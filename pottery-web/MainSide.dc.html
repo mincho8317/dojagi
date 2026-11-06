@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>공방 메인 단면 뷰</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#8FB3C9;color:#2B1A0F">
+
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;width:390px;height:844px;background:linear-gradient(#9CC0D4,#D9E6DA)"></div>
+
+  <div style="position:absolute;left:0;right:0;top:78px;bottom:92px;overflow-y:auto;overflow-x:hidden">
+    <div style="position:relative;box-sizing:border-box;margin:6px 10px 0;padding:6px 8px;border:2px dashed #4A6A7A;border-radius:10px;background:rgba(255,255,255,.35);font-size:9.5px;color:#2B3A42"><b>BG_SKY_ROOF</b> 하늘·지붕 1080×300 · 층이 늘면 지붕이 위로 밀려 올라간다</div>
+
+    <div style="position:relative;margin:6px 8px 0;height:26px;background:#7A3E2A;clip-path:polygon(6% 100%,50% 0,94% 100%);" aria-hidden="true"></div>
+
+    <sc-for list="{{rooms}}" as="rm" hint-placeholder-count="5">
+      <section style="position:relative;margin:0 8px;box-sizing:border-box;border-left:6px solid #5B3A24;border-right:6px solid #5B3A24;background:{{rm.wall}}">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px 0">
+          <span style="padding:2px 10px;border-radius:8px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8">{{rm.name}}</span>
+          <span style="font-size:10px;font-weight:700;color:#5B3A24">{{rm.res}} · 설비 {{rm.used}}/{{rm.cap}}</span>
+        </div>
+        <div style="position:relative;height:136px;margin:4px 6px 0;border:2px dashed rgba(91,58,36,.45);border-radius:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:end;padding:0 6px 6px;box-sizing:border-box">
+          <sc-for list="{{rm.slots}}" as="sl" hint-placeholder-count="3">
+            <a href="{{sl.href}}" style="{{sl.box}}">
+              <sc-if value="{{sl.bubbleOn}}" hint-placeholder-val="{{true}}">
+                <span style="{{sl.bubble}}">{{sl.bubbleText}}</span>
+              </sc-if>
+              <span style="font-size:8.5px;font-weight:900;line-height:1.15;white-space:pre-line">{{sl.res}}</span>
+              <span style="font-family:'Jua',sans-serif;font-size:12px">{{sl.label}}</span>
+              <span style="font-size:9.5px;font-weight:700;opacity:.85">{{sl.sub}}</span>
+            </a>
+          </sc-for>
+        </div>
+        <div aria-hidden="true" style="height:10px;margin-top:6px;background:#6B4429;border-top:3px solid #3E2616"></div>
+      </section>
+    </sc-for>
+
+    <a href="Shop.dc.html" style="position:relative;margin:0 8px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:120px;border:3px dashed #5B3A24;border-top:none;background:rgba(43,26,15,.55);text-decoration:none;color:#FFE7A8">
+      <span style="font-family:'Jua',sans-serif;font-size:17px">미개방 층 · 공방 승급</span>
+      <span style="font-size:11px;font-weight:700;color:#F1DDBD">80,000G · 방 2개 · 설비 칸 +6</span>
+      <span style="font-size:9.5px;color:#E8D3B5"><b>ROOM_LOCKED</b> 비계·천막 1056×360</span>
+    </a>
+    <div aria-hidden="true" style="margin:0 4px;height:18px;background:#5A4A38;border-top:4px solid #3E2616"></div>
+    <div style="height:90px"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:0;height:78px;background:linear-gradient(rgba(43,26,15,.55),rgba(43,26,15,0))"></div>
+  <div style="position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:8px">
+    <div style="width:54px;height:54px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:14px;background:#FFF4DE;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;padding:3px">
+      <img src="_blob/ebffb2939619150f9c3eb16e1634b88c.webp" alt="내 프로필" style="width:100%;height:100%;object-fit:cover;border-radius:9px">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="padding:1px 8px;border-radius:8px;background:#B9533A;color:#FFF4DE;font-family:'Jua',sans-serif;font-size:13px">명성 Lv.{{lv}}</span>
+        <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE;text-shadow:0 1px 0 #2B1A0F">{{playerName}}의 공방</span>
+      </div>
+      <div style="width:120px;height:10px;box-sizing:border-box;border:2px solid #3E2616;border-radius:6px;background:#3E2616;overflow:hidden"><div style="{{fameBar}}"></div></div>
+    </div>
+  </div>
+  <div style="position:absolute;right:12px;top:14px;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+    <a href="Shop.dc.html" aria-label="골드, 상점 열기" style="text-decoration:none;position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px">
+      <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#7A5A12"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+      <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{gold}}</span>
+    </a>
+    <a href="Research.dc.html" aria-label="파편, 연구 열기" style="text-decoration:none;position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px">
+      <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#2E4F48"><img src="_blob/42ba2694aff99a86b951a80fe9936a43.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+      <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{shards}}</span>
+    </a>
+  </div>
+
+  <div style="position:absolute;right:12px;bottom:108px;display:flex;flex-direction:column;gap:10px">
+    <a href="Commission.dc.html" aria-label="의뢰" style="position:relative;width:58px;height:58px;box-sizing:border-box;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none">
+      <span style="width:30px;height:26px;box-sizing:border-box;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24"><img src="_blob/1d0e1bb40ced0631fa158d238843ac20.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+      <span style="font-family:'Jua',sans-serif;font-size:11px;color:#5B3A24">의뢰</span>
+      <sc-if value="{{questBadgeOn}}" hint-placeholder-val="{{true}}">
+        <span style="position:absolute;right:-7px;top:-7px;min-width:22px;height:22px;box-sizing:border-box;padding:0 5px;border-radius:11px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:'Jua',sans-serif;font-size:12px;display:flex;align-items:center;justify-content:center">{{questBadge}}</span>
+      </sc-if>
+    </a>
+    <a href="Research.dc.html" aria-label="연구" style="width:58px;height:58px;box-sizing:border-box;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none">
+      <img src="_blob/6a66a73c9fc4b6c62852fd952628acea.webp" alt="" aria-hidden="true" style="width:30px;height:26px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:11px;color:#5B3A24">연구</span>
+    </a>
+    <a href="Codex.dc.html" aria-label="도감" style="width:58px;height:58px;box-sizing:border-box;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none">
+      <span style="width:30px;height:26px;box-sizing:border-box;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24"><img src="_blob/ec31190f776d7005da6bd6a0febe0402.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+      <span style="font-family:'Jua',sans-serif;font-size:11px;color:#5B3A24">도감</span>
+    </a>
+  </div>
+
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="MainSide.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFD66B">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"playerName":{"editor":"text","default":"플레이어","label":"플레이어 이름"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG() };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      dryList: [
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+      ],
+      glazeList: [
+        { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
+        { id: 'g2', shape: 'cup', clay: 'basic', form: 4, tmin: 4.2, dry: 'ok' }
+      ],
+      kilnList: [],
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef(), need = true;
+    try {
+      var r = localStorage.getItem('pottery-proto-v1');
+      if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } need = o.dryList === undefined || o.glazeList === undefined || o.kilnList === undefined; }
+      if (need) { localStorage.setItem('pottery-proto-v1', JSON.stringify(d)); }
+    } catch (e) {}
+    return d;
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.tick = setInterval(function () { self.forceUpdate(); }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  renderVals() {
+    var g = this.state.g;
+    var q = g.quests || {};
+    var now = Date.now();
+    var dryList = g.dryList || [];
+    var dryDone = dryList.filter(function (it) { return (now - it.start) / 30000 >= 1; }).length;
+    var shelf = 0;
+    for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { shelf++; } }
+    var firing = g.kiln === 'firing';
+
+    function fac(href, res, label, sub, bubble, tone) {
+      return {
+        href: href, res: res, label: label, sub: sub,
+        bubbleOn: !!bubble, bubbleText: bubble || '',
+        bubble: 'position:absolute;top:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:2px 9px;border-radius:10px;font-family:Jua,sans-serif;font-size:11.5px;' + (tone === 'go' ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (tone === 'fire' ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24')),
+        box: 'position:relative;height:112px;box-sizing:border-box;border:2px dashed #7A5434;border-radius:10px 10px 4px 4px;background:rgba(255,248,235,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#5B3A24;text-align:center'
+      };
+    }
+    function empty(label, sub) {
+      return {
+        href: 'Shop.dc.html', res: '+', label: label, sub: sub, bubbleOn: false, bubbleText: '', bubble: '',
+        box: 'position:relative;height:84px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:10px;background:rgba(255,255,255,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#7A5434;text-align:center'
+      };
+    }
+    function locked(label, sub) {
+      return {
+        href: 'Shop.dc.html', res: 'LOCK', label: label, sub: sub, bubbleOn: false, bubbleText: '', bubble: '',
+        box: 'position:relative;height:84px;box-sizing:border-box;border:2px dashed #5E5547;border-radius:10px;background:rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:#F1DDBD;text-align:center'
+      };
+    }
+
+    var rooms = [
+      { name: '작업실', res: 'ROOM_WORK', wall: '#E8D5B7', cap: 3, slots: [
+        fac('Wheel.dc.html', 'OBJ_WHEEL_SIDE\n300×300', '물레', '탭해서 빚기', '빚기', ''),
+        empty('작업대', '1,200G · 손·판성형'),
+        locked('몰드 작업대', '명성 Lv.4')
+      ] },
+      { name: '건조실', res: 'ROOM_DRY', wall: '#EFE0C2', cap: 3, slots: [
+        fac('Dry.dc.html', 'OBJ_DRYRACK_SIDE\n300×300', '건조대 A', '2칸', dryList.length + '/4', ''),
+        fac('Dry.dc.html', 'OBJ_DRYRACK_SIDE\n300×300', '건조대 B', '2칸', dryDone ? '완료 ' + dryDone : '', 'go'),
+        empty('건조대 증설', '1,500G · +2칸')
+      ] },
+      { name: '시유실', res: 'ROOM_GLAZE', wall: '#DCE3D6', cap: 3, slots: [
+        fac('Glaze.dc.html', 'OBJ_GLAZE_TABLE_SIDE\n300×300', '유약대', '담금', (g.glazeList || []).length ? '대기 ' + (g.glazeList || []).length : '', (g.glazeList || []).length ? 'go' : ''),
+        empty('시유 계측기', '9,000G · 두께 표시'),
+        locked('유약 조합대', '연구 필요')
+      ] },
+      { name: '가마실', res: 'ROOM_KILN', wall: '#D8B8A0', cap: 3, slots: [
+        fac(firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', 'OBJ_KILN_SIDE\n300×300', '전기가마', firing ? '소성 중' : '대기 ' + (g.kilnList || []).length, firing ? '5:12 · 열기' : '비어 있음', firing ? 'fire' : ''),
+        locked('가스가마', '명성 Lv.6 · 연구'),
+        empty('빈 칸', '가마 추가')
+      ] },
+      { name: '전시실', res: 'ROOM_GALLERY', wall: '#EADCC8', cap: 3, slots: [
+        fac('Display.dc.html', 'OBJ_SHELF_SIDE\n300×300', '진열대', shelf + '/6 전시', '명성 +' + shelf * 3 + '/h', ''),
+        empty('꾸미기', '등 · 화분 · 간판'),
+        locked('응접실', '명성 Lv.6')
+      ] }
+    ];
+    rooms.forEach(function (r) {
+      r.used = r.slots.filter(function (s) { return s.res !== '+' && s.res !== 'LOCK'; }).length;
+      r.res = r.res + ' 1056×420';
+    });
+
+    var openQuests = (q.min ? 0 : 1) + (q.guest ? 0 : 1) + (q.week ? 0 : 1);
+    return {
+      rooms: rooms,
+      lv: g.fameLv,
+      playerName: (this.props.playerName || g.playerName || '플레이어'),
+      fameBar: 'width:' + g.fameXp + '%;height:100%;background:#E3B23C;border-radius:3px',
+      gold: g.gold.toLocaleString(),
+      shards: g.shards,
+      questBadge: openQuests,
+      questBadgeOn: openQuests > 0
+    };
+  }
+}
+</script>
+</body>
+</html>

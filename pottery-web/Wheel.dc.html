@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>물레 성형</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+@keyframes wheelspin{to{stroke-dashoffset:-48}}
+.spin{animation-name:wheelspin;animation-timing-function:linear;animation-iteration-count:infinite}
+</style>
+<style>
+@keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
+.bg-bg-wheel{background:#BFA584 url(_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp) center/cover no-repeat}
+</style>
+</helmet>
+<div style="{{navRoot}}">
+  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+    <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="transform:{{chipTf}};z-index:41;position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+      <div style="{{navStrip}}">
+        <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
+          <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="{{navFadeL}}"></div>
+      <div aria-hidden="true" style="{{navFadeR}}"></div>
+    </div>
+  </div>
+  <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
+    <div style="{{navDropStyle}}">
+<div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
+
+  <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{targetName}} 빚기</div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:64px;display:flex;align-items:stretch;gap:6px">
+    <button type="button" onClick="{{openClay}}" aria-label="흙 바꾸기 · 지금 {{clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
+      <img dc-src="{{clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
+      <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:9.5px;font-weight:700;color:#B9533A">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} ▾</span></span>
+    </button>
+    <button type="button" onClick="{{openTarget}}" aria-label="목표 모양 바꾸기 · 지금 {{targetName}}" style="all:unset;cursor:pointer;flex:0 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
+      <svg width="28" height="28" viewBox="{{tgIcon.vb}}" aria-hidden="true" style="flex:0 0 auto"><path d="{{tgIcon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{tgIcon.sw}}" stroke-linejoin="round"></path></svg>
+      <span style="display:flex;flex-direction:column;line-height:1.05;min-width:0"><span style="{{tgTagStyle}}">{{tgTag}}</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{targetName}} ▾</span></span>
+    </button>
+  </div>
+
+  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:12px;top:116px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
+      <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
+      <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{fitPct}}<span style="font-size:18px">%</span></span>
+    </div>
+    <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0">
+      <div style="height:12px;border-radius:6px;background:rgba(255,244,222,.18);overflow:hidden"><div style="{{fitBar}}"></div></div>
+      <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:2px;color:#FFD66B;line-height:1">{{fitStars}}</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:188px;height:500px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+    
+
+    <svg style="position:absolute;left:8px;top:44px;overflow:visible" width="350" height="384" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
+      <defs>
+        <linearGradient id="clayShade" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="{{clayDark}}"></stop>
+          <stop offset="0.38" stop-color="{{clayLight}}"></stop>
+          <stop offset="0.62" stop-color="{{clayColor}}"></stop>
+          <stop offset="1" stop-color="{{clayDark}}"></stop>
+        </linearGradient>
+        <clipPath id="potClip"><path d="{{potPath}}"></path></clipPath>
+      </defs>
+      <image href="_blob/3c9b10b6a96c1ab7d724ba551332b361.webp" x="30" y="232" width="258" height="207"></image>
+      <ellipse class="spin" cx="150" cy="290" rx="66" ry="22" fill="none" stroke="#C9B49A" stroke-width="3" stroke-dasharray="14 34" style="{{spinStyle}}"></ellipse>
+      <ellipse class="spin" cx="150" cy="290" rx="40" ry="13" fill="none" stroke="#B19A80" stroke-width="2" stroke-dasharray="10 38" style="{{spinStyle}}"></ellipse>
+      <g transform="{{dropTf}}" opacity="{{dropOp}}">
+      <ellipse cx="{{foot.cx}}" cy="291" rx="{{foot.rx}}" ry="{{foot.ry}}" fill="#2B1A0F" opacity="0.28"></ellipse>
+      <path d="{{potPath}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>
+      <sc-for list="{{rings}}" as="rg" hint-placeholder-count="10">
+        <line class="spin" x1="{{rg.x1}}" x2="{{rg.x2}}" y1="{{rg.y}}" y2="{{rg.y}}" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.6" stroke-dasharray="8 16" style="{{spinStyle}}"></line>
+      </sc-for>
+      <ellipse cx="{{rim.cx}}" cy="{{rim.cy}}" rx="{{rim.rx}}" ry="{{rim.ry}}" fill="{{clayColor}}" stroke="{{clayEdge}}" stroke-width="2"></ellipse>
+      <ellipse cx="{{rim.cx}}" cy="{{rim.cy}}" rx="{{rim.irx}}" ry="{{rim.iry}}" fill="#3E2616" opacity="0.55"></ellipse>
+      </g>
+      <g transform="{{dustTf}}" opacity="{{dustOp}}" pointer-events="none">
+        <ellipse cx="112" cy="292" rx="22" ry="8" fill="#D9C2A2" opacity="0.8"></ellipse>
+        <ellipse cx="188" cy="292" rx="22" ry="8" fill="#D9C2A2" opacity="0.8"></ellipse>
+        <ellipse cx="150" cy="298" rx="30" ry="7" fill="#E8D6BC" opacity="0.7"></ellipse>
+      </g>
+      <path d="{{ghostPath}}" fill="none" stroke="#2B1A0F" stroke-width="4.2" stroke-dasharray="6 6" opacity="0.35" pointer-events="none"></path>
+      <path d="{{ghostPath}}" fill="none" stroke="#FFF4DE" stroke-width="2.2" stroke-dasharray="6 6" opacity="0.95" pointer-events="none"></path>
+
+      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="2">
+        <text x="{{mk.x}}" y="{{mk.y}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="{{mk.c}}" stroke="#2B1A0F" stroke-width="0.8">{{mk.t}}</text>
+      </sc-for>
+
+      <sc-if value="{{grabOn}}" hint-placeholder-val="{{false}}">
+        <rect x="0" y="{{grab.y1}}" width="300" height="{{grab.h}}" fill="#FFE7A8" opacity="{{grab.op}}" clip-path="url(#potClip)"></rect>
+        <line x1="10" x2="290" y1="{{grab.y}}" y2="{{grab.y}}" stroke="#FFE7A8" stroke-width="1.4" stroke-dasharray="3 5"></line>
+        <circle cx="{{grab.hx}}" cy="{{grab.y}}" r="13" fill="#FFF4DE" fill-opacity="0.55" stroke="#2B1A0F" stroke-width="2"></circle>
+        <text x="{{grab.ax}}" y="{{grab.ay}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="22" fill="#FFE7A8" stroke="#2B1A0F" stroke-width="1">{{grab.arrow}}</text>
+        <text x="150" y="{{grab.ly}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="12" fill="#FFF4DE" stroke="#2B1A0F" stroke-width="0.6">{{grab.label}}</text>
+      </sc-if>
+
+      <sc-if value="{{wrapping}}" hint-placeholder-val="{{false}}">
+        <image href="_blob/a795fdcbe57fe24aff00e58aef9dce47.webp" x="{{hands.ilx}}" y="{{hands.iy}}" width="40" height="111"></image>
+        <image href="_blob/97dc46d26eb0d59475dcf2e6abaca47b.webp" x="{{hands.irx}}" y="{{hands.iy}}" width="40" height="111"></image>
+      </sc-if>
+
+      <sc-if value="{{hdl.on}}" hint-placeholder-val="{{true}}">
+        <line x1="150" y1="{{hdl.ly1}}" x2="150" y2="{{hdl.ly2}}" stroke="#FFE7A8" stroke-width="2" stroke-dasharray="3 3"></line>
+        <rect x="122" y="{{hdl.y}}" width="56" height="24" rx="12" fill="{{hdl.fill}}" stroke="#2B1A0F" stroke-width="2"></rect>
+        <text x="150" y="{{hdl.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="12" fill="#2B1A0F">▲ 높이 ▼</text>
+      </sc-if>
+      <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
+        <g pointer-events="none">
+          <g transform="{{fx.colTf}}" opacity="{{fx.colOp}}">
+            <path d="{{fx.path}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>
+          </g>
+          <sc-for list="{{fx.blobs}}" as="bl" hint-placeholder-count="8">
+            <circle cx="{{bl.x}}" cy="{{bl.y}}" r="{{bl.r}}" fill="{{clayColor}}" stroke="{{clayEdge}}" stroke-width="1.2" opacity="{{bl.op}}"></circle>
+          </sc-for>
+        </g>
+      </sc-if>
+      <sc-if value="{{fxOk}}" hint-placeholder-val="{{false}}">
+        <g pointer-events="none">
+          <ellipse cx="150" cy="{{fx.cy}}" rx="{{fx.ringR}}" ry="{{fx.ringR}}" fill="none" stroke="#FFE7A8" stroke-width="6" opacity="{{fx.ringOp}}"></ellipse>
+          <sc-for list="{{fx.sparks}}" as="sp" hint-placeholder-count="10">
+            <text x="{{sp.x}}" y="{{sp.y}}" text-anchor="middle" font-size="{{sp.fs}}" fill="#FFD66B" stroke="#8A6410" stroke-width="0.8" opacity="{{sp.op}}">✦</text>
+          </sc-for>
+        </g>
+      </sc-if>
+    </svg>
+
+    <div style="position:absolute;left:8px;top:162px;width:40px;box-sizing:border-box;padding:6px 5px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;display:flex;flex-direction:column-reverse;align-items:center;gap:3px" role="img" aria-label="높이별 두께">
+      <span style="{{tminStyle}}">{{tmin}}</span>
+      <sc-for list="{{segs}}" as="s" hint-placeholder-count="12">
+        <span style="{{s.style}}"></span>
+      </sc-for>
+      <span style="font-family:'Jua',sans-serif;font-size:10px;color:#FFE7A8">두께</span>
+      <span style="font-size:8px;font-weight:700;color:#9FE08F;text-align:center;line-height:1.2">{{safeLine}}</span>
+    </div>
+
+    <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
+
+    <div role="status" style="position:absolute;left:8px;right:8px;top:8px;box-sizing:border-box;padding:7px 10px;border-radius:12px;background:{{hintBg}};box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:'Jua',sans-serif;font-size:13px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none"><span style="display:inline-block;margin-right:5px;padding:0 6px;border-radius:6px;background:rgba(255,244,222,.25);font-size:11px">가이드</span>{{hint}}</div>
+    <div aria-live="polite" style="position:absolute;left:8px;top:64px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none">
+      <sc-for list="{{tips}}" as="tp" hint-placeholder-count="2">
+        <span style="{{tp.style}}">{{tp.text}}</span>
+      </sc-for>
+    </div>
+    <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
+      <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{fx.flash}}"></div>
+      <div role="alert" style="position:absolute;left:50%;top:44%;pointer-events:none;white-space:nowrap;padding:8px 18px;border-radius:16px;background:rgba(43,26,15,.9);border:3px solid #D0452B;font-family:'Jua',sans-serif;font-size:28px;color:#FFB08A;text-shadow:0 2px 0 #5A1A0E;{{fx.pop}}">와르르… 실패</div>
+    </sc-if>
+    <sc-if value="{{fxOk}}" hint-placeholder-val="{{false}}">
+      <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(255,231,168,.55) 0%,rgba(255,231,168,0) 60%);opacity:{{fx.flash}}"></div>
+      <div role="status" style="position:absolute;left:50%;top:40%;pointer-events:none;white-space:nowrap;display:flex;flex-direction:column;align-items:center;padding:8px 18px;border-radius:16px;background:rgba(47,99,40,.92);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;color:#FFFDF5;{{fx.pop}}"><span style="font-size:26px">성형 완료!</span><span style="font-size:18px;letter-spacing:2px;color:#FFD66B">{{fx.stars}}</span></div>
+    </sc-if>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">중심</span>
+      <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="중심 이탈 게이지">
+        <div style="{{wBarStyle}}"></div>
+        <span aria-hidden="true" style="position:absolute;left:70%;top:0;bottom:0;width:2px;background:#E8B640"></span>
+      </div>
+      <span style="{{wLabelStyle}}">{{wLabel}}</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1 1 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:3px solid #5B3A24;border-radius:14px;overflow:hidden">
+        <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
+          <button type="button" aria-pressed="{{sp.on}}" onClick="{{sp.pick}}" style="{{sp.style}}">{{sp.label}}</button>
+        </sc-for>
+      </div>
+      <button type="button" onClick="{{finish}}" style="{{finishStyle}}">
+        <span style="font-family:'Jua',sans-serif;font-size:19px">완성</span>
+        <span style="font-size:9.5px;font-weight:700;opacity:.9">성형 대기로 · 새 흙</span>
+      </button>
+    </div>
+  </div>
+
+
+  <sc-if value="{{sheetOn}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{sheetTitle}}" style="width:390px;max-height:640px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{sheetTitle}}</span><span style="font-size:11.5px;color:#7A5434">{{sheetSub}}</span></div>
+          <button type="button" onClick="{{closeSheet}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:2px">
+          <sc-for list="{{sheetRows}}" as="sr" hint-placeholder-count="4">
+            <button type="button" onClick="{{sr.pick}}" aria-pressed="{{sr.on}}" aria-label="{{sr.aria}}" style="{{sr.style}}">
+              <span style="{{sr.tagStyle}}">{{sr.tag}}</span>
+              <img dc-src="{{sr.img}}" alt="" aria-hidden="true" style="{{sr.imgStyle}}">
+              <svg width="56" height="56" viewBox="{{sr.icon.vb}}" aria-hidden="true" style="{{sr.svgStyle}}"><path d="{{sr.icon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{sr.icon.sw}}" stroke-linejoin="round"></path></svg>
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{sr.name}}</span>
+              <span style="font-size:10.5px;color:#7A5434;text-align:center">{{sr.meta}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="{{toastStyle}}">{{toast}}</div>
+  </sc-if>
+
+</div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
+  <sc-if value="{{fxOk}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:scale(0.82464);pointer-events:none;z-index:40">
+      <svg style="position:absolute;left:20px;top:232px;overflow:visible" width="350" height="384" viewBox="0 0 300 330">
+        <g transform="{{fx.flyTf}}" opacity="{{fx.flyOp}}">
+          <path d="{{fx.path}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>
+        </g>
+      </svg>
+    </div>
+  </sc-if>
+  <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navPrevName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navNextName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
+    <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var f = this.fresh();
+    f.g = this.loadG();
+    f.clay = 'basic';
+    f.target = 'dish';
+    f.speed = 'std';
+    f.toast = '';
+    f.toastKind = 'ok';
+    f.touchUI = false; f.squeezePrep = false;
+    try { f.touchUI = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches); } catch (e) {}
+    f.phase = 0;
+    this.state = f;
+    this.ptrs = {};
+    this.drag = null;
+  }
+  fresh() {
+    var r = [], t = [];
+    for (var i = 0; i < 12; i++) { r.push(40 + (i < 2 ? 3 : 0)); t.push(8); }
+    this.dropN = (this.dropN || 0) + 1;
+    return { r: r, t: t, H: 110, w: 62, stage: 'center', wrapping: false, grab: null, drop: this.dropN, dropT: Date.now(), dropDelay: 0 };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      dryList: [
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+      ],
+      glazeList: [
+        { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
+        { id: 'g2', shape: 'cup', clay: 'basic', form: 4, tmin: 4.2, dry: 'ok' }
+      ],
+      kilnList: [],
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef(), need = true;
+    try {
+      var r = localStorage.getItem('pottery-proto-v1');
+      if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } need = o.dryList === undefined || o.glazeList === undefined || o.kilnList === undefined; }
+      if (need) { localStorage.setItem('pottery-proto-v1', JSON.stringify(d)); }
+    } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.applyGoal(); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.applyGoal();
+    this.last = Date.now();
+    this.tick = setInterval(function () { self.step(); }, 40);
+  }
+  componentWillUnmount() {
+    clearTimeout(this.tt);
+    clearTimeout(this.holdT);
+    clearInterval(this.tick);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg, kind) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg, toastKind: kind || 'ok' });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000);
+  }
+  shapes() {
+    return {
+      dish: { n: '종지', H: 70, T: [5, 6.5], f: function (u) { return 40 + 50 * Math.sqrt(u); } },
+      cup: { n: '찻잔', H: 130, T: [3.5, 5], f: function (u) { return 34 + 14 * u; } },
+      bowl: { n: '사발', H: 95, T: [4, 5.5], f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } },
+      goal: this.goalShape()
+    };
+  }
+  goalShape() {
+    var gl = ((this.state && this.state.g) || {}).goal;
+    if (!gl || !gl.prof) { return { n: '종지', H: 70, T: [5, 6.5], f: function (u) { return 40 + 50 * Math.sqrt(u); } }; }
+    var p = gl.prof, n = p.length;
+    return { n: gl.shapeN || gl.name, H: gl.H, T: [3.5, 6], f: function (u) { var x = u * (n - 1), lo = Math.floor(x), hi = Math.min(n - 1, lo + 1); return p[lo] + (p[hi] - p[lo]) * (x - lo); } };
+  }
+  iconOf(tg) {
+    var r = [], H = tg.H, M = 0;
+    for (var i = 0; i < 12; i++) { var v = tg.f(i / 11); r.push(v); M = Math.max(M, v); }
+    var d = 'M' + (-r[0]).toFixed(1) + ' 0 L' + r[0].toFixed(1) + ' 0';
+    for (var j = 1; j < 12; j++) { d += ' L' + r[j].toFixed(1) + ' ' + (-H * j / 11).toFixed(1); }
+    for (var k = 11; k >= 0; k--) { d += ' L' + (-r[k]).toFixed(1) + ' ' + (-H * k / 11).toFixed(1); }
+    var side = Math.max(2 * M, H) + 16;
+    return { d: d + ' Z', vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), sw: (side / 22).toFixed(2) };
+  }
+  applyGoal() {
+    var g = this.loadG(), gl = g.goal;
+    if (!gl || !g.goalJump) { return; }
+    var own = gl.clay === 'basic' || ((g.mats || {})[gl.clay] || 0) > 0;
+    this.resetPointers && this.resetPointers();
+    var nf = this.fresh(); nf.g = g; nf.target = 'goal'; nf.clay = own ? gl.clay : 'basic';
+    this.setState(nf);
+    var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유' };
+    var CN = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선' };
+    var self = this;
+    setTimeout(function () {
+      self.setG({ goalJump: false });
+      self.say(gl.num + '스테이지 목표 · ' + (own ? CN[gl.clay] + ' 흙' : CN[gl.clay] + ' 흙이 없어 기본 흙') + ' · ' + GN[gl.glaze] + ' 예약', own ? 'ok' : 'fail');
+    }, 0);
+  }
+  claysDef() {
+    return [
+      { id: 'basic', img: '_blob/976713d77fcd910c2063a318370be110.webp', n: '기본', res: 'CLAY', c: '#A9765A', limit: 2.5 },
+      { id: 'refined', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp', n: '정제', res: 'CLAY', c: '#B8957C', limit: 2.5 },
+      { id: 'kaolin', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp', n: '고령토', res: 'CLAY', c: '#CABBA9', limit: 2.5 },
+      { id: 'porcelain', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp', n: '자기토', res: 'CLAY', c: '#D6CFC2', limit: 2.5 },
+      { id: 'premium', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', n: '특선', res: 'CLAY', c: '#DED8CD', limit: 2.0 }
+    ];
+  }
+  mul() { return this.state.speed === 'slow' ? 0.6 : (this.state.speed === 'fast' ? 1.6 : 1.0); }
+  limit() {
+    var s = this.state, lim = 2.5;
+    this.claysDef().forEach(function (c) { if (c.id === s.clay) { lim = c.limit; } });
+    return lim;
+  }
+  consumeClay() {
+    var g = this.state.g, c = this.state.clay;
+    if (c === 'basic') { return g.mats || {}; }
+    var m = {}; for (var k in g.mats) { m[k] = g.mats[k]; }
+    m[c] = Math.max(0, (m[c] || 0) - 1);
+    return m;
+  }
+  resetPointers() {
+    this.ptrs = {};
+    this.drag = null;
+    clearTimeout(this.holdT);
+  }
+  clearFx(k, ms) {
+    var self = this;
+    setTimeout(function () { if (self.state.fx && self.state.fx.k === k) { self.setState({ fx: null }); } }, ms);
+  }
+  failWith(msg) {
+    var s = this.state;
+    this.resetPointers();
+    var mats = this.consumeClay();
+    var nf = this.fresh();
+    if (s.clay !== 'basic' && (mats[s.clay] || 0) <= 0) { nf.clay = 'basic'; }
+    nf.dropDelay = 0.8;
+    nf.fx = { kind: 'fail', k: Date.now(), path: this.profile(s.r, s.H, 0).path, H: s.H };
+    this.setState(nf);
+    this.clearFx(nf.fx.k, 1300);
+    this.setG({ shards: s.g.shards + 1, mats: mats });
+    this.say(msg + ' · 파편 +1 · 새 흙을 올렸다', 'fail');
+  }
+  step() {
+    var now = Date.now();
+    var dt = Math.min(0.1, (now - this.last) / 1000);
+    this.last = now;
+    var s = this.state;
+    var w = s.w, t = s.t;
+    if (s.wrapping) {
+      w = Math.max(0, w - 30 * dt);
+    } else if (!this.drag) {
+      w = Math.max(0, w - 0.8 * dt);
+    }
+    var stage = s.stage;
+    if (stage === 'center' && w < 15) {
+      stage = 'shape';
+      this.say('중심이 잡혔다 · 이제 벽을 밀어 모양을 낸다');
+    }
+    this.setState({ phase: s.phase + dt * (s.speed === 'slow' ? 2 : (s.speed === 'fast' ? 7 : 4)), w: w, t: t, stage: stage });
+  }
+  toView(el, cx, cy) {
+    var rect = el.getBoundingClientRect();
+    var k = rect.width / (el.offsetWidth || rect.width) || 1;
+    var sx = (cx - rect.left) / k + 44;
+    var sy = (cy - rect.top) / k - 44;
+    return { x: sx * 300 / 350, y: sy * 330 / 384, k: k };
+  }
+  rAt(ci) {
+    var r = this.state.r;
+    var a = Math.max(0, Math.min(11, Math.floor(ci))), b = Math.min(11, a + 1), f = ci - a;
+    return r[a] * (1 - f) + r[b] * f;
+  }
+  shapeMove(p, dx, dy, axis, sub) {
+    var s = this.state;
+    var m = this.mul();
+    var base = 290;
+    var r = s.r.slice(), t = s.t.slice(), H = s.H, w = s.w;
+    var lim0 = this.limit();
+    var damp = function (x) { return x < lim0 + 1 ? 0.25 : (x < lim0 + 2 ? 0.6 : 1); };
+    var grab;
+    if (axis === 'h') {
+      var u = Math.max(0, Math.min(1, (base - p.y) / H));
+      var ci = u * 11;
+      var side = p.x >= 150 ? 'R' : 'L';
+      var out = side === 'R' ? dx : -dx;
+      for (var i = 0; i < 12; i++) {
+        var wt = Math.exp(-Math.pow(i - ci, 2) / 2.2);
+        if (wt < 0.03) { continue; }
+        if (out > 0) {
+          r[i] = Math.min(125, r[i] + 0.38 * out * wt * m);
+        } else {
+          r[i] = Math.max(14, r[i] + 0.32 * out * wt * m);
+        }
+      }
+      w = w + 0.01 * Math.abs(dx) * m * (s.speed === 'fast' ? 1.6 : 1);
+      grab = { mode: 'h', ci: ci, side: side, dir: out > 0.3 ? 'out' : (out < -0.3 ? 'in' : (s.grab ? s.grab.dir : '')) };
+    } else if (sub === 'wall') {
+      var dw = -dy;
+      var uw = Math.max(0, Math.min(1, (base - p.y) / H)), cw = uw * 11;
+      for (var q = 0; q < 12; q++) {
+        var ww = Math.exp(-Math.pow(q - cw, 2) / 14);
+        if (ww < 0.03) { continue; }
+        if (dw > 0) { t[q] = t[q] - 0.02 * dw * ww * m * damp(t[q]); } else { t[q] = Math.min(12, t[q] - 0.02 * dw * ww * m); }
+      }
+      var r0 = r.slice(), t0 = t.slice(), sk = Math.min(0.5, 0.02 * Math.abs(dw) * m);
+      for (var z = 1; z < 11; z++) {
+        var wz = Math.exp(-Math.pow(z - cw, 2) / 6);
+        if (wz < 0.05) { continue; }
+        var avR = (r0[z - 1] + r0[z + 1]) / 2, avT = (t0[z - 1] + t0[z + 1]) / 2;
+        r[z] = r[z] + (avR - r0[z]) * sk * wz * 0.15;
+        t[z] = t[z] + (avT - t0[z]) * sk * wz;
+      }
+      grab = { mode: 'w', ci: cw, side: p.x >= 150 ? 'R' : 'L', dir: dw > 0.3 ? 'up' : (dw < -0.3 ? 'down' : (s.grab ? s.grab.dir : '')) };
+    } else {
+      var d = -dy;
+      if (d > 0) {
+        H = Math.min(210, H + 0.28 * d * m);
+        for (var j = 0; j < 12; j++) { r[j] = Math.max(14, r[j] * (1 - 0.0012 * d * m)); }
+      } else {
+        var a = -d;
+        H = Math.max(40, H - 0.28 * a * m);
+        for (var k = 0; k < 12; k++) { r[k] = Math.min(125, r[k] * (1 + 0.001 * a * m)); }
+        w = w + 0.05 * a * m;
+      }
+      grab = { mode: 'v', ci: 11, side: 'R', dir: d > 0.3 ? 'up' : (d < -0.3 ? 'down' : (s.grab ? s.grab.dir : '')) };
+    }
+    var tmin = Math.min.apply(null, t);
+    if (tmin < this.limit()) { this.failWith('벽이 너무 얇아져 찢어졌다'); return; }
+    if (w > 100) { this.failWith('흔들림이 쌓여 중심이 무너졌다'); return; }
+    this.setState({ r: r, t: t, H: H, w: w, grab: grab });
+  }
+  analyze(s) {
+    var tg = this.shapes()[s.target];
+    var tr = [];
+    for (var i = 0; i < 12; i++) { tr.push(tg.f(i / 11)); }
+    var err = 0;
+    for (var j = 0; j < 12; j++) { err += Math.max(0, Math.abs(s.r[j] - tr[j]) / tr[j] - 0.06); }
+    err = err / 12;
+    var herr = (s.H - tg.H) / tg.H;
+    var tAvg = 0;
+    for (var tt = 0; tt < 12; tt++) { tAvg += s.t[tt]; }
+    tAvg = tAvg / 12;
+    var tOut = Math.max(0, tAvg - tg.T[1], tg.T[0] - tAvg);
+    // 비선형 일치율: 목표에 가까울수록 같은 손질에도 크게 오른다 (지수 곡선) · 95% 이상은 100%로 스냅
+    var eS = 0;
+    for (var e2 = 0; e2 < 12; e2++) { eS += Math.max(0, Math.abs(s.r[e2] - tr[e2]) / tr[e2] - 0.03); }
+    var E = eS / 12 + Math.max(0, Math.abs(herr) - 0.03) * 0.6 + Math.max(0, tOut - 0.2) * 0.018;
+    var fit = Math.round(100 * Math.exp(-8 * E));
+    if (fit >= 95) { fit = 100; }
+    var regions = [{ n: '아랫부분', a: 0, b: 3 }, { n: '몸통', a: 4, b: 7 }, { n: '입구', a: 8, b: 11 }];
+    var issues = [];
+    regions.forEach(function (rg) {
+      var cur = 0, want = 0;
+      for (var k = rg.a; k <= rg.b; k++) { cur += s.r[k]; want += tr[k]; }
+      var rel = (cur - want) / want;
+      if (Math.abs(rel) > 0.03) {
+        issues.push({ mag: Math.abs(rel), kind: rel > 0 ? 'in' : 'out', ci: (rg.a + rg.b) / 2, text: ({ '아랫부분': '아래', '몸통': '몸통', '입구': '입구' })[rg.n] + (rel > 0 ? ' 넓음 →←' : ' 좁음 ←→') + ' ' + Math.round(Math.abs(rel) * 100) + '%' });
+      }
+    });
+    if (Math.abs(herr) > 0.03) {
+      issues.push({ mag: Math.abs(herr), kind: herr > 0 ? 'down' : 'up', ci: 11, text: '높이 ' + (herr > 0 ? '높음 ↓' : '낮음 ↑') + ' ' + Math.round(Math.abs(herr) * 100) + '%' });
+    }
+    issues.sort(function (x, y) { return y.mag - x.mag; });
+    if (tAvg > tg.T[1] + 0.2) { issues.push({ mag: (tAvg - tg.T[1]) / 5, kind: 'thin', ci: 5.5, text: '두께 두꺼움 ' + tAvg.toFixed(1) + 'mm' }); }
+    else if (tAvg < tg.T[0] - 0.2) { issues.push({ mag: (tg.T[0] - tAvg) / 5, kind: 'thick', ci: 5.5, text: '두께 얇음 ' + tAvg.toFixed(1) + 'mm' }); }
+    issues.sort(function (x, y) { return y.mag - x.mag; });
+    if (fit < 100 && !issues.length) {
+      var wj = -1, wd = 0.03;
+      for (var q2 = 0; q2 < 12; q2++) { var dv = Math.abs(s.r[q2] - tr[q2]) / tr[q2]; if (dv > wd) { wd = dv; wj = q2; } }
+      if (wj >= 0) {
+        var wide = s.r[wj] > tr[wj];
+        issues.push({ mag: wd, kind: wide ? 'in' : 'out', ci: wj, text: (wj < 4 ? '아래' : (wj < 8 ? '몸통' : '입구')) + ' 일부 ' + (wide ? '넓음 →←' : '좁음 ←→') + ' ' + Math.round(wd * 100) + '%' });
+      }
+    }
+    var thk = issues.filter(function (x) { return x.kind === 'thin' || x.kind === 'thick'; }), oth = issues.filter(function (x) { return x.kind !== 'thin' && x.kind !== 'thick'; });
+    return { fit: fit, tr: tr, tg: tg, tOut: tOut, tAvg: tAvg, issues: thk.concat(oth.slice(0, thk.length ? 2 : 3)) };
+  }
+  profile(r, H, wob) {
+    var base = 290, cx = 150, n = r.length;
+    var R = [], L = [];
+    for (var i = 0; i < n; i++) {
+      var y = base - H * (i / (n - 1));
+      R.push([cx + r[i] + wob, y]);
+      L.push([cx - r[i] + wob, y]);
+    }
+    function smooth(pts) {
+      var d = '';
+      for (var j = 1; j < pts.length - 1; j++) {
+        var mx = (pts[j][0] + pts[j + 1][0]) / 2, my = (pts[j][1] + pts[j + 1][1]) / 2;
+        d += ' Q' + pts[j][0].toFixed(1) + ' ' + pts[j][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1);
+      }
+      var last = pts[pts.length - 1];
+      return d + ' L' + last[0].toFixed(1) + ' ' + last[1].toFixed(1);
+    }
+    var Lr = L.slice().reverse();
+    var r0 = (R[0][0] - L[0][0]) / 2;
+    var path = 'M' + L[0][0].toFixed(1) + ' ' + base + ' A' + r0.toFixed(1) + ' ' + (r0 * 0.24).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' ' + base + smooth(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + smooth(Lr) + ' Z';
+    return { path: path, R: R, L: L };
+  }
+  renderVals0() {
+    var self = this;
+    var s = this.state;
+    var g = s.g;
+    var clays = this.claysDef();
+    var cur = clays[0];
+    clays.forEach(function (c) { if (c.id === s.clay) { cur = c; } });
+    var an = this.analyze(s);
+    var tg = an.tg;
+
+    var base = 290;
+    var wob = s.wrapping ? 0 : Math.sin(s.phase * 3.1) * s.w * 0.07;
+    var prof = this.profile(s.r, s.H, wob);
+    var ghost = this.profile(an.tr, tg.H, 0);
+    var rings = [];
+    for (var j = 1; j < 11; j++) {
+      rings.push({ y: prof.R[j][1].toFixed(1), x1: (prof.L[j][0] + 3).toFixed(1), x2: (prof.R[j][0] - 3).toFixed(1) });
+    }
+    var topR = s.r[11], topT = s.t[11];
+    var lim = this.limit();
+    var TB = tg.T;
+    var segs = s.t.map(function (x) {
+      var col = x < lim + 1 ? '#D0452B' : (x < TB[0] ? '#E8B640' : (x <= TB[1] ? '#5FB052' : '#F3EAD7'));
+      return { style: 'width:22px;height:9px;border-radius:3px;background:' + col };
+    });
+    var tmin = Math.min.apply(null, s.t);
+    var formN = Math.max(1, Math.min(5, Math.round(an.fit / 20)));
+    var stars = ''; for (var k = 0; k < 5; k++) { stars += k < formN ? '★' : '☆'; }
+    var wc = s.w > 90 ? '#D0452B' : (s.w > 70 ? '#E07A2E' : (s.w > 40 ? '#E8B640' : '#5FB052'));
+    var wLabel = s.w > 90 ? '붕괴 직전' : (s.w > 70 ? '흔들림' : (s.w > 40 ? '주의' : '안정'));
+    var dur = s.speed === 'slow' ? '1.6s' : (s.speed === 'fast' ? '0.45s' : '0.9s');
+    var shaping = s.stage === 'shape';
+
+    var tipBase = 'padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;box-shadow:0 2px 0 rgba(43,26,15,.3);border:2px solid ';
+    var tips = [];
+    if (!shaping) {
+    } else {
+      an.issues.forEach(function (is) { tips.push({ text: is.text, style: tipBase + '#5B3A24;background:#FFF4DE;color:#5B3A24' }); });
+      if (tmin < lim + 1) { tips.push({ text: '찢어짐 주의 ⚠', style: tipBase + '#A33B22;background:#F8DDD5;color:#A33B22' }); }
+      if (!tips.length) { tips.push({ text: an.fit >= 100 ? '완벽 ✓' : '부족한 곳 없음', style: tipBase + '#2F6328;background:#E1EFE4;color:#2F6328' }); }
+    }
+
+    var marks = [];
+    if (shaping) {
+      an.issues.forEach(function (is) {
+        if (is.kind === 'thin' || is.kind === 'thick') {
+          var yy = base - s.H * (is.ci / 11), rr3 = self.rAt(is.ci);
+          marks.push({ x: (150 + rr3 - 6).toFixed(1), y: (yy + 5).toFixed(1), t: is.kind === 'thin' ? '▲' : '▼', c: is.kind === 'thin' ? '#7FD3F0' : '#FFB979' });
+        } else if (is.kind === 'up' || is.kind === 'down') {
+          marks.push({ x: 192, y: (base - s.H - 22).toFixed(1), t: is.kind === 'up' ? '▲' : '▼', c: '#FFD66B' });
+        } else {
+          var y = base - s.H * (is.ci / 11);
+          var rr = self.rAt(is.ci);
+          var out = is.kind === 'out';
+          marks.push({ x: (150 + rr + (out ? 18 : 10)).toFixed(1), y: (y + 6).toFixed(1), t: out ? '▶' : '◀', c: out ? '#9FE08F' : '#FFB979' });
+          marks.push({ x: (150 - rr - (out ? 18 : 10)).toFixed(1), y: (y + 6).toFixed(1), t: out ? '◀' : '▶', c: out ? '#9FE08F' : '#FFB979' });
+        }
+      });
+    }
+
+    var grabOn = !!s.grab && !!this.drag && shaping;
+    var grab = { y1: 0, h: 0, y: 0, hx: 0, ax: 0, ay: 0, arrow: '', label: '', ly: 0, op: 0.35 };
+    if (grabOn) {
+      var REG = function (ci) { return ci < 3.5 ? '아랫부분' : (ci < 7.5 ? '몸통' : '입구'); };
+      if (s.grab.mode === 'h' || s.grab.mode === 'w') {
+        var gy = base - s.H * (s.grab.ci / 11);
+        var band = s.H / 11 * 1.6;
+        var rr2 = this.rAt(s.grab.ci);
+        var hx = s.grab.side === 'R' ? 150 + rr2 + wob : 150 - rr2 + wob;
+        var outw = s.grab.dir === 'out';
+        var pointRight = (s.grab.side === 'R') === outw;
+        grab = {
+          y1: (gy - band).toFixed(1), h: (band * 2).toFixed(1), y: gy.toFixed(1), hx: hx.toFixed(1), op: 0.38,
+          ax: (hx + (pointRight ? 24 : -24)).toFixed(1), ay: (gy + 7).toFixed(1),
+          arrow: s.grab.mode === 'w' ? (s.grab.dir === 'up' ? '▲' : (s.grab.dir === 'down' ? '▼' : '')) : (s.grab.dir ? (pointRight ? '▶' : '◀') : ''),
+          label: REG(s.grab.ci) + (s.grab.mode === 'w' ? (s.grab.dir === 'up' ? ' 쓸어올려 얇고 매끈하게' : (s.grab.dir === 'down' ? ' 쓸어내려 두껍고 매끈하게' : ' 벽 잡음')) : (s.grab.dir === 'out' ? ' 넓히는 중' : (s.grab.dir === 'in' ? ' 모으는 중' : ' 잡음'))) + ' · ' + s.t[Math.round(s.grab.ci)].toFixed(1) + 'mm' + (s.t[Math.round(s.grab.ci)] < lim + 1 ? ' 위험' : (s.t[Math.round(s.grab.ci)] >= tg.T[0] && s.t[Math.round(s.grab.ci)] <= tg.T[1] ? ' 적정' : '')),
+          ly: Math.max(14, gy - band - 6).toFixed(1)
+        };
+      } else {
+        var ty = base - s.H;
+        grab = {
+          y1: 0, h: 330, y: ty.toFixed(1), hx: (150 + wob).toFixed(1), op: 0.14,
+          ax: (150 + wob).toFixed(1), ay: (ty - 18).toFixed(1),
+          arrow: s.grab.dir === 'up' ? '▲' : (s.grab.dir === 'down' ? '▼' : ''),
+          label: s.grab.dir === 'down' ? '전체를 누르는 중 · 흔들림 ↑' : '전체를 끌어올리는 중',
+          ly: Math.max(14, ty - 38).toFixed(1)
+        };
+      }
+    }
+
+    var midR = this.rAt(5.5);
+    var squeeze = s.wrapping ? 4 + Math.sin(s.phase * 6) * 2 : 0;
+    var hy = base - s.H * 0.5 - 38;
+    var hands = {
+      lx: (150 - midR - 32 + squeeze).toFixed(1), rx: (150 + midR + 2 - squeeze).toFixed(1), y: hy.toFixed(1),
+      ltx: (150 - midR - 17 + squeeze).toFixed(1), rtx: (150 + midR + 17 - squeeze).toFixed(1), ty: (hy + 41).toFixed(1),
+      ilx: (150 - midR - 36 + squeeze).toFixed(1), irx: (150 + midR - 4 - squeeze).toFixed(1), iy: (hy - 4).toFixed(1)
+    };
+
+    function shade(hex, f) {
+      var n = parseInt(hex.slice(1), 16);
+      var rr = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * f)));
+      var gg = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * f)));
+      var bb = Math.min(255, Math.max(0, Math.round((n & 255) * f)));
+      return 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+    }
+
+    var NOW = Date.now();
+    function lerp(a, b, k) { return a + (b - a) * k; }
+    function kf(t, F) {
+      if (t <= F[0][0]) { return F[0][1]; }
+      for (var fi = 1; fi < F.length; fi++) {
+        if (t <= F[fi][0]) { var k = (t - F[fi - 1][0]) / (F[fi][0] - F[fi - 1][0]); k = k * k * (3 - 2 * k); var o = {}; for (var key in F[fi][1]) { o[key] = lerp(F[fi - 1][1][key], F[fi][1][key], k); } return o; }
+      }
+      return F[F.length - 1][1];
+    }
+    function sc(cx, cy, sx, sy, tx, ty) { return 'translate(' + (tx || 0).toFixed(1) + ' ' + (ty || 0).toFixed(1) + ') translate(' + cx + ' ' + cy + ') scale(' + sx.toFixed(3) + ' ' + sy.toFixed(3) + ') translate(' + (-cx) + ' ' + (-cy) + ')'; }
+    var dt0 = (NOW - (s.dropT || 0)) / 1000 - (s.dropDelay || 0);
+    var dk = kf(dt0, [[0, { y: -330, sx: .9, sy: 1.1, o: 0 }], [0.06, { y: -300, sx: .9, sy: 1.1, o: 1 }], [0.38, { y: 0, sx: 1.16, sy: .8, o: 1 }], [0.52, { y: -14, sx: .96, sy: 1.05, o: 1 }], [0.66, { y: 0, sx: 1.05, sy: .96, o: 1 }], [0.8, { y: 0, sx: 1, sy: 1, o: 1 }]]);
+    if (dt0 > 0 && dt0 < 0.38) { dk.y = -330 * (1 - Math.pow(dt0 / 0.38, 2)); }
+    var dropA = { tf: dt0 >= 0.8 ? '' : sc(150, 290, dk.sx, dk.sy, 0, dk.y), op: dt0 < 0 ? 0 : dk.o.toFixed(2) };
+    var du = dt0 - 0.36;
+    var dustA = { tf: sc(150, 292, du <= 0 ? .3 : .3 + 1.3 * Math.min(1, du / 0.6), du <= 0 ? .3 : .3 + 1.3 * Math.min(1, du / 0.6)), op: du <= 0 || du > 0.6 ? 0 : (0.85 * (1 - du / 0.6)).toFixed(2) };
+    var F = s.fx, ft = F ? (NOW - F.k) / 1000 : 9;
+    var chipS = F && F.kind === 'ok' && ft > 1.3 && ft < 1.75 ? 1 + 0.3 * Math.sin(Math.PI * (ft - 1.3) / 0.45) : 1;
+    var fxV = { path: '', blobs: [], sparks: [], stars: '', cy: 0, colTf: '', colOp: 0, ringR: 0, ringOp: 0, flyTf: '', flyOp: 0, flash: 0, pop: 'opacity:0' };
+    if (F) {
+      var fcy = 290 - F.H / 2;
+      var pk = kf(ft, [[0, { s: .3, o: 0, y: 0 }], [0.25, { s: 1.18, o: 1, y: 0 }], [0.4, { s: 1, o: 1, y: 0 }], [1.0, { s: 1, o: 1, y: 0 }], [1.3, { s: .95, o: 0, y: -18 }]]);
+      fxV.pop = 'transform:translate(-50%,-50%) translateY(' + pk.y.toFixed(1) + 'px) scale(' + pk.s.toFixed(3) + ');opacity:' + pk.o.toFixed(2);
+      fxV.flash = ft < 0.1 ? (ft / 0.1).toFixed(2) : Math.max(0, 1 - (ft - 0.1) / 0.6).toFixed(2);
+      fxV.path = F.path; fxV.stars = F.stars || ''; fxV.cy = fcy.toFixed(1);
+      if (F.kind === 'fail') {
+        var shake = ft < 0.45 ? Math.sin(ft * 40) * 8 * (1 - ft / 0.45) : 0, sq = Math.max(0, Math.min(1, (ft - 0.35) / 0.45));
+        fxV.colTf = sc(150, 290, 1 + 0.4 * sq, 1 - 0.9 * sq, shake, 6 * sq); fxV.colOp = (1 - sq).toFixed(2);
+        for (var bi = 0; bi < 10; bi++) {
+          var ang = Math.PI * (0.05 + 0.9 * bi / 9), dist = 70 + (bi * 37) % 50, bt = Math.max(0, Math.min(1, (ft - 0.3) / 0.7)), e = 1 - Math.pow(1 - bt, 2);
+          fxV.blobs.push({ x: (150 - Math.cos(ang) * dist * e).toFixed(1), y: (fcy + 10 - Math.sin(ang) * dist * 0.8 * e + 160 * bt * bt).toFixed(1), r: ((4 + (bi * 7) % 6) * (1 - 0.5 * bt)).toFixed(1), op: bt <= 0 ? 0 : (1 - bt).toFixed(2) });
+        }
+      } else {
+        var rt = Math.min(1, ft / 0.7);
+        fxV.ringR = (20 + 110 * rt).toFixed(1); fxV.ringOp = (0.95 * (1 - rt)).toFixed(2);
+        for (var si = 0; si < 10; si++) {
+          var a2 = Math.PI * 2 * si / 10, rr = 62 + (si % 3) * 14, st2 = Math.max(0, Math.min(1, (ft - si * 0.035) / 0.9));
+          fxV.sparks.push({ x: (150 + Math.cos(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), y: (fcy + Math.sin(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), fs: ((14 + (si % 3) * 5) * (st2 < 0.3 ? st2 / 0.3 * 1.2 : 1.2 - 0.6 * (st2 - 0.3) / 0.7)).toFixed(1), op: st2 <= 0 ? 0 : (st2 < 0.3 ? 1 : 1 - (st2 - 0.3) / 0.7).toFixed(2) });
+        }
+        var fl = kf(ft, [[0, { x: 0, y: 0, s: 1, o: 1 }], [0.3, { x: 0, y: -18, s: 1.08, o: 1 }], [0.55, { x: 0, y: -18, s: 1.08, o: 1 }], [1.4, { x: -164, y: -229 - fcy, s: .12, o: .95 }]]);
+        fxV.flyTf = sc(150, fcy, fl.s, fl.s, fl.x, fl.y); fxV.flyOp = ft > 1.4 ? 0 : fl.o.toFixed(2);
+      }
+    }
+    var claysOut = clays.map(function (c) {
+      var own = c.id === 'basic' ? -1 : ((g.mats || {})[c.id] || 0);
+      var on = c.id === s.clay;
+      var avail = own !== 0;
+      return {
+        name: c.n, res: c.res, on: on,
+        own: own === -1 ? '무한' : (own > 0 ? own + '개' : '없음'),
+        dot: 'flex:0 0 auto;width:26px;height:20px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 3px rgba(255,231,168,.9))' : ''), img: c.img,
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;padding:4px 4px;border-radius:11px;' + (on ? 'background:#5B3A24;border:2px solid #3E2616;color:#FFE7A8;' : (avail ? 'background:#FFF4DE;border:2px solid #8A6440;color:#5B3A24;' : 'background:#D9CDB6;border:2px dashed #A8987C;color:#7A6A55;')),
+        pick: function () {
+          if (!avail) { self.say(c.n + ' 흙이 없다 · 상점 재료 탭에서 산다', 'fail'); return; }
+          if (s.clay === c.id) { return; }
+          self.resetPointers();
+          var nf = self.fresh(); nf.clay = c.id;
+          self.setState(nf);
+          self.say(c.n + ' 흙을 새로 올렸다');
+        }
+      };
+    });
+
+    var speedDefs = [{ id: 'slow', label: '저속' }, { id: 'std', label: '표준' }, { id: 'fast', label: '고속' }];
+    var speeds = speedDefs.map(function (d, idx) {
+      var on = d.id === s.speed;
+      var sep = idx === 1 ? 'border-left:2px solid #5B3A24;border-right:2px solid #5B3A24;' : '';
+      return {
+        label: d.label, on: on,
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:10px 0;font-family:Jua,sans-serif;font-size:14px;' + sep + (on ? 'background:#5B3A24;color:#FFE7A8;' : 'background:#F3E3C4;color:#7A5434;'),
+        pick: function () { self.setState({ speed: d.id }); }
+      };
+    });
+
+    var targets = (g.goal ? ['goal'] : []).concat(['dish', 'cup', 'bowl']);
+    var dryCount = (g.formedList || []).length;
+    var hint;
+    if (s.wrapping) { hint = '감싸는 중 · 흔들림이 가라앉는다'; }
+    else if (s.squeezePrep) { hint = '그대로 꾸욱 · 양손을 떼지 말기'; }
+    else if (!shaping) { hint = s.touchUI ? '양손으로 흙 양옆을 동시에 꾸욱 누르고 있기 · 흔들림이 가라앉는다' : '흙을 꾹 누르고 있기 · 손으로 감싸 흔들림을 가라앉힌다'; }
+    else if (this.drag && this.drag.axis) { hint = this.drag.axis === 'v' ? (s.grab && s.grab.mode === 'w' ? '위로 쓸면 얇게, 아래로 쓸면 두껍게 · 쓴 자리는 매끈하게 다듬어진다' : '높이 손잡이를 올리면 높아지고, 내리면 낮아진다 · 두께는 그대로') : '바깥으로 밀면 넓어지고, 안으로 모으면 좁아진다'; }
+    else { hint = '좌우로 밀어 모양 · 벽을 위아래로 쓸어 두께 · 위의 높이 손잡이로 높이' + (s.touchUI ? ' · 흔들리면 양손으로 꾸욱' : ' · 흔들리면 꾹 눌러 감싸기'); }
+
+    function pid(e) { return String(e.pointerId); }
+
+    return {
+      clays: claysOut,
+      dropTf: dropA.tf, dropOp: dropA.op, dustTf: dustA.tf, dustOp: dustA.op,
+      fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
+      chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
+      fx: fxV,
+      clayName: cur.n, clayImg: cur.img,
+      tgIcon: self.iconOf(tg),
+      tgTag: s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지 목표' : '목표',
+      tgTagStyle: 'font-size:9.5px;font-weight:700;white-space:nowrap;color:' + (s.target === 'goal' && g.goal ? '#7A5A93' : '#B9533A'),
+      openClay: function () { self.setState({ sheet: 'clay' }); },
+      openTarget: function () { self.setState({ sheet: 'target' }); },
+      closeSheet: function () { self.setState({ sheet: '' }); },
+      sheetOn: !!s.sheet,
+      sheetTitle: s.sheet === 'clay' ? '흙 고르기' : '목표 모양 고르기',
+      sheetSub: s.sheet === 'clay' ? '흙을 바꾸면 물레에 새 흙을 올린다 · 빚던 모양은 사라진다' : '모양만 정한다 · 유약은 시유 단계에서 고른다',
+      sheetRows: s.sheet === 'clay' ? claysOut.map(function (c, i) {
+        var rec = g.goal && clays[i].id === g.goal.clay;
+        return {
+          name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: '보유 ' + c.own + ' · 최소 두께 ' + clays[i].limit + 'mm', img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
+          imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
+          tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (c.own === '없음' ? '없음' : '')),
+          tagStyle: (c.on || rec || c.own === '없음') ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : 'background:#A8987C;color:#FFF')) : 'display:none',
+          style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (c.on ? 'background:#FFF;border:3px solid #5B3A24;box-shadow:0 0 0 3px #FFD66B' : (c.own === '없음' ? 'background:#E9DFCC;border:2px dashed #A8987C;opacity:.7' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
+          pick: function () { self.setState({ sheet: '' }); c.pick(); }
+        };
+      }) : targets.map(function (k) {
+        var t = self.shapes()[k], on = s.target === k, isG = k === 'goal';
+        return {
+          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: '', icon: self.iconOf(t),
+          on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : ''),
+          tag: isG ? (on ? '선택 중 · ' : '') + '★ ' + g.goal.num + '스테이지 목표' : (on ? '선택 중' : ''),
+          tagStyle: (on || isG) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (isG ? 'background:#7A5A93;color:#FFF' : 'background:#5B3A24;color:#FFE7A8') : 'display:none',
+          style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid ' + (isG ? '#7A5A93' : '#5B3A24') + ';box-shadow:0 0 0 3px #FFD66B' : (isG ? 'background:#F6EEFA;border:2px solid #7A5A93;box-shadow:0 3px 0 #7A5A93' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
+          pick: function () { self.setState({ target: k, sheet: '' }); }
+        };
+      }),
+      targetName: tg.n,
+      fitPct: an.fit,
+      fitCol: an.fit >= 88 ? '#9BE08A' : (an.fit >= 60 ? '#FFD66B' : '#FFB08A'),
+      fitBar: 'height:100%;border-radius:6px;transition:width .2s;width:' + an.fit + '%;background:' + (an.fit >= 88 ? '#5FB052' : (an.fit >= 60 ? '#E3B23C' : '#D9773E')),
+      fitStars: stars,
+      tips: tips,
+      marks: marks,
+      potPath: prof.path,
+      ghostPath: ghost.path,
+      rings: rings,
+      foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1) },
+      rim: { cx: (150 + wob).toFixed(1), cy: prof.R[11][1].toFixed(1), rx: topR.toFixed(1), ry: (topR * 0.17 + 2).toFixed(1), irx: Math.max(3, topR - topT * 2.2).toFixed(1), iry: Math.max(1, (topR - topT * 2.2) * 0.17).toFixed(1) },
+      clayColor: cur.c,
+      clayLight: shade(cur.c, 1.15),
+      clayDark: shade(cur.c, 0.72),
+      clayEdge: shade(cur.c, 0.55),
+      spinStyle: 'animation-duration:' + dur,
+      grabOn: grabOn,
+      grab: grab,
+      hdl: { on: shaping && !s.wrapping, y: (base - s.H - 40).toFixed(1), ty: (base - s.H - 24).toFixed(1), ly1: (base - s.H - 16).toFixed(1), ly2: (base - s.H).toFixed(1), fill: s.grab && s.grab.mode === 'v' ? '#FFD66B' : '#FFF4DE' },
+      wrapping: s.wrapping,
+      hands: hands,
+      segs: segs,
+      tmin: '평균 ' + an.tAvg.toFixed(1),
+      safeLine: '목표 ' + tg.T[0] + '~' + tg.T[1],
+      tminStyle: "font-family:'Jua',sans-serif;font-size:9.5px;text-align:center;line-height:1.1;color:" + (tmin < lim + 1 ? '#FF8A6B' : (an.tAvg >= tg.T[0] && an.tAvg <= tg.T[1] ? '#9FE08F' : '#FFF4DE')),
+      wLabel: wLabel,
+      wLabelStyle: "flex:0 0 52px;text-align:right;font-family:'Jua',sans-serif;font-size:13px;color:" + (s.w > 70 ? '#A33B22' : '#2F6328'),
+      wBarStyle: 'width:' + Math.min(100, s.w) + '%;height:100%;border-radius:6px;background:' + wc + ';box-shadow:inset 0 3px 0 rgba(255,255,255,.35)',
+      speeds: speeds,
+      dryCount: dryCount,
+      hint: hint,
+      hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
+      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+      toast: s.toast,
+      toastOn: s.toast !== '',
+      toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
+      noMenu: function (e) { if (e && e.preventDefault) { e.preventDefault(); } },
+      pDown: function (e) {
+        var el = e.currentTarget;
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        var p = self.toView(el, e.clientX, e.clientY);
+        var touch = !!e.pointerType && e.pointerType !== 'mouse';
+        self.ptrs[pid(e)] = { x: p.x, y: p.y, cx: e.clientX, cy: e.clientY, touch: touch };
+        if (touch !== self.state.touchUI) { self.setState({ touchUI: touch }); }
+        var ids = Object.keys(self.ptrs);
+        if (touch) {
+          var tids = ids.filter(function (k) { return self.ptrs[k].touch; });
+          if (tids.length >= 2) {
+            var ta = self.ptrs[tids[0]], tb = self.ptrs[tids[1]];
+            clearTimeout(self.holdT);
+            self.drag = null;
+            if ((ta.x - 150) * (tb.x - 150) < 0) {
+              self.setState({ grab: null, squeezePrep: true });
+              self.holdT = setTimeout(function () {
+                var n = Object.keys(self.ptrs).filter(function (k) { return self.ptrs[k].touch; }).length;
+                self.setState({ squeezePrep: false, wrapping: n >= 2 });
+              }, 300);
+            } else {
+              self.setState({ grab: null });
+              self.say('흙 왼쪽과 오른쪽을 한 손씩 눌러야 감싼다', 'fail');
+            }
+            return;
+          }
+          if (self.state.stage !== 'shape') { self.drag = null; return; }
+          var thy = base - self.state.H - 28;
+          var tOn = Math.abs(p.x - 150) < 40 && Math.abs(p.y - thy) < 22;
+          self.drag = { x0: e.clientX, y0: e.clientY, lx: e.clientX, ly: e.clientY, axis: tOn ? 'v' : '', sub: tOn ? 'rim' : '', k: p.k, el: el, py0: p.y };
+          if (tOn) { self.setState({ grab: { mode: 'v', ci: 11, side: 'R', dir: '' } }); return; }
+          var tu = Math.max(0, Math.min(1, (base - p.y) / self.state.H));
+          self.setState({ grab: { mode: 'h', ci: tu * 11, side: p.x >= 150 ? 'R' : 'L', dir: '' } });
+          return;
+        }
+        if (ids.length >= 2) {
+          var a = self.ptrs[ids[0]], b = self.ptrs[ids[1]];
+          if ((a.x - 150) * (b.x - 150) < 0) {
+            clearTimeout(self.holdT);
+            self.drag = null;
+            self.setState({ wrapping: true, grab: null });
+          }
+          return;
+        }
+        if (self.state.stage !== 'shape') {
+          self.setState({ wrapping: true, grab: null });
+          return;
+        }
+        var hy = base - self.state.H - 28;
+        var onHandle = Math.abs(p.x - 150) < 40 && Math.abs(p.y - hy) < 22;
+        self.drag = { x0: e.clientX, y0: e.clientY, lx: e.clientX, ly: e.clientY, axis: onHandle ? 'v' : '', sub: onHandle ? 'rim' : '', k: p.k, el: el, py0: p.y };
+        if (onHandle) { self.setState({ grab: { mode: 'v', ci: 11, side: 'R', dir: '' } }); return; }
+        var u = Math.max(0, Math.min(1, (base - p.y) / self.state.H));
+        self.setState({ grab: { mode: 'h', ci: u * 11, side: p.x >= 150 ? 'R' : 'L', dir: '' } });
+        clearTimeout(self.holdT);
+        self.holdT = setTimeout(function () {
+          if (self.drag && !self.drag.axis) {
+            self.drag = null;
+            self.setState({ wrapping: true, grab: null });
+          }
+        }, 450);
+      },
+      pMove: function (e) {
+        var pp = self.ptrs[pid(e)];
+        if (pp) { pp.cx = e.clientX; pp.cy = e.clientY; }
+        var d = self.drag;
+        if (!d || self.state.wrapping) { return; }
+        var dx = (e.clientX - d.lx) / d.k, dy = (e.clientY - d.ly) / d.k;
+        d.lx = e.clientX; d.ly = e.clientY;
+        if (!d.axis) {
+          var tx = e.clientX - d.x0, ty = e.clientY - d.y0;
+          if (Math.abs(tx) + Math.abs(ty) < 8 * d.k) { return; }
+          d.axis = Math.abs(tx) >= Math.abs(ty) ? 'h' : 'v';
+          if (d.axis === 'v') { d.sub = 'wall'; }
+          clearTimeout(self.holdT);
+        }
+        var p = self.toView(d.el, e.clientX, e.clientY);
+        self.shapeMove(p, dx * 300 / 350, dy * 330 / 384, d.axis, d.sub);
+      },
+      pUp: function (e) {
+        var wasTouch = self.ptrs[pid(e)] && self.ptrs[pid(e)].touch;
+        delete self.ptrs[pid(e)];
+        var left = Object.keys(self.ptrs);
+        if (left.length === 0) {
+          clearTimeout(self.holdT);
+          self.drag = null;
+          self.setState({ wrapping: false, grab: null, squeezePrep: false });
+        } else if (wasTouch && left.filter(function (k) { return self.ptrs[k].touch; }).length < 2 && (self.state.wrapping || self.state.squeezePrep)) {
+          clearTimeout(self.holdT);
+          self.drag = null;
+          self.setState({ wrapping: false, grab: null, squeezePrep: false });
+        }
+      },
+      nextTarget: function () {
+        self.setState({ target: targets[(targets.indexOf(s.target) + 1) % targets.length] });
+      },
+      finish: function () {
+        if (!shaping) { self.say('중심부터 잡아야 빚을 수 있다', 'fail'); return; }
+        if (dryCount >= 6) { self.say('성형 대기 선반이 가득 찼다 · 건조대에 먼저 올리자', 'fail'); return; }
+        var isGoal = s.target === 'goal' && g.goal;
+        var item = { id: 'w' + Date.now(), shape: isGoal ? (g.goal.wshape || 'bowl') : s.target, goalSid: isGoal ? g.goal.sid : '', goalGlaze: isGoal ? g.goal.glaze : '', goalName: isGoal ? (g.goal.shapeN || g.goal.name) : '', clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
+        var mats = self.consumeClay();
+        self.setG({ formedList: (g.formedList || []).concat([item]), mats: mats });
+        self.resetPointers();
+        var nf = self.fresh();
+        if (s.clay !== 'basic' && (mats[s.clay] || 0) <= 0) { nf.clay = 'basic'; }
+        nf.dropDelay = 1.5;
+        nf.fx = { kind: 'ok', k: Date.now(), path: self.profile(s.r, s.H, 0).path, H: s.H, stars: stars };
+        self.setState(nf);
+        self.clearFx(nf.fx.k, 1800);
+        self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올리자');
+      }
+    };
+  }
+
+  navId() { return 'wheel'; }
+  navFlow() {
+    var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
+    var defs = [
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+    ];
+    return defs.filter(function (d) { return !st[d.id] || d.id === me; });
+  }
+  renderVals() {
+    var v = this.renderVals0();
+    var n = this.navVals();
+    for (var k in n) { v[k] = n[k]; }
+    return v;
+  }
+  navVals() {
+    var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 696 / 844;
+    var i = 0;
+    fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
+    var prev = fl[i - 1], next = fl[i + 1];
+    var dx = s.navDx || 0;
+    var NB = 59, VW = 312, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
+    var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));
+    var off = s.navOff === undefined || s.navOff === null ? autoOff : Math.max(minOff, Math.min(0, s.navOff));
+    function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
+    return {
+      navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
+      navDropStyle: 'width:390px;height:844px',
+      navDust: 'display:none',
+      navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
+      navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navFadeR: off > minOff + 2 ? 'position:absolute;right:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(270deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navBarDown: function (e) { self.navBar = { x: e.clientX, off: off, moved: false, k: (e.currentTarget.getBoundingClientRect().width / VW) || 1 }; },
+      navBarMove: function (e) {
+        var b = self.navBar; if (!b) { return; }
+        var d = (e.clientX - b.x) / b.k;
+        if (!b.moved && Math.abs(d) > 6) { b.moved = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }
+        if (b.moved) { self.setState({ navOff: Math.max(minOff, Math.min(0, b.off + d)) }); }
+      },
+      navBarUp: function () { var b = self.navBar; self.navBar = null; self.navBarMoved = !!(b && b.moved); if (b && b.moved) { self.setState({ navOff: s.navOff }); } setTimeout(function () { self.navBarMoved = false; }, 60); },
+      navBarClick: function (e) { if (self.navBarMoved) { e.preventDefault(); e.stopPropagation(); self.navBarMoved = false; } },
+      navSteps: fl.map(function (d, j) {
+        var on = j === i;
+        return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
+          style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
+      }),
+      navStage: 'position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:translateX(' + dx + 'px) scale(' + K + ');touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navPrevOn: !!prev, navNextOn: !!next,
+      navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
+      navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
+      navLocked: !!s.navLock,
+      navWip: (function () { var g2 = s.g || {}, kf = g2.kilnFilled || {}, n = 0; for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { n++; } } return (g2.formedList || []).length + (g2.dryList || []).length + (g2.bisqueList || []).length + ((g2.bisque || {}).items || []).length + (g2.glazeList || []).length + (g2.kilnList || []).length + n + (g2.kiln === 'firing' ? (g2.batchItems || []).length : 0) + (function () { var c = 0, ps = g2.pieces || {}; for (var pk in ps) { if (ps[pk] && ps[pk].where === 'store' && ps[pk].fresh) { c++; } } return c; })(); })(),
+      navDown: function (e) {
+        if (isWork(e)) {
+          self.navWork = self.navWork || {};
+          self.navWork[e.pointerId] = true;
+          if (self.navP) { self.navP = null; self.setState({ navSw: false, navDx: 0 }); }
+          if (!self.state.navLock) { self.setState({ navLock: true }); }
+          return;
+        }
+        if (self.state.navLock) { return; }
+        var el = e.currentTarget, rc = el.getBoundingClientRect();
+        self.navP = { x: e.clientX, y: e.clientY, id: e.pointerId, el: el, on: false, kk: (rc.width / ((el.offsetWidth || 390) * K)) || 1 };
+      },
+      navMove: function (e) {
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        var mx = (e.clientX - p.x) / p.kk, my = (e.clientY - p.y) / p.kk;
+        if (!p.on) {
+          if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my)) { return; }
+          p.on = true; self.navMoved = true;
+          try { p.el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        var edge = (!prev && mx > 0) || (!next && mx < 0);
+        self.setState({ navSw: true, navDx: edge ? mx * 0.25 : mx });
+      },
+      navUp: function (e) {
+        var w = self.navWork || {};
+        if (w[e.pointerId]) {
+          delete w[e.pointerId];
+          if (!Object.keys(w).length) { self.setState({ navLock: false }); }
+          return;
+        }
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        self.navP = null;
+        if (!p.on) { return; }
+        var d = self.state.navDx || 0;
+        var dir = d < -80 && next ? 'next' : (d > 80 && prev ? 'prev' : '');
+        if (!dir) { self.setState({ navSw: false, navDx: 0 }); return; }
+        self.setState({ navSw: false, navDx: 0 });
+        var root = p.el.parentNode;
+        setTimeout(function () {
+          var a = root && (root.querySelector('a[data-nav="' + dir + '"]') || root.querySelector('a[aria-label="' + (dir === 'next' ? '다음 공정' : '이전 공정') + '"]'));
+          if (a) { a.click(); } else { self.setState({ navDx: 0 }); }
+        }, 0);
+      },
+      navClickCap: function (e) { if (self.navMoved) { e.preventDefault(); e.stopPropagation(); self.navMoved = false; } }
+    };
+  }
+}
+</script>
+</body>
+</html>

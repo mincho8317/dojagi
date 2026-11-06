@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>진열대와 방문객</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+</style>
+<style>
+@keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
+@keyframes curIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+</style>
+</helmet>
+<div style="{{navRoot}}">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
+<linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
+<clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
+<clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
+<filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
+</defs></svg>
+  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+    <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+      <div style="{{navStrip}}">
+        <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
+          <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="{{navFadeL}}"></div>
+      <div aria-hidden="true" style="{{navFadeR}}"></div>
+    </div>
+  </div>
+  <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
+    <div style="{{navDropStyle}}">
+<div data-dsroot="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:repeating-linear-gradient(135deg,#CDB594 0 12px,#C6AD8B 12px 24px);color:#2B1A0F">
+
+  <div aria-hidden="true" style="position:absolute;left:4px;top:4px;right:4px;bottom:4px;border:2px dashed #7A5434;border-radius:10px"></div>
+
+  <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">진열대 {{shelfCount}}/6</div>
+    <span style="flex:0 0 auto;padding:4px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;font-family:'Jua',sans-serif;font-size:12px;color:#9FE08F">명성 +{{fameRate}}/h</span>
+  </div>
+
+  <sc-if value="{{canRecall}}" hint-placeholder-val="{{false}}">
+    <button type="button" onClick="{{recall}}" aria-label="미술관 큐레이터의 제안 다시 보기" style="all:unset;cursor:pointer;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;top:354px;z-index:6;display:flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;border-radius:30px;background:#7A5A93;border:3px solid #FFF4DE;box-shadow:0 0 0 3px #7A5A93,0 0 16px rgba(196,160,230,.9),0 4px 0 #4A3460">
+      <span style="width:42px;height:42px;border-radius:50%;overflow:hidden;background:#EDE3F3;border:2px solid #FFF4DE;flex:0 0 auto"><img src="_blob/03a328d4ea7622f6949c549414b9dd47.webp" alt="" aria-hidden="true" style="width:42px;height:84px;object-fit:cover;object-position:50% 0"></span>
+      <span style="display:flex;flex-direction:column;line-height:1.15;font-family:'Jua',sans-serif;color:#FFFDF5"><span style="font-size:11px;color:#E9DDF3">미술관 큐레이터가 기다려요</span><span style="font-size:15px">“{{target.name}}” 제안 보기 ›</span></span>
+    </button>
+  </sc-if>
+
+  <div id="dshelf" style="{{shelfArea}}">
+    <img src="_blob/25f94ac87f8825d51647272b20b44a34.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:362px;height:322px;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(43,26,15,.4))">
+    <sc-for list="{{tiers}}" as="tr" hint-placeholder-count="2">
+      <div style="position:relative;height:100px;box-sizing:border-box;padding:0 0 2px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:10px">
+        <sc-for list="{{tr.slots}}" as="sl" hint-placeholder-count="3">
+          <sc-if value="{{sl.filled}}" hint-placeholder-val="{{true}}">
+            <button type="button" data-work="1" onPointerDown="{{sl.down}}" onClick="{{sl.pick}}" aria-label="{{sl.name}}" style="{{sl.box}}">
+              <svg width="72" height="72" viewBox="{{sl.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{sl.pot.shCy}}" rx="{{sl.pot.shRx}}" ry="{{sl.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{sl.pot.d}}" fill="{{sl.pot.fill}}"></path><path d="{{sl.pot.d}}" fill="url(#potTopLight)"></path><path d="{{sl.pot.d}}" fill="url(#potRings)"></path><path d="{{sl.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{sl.pot.grainOp}}"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.foot}}" fill-opacity="{{sl.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.drip}}" fill-opacity="{{sl.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{sl.pot.d}}" fill="url(#potShade)"></path><path d="{{sl.pot.d}}" fill="none" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{sl.pot.rimY}}" rx="{{sl.pot.rimRx}}" ry="{{sl.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}"></ellipse></svg>
+              <span style="{{sl.badge}}">{{sl.grade}}</span>
+              <span aria-hidden="true" style="{{sl.chk}}">✓</span>
+            </button>
+          </sc-if>
+          <sc-if value="{{sl.empty}}" hint-placeholder-val="{{false}}">
+            <button type="button" onClick="{{sl.add}}" aria-label="빈 칸 · 보관 중인 작품 올리기" style="all:unset;cursor:pointer;height:84px;box-sizing:border-box;border:2px dashed rgba(232,211,181,.55);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#E8D3B5">
+              <span style="font-family:'Jua',sans-serif;font-size:26px;line-height:1">+</span>
+              <span style="font-family:'Jua',sans-serif;font-size:12px">올리기</span>
+            </button>
+          </sc-if>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{barNormal}}" hint-placeholder-val="{{true}}">
+  <div style="position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;padding:8px 10px;border-radius:16px;display:flex;align-items:center;gap:8px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4)">
+    <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
+      <span style="font-family:'Jua',sans-serif;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{sel.name}} <span style="font-size:11.5px;color:#7A5434">{{sel.grade}}</span></span>
+      <span style="font-size:11.5px;color:#2E6B5F;font-weight:700">평가액 {{sel.value}}G</span>
+    </div>
+    <button type="button" onClick="{{toStore}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;border-radius:12px;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">내리기</button>
+  </div>
+  </sc-if>
+  <sc-if value="{{sellMode}}" hint-placeholder-val="{{false}}">
+  <div role="status" style="position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;padding:8px 10px;border-radius:16px;display:flex;align-items:center;gap:8px;background:#2F6328;border:3px solid #1E4419;box-shadow:0 3px 0 rgba(43,26,15,.4);color:#FFFDF5">
+    <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
+      <span style="font-family:'Jua',sans-serif;font-size:15px">판매할 작품 고르기 · {{sellN}}점</span>
+      <span style="font-size:11.5px;color:#CFE9C6">진열대·보관함에서 여러 점 선택 · 합계 {{sellSum}}G</span>
+    </div>
+    <button type="button" onClick="{{sellCancel}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 12px;background:#FFF4DE;border:3px solid #1E4419;border-radius:12px;font-family:'Jua',sans-serif;font-size:13px;color:#2F6328">취소</button>
+  </div>
+  </sc-if>
+  <sc-if value="{{dragOn}}" hint-placeholder-val="{{false}}">
+  <div id="dsell" style="{{sellZone}}">
+    <img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:30px;height:30px">
+    <span style="font-family:'Jua',sans-serif;font-size:16px">{{sellZoneText}}</span>
+  </div>
+  </sc-if>
+
+  <div id="dstore" style="{{storeArea}}">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">보관 중 {{storeCount}}점</span>
+      <span style="flex:1 1 auto;min-width:0;padding:0 6px;font-size:10.5px;line-height:1.3;color:#7A5434">{{storeHint}}</span>
+      <button type="button" onClick="{{sellBtn}}" style="{{sellBtnStyle}}">{{sellBtnText}}</button>
+    </div>
+    <div data-work="1" style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:max-content;gap:6px">
+      <sc-for list="{{stores}}" as="st" hint-placeholder-count="4">
+        <button type="button" data-work="1" onPointerDown="{{st.down}}" onClick="{{st.tap}}" aria-pressed="{{st.on}}" aria-label="{{st.name}}" style="{{st.style}}">
+          <span aria-hidden="true" style="{{st.chk}}">✓</span>
+          <svg width="44" height="44" viewBox="{{st.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{st.pot.shCy}}" rx="{{st.pot.shRx}}" ry="{{st.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{st.pot.d}}" fill="{{st.pot.fill}}"></path><path d="{{st.pot.d}}" fill="url(#potTopLight)"></path><path d="{{st.pot.d}}" fill="url(#potRings)"></path><path d="{{st.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{st.pot.grainOp}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.foot}}" fill-opacity="{{st.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{st.pot.d}}" fill="{{st.pot.drip}}" fill-opacity="{{st.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{st.pot.d}}" fill="url(#potShade)"></path><path d="{{st.pot.d}}" fill="none" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{st.pot.rimY}}" rx="{{st.pot.rimRx}}" ry="{{st.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}"></ellipse></svg>
+          <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:11px;color:#2B1A0F">{{st.name}}</span>
+          <span style="{{st.badge}}">{{st.grade}}</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{storeEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="grid-column:1 / -1;padding:14px 0;text-align:center;font-size:12px;color:#7A5434;line-height:1.6">보관 중인 작품이 없다<br>가마에서 꺼낸 작품이 여기로 온다</span>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{visitorOn}}" hint-placeholder-val="{{true}}">
+    <div aria-hidden="true" style="position:absolute;left:0;top:0;width:390px;height:844px;background:rgba(26,15,8,.6)"></div>
+    <img src="_blob/03a328d4ea7622f6949c549414b9dd47.webp" alt="미술관 큐레이터" draggable="false" style="position:absolute;left:4px;top:250px;width:220px;height:330px;object-fit:contain;object-position:50% 100%;pointer-events:none;animation:curIn .4s ease-out both">
+    <div role="dialog" aria-label="방문객 제안" style="position:absolute;left:12px;right:12px;bottom:16px;box-sizing:border-box;padding:22px 16px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;gap:12px">
+      <span style="position:absolute;left:18px;top:-18px;padding:4px 16px;border-radius:10px;background:#5B3A24;border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:16px;color:#FFE7A8">미술관 큐레이터</span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex:0 0 76px;height:76px;box-sizing:border-box;border-radius:14px;background:#F3E3C4;border:3px solid #E3B23C;box-shadow:0 0 12px rgba(255,214,107,.8);display:flex;align-items:center;justify-content:center"><svg width="62" height="62" viewBox="{{target.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{target.pot.shCy}}" rx="{{target.pot.shRx}}" ry="{{target.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{target.pot.d}}" fill="{{target.pot.fill}}"></path><path d="{{target.pot.d}}" fill="url(#potTopLight)"></path><path d="{{target.pot.d}}" fill="url(#potRings)"></path><path d="{{target.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{target.pot.grainOp}}"></path><path d="{{target.pot.d}}" fill="{{target.pot.foot}}" fill-opacity="{{target.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{target.pot.d}}" fill="{{target.pot.drip}}" fill-opacity="{{target.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{target.pot.d}}" fill="url(#potShade)"></path><path d="{{target.pot.d}}" fill="none" stroke="{{target.pot.edge}}" stroke-width="{{target.pot.sw}}" stroke-linejoin="round"></path></svg></div>
+        <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:3px;min-width:0">
+          <span style="font-size:11px;font-weight:700;color:#7A5A93">사고 싶은 작품</span>
+          <span style="font-family:'Jua',sans-serif;font-size:19px;color:#2B1A0F">{{target.name}} <span style="font-size:13px;color:#8A6410">{{target.grade}}</span></span>
+          <p style="margin:0;font-size:13px;line-height:1.5;color:#5B3A24">“이 작품, 저희 상설전에 모시고 싶습니다.”</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:14px;background:#FFE7A8;border:3px solid #B8923F">
+          <span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">{{target.offer}}</span>
+        </div>
+        <div style="flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:14px;background:#E1EFE4;border:3px solid #4E7D74">
+          <span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#2E4F48"><img src="_blob/25cf4bdcaaa68ea6c3a879fbc79e6f1e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2E4F48">+45</span>
+        </div>
+        <div style="flex:1.3 1 0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;border-radius:14px;background:#EDE3F3;border:3px solid #7A5A93">
+          <span style="width:30px;height:30px;box-sizing:border-box;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:5.5px;font-weight:900;color:#4A3460"><img src="_blob/56b2307541919294cf14af6f1648cf3e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#4A3460">미술관 소장</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+        <button type="button" onClick="{{send}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:19px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">보내기</button>
+        <button type="button" onClick="{{keep}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;font-family:'Jua',sans-serif;font-size:19px;color:#5B3A24">더 둘게요</button>
+      </div>
+      <span style="text-align:center;font-size:11px;color:#7A5434">거절해도 잃는 것은 없어요. 손님은 다시 들러요.</span>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{dragOn}}" hint-placeholder-val="{{false}}">
+    <svg aria-hidden="true" viewBox="{{ghost.pot.vb}}" style="{{ghost.style}}"><ellipse cx="0" cy="{{ghost.pot.shCy}}" rx="{{ghost.pot.shRx}}" ry="{{ghost.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{ghost.pot.d}}" fill="{{ghost.pot.fill}}"></path><path d="{{ghost.pot.d}}" fill="url(#potTopLight)"></path><path d="{{ghost.pot.d}}" fill="url(#potRings)"></path><path d="{{ghost.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{ghost.pot.grainOp}}"></path><path d="{{ghost.pot.d}}" fill="{{ghost.pot.foot}}" fill-opacity="{{ghost.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{ghost.pot.d}}" fill="{{ghost.pot.drip}}" fill-opacity="{{ghost.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{ghost.pot.d}}" fill="url(#potShade)"></path><path d="{{ghost.pot.d}}" fill="none" stroke="{{ghost.pot.edge}}" stroke-width="{{ghost.pot.sw}}" stroke-linejoin="round"></path></svg>
+  </sc-if>
+  <sc-if value="{{cfOn}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:65;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center">
+      <div role="dialog" aria-label="판매 확인" style="position:relative;width:330px;max-height:600px;box-sizing:border-box;padding:30px 16px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;display:flex;flex-direction:column;gap:10px">
+        <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;height:42px;padding:0 40px;display:flex;align-items:center;justify-content:center;background:#4A9440;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">{{cf.n}}점 판매할까요?</div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{cf.rows}}" as="c" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:12px;background:#F3E3C4">
+              <svg width="34" height="34" viewBox="{{c.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{c.pot.shCy}}" rx="{{c.pot.shRx}}" ry="{{c.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{c.pot.d}}" fill="{{c.pot.fill}}"></path><path d="{{c.pot.d}}" fill="url(#potTopLight)"></path><path d="{{c.pot.d}}" fill="url(#potRings)"></path><path d="{{c.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{c.pot.grainOp}}"></path><path d="{{c.pot.d}}" fill="{{c.pot.foot}}" fill-opacity="{{c.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{c.pot.d}}" fill="{{c.pot.drip}}" fill-opacity="{{c.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{c.pot.d}}" fill="url(#potShade)"></path><path d="{{c.pot.d}}" fill="none" stroke="{{c.pot.edge}}" stroke-width="{{c.pot.sw}}" stroke-linejoin="round"></path></svg>
+              <span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{c.name}} <span style="{{c.badge}}">{{c.grade}}</span></span>
+              <span style="font-family:'Jua',sans-serif;font-size:14px;color:#8A6410">{{c.value}}G</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:12px;background:#FFE7A8;border:2px solid #B8923F">
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">받을 골드</span>
+          <span style="font-family:'Jua',sans-serif;font-size:21px;color:#8A6410">+{{cf.sum}}G</span>
+        </div>
+        <span style="text-align:center;font-size:11px;color:#7A5434">판매해도 도감 기록은 남는다</span>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <button type="button" onClick="{{cf.no}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24">취소</button>
+          <button type="button" onClick="{{cf.yes}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">판매하기</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="z-index:70;position:absolute;left:30px;right:30px;top:236px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
+  </sc-if>
+
+
+  <sc-if value="{{pk.on}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:660px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{pk.title}}</span>
+            <span style="font-size:12px;color:#7A5434">{{pk.sub}}</span>
+          </div>
+          <button type="button" onClick="{{pk.close}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 44px;height:44px;box-sizing:border-box;border-radius:50%;background:#5B3A24;border:3px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:4px 2px 6px">
+          <sc-for list="{{pk.rows}}" as="pr" hint-placeholder-count="4">
+            <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" style="{{pr.style}}">
+              <span style="{{pr.checkStyle}}">{{pr.check}}</span>
+              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="url(#potRings)"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{pr.name}}</span>
+              <span style="font-size:11px;color:#7A5434">{{pr.meta}}</span>
+              <span style="{{pr.tagStyle}}">{{pr.tag}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{pk.empty}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 0">
+            <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">{{pk.emptyText}}</span>
+            <a href="{{pk.emptyHref}}" style="font-family:'Jua',sans-serif;font-size:14px;color:#2F6328">{{pk.emptyLink}}</a>
+          </div>
+        </sc-if>
+        <sc-if value="{{pk.multi}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{pk.confirm}}" style="{{pk.confirmStyle}}">{{pk.confirmLabel}}</button>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
+  <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navPrevName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navNextName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
+    <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), visitor: true, sel: '', toast: '', stSel: '' };
+    this.lastCall = this.state.g.curatorCall || 0;
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      drying: 1, glazeQ: 2, kilnQ: 0,
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef();
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { var g2 = self.loadG(), st = { g: g2 }; if ((g2.curatorCall || 0) > self.lastCall) { self.lastCall = g2.curatorCall; st.visitor = true; } self.setState(st); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1900);
+  }
+  togglePick(id) {
+    var sp = {}, cur = this.state.sellPick || {};
+    for (var k in cur) { sp[k] = cur[k]; }
+    if (sp[id]) { delete sp[id]; } else { sp[id] = true; }
+    this.setState({ sellPick: sp });
+  }
+  sellMany(ids) {
+    var g = this.state.g, pieces = {}, sum = 0, n = 0;
+    for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
+    ids.forEach(function (id) { var p0 = pieces[id]; if (!p0 || (p0.where !== 'store' && p0.where !== 'shelf')) { return; } var p = {}; for (var a in p0) { p[a] = p0[a]; } p.where = 'sold'; delete p.fresh; pieces[id] = p; sum += p.value || 0; n++; });
+    this.setG({ pieces: pieces, gold: (g.gold || 0) + sum });
+    this.setState({ cfIds: [], sellMode: false, sellPick: {}, sel: '' });
+    this.say(n + '점 판매 · 골드 +' + sum.toLocaleString());
+  }
+  dragPt(cx, cy) {
+    var root = document.querySelector('[data-dsroot]'); if (!root) { return null; }
+    var R = root.getBoundingClientRect(), k = R.width / 390;
+    function hit(id) { var el = document.getElementById(id); if (!el) { return false; } var r = el.getBoundingClientRect(); return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom; }
+    return { x: (cx - R.left) / k, y: (cy - R.top) / k, over: hit('dsell') ? 'sell' : (hit('dshelf') ? 'shelf' : (hit('dstore') ? 'store' : '')) };
+  }
+  dragDown(e, sid, from) {
+    if (this.state.sellMode || (e.button !== undefined && e.button !== 0)) { return; }
+    var self = this, x0 = e.clientX, y0 = e.clientY, on = false;
+    function mv(ev) {
+      if (!on && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) { return; }
+      if (!on) { on = true; self.setState({ drag: { on: true, sid: sid, from: from, x: 0, y: 0, over: '' } }); }
+      if (ev.cancelable) { ev.preventDefault(); }
+      var pt = self.dragPt(ev.clientX, ev.clientY); if (!pt) { return; }
+      var ov = pt.over === from ? '' : pt.over;
+      self.setState({ drag: { on: true, sid: sid, from: from, x: pt.x, y: pt.y, over: ov } });
+    }
+    function up(ev) {
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      if (!on) { return; }
+      self.dragEnd = Date.now();
+      var pt = ev.type === 'pointercancel' ? null : self.dragPt(ev.clientX, ev.clientY), over = pt && pt.over !== from ? pt.over : '';
+      self.setState({ drag: null });
+      var g = self.state.g, p = g.pieces[sid]; if (!p) { return; }
+      if (over === 'shelf') {
+        var n = 0; for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { n++; } }
+        if (n >= 6) { self.say('진열대가 가득 찼다 · 먼저 하나를 내리자'); return; }
+        self.movePiece(sid, 'shelf'); self.setState({ sel: sid }); self.say(p.name + '을(를) 진열대에 올렸다');
+      } else if (over === 'store') {
+        self.movePiece(sid, 'store'); self.setState({ sel: '' }); self.say(p.name + '을(를) 내려서 보관했다');
+      } else if (over === 'sell') {
+        self.setState({ cfIds: [sid] });
+      }
+    }
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
+  movePiece(id, where, extra) {
+    var g = this.state.g;
+    var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
+    var p = {}; for (var a in pieces[id]) { p[a] = pieces[id][a]; }
+    p.where = where; delete p.fresh;
+    pieces[id] = p;
+    var patch = { pieces: pieces };
+    for (var e in (extra || {})) { patch[e] = extra[e]; }
+    this.setG(patch);
+  }
+  renderVals0() {
+    var self = this;
+    var g = this.state.g;
+    var SH = {
+      dish: { p: 'M10 24h28c0 10-6 16-14 16s-14-6-14-16z', y: 24, x: 14 },
+      cup: { p: 'M14 8h20c0 26-4 40-10 40s-10-14-10-40z', y: 8, x: 10 },
+      bowl: { p: 'M8 18h32c0 16-7 26-16 26s-16-10-16-26z', y: 18, x: 16 },
+      jar: { p: 'M12 22c0-8 5-12 12-12s12 4 12 12c0 14-5 26-12 26s-12-12-12-26z', y: 11, x: 6 },
+      vase: { p: 'M18 8h12c0 6-4 8-4 12 0 6 10 10 10 20 0 6-6 8-12 8s-12-2-12-8c0-10 10-14 10-20 0-4-4-6-4-12z', y: 8, x: 6 },
+      maebyeong: { p: 'M18 6h12v4c8 2 12 8 12 14 0 12-8 26-18 26S6 36 6 24c0-6 4-12 12-14z', y: 6, x: 6 }
+    };
+    var GC = { white: '#F2EFE6', celadon: '#8FB3A9', black: '#3A3530', cheonmok: '#5A3A22', jinsa: '#A8443A' };
+    var GR = { '양작': '#8A7A63', '수작': '#4E7D74', '명작': '#C9962E', '요변': '#7A5A93' };
+
+    var shelfIds = [], storeIds = [];
+    (g.order || []).forEach(function (id) {
+      var p = g.pieces[id];
+      if (!p) { return; }
+      if (p.where === 'shelf') { shelfIds.push(id); }
+      if (p.where === 'store') { storeIds.push(id); }
+    });
+    function badgeOf(gr, extra) { return 'padding:0 8px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + (GR[gr] || '#8A7A63') + (extra || ''); }
+    var slots = [];
+    for (var i = 0; i < 6; i++) {
+      var id = shelfIds[i];
+      if (id) {
+        var p = g.pieces[id];
+        var on = self.state.sel === id;
+        slots.push({
+          pid: id, filled: true, empty: false, name: p.name, grade: p.grade,
+          pot: self.potOf(p, GC[p.glaze] || '#F2EFE6'),
+          box: 'all:unset;cursor:pointer;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;' + (self.state.drag && self.state.drag.on && self.state.drag.sid === id ? 'opacity:.3;' : '') + 'height:96px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding-bottom:4px;border-radius:12px;' + (on ? 'background:rgba(255,231,168,.18);box-shadow:inset 0 0 0 2px #FFE7A8' : ''),
+          badge: badgeOf(p.grade),
+          chk: self.state.sellMode ? 'position:absolute;right:2px;top:4px;width:22px;height:22px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:13px;' + ((self.state.sellPick || {})[id] ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE' : 'background:rgba(255,244,222,.85);color:transparent;border:2px solid #C9A27A') : 'display:none',
+          down: (function (pid) { return function (e) { self.dragDown(e, pid, 'shelf'); }; })(id),
+          pick: (function (pid) { return function () { if (Date.now() - (self.dragEnd || 0) < 300) { return; } if (self.state.sellMode) { self.togglePick(pid); return; } self.setState({ sel: pid }); }; })(id)
+        });
+      } else {
+        slots.push({ filled: false, empty: true, add: function () { self.setState({ pkOpen: true }); } });
+      }
+    }
+    var tiers = [{ slots: slots.slice(0, 3) }, { slots: slots.slice(3, 6) }];
+    var stId = this.state.stSel && g.pieces[this.state.stSel] && g.pieces[this.state.stSel].where === 'store' ? this.state.stSel : '';
+    var stP = stId ? g.pieces[stId] : null;
+    var stores = storeIds.map(function (sid) {
+      var p = g.pieces[sid], pickOn = !!(self.state.sellMode && (self.state.sellPick || {})[sid]), dragging = self.state.drag && self.state.drag.on && self.state.drag.sid === sid, on = pickOn;
+      return {
+        name: p.name, grade: p.grade, on: on ? 'true' : 'false', pot: self.potOf(p, GC[p.glaze] || '#F2EFE6'), badge: badgeOf(p.grade, ';font-size:10px;padding:0 6px'),
+        style: 'all:unset;cursor:pointer;aspect-ratio:1 / 1;box-sizing:border-box;padding:4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 2px #A9D69E' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A') + ';position:relative;touch-action:none;user-select:none;-webkit-user-select:none' + (dragging ? ';opacity:.3' : ''),
+        chk: self.state.sellMode ? 'position:absolute;right:3px;top:3px;width:20px;height:20px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:12px;' + (pickOn ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;color:transparent;border:2px solid #C9A27A') : 'display:none',
+        down: function (e) { self.dragDown(e, sid, 'store'); },
+        tap: function () {
+          if (Date.now() - (self.dragEnd || 0) < 300) { return; }
+          if (self.state.sellMode) { self.togglePick(sid); return; }
+          self.say('끌어서 진열대에 올리거나 판매 상자에 넣자');
+        }
+      };
+    });
+    var pk = self.pickBox({
+      on: !!this.state.pkOpen, multi: false, title: '진열대에 올릴 작품', sub: '보관 중 ' + storeIds.length + '점 · 전시하면 명성 +3/h',
+      rows: storeIds.map(function (sid) {
+        var p = g.pieces[sid];
+        var r = self.pickRow(p, { stage: 'glazed', single: true, tag: p.grade + ' · ' + (p.value || 0).toLocaleString() + 'G', tap: function () {
+          self.movePiece(sid, 'shelf'); self.setState({ pkOpen: false, sel: sid, stSel: '' }); self.say(p.name + '을(를) 진열대에 올렸다');
+        } });
+        r.pot = self.potOf(p, GC[p.glaze] || '#F2EFE6'); r.name = p.name; r.meta = '평가액 ' + (p.value || 0).toLocaleString() + 'G';
+        r.tagStyle = badgeOf(p.grade);
+        r.tag = p.grade;
+        return r;
+      }),
+      emptyText: '보관 중인 작품이 없다', emptyHref: 'Kiln.dc.html', emptyLink: '가마로 가기 →'
+    });
+
+    var selId = this.state.sel && g.pieces[this.state.sel] && g.pieces[this.state.sel].where === 'shelf' ? this.state.sel : shelfIds[0];
+    var selP = selId ? g.pieces[selId] : null;
+
+    var targetId = '';
+    for (var t = 0; t < shelfIds.length; t++) {
+      var gp = g.pieces[shelfIds[t]].grade;
+      if (gp === '수작' || gp === '명작' || gp === '요변') { targetId = shelfIds[t]; break; }
+    }
+    var target = targetId ? g.pieces[targetId] : null;
+    var curatorWaiting = g.curator !== 'done' && !!target;
+    var offer = target ? Math.round(target.value * 0.55 / 100) * 100 : 0;
+    if (curatorWaiting) { slots.forEach(function (sl) { if (sl.pid === targetId) { sl.box += 'background:rgba(196,160,230,.28);box-shadow:inset 0 0 0 3px #C4A0E6,0 0 14px rgba(196,160,230,.9);'; sl.grade = '♥ ' + sl.grade; } }); }
+
+    var SP = this.state.sellMode ? (this.state.sellPick || {}) : {}, sellIds = [], sellSum = 0;
+    (g.order || []).forEach(function (pid) { var pp = g.pieces[pid]; if (SP[pid] && pp && (pp.where === 'store' || pp.where === 'shelf')) { sellIds.push(pid); sellSum += pp.value || 0; } });
+    var D = this.state.drag && this.state.drag.on ? this.state.drag : null, Dp = D ? g.pieces[D.sid] : null;
+    var cfIds = this.state.cfIds || [], cfRows = [], cfSum = 0;
+    cfIds.forEach(function (pid) { var pp = g.pieces[pid]; if (!pp) { return; } cfSum += pp.value || 0; cfRows.push({ name: pp.name, grade: pp.grade, value: (pp.value || 0).toLocaleString(), badge: badgeOf(pp.grade, ';font-size:10px;padding:0 6px'), pot: self.potOf(pp, GC[pp.glaze] || '#F2EFE6') }); });
+    return {
+      storeArea: 'position:absolute;left:14px;right:14px;top:494px;bottom:14px;box-sizing:border-box;padding:10px;border-radius:18px;display:flex;flex-direction:column;gap:8px;' + (D && D.from === 'shelf' ? (D.over === 'store' ? 'background:#FFF6D8;border:3px solid #E3B23C;box-shadow:0 0 0 3px #FFD66B,0 0 22px rgba(255,214,107,.9)' : 'background:rgba(255,244,222,.92);border:3px dashed #B8923F') : 'background:rgba(255,244,222,.92);border:3px solid #5B3A24'),
+      shelfArea: 'position:absolute;left:14px;right:14px;top:86px;height:322px;box-sizing:border-box;padding:52px 40px 0 38px;border-radius:18px;' + (D && D.from !== 'shelf' ? (D.over === 'shelf' ? 'box-shadow:0 0 0 4px #FFD66B,0 0 22px rgba(255,214,107,.9);background:rgba(255,231,168,.25)' : 'box-shadow:0 0 0 3px rgba(255,231,168,.6)') : ''),
+      barNormal: !this.state.sellMode && !D, sellMode: !!this.state.sellMode && !D, dragOn: !!D,
+      sellN: sellIds.length, sellSum: sellSum.toLocaleString(),
+      sellCancel: function () { self.setState({ sellMode: false, sellPick: {} }); },
+      storeHint: this.state.sellMode ? '카드를 눌러 선택' : (D && D.from === 'shelf' ? '여기에 놓으면 보관' : '끌어서 진열대·판매 상자로'),
+      sellBtnText: this.state.sellMode ? (sellIds.length ? '판매 ' + sellIds.length + '점' : '닫기') : '판매',
+      sellBtnStyle: 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (this.state.sellMode && sellIds.length ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;animation:navPulse 1s ease-in-out infinite' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;color:#5B3A24'),
+      sellBtn: function () {
+        if (!self.state.sellMode) { self.setState({ sellMode: true, sellPick: {} }); return; }
+        if (!sellIds.length) { self.setState({ sellMode: false, sellPick: {} }); return; }
+        self.setState({ cfIds: sellIds });
+      },
+      sellZone: 'position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;border:3px dashed ' + (D && D.over === 'sell' ? '#FFD66B;background:#2F6328;color:#FFE7A8;box-shadow:0 0 18px rgba(255,214,107,.9)' : '#2F6328;background:rgba(74,148,64,.85);color:#FFFDF5'),
+      sellZoneText: D && D.over === 'sell' ? '놓으면 판매 · ' + (Dp ? (Dp.value || 0).toLocaleString() : 0) + 'G' : '판매 상자 · 여기에 놓기',
+      ghost: D && Dp ? { pot: self.potOf(Dp, GC[Dp.glaze] || '#F2EFE6'), style: 'position:absolute;left:' + (D.x - 34) + 'px;top:' + (D.y - 44) + 'px;width:68px;height:68px;z-index:66;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45));transform:scale(1.1)' } : { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, style: 'display:none' },
+      cfOn: cfRows.length > 0,
+      cf: { n: cfRows.length, rows: cfRows, sum: cfSum.toLocaleString(), no: function () { self.setState({ cfIds: [] }); }, yes: function () { self.sellMany(cfIds); } },
+      tiers: tiers, pk: pk,
+      stores: stores, storeEmpty: !storeIds.length, stOn: !!stP,
+      stName: stP ? stP.name : '', stValue: stP ? (stP.value || 0).toLocaleString() : '0',
+      sellStore: function () { if (!stP) { return; } self.movePiece(stId, 'sold', { gold: g.gold + (stP.value || 0) }); self.setState({ stSel: '' }); self.say(stP.name + ' 판매 · 골드 +' + (stP.value || 0).toLocaleString()); },
+      showStore: function () { if (!stP) { return; } if (shelfIds.length >= 6) { self.say('진열대가 가득 찼다 · 먼저 하나를 내리자'); return; } self.movePiece(stId, 'shelf'); self.setState({ stSel: '', sel: stId }); self.say(stP.name + '을(를) 진열대에 올렸다'); },
+      slots: slots,
+      shelfCount: shelfIds.length,
+      storeCount: storeIds.length,
+      fameRate: shelfIds.length * 3,
+      sel: selP ? { name: selP.name, grade: selP.grade, value: selP.value.toLocaleString() } : { name: '진열된 작품 없음', grade: '', value: '0' },
+      target: target ? { name: target.name, grade: target.grade, offer: offer.toLocaleString(), pot: self.potOf(target, GC[target.glaze] || '#F2EFE6') } : { name: '', grade: '', offer: '0', pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 } },
+      visitorOn: curatorWaiting && this.state.visitor,
+      canRecall: curatorWaiting && !this.state.visitor,
+      toast: this.state.toast,
+      toastOn: this.state.toast !== '',
+      addSlot: function () {
+        if (!storeIds.length) { self.say('창고가 비어 있다. 가마에서 꺼낼 때 보관을 고르면 여기로 온다'); return; }
+        self.movePiece(storeIds[0], 'shelf');
+        self.say(g.pieces[storeIds[0]].name + '을(를) 진열대에 올렸다');
+      },
+      toStore: function () {
+        if (!selId) { return; }
+        self.movePiece(selId, 'store');
+        self.setState({ sel: '' });
+        self.say(selP.name + '을(를) 내려서 보관했다');
+      },
+      sellSel: function () {
+        if (!selId) { return; }
+        self.movePiece(selId, 'sold', { gold: g.gold + selP.value });
+        self.setState({ sel: '' });
+        self.say(selP.name + ' 판매 · 골드 +' + selP.value.toLocaleString() + ' · 도감 기록은 남는다');
+      },
+      send: function () {
+        var x = g.fameXp + 45, lv = g.fameLv;
+        while (x >= 100) { lv++; x -= 100; }
+        self.movePiece(targetId, 'museum', { gold: g.gold + offer, fameLv: lv, fameXp: x, curator: 'done' });
+        self.say(target.name + '이(가) 미술관으로 떠났다 · 골드 +' + offer.toLocaleString() + ' · 명성 +45');
+      },
+      keep: function () { self.setState({ visitor: false }); self.say('“알겠습니다. 다음에 또 들르지요.”'); },
+      recall: function () { self.setState({ visitor: true }); }
+    };
+  }
+
+  potOf(it, fill) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    var r = it && it.prof, H = it && it.H;
+    if (!r || r.length < 3) { var tt = T[it && it.shape] || T.cup; r = []; for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); } H = tt.H; }
+    H = H || 110;
+    var n = r.length, M = 0, R = [], L = [];
+    for (var j = 0; j < n; j++) { M = Math.max(M, r[j]); var y = -H * j / (n - 1); R.push([r[j], y]); L.push([-r[j], y]); }
+    function sm(pts) {
+      var d = '';
+      for (var k = 1; k < pts.length - 1; k++) { var mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; d += ' Q' + pts[k][0].toFixed(1) + ' ' + pts[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
+      var la = pts[pts.length - 1];
+      return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
+    }
+    var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
+    var Lr = L.slice().reverse();
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var side = Math.max(2 * M, H) + 20;
+    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+  }
+  fillOf(it, stage) {
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var c = CL[it && it.clay] || CL.basic;
+    if (stage === 'wet') { return c[0]; }
+    if (stage === 'dry') { return c[1]; }
+    if (stage === 'bisque') { return '#EAD8C4'; }
+    return GZ[it && it.glaze] || '#ECE8DE';
+  }
+  pickRow(it, o) {
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
+    var on = !!o.on;
+    return {
+      pot: this.potOf(it, this.fillOf(it, o.stage)),
+      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
+      check: on ? '✓' : '', on: on ? 'true' : 'false',
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      tap: o.tap
+    };
+  }
+  pickBox(o) {
+    var self = this;
+    var n = o.count || 0;
+    return {
+      on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
+      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      multi: !!o.multi,
+      confirmLabel: o.confirmLabel || '확인',
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirm: o.confirm || function () {},
+      close: function () { self.setState({ pkOpen: false }); }
+    };
+  }
+
+  navId() { return 'shelf'; }
+  navFlow() {
+    var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
+    var defs = [
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+    ];
+    return defs.filter(function (d) { return !st[d.id] || d.id === me; });
+  }
+  renderVals() {
+    var v = this.renderVals0();
+    var n = this.navVals();
+    for (var k in n) { v[k] = n[k]; }
+    return v;
+  }
+  navVals() {
+    var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 696 / 844;
+    var i = 0;
+    fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
+    var prev = fl[i - 1], next = fl[i + 1];
+    var dx = s.navDx || 0;
+    var NB = 59, VW = 312, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
+    var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));
+    var off = s.navOff === undefined || s.navOff === null ? autoOff : Math.max(minOff, Math.min(0, s.navOff));
+    function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
+    return {
+      navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
+      navDropStyle: 'width:390px;height:844px',
+      navDust: 'display:none',
+      navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
+      navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navFadeR: off > minOff + 2 ? 'position:absolute;right:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(270deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navBarDown: function (e) { self.navBar = { x: e.clientX, off: off, moved: false, k: (e.currentTarget.getBoundingClientRect().width / VW) || 1 }; },
+      navBarMove: function (e) {
+        var b = self.navBar; if (!b) { return; }
+        var d = (e.clientX - b.x) / b.k;
+        if (!b.moved && Math.abs(d) > 6) { b.moved = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }
+        if (b.moved) { self.setState({ navOff: Math.max(minOff, Math.min(0, b.off + d)) }); }
+      },
+      navBarUp: function () { var b = self.navBar; self.navBar = null; self.navBarMoved = !!(b && b.moved); if (b && b.moved) { self.setState({ navOff: s.navOff }); } setTimeout(function () { self.navBarMoved = false; }, 60); },
+      navBarClick: function (e) { if (self.navBarMoved) { e.preventDefault(); e.stopPropagation(); self.navBarMoved = false; } },
+      navSteps: fl.map(function (d, j) {
+        var on = j === i;
+        return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
+          style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
+      }),
+      navStage: 'position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:translateX(' + dx + 'px) scale(' + K + ');touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navPrevOn: !!prev, navNextOn: !!next,
+      navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
+      navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
+      navLocked: !!s.navLock,
+      navWip: (function () { var g2 = s.g || {}, kf = g2.kilnFilled || {}, n = 0; for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { n++; } } return (g2.formedList || []).length + (g2.dryList || []).length + (g2.bisqueList || []).length + ((g2.bisque || {}).items || []).length + (g2.glazeList || []).length + (g2.kilnList || []).length + n + (g2.kiln === 'firing' ? (g2.batchItems || []).length : 0) + (function () { var c = 0, ps = g2.pieces || {}; for (var pk in ps) { if (ps[pk] && ps[pk].where === 'store' && ps[pk].fresh) { c++; } } return c; })(); })(),
+      navDown: function (e) {
+        if (isWork(e)) {
+          self.navWork = self.navWork || {};
+          self.navWork[e.pointerId] = true;
+          if (self.navP) { self.navP = null; self.setState({ navSw: false, navDx: 0 }); }
+          if (!self.state.navLock) { self.setState({ navLock: true }); }
+          return;
+        }
+        if (self.state.navLock) { return; }
+        var el = e.currentTarget, rc = el.getBoundingClientRect();
+        self.navP = { x: e.clientX, y: e.clientY, id: e.pointerId, el: el, on: false, kk: (rc.width / ((el.offsetWidth || 390) * K)) || 1 };
+      },
+      navMove: function (e) {
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        var mx = (e.clientX - p.x) / p.kk, my = (e.clientY - p.y) / p.kk;
+        if (!p.on) {
+          if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my)) { return; }
+          p.on = true; self.navMoved = true;
+          try { p.el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        var edge = (!prev && mx > 0) || (!next && mx < 0);
+        self.setState({ navSw: true, navDx: edge ? mx * 0.25 : mx });
+      },
+      navUp: function (e) {
+        var w = self.navWork || {};
+        if (w[e.pointerId]) {
+          delete w[e.pointerId];
+          if (!Object.keys(w).length) { self.setState({ navLock: false }); }
+          return;
+        }
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        self.navP = null;
+        if (!p.on) { return; }
+        var d = self.state.navDx || 0;
+        var dir = d < -80 && next ? 'next' : (d > 80 && prev ? 'prev' : '');
+        if (!dir) { self.setState({ navSw: false, navDx: 0 }); return; }
+        self.setState({ navSw: false, navDx: 0 });
+        var root = p.el.parentNode;
+        setTimeout(function () {
+          var a = root && (root.querySelector('a[data-nav="' + dir + '"]') || root.querySelector('a[aria-label="' + (dir === 'next' ? '다음 공정' : '이전 공정') + '"]'));
+          if (a) { a.click(); } else { self.setState({ navDx: 0 }); }
+        }, 0);
+      },
+      navClickCap: function (e) { if (self.navMoved) { e.preventDefault(); e.stopPropagation(); self.navMoved = false; } }
+    };
+  }
+}
+</script>
+</body>
+</html>

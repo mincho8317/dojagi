@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>도감</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+.bg-bg-codex{background:#A7906F url(_blob/59d53b66a9052ce3d7212fad21356d9f.webp) center/cover no-repeat}
+</style>
+</helmet>
+<div class="bg-bg-codex" style="position:relative;width:390px;height:844px;box-sizing:border-box;overflow:hidden;color:#2B1A0F;padding:12px 12px 14px;display:flex;flex-direction:column;gap:10px">
+
+  <div style="position:relative;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">도감</div>
+    <span style="flex:0 0 46px"></span>
+  </div>
+
+  <div style="position:relative;box-sizing:border-box;padding:10px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;flex-direction:column;gap:6px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">수집 진행도</span>
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE">{{total.found}} / {{total.all}}</span>
+    </div>
+    <div style="height:14px;box-sizing:border-box;border:2px solid #1E120A;border-radius:8px;background:#1E120A;overflow:hidden"><div style="{{total.bar}}"></div></div>
+    <div style="display:flex;gap:12px;font-size:11px;font-weight:700;color:#E8D3B5">
+      <span>작품 {{counts.works}}</span><span>유약 {{counts.glazes}}</span><span>형태 {{counts.shapes}}</span><span>파손 기록 {{counts.broken}}</span>
+    </div>
+  </div>
+
+  <div role="tablist" aria-label="도감 분류" style="position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 10px">
+    <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
+      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
+    </sc-for>
+  </div>
+
+  <div style="position:relative;flex:1 1 auto;min-height:0;box-sizing:border-box;padding:12px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:20px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.45);overflow-y:auto">
+
+    <sc-if value="{{isWorks}}" hint-placeholder-val="{{true}}">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <sc-for list="{{works}}" as="w" hint-placeholder-count="6">
+          <div style="{{w.card}}">
+            <sc-if value="{{w.known}}" hint-placeholder-val="{{true}}">
+              <svg width="46" height="54" viewBox="0 0 48 56" aria-hidden="true"><path d="{{w.path}}" fill="{{w.fill}}" stroke="#3E2616" stroke-width="2.4" stroke-linejoin="round"></path><ellipse cx="24" cy="{{w.rimY}}" rx="{{w.rimX}}" ry="2.6" fill="{{w.fill}}" stroke="#3E2616" stroke-width="2"></ellipse></svg>
+              <span style="font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F;text-align:center;line-height:1.2">{{w.name}}</span>
+              <span style="{{w.badge}}">{{w.grade}}</span>
+              <span style="font-size:10px;font-weight:700;color:#7A5434">{{w.where}}</span>
+            </sc-if>
+            <sc-if value="{{w.unknown}}" hint-placeholder-val="{{false}}">
+              <img src="_blob/54cb80211ffe4a636d2ab993bdfbceb2.webp" alt="" aria-hidden="true" style="width:46px;height:54px;object-fit:contain;opacity:.75">
+              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#A8987C">?</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isGlazes}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{glazes}}" as="z" hint-placeholder-count="6">
+          <div style="{{z.row}}">
+            <span style="{{z.swatch}}">{{z.mark}}</span>
+            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{z.name}}</span>
+              <span style="font-size:11px;color:#7A5434">{{z.desc}}</span>
+            </span>
+            <span style="{{z.tag}}">{{z.state}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isShapes}}" hint-placeholder-val="{{false}}">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <sc-for list="{{shapes}}" as="sh" hint-placeholder-count="6">
+          <div style="{{sh.card}}">
+            <svg width="46" height="54" viewBox="0 0 48 56" aria-hidden="true"><path d="{{sh.path}}" fill="{{sh.fill}}" stroke="{{sh.stroke}}" stroke-width="2.4" stroke-linejoin="round" stroke-dasharray="{{sh.dash}}"></path></svg>
+            <span style="font-family:'Jua',sans-serif;font-size:13px;color:#2B1A0F">{{sh.name}}</span>
+            <span style="font-size:10px;font-weight:700;color:#7A5434;text-align:center">{{sh.desc}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <button type="button" onClick="{{reset}}" style="{{resetStyle}}">{{resetLabel}}</button>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:40px;right:40px;top:380px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), tab: 'works', armed: false, toast: '' };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      drying: 1, glazeQ: 2, kilnQ: 0,
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef();
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1800);
+  }
+  renderVals() {
+    var self = this;
+    var g = this.state.g;
+    var SH = {
+      dish: { p: 'M10 24h28c0 10-6 16-14 16s-14-6-14-16z', y: 24, x: 14, n: '종지', d: '시작 형태' },
+      cup: { p: 'M14 8h20c0 26-4 40-10 40s-10-14-10-40z', y: 8, x: 10, n: '찻잔', d: '물레 기본' },
+      bowl: { p: 'M8 18h32c0 16-7 26-16 26s-16-10-16-26z', y: 18, x: 16, n: '사발', d: '물레 기본' },
+      jar: { p: 'M12 22c0-8 5-12 12-12s12 4 12 12c0 14-5 26-12 26s-12-12-12-26z', y: 11, x: 6, n: '항아리', d: '높이 150mm↑' },
+      vase: { p: 'M18 8h12c0 6-4 8-4 12 0 6 10 10 10 20 0 6-6 8-12 8s-12-2-12-8c0-10 10-14 10-20 0-4-4-6-4-12z', y: 8, x: 6, n: '화병', d: '스테이지 · 꽃병' },
+      plate: { p: 'M4 30h40c0 6-8 10-20 10S4 36 4 30z', y: 30, x: 20, n: '접시', d: '시즌 스테이지' },
+      bottle: { p: 'M20 6h8v10c8 4 12 10 12 18 0 10-7 16-16 16S8 44 8 34c0-8 4-14 12-18z', y: 6, x: 4, n: '병', d: '물레 Lv.8' },
+      maebyeong: { p: 'M18 6h12v4c8 2 12 8 12 14 0 12-8 26-18 26S6 36 6 24c0-6 4-12 12-14z', y: 6, x: 6, n: '매병', d: '스테이지 · 꽃병' },
+      moonjar: { p: 'M16 8h16c0 4 10 8 10 20s-8 20-18 20S6 40 6 28s10-16 10-20z', y: 8, x: 8, n: '달항아리', d: '스테이지 · 항아리' },
+      lotuscup: { p: 'M4 20h40c-2 10-10 16-20 16S6 30 4 20z', y: 20, x: 20, n: '연꽃잔', d: '시즌 스테이지' },
+      dawan: { p: 'M8 16h32c0 18-6 28-16 28S8 34 8 16z', y: 16, x: 16, n: '다완', d: '스테이지 · 찻잔' },
+      box: { p: 'M8 16h32v28H8z', y: 16, x: 16, n: '합', d: '판성형 숙련' }
+    };
+    var GL = {
+      white: { c: '#F2EFE6', n: '백자유', d: '기본 · 무료' },
+      celadon: { c: '#8FB3A9', n: '청자유', d: '기본 · 무료' },
+      black: { c: '#3A3530', n: '흑유', d: '기본 · 무료' },
+      jinsa: { c: '#A8443A', n: '진사유', d: '환원소성 연구 후 가스가마' },
+      cheonmok: { c: '#5A3A22', n: '천목유', d: '고화도 흑유 계열 · 요변 대상' },
+      buncheong: { c: '#C9BBA2', n: '분청 화장토', d: '유약 조합 연구' },
+      ash: { c: '#9A9B6E', n: '재유', d: '장작가마 전용' }
+    };
+    var GRADE = { '범작': '#8A7A63', '양작': '#8A7A63', '수작': '#4E7D74', '명작': '#C9962E', '요변': '#7A5A93' };
+    var WHERE = { shelf: '진열 중', store: '창고', sold: '납품함', museum: '미술관 소장' };
+
+    var seen = {}, works = [];
+    var ids = g.order || [];
+    for (var i = 0; i < ids.length; i++) {
+      var p = g.pieces[ids[i]];
+      if (!p) { continue; }
+      var key = p.name + '|' + p.grade;
+      if (seen[key]) { seen[key].count++; continue; }
+      var sh = SH[p.shape] || SH.cup;
+      var gl = GL[p.glaze] || GL.white;
+      var item = {
+        known: true, unknown: false, count: 1,
+        name: p.name, grade: p.grade, where: WHERE[p.where] || '',
+        path: sh.p, rimY: sh.y, rimX: sh.x, fill: gl.c,
+        badge: 'padding:0 8px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + (GRADE[p.grade] || '#8A7A63'),
+        card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#F3E3C4;border:3px solid ' + (p.grade === '명작' ? '#C9962E' : '#8A6440') + ';display:flex;flex-direction:column;align-items:center;gap:3px;min-height:150px'
+      };
+      seen[key] = item;
+      works.push(item);
+    }
+    var worksFound = works.length;
+    var WORK_SLOTS = 15;
+    while (works.length < WORK_SLOTS) {
+      works.push({ known: false, unknown: true, card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#EADBC0;border:3px dashed #A8987C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:150px' });
+    }
+
+    var gf = g.glazesFound || {};
+    var glazes = Object.keys(GL).map(function (id) {
+      var found = !!gf[id];
+      var z = GL[id];
+      return {
+        name: found ? z.n : '???',
+        desc: found ? z.d : '힌트: ' + z.d,
+        mark: found ? '' : '?',
+        state: found ? '발견' : '미발견',
+        row: 'box-sizing:border-box;padding:9px 10px;border-radius:14px;display:flex;align-items:center;gap:10px;' + (found ? 'background:#F3E3C4;border:3px solid #8A6440;' : 'background:#EADBC0;border:3px dashed #A8987C;'),
+        swatch: 'flex:0 0 40px;height:40px;box-sizing:border-box;border-radius:50%;border:3px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:16px;color:#5B3A24;background:' + (found ? z.c : '#D8C6A6'),
+        tag: 'padding:2px 9px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;' + (found ? 'background:#4A9440;color:#FFFDF5' : 'background:#CFC5B4;color:#5E5547')
+      };
+    });
+    var glazesFound = glazes.filter(function (z) { return z.state === '발견'; }).length;
+
+    var sf = g.shapesFound || {};
+    var shapes = Object.keys(SH).map(function (id) {
+      var found = !!sf[id];
+      var s = SH[id];
+      return {
+        name: found ? s.n : '???',
+        desc: found ? '발견' : s.d,
+        path: s.p,
+        fill: found ? '#D9B99A' : '#D8C6A6',
+        stroke: found ? '#5B3A24' : '#A8987C',
+        dash: found ? '0' : '4 4',
+        card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:3px;' + (found ? 'background:#F3E3C4;border:3px solid #8A6440;' : 'background:#EADBC0;border:3px dashed #A8987C;')
+      };
+    });
+    var shapesFound = shapes.filter(function (x) { return x.desc === '발견'; }).length;
+
+    var allCount = WORK_SLOTS + glazes.length + shapes.length;
+    var foundCount = worksFound + glazesFound + shapesFound;
+
+    var tabDefs = [{ id: 'works', label: '작품' }, { id: 'glazes', label: '유약' }, { id: 'shapes', label: '형태' }];
+    var tabs = tabDefs.map(function (d) {
+      var on = d.id === self.state.tab;
+      return {
+        label: d.label, on: on,
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:9px 0 7px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:15px;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#5B3A24;' : 'background:#C9B08C;color:#4A2E1A;'),
+        pick: function () { self.setState({ tab: d.id }); }
+      };
+    });
+
+    var armed = this.state.armed;
+    return {
+      tabs: tabs,
+      isWorks: this.state.tab === 'works',
+      isGlazes: this.state.tab === 'glazes',
+      isShapes: this.state.tab === 'shapes',
+      works: works,
+      glazes: glazes,
+      shapes: shapes,
+      counts: { works: worksFound + '/' + WORK_SLOTS, glazes: glazesFound + '/' + glazes.length, shapes: shapesFound + '/' + shapes.length, broken: g.broken || 0 },
+      total: { found: foundCount, all: allCount, bar: 'width:' + Math.round(foundCount / allCount * 100) + '%;height:100%;border-radius:5px;background:#E3B23C' },
+      resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아간다' : '목업 초기화',
+      resetStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;text-align:center;padding:10px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (armed ? 'background:#B9533A;border:3px solid #7A2F1E;color:#FFFDF5;' : 'background:rgba(43,26,15,.75);border:2px solid #3E2616;color:#E8D3B5;'),
+      reset: function () {
+        if (!armed) { self.setState({ armed: true }); return; }
+        try { localStorage.removeItem('pottery-proto-v1'); } catch (e) {}
+        self.setState({ g: self.gdef(), armed: false });
+        self.say('모든 화면이 처음 상태로 돌아갔다');
+      },
+      toast: this.state.toast,
+      toastOn: this.state.toast !== ''
+    };
+  }
+}
+</script>
+</body>
+</html>

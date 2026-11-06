@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>스테이지</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+@keyframes starPop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
+@keyframes rise{0%{transform:translateY(30px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes glowP{0%,100%{box-shadow:0 0 0 3px #FFE7A8,0 0 10px rgba(255,214,107,.6)}50%{box-shadow:0 0 0 3px #FFE7A8,0 0 22px rgba(255,214,107,1)}}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#EADBC0;color:#2B1A0F">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
+<linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
+<clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
+<clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
+<filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
+</defs></svg>
+  <img src="_blob/ac38a7b60a0c994110e0982ccc2e3cf2.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:390px;height:844px;object-fit:cover;pointer-events:none;user-select:none">
+  <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
+    <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
+    <button type="button" onClick="{{openCat}}" aria-label="스테이지 분류 변경" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;height:42px;display:flex;align-items:center;justify-content:center;gap:6px;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">“{{ch.label}}” 스테이지</span><span aria-hidden="true" style="flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#FFF4DE;color:#B9533A;text-shadow:none;font-size:11px;display:flex;align-items:center;justify-content:center">▼</span></button>
+    <div role="img" aria-label="획득한 별 {{starTotal}}개" style="flex:0 0 auto;height:48px;box-sizing:border-box;padding:0 12px 0 7px;border-radius:16px;background:#3E2616;border:3px solid #E3B23C;box-shadow:0 3px 0 #2B1A0F;display:flex;align-items:center;gap:5px">
+      <span aria-hidden="true" style="font-size:32px;line-height:1;color:#FFD66B;text-shadow:0 2px 0 #8A6410">★</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;gap:1px"><span style="font-size:9.5px;font-weight:700;color:#E9CF94">획득한 별</span><span style="font-family:'Jua',sans-serif;font-size:25px;color:#FFE7A8">{{starTotal}}</span></span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:68px;height:58px;box-sizing:border-box;padding:6px 12px;border-radius:16px;border:3px solid #5B3A24;overflow:hidden;isolation:isolate;background:#FFF4DE;box-shadow:0 3px 0 rgba(43,26,15,.35);display:flex;align-items:center;gap:10px">
+    <img dc-src="{{ch.banner}}" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;z-index:-1;pointer-events:none">
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(255,250,240,.94) 0%,rgba(255,250,240,.8) 55%,rgba(255,250,240,.45) 100%)"></div>
+    <img dc-src="{{ch.img}}" alt="" aria-hidden="true" style="flex:0 0 34px;width:34px;height:34px;object-fit:contain">
+    <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F;white-space:nowrap">스테이지 {{ch.cur}} / {{ch.cnt}}</span><span style="{{ch.extraStyle}}">{{ch.extra}}</span><span style="{{ch.nextStyle}}">{{ch.next}}</span><span style="margin-left:auto;font-family:'Jua',sans-serif;font-size:14px;color:#8A6410;white-space:nowrap">★ {{ch.got}}/{{ch.max}}</span></div>
+      <div style="position:relative;height:10px">
+        <div style="position:absolute;inset:0;border-radius:5px;background:rgba(91,58,36,.22);overflow:hidden;box-shadow:inset 0 1px 0 rgba(43,26,15,.2)"><div style="{{ch.bar}}"></div></div>
+        <span aria-hidden="true" style="{{ch.mark}}"></span>
+      </div>
+    </div>
+  </div>
+
+  <div data-stg-scroll="1" style="position:absolute;left:0;right:0;top:134px;bottom:92px;overflow-y:auto;display:flex;flex-direction:column-reverse">
+    <div style="position:relative;flex:0 0 auto;display:flex;flex-direction:column-reverse;padding:18px 0 14px">
+      <div aria-hidden="true" style="position:absolute;left:50%;top:70px;bottom:70px;width:0;border-left:6px dotted #B08A60;margin-left:-3px"></div>
+      <sc-for list="{{nodes}}" as="nd" hint-placeholder-count="3">
+        <div style="{{nd.row}}">
+          <button type="button" id="{{nd.domId}}" onClick="{{nd.tap}}" aria-label="{{nd.aria}}" style="{{nd.btn}}">
+            <span style="{{nd.ribStyle}}">{{nd.rib}}</span>
+            <span style="{{nd.circle}}">
+              <svg width="{{nd.sz}}" height="{{nd.sz}}" viewBox="{{nd.pot.vb}}" aria-hidden="true"><path d="{{nd.pot.d}}" fill="{{nd.pot.fill}}" stroke="{{nd.stroke}}" stroke-width="{{nd.pot.sw}}" stroke-dasharray="{{nd.dash}}" stroke-linejoin="round"></path></svg>
+              <span style="{{nd.numStyle}}">{{nd.num}}</span>
+            </span>
+            <span style="{{nd.starStyle}}">{{nd.stars}}</span>
+            <span style="font-family:'Jua',sans-serif;font-size:13.5px;color:#2B1A0F;white-space:nowrap">{{nd.name}}</span>
+            <span style="{{nd.lockStyle}}">{{nd.lock}}</span>
+          </button>
+        </div>
+      </sc-for>
+      <div style="position:relative;align-self:center;margin-bottom:10px;padding:4px 14px;border-radius:12px;background:rgba(62,38,22,.82);font-family:'Jua',sans-serif;font-size:12.5px;color:#FFE7A8">{{endCap}}</div>
+    </div>
+  </div>
+
+  <sc-if value="{{catOn}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:45;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="스테이지 분류 선택" style="width:390px;max-height:700px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px;animation:rise .2s ease-out">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'Jua',sans-serif;font-size:20px">스테이지 선택</span><span style="font-size:11.5px;color:#7A5434">전체 별 {{starTotal}}개 · 별과 명성으로 다음 스테이지가 열린다</span></div>
+          <button type="button" onClick="{{closeCat}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;width:42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:2px">
+          <sc-for list="{{groups}}" as="gp" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;gap:6px"><span style="{{gp.tagStyle}}">{{gp.name}}</span><span style="font-size:11px;color:#7A5434">{{gp.desc}}</span></div>
+              <sc-for list="{{gp.rows}}" as="cr" hint-placeholder-count="3">
+                <button type="button" onClick="{{cr.pick}}" aria-label="{{cr.aria}}" style="{{cr.style}}">
+                  <img dc-src="{{cr.img}}" alt="" aria-hidden="true" style="{{cr.iconStyle}}">
+                  <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
+                    <span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{cr.label}}</span><span style="font-size:11px;color:#7A5434">스테이지 {{cr.count}}개</span><span style="{{cr.badgeStyle}}">{{cr.badge}}</span></span>
+                    <span style="display:flex;align-items:center;gap:6px"><span style="flex:1 1 auto;height:7px;border-radius:4px;background:#E9DCC3;overflow:hidden"><span style="{{cr.bar}}"></span></span><span style="font-size:11px;font-weight:700;color:#8A6410;white-space:nowrap">★ {{cr.got}}/{{cr.max}}</span></span>
+                  </span>
+                  <span style="{{cr.stateStyle}}">{{cr.state}}</span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{det.on}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:40;background:rgba(26,15,8,.55);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{det.name}}" style="width:390px;box-sizing:border-box;padding:16px 16px 20px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px;animation:rise .2s ease-out">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="padding:2px 9px;border-radius:9px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">{{det.kind}}</span>
+          <span style="font-family:'Jua',sans-serif;font-size:21px">{{det.name}}</span>
+          <button type="button" onClick="{{det.close}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;width:42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="flex:0 0 130px;height:150px;box-sizing:border-box;border-radius:16px;background:#F3E3C4;border:3px dashed #8A6440;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+            <svg width="112" height="112" viewBox="{{det.pot.vb}}" role="img" aria-label="목표 모양"><path d="{{det.pot.d}}" fill="{{det.pot.fill}}" stroke="#5B3A24" stroke-width="{{det.pot.sw}}" stroke-dasharray="{{det.dash}}" stroke-linejoin="round"></path></svg>
+            <span style="font-size:10px;font-weight:700;color:#7A5434">목표 모양 · 높이 {{det.h}}</span>
+          </div>
+          <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:6px;min-width:0">
+            <span style="font-size:12px;line-height:1.55;color:#5B3A24">{{det.story}}</span>
+            <div style="display:flex;flex-wrap:wrap;gap:4px">
+              <sc-for list="{{det.conds}}" as="cn" hint-placeholder-count="3">
+                <span style="padding:2px 8px;border-radius:8px;background:#F3E3C4;border:2px solid #C9A27A;font-size:11px;font-weight:700;color:#5B3A24">{{cn}}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:12px;background:#F3E3C4">
+          <span style="font-size:12px;color:#5B3A24">최고 기록 <b style="font-family:'Jua',sans-serif;font-size:16px;color:#C9962E">{{det.best}}</b></span>
+          <span style="font-size:11.5px;font-weight:700;color:#2E6B5F">{{det.reward}}</span>
+        </div>
+        <span style="font-size:11px;color:#7A5434;text-align:center">{{det.rule}}</span>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:8px">
+          <a href="Wheel.dc.html" onClick="{{det.make}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;font-family:'Jua',sans-serif;color:#5B3A24"><span style="font-size:16px">작품 제작하기</span><span style="font-size:10.5px;color:#8A6440">목표·흙·유약 자동 선택</span></a>
+          <button type="button" onClick="{{det.go}}" aria-disabled="{{det.goDis}}" style="{{det.goStyle}}"><span style="font-size:16px">출품할 작품 고르기</span><span style="{{det.goSubStyle}}">{{det.goSub}}</span></button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{pk.on}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="출품할 작품 고르기" style="width:390px;max-height:700px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">출품할 작품 고르기</span>
+            <span style="font-size:12px;color:#7A5434">{{pk.sub}}</span>
+          </div>
+          <button type="button" onClick="{{pk.close}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 44px;height:44px;box-sizing:border-box;border-radius:50%;background:#5B3A24;border:3px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 10px;border-radius:12px;background:#F3E3C4;border:2px dashed #C9A27A">
+          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#7A2F1E">{{pk.stage}} 조건</span>
+          <sc-for list="{{pk.goals}}" as="gl" hint-placeholder-count="3">
+            <span style="padding:2px 8px;border-radius:8px;background:#FFFDF5;border:2px solid #C9A27A;font-size:11px;font-weight:700;color:#5B3A24">{{gl}}</span>
+          </sc-for>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px 6px">
+          <sc-for list="{{pk.rows}}" as="pr" hint-placeholder-count="4">
+            <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" aria-label="{{pr.aria}}" style="{{pr.style}}">
+              <span style="position:relative;flex:0 0 72px;width:72px;height:72px;box-sizing:border-box;border-radius:14px;background:#F3E3C4;display:flex;align-items:center;justify-content:center">
+                <svg width="62" height="62" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="url(#potRings)"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+                <span aria-hidden="true" style="{{pr.starStyle}}">✓</span>
+              </span>
+              <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px">
+                <span style="display:flex;align-items:center;gap:6px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{pr.name}}</span><span style="{{pr.fitStyle}}">★ 조건 충족</span></span>
+                <span style="font-size:11px;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{pr.meta}}</span>
+                <span style="display:flex;gap:4px;flex-wrap:wrap">
+                  <sc-for list="{{pr.checks}}" as="ck" hint-placeholder-count="3">
+                    <span style="{{ck.style}}">{{ck.t}}</span>
+                  </sc-for>
+                </span>
+              </span>
+            </button>
+          </sc-for>
+          <sc-if value="{{pk.empty}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 0">
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">보관·진열 중인 작품이 없다</span>
+              <a href="Wheel.dc.html" style="font-family:'Jua',sans-serif;font-size:14px;color:#2F6328">물레로 가서 빚기 →</a>
+            </div>
+          </sc-if>
+        </div>
+        <button type="button" onClick="{{pk.confirm}}" style="{{pk.confirmStyle}}">{{pk.confirmLabel}}</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{res.on}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:80;background:rgba(26,15,8,.78);display:flex;align-items:center;justify-content:center">
+      <div role="dialog" aria-label="스테이지 결과" style="width:340px;box-sizing:border-box;padding:18px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:8px;animation:rise .25s ease-out">
+        <span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A5434">{{res.title}}</span>
+        <div style="display:flex;gap:8px">
+          <sc-for list="{{res.stars}}" as="st" hint-placeholder-count="3">
+            <span style="{{st.style}}">★</span>
+          </sc-for>
+        </div>
+        <span style="font-family:'Jua',sans-serif;font-size:24px;color:#2B1A0F">{{res.grade}}</span>
+        <div style="position:relative;width:170px;height:170px;border-radius:16px;background:#F3E3C4">
+          <svg width="170" height="170" viewBox="{{res.vb}}" role="img" aria-label="목표 모양과 출품작 겹쳐보기">
+            <path d="{{res.pd}}" fill="{{res.pfill}}" stroke="#3E2616" stroke-width="{{res.sw}}" stroke-linejoin="round" opacity="0.92"></path>
+            <path d="{{res.td}}" fill="none" stroke="#C8601E" stroke-width="{{res.sw}}" stroke-dasharray="{{res.dash}}" stroke-linejoin="round"></path>
+          </svg>
+          <span style="position:absolute;left:6px;bottom:4px;font-size:10px;font-weight:700;color:#C8601E">점선 = 목표</span>
+        </div>
+        <div style="width:100%;display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:#3E2616">
+          <sc-for list="{{res.rows}}" as="rw" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between"><span>{{rw.k}}</span><b style="{{rw.vs}}">{{rw.v}}</b></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{res.newOn}}" hint-placeholder-val="{{false}}">
+          <div style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:12px;background:#7A5A93;color:#FFFDF5;text-align:center;font-family:'Jua',sans-serif;font-size:15px;animation:glowP 1.4s ease-in-out infinite">신규 모양 해금 · {{res.newName}} 도감 등록</div>
+        </sc-if>
+        <span style="font-size:12px;font-weight:700;color:#2E6B5F">{{res.reward}}</span>
+        <button type="button" onClick="{{res.close}}" style="all:unset;cursor:pointer;width:100%;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5">확인</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFD66B">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:30px;right:30px;top:300px;z-index:90;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center;pointer-events:none">{{toast}}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { g: this.loadG(), ch: 'table', det: '', pkOpen: false, res: null, toast: '' }; }
+  loadG() {
+    var d = { gold: 1240, shards: 142, fameLv: 3, fameXp: 62, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, deco: {}, mats: {} };
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.loadG(), g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.scrollCur();
+  }
+  componentWillUnmount() { clearTimeout(this.tt); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
+  say(m) { var self = this; clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000); }
+
+  potOf(it, fill) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    var r = it && it.prof, H = it && it.H;
+    if (!r || r.length < 3) { var tt = T[it && it.shape] || T.cup; r = []; for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); } H = tt.H; }
+    H = H || 110;
+    var n = r.length, M = 0, R = [], L = [];
+    for (var j = 0; j < n; j++) { M = Math.max(M, r[j]); var y = -H * j / (n - 1); R.push([r[j], y]); L.push([-r[j], y]); }
+    function sm(pts) {
+      var d = '';
+      for (var k = 1; k < pts.length - 1; k++) { var mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; d += ' Q' + pts[k][0].toFixed(1) + ' ' + pts[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
+      var la = pts[pts.length - 1];
+      return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
+    }
+    var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
+    var Lr = L.slice().reverse();
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var side = Math.max(2 * M, H) + 20;
+    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+  }
+  fillOf(it, stage) {
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var c = CL[it && it.clay] || CL.basic;
+    if (stage === 'wet') { return c[0]; }
+    if (stage === 'dry') { return c[1]; }
+    if (stage === 'bisque') { return '#EAD8C4'; }
+    return GZ[it && it.glaze] || '#ECE8DE';
+  }
+  pickRow(it, o) {
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
+    var on = !!o.on;
+    return {
+      pot: this.potOf(it, this.fillOf(it, o.stage)),
+      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
+      check: on ? '✓' : '', on: on ? 'true' : 'false',
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      tap: o.tap
+    };
+  }
+  pickBox(o) {
+    var self = this;
+    var n = o.count || 0;
+    return {
+      on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
+      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      multi: !!o.multi,
+      confirmLabel: o.confirmLabel || '확인',
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirm: o.confirm || function () {},
+      close: function () { self.setState({ pkOpen: false }); }
+    };
+  }
+
+  data() {
+    return {
+      chapters: [
+        { id: 'table', kind: '용도', group: 'use', label: '식기', icon: 'ICON_CAT_TABLE', img: '_blob/2a30c76aea86fc44a061b326d6b9c96c.webp', title: '식기 · 밥상에 오르는 그릇', desc: '종지, 사발, 대접 · 매일 쓰는 그릇일수록 선이 단정해야 한다', res: 'BANNER_CAT_TABLE', bg: 'linear-gradient(90deg,#F4F1EA,#EADBC0)', lv: 1 },
+        { id: 'tea', kind: '용도', group: 'use', label: '찻잔', icon: 'ICON_CAT_TEA', img: '_blob/0109f2b3b48a15eab1221b0cd9c3a3a5.webp', title: '찻잔 · 찻자리의 그릇', desc: '잔과 다완 · 손에 쥐었을 때의 곡선이 핵심', res: 'BANNER_CAT_TEA', bg: 'linear-gradient(90deg,#CFE0D6,#EADBC0)', lv: 1 },
+        { id: 'vase', kind: '용도', group: 'use', label: '꽃병', icon: 'ICON_CAT_VASE', img: '_blob/7740462a294e5fa32bbd938c6df01dcd.webp', title: '꽃병 · 꽃을 꽂는 그릇', desc: '매병과 화병 · 좁은 목과 풍만한 어깨', res: 'BANNER_CAT_VASE', bg: 'linear-gradient(90deg,#E8DDEE,#EADBC0)', lv: 3 },
+        { id: 'jar', kind: '용도', group: 'use', label: '항아리', icon: 'ICON_CAT_JAR', img: '_blob/8d68851c718a6be2933d08169bf4581a.webp', title: '항아리 · 담고 저장하는 그릇', desc: '달항아리와 장독 · 큰 몸통의 균형', res: 'BANNER_CAT_JAR', bg: 'linear-gradient(90deg,#E6DCCB,#EADBC0)', lv: 4 },
+        { id: 'season', kind: '시즌', group: 'season', label: '봄 다회', icon: 'ICON_CAT_SEASON', img: '_blob/ed206c760a72bb01475254fe5168f2b9.webp', title: '시즌 · 봄 다회', desc: '시즌 이벤트 기간에만 열리는 한정 스테이지', res: 'BANNER_SEASON_STAGE', bg: 'linear-gradient(90deg,#F6D9DE,#EADBC0)', lv: 2, until: '2026-11-17' },
+        { id: 'plate', kind: '용도', group: 'use', label: '접시·합', icon: 'ICON_CAT_PLATE', img: '_blob/3699d1eb8c2d52a317153b1f58f893a3.webp', title: '접시·합', desc: '판성형으로 만드는 납작한 그릇', res: 'BANNER_CAT_PLATE', bg: '#EADBC0', lv: 6, soon: true },
+        { id: 'harbor', kind: '지역', group: 'region', label: '항구 마을', icon: 'ICON_CAT_HARBOR', img: '_blob/46d7efcca9b461db5911349c3dadf7b0.webp', title: '항구 마을', desc: '바다를 건너던 큰 항아리들', res: 'BANNER_REGION_HARBOR', bg: '#CFDCE8', lv: 5, soon: true },
+        { id: 'temple', kind: '지역', group: 'region', label: '산사', icon: 'ICON_CAT_TEMPLE', img: '_blob/1e7a9b29902bbbea86d98ff615e4c700.webp', title: '산사', desc: '고요한 찻자리의 그릇', res: 'BANNER_REGION_TEMPLE', bg: '#D9E4CF', lv: 5, soon: true }
+      ],
+      stages: this.genStages()
+    };
+  }
+  genStages() {
+    var P = {
+      dish: { n: '종지', H: 60, p: [40, 45, 50, 55, 59, 63, 66, 69, 72, 74, 76, 78], s: '간장과 양념을 담는 작은 종지. 낮고 넓게 벌린다.' },
+      sabal: { n: '사발', H: 85, p: [36, 44, 52, 59, 65, 70, 74, 78, 81, 84, 86, 88], s: '밥과 국을 담던 넉넉한 사발. 굽에서 입까지 부드럽게 퍼진다.' },
+      daejeop: { n: '대접', H: 70, p: [40, 50, 60, 68, 74, 78, 82, 85, 87, 89, 90, 91], s: '넓고 얕은 대접. 낮게, 넓게 벌리는 게 관건.' },
+      plate: { n: '접시', H: 40, p: [50, 60, 68, 75, 80, 84, 87, 89, 91, 92, 93, 94], s: '반찬을 올리는 얕은 접시. 거의 눕히듯 벌린다.' },
+      jan: { n: '잔', H: 110, p: [34, 33, 32, 33, 35, 37, 39, 41, 43, 44, 45, 46], s: '위로 갈수록 살짝 벌어지는 소박한 잔.' },
+      chatjan: { n: '찻잔', H: 125, p: [32, 34, 36, 38, 39, 40, 41, 42, 42, 43, 43, 44], s: '높고 곧은 찻잔. 몸통을 고르게 세우는 연습.' },
+      tongjan: { n: '통잔', H: 95, p: [38, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 43], s: '원통처럼 곧게 선 잔. 벽 두께를 고르게.' },
+      dawan: { n: '다완', H: 90, p: [34, 40, 47, 53, 58, 62, 65, 67, 68, 69, 69, 68], s: '두 손에 감기는 찻사발. 입이 살짝 오므라든다.' },
+      hwabyeong: { n: '화병', H: 150, p: [28, 36, 44, 48, 48, 44, 36, 26, 18, 16, 18, 22], s: '가는 목에 한두 송이를 꽂는 화병. 목을 조이다 무너지기 쉽다.' },
+      byeong: { n: '병', H: 140, p: [30, 40, 46, 48, 46, 40, 30, 20, 15, 14, 14, 16], s: '술과 물을 담는 병. 어깨에서 목으로 급하게 조인다.' },
+      maebyeong: { n: '매병', H: 160, p: [30, 38, 46, 52, 55, 55, 52, 46, 38, 28, 20, 22], s: '어깨가 풍만하고 허리가 잘록한 매병. 좁은 입이 핵심이다.' },
+      hangari: { n: '항아리', H: 140, p: [36, 50, 60, 66, 68, 68, 64, 58, 50, 44, 40, 40], s: '곡식을 담는 항아리. 어깨를 둥글게.' },
+      jangdok: { n: '장독', H: 170, p: [36, 50, 62, 70, 74, 74, 70, 62, 52, 42, 36, 36], s: '장을 담그는 큰 독. 크게, 튼튼하게.' },
+      danji: { n: '단지', H: 110, p: [34, 46, 56, 62, 64, 62, 58, 52, 46, 42, 40, 40], s: '꿀과 젓갈을 담는 작은 단지.' },
+      moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32], s: '보름달처럼 둥근 몸통. 위아래 균형이 무너지면 달이 찌그러진다.' },
+      lotuscup: { n: '연꽃잔', H: 60, p: [26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70], s: '봄 다회의 잔. 낮고 활짝 핀 꽃처럼.' }
+    };
+    var GL = ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'jinsa', 'black', 'white', 'celadon', 'jinsa', 'black', 'white'];
+    var GP = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사' };
+    var SZ = [{ k: 1, n: '' }, { k: 1.12, n: '큰 ' }, { k: 0.9, n: '작은 ' }];
+    var C = [
+      { id: 'table', pre: 't', n: 15, pool: ['dish', 'sabal', 'daejeop'], un: 'plate', lv: 1, cl: ['basic', 'refined', 'kaolin'] },
+      { id: 'tea', pre: 'c', n: 15, pool: ['jan', 'chatjan', 'tongjan'], un: 'dawan', lv: 1, cl: ['basic', 'refined', 'porcelain'] },
+      { id: 'vase', pre: 'v', n: 15, pool: ['hwabyeong', 'byeong'], un: 'maebyeong', lv: 3, cl: ['refined', 'kaolin', 'porcelain'] },
+      { id: 'jar', pre: 'j', n: 15, pool: ['hangari', 'jangdok', 'danji'], un: 'moonjar', lv: 4, cl: ['refined', 'kaolin', 'porcelain'] },
+      { id: 'season', pre: 's', n: 10, pool: ['jan', 'dish', 'sabal'], un: 'lotuscup', lv: 2, cl: ['refined', 'kaolin'] }
+    ];
+    var WS = { dish: 'dish', plate: 'dish', lotuscup: 'dish', sabal: 'bowl', daejeop: 'bowl', dawan: 'bowl', jan: 'cup', chatjan: 'cup', tongjan: 'cup', hwabyeong: 'jar', byeong: 'jar', maebyeong: 'jar', hangari: 'jar', jangdok: 'jar', danji: 'jar', moonjar: 'jar' };
+    var out = [];
+    C.forEach(function (c) {
+      for (var i = 0; i < c.n; i++) {
+        var last = i === c.n - 1;
+        var key = last ? c.un : c.pool[i % c.pool.length];
+        var b = P[key], sz = last ? SZ[0] : SZ[Math.floor(i / c.pool.length) % 3];
+        var gz = GL[i % GL.length];
+        out.push({
+          id: c.pre + (i + 1), ch: c.id, idx: i, name: GP[gz] + ' ' + sz.n + b.n,
+          prof: b.p.map(function (v) { return Math.round(v * sz.k * 10) / 10; }), H: Math.round(b.H * sz.k), glaze: gz, lv: c.lv, clay: last ? c.cl[c.cl.length - 1] : c.cl[Math.min(c.cl.length - 1, Math.floor(i / 5))], shapeN: sz.n + b.n, wshape: WS[key] || 'bowl',
+          newShape: last ? c.un : '', newName: last ? b.n : '',
+          story: b.s + (last ? ' 처음 재현하면 도감과 물레 틀에 ' + b.n + '이(가) 등록된다.' : '')
+        });
+      }
+    });
+    return out;
+  }
+  scrollCur() {
+    setTimeout(function () {
+      try {
+        var el = document.getElementById('stg-cur'); if (!el) { return; }
+        var sc = el.closest('[data-stg-scroll]'); if (!sc) { return; }
+        var a = el.getBoundingClientRect(), r = sc.getBoundingClientRect();
+        sc.scrollTop += (a.top - r.top) - (r.height / 2 - a.height / 2);
+      } catch (e) {}
+    }, 80);
+  }
+  check(st, p) {
+    var j = this.judge(st, p);
+    var gOk = j.glazeOk, sOk = j.shapeS >= 60, hOk = j.hS >= 60;
+    return { j: j, gOk: gOk, sOk: sOk, hOk: hOk, fit: gOk && sOk && hOk };
+  }
+  profileOf(it) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    if (it.prof && it.prof.length >= 3) { return { r: it.prof, H: it.H || 110 }; }
+    var tt = T[it.shape] || T.cup, r = [];
+    for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); }
+    return { r: r, H: tt.H };
+  }
+  judge(st, p) {
+    var a = this.profileOf(p), n = st.prof.length, sum = 0, tot = 0;
+    for (var i = 0; i < n; i++) {
+      var u = i / (n - 1) * (a.r.length - 1), lo = Math.floor(u), hi = Math.min(a.r.length - 1, lo + 1), v = a.r[lo] + (a.r[hi] - a.r[lo]) * (u - lo);
+      sum += Math.abs(v - st.prof[i]); tot += st.prof[i];
+    }
+    var shapeS = Math.max(0, 100 - sum / tot * 100 * 2.2);
+    var hS = Math.max(0, 100 - Math.abs(a.H - st.H) / st.H * 100 * 1.6);
+    var glazeOk = !st.glaze || p.glaze === st.glaze;
+    var score = Math.round(shapeS * 0.7 + hS * 0.3);
+    var stars = score >= 88 ? 3 : (score >= 75 ? 2 : (score >= 60 ? 1 : 0));
+    if (!glazeOk) { stars = Math.min(stars, 1); }
+    return { score: score, shapeS: Math.round(shapeS), hS: Math.round(hS), glazeOk: glazeOk, stars: stars };
+  }
+  renderVals() {
+    var self = this, s = this.state, g = s.g, D = this.data();
+    var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유' };
+    var GF = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var rec = (g.contest || {}).stars || {};
+    var total = 0; for (var k in rec) { total += rec[k]; }
+    var town = g.townOpen || {};
+    var now = Date.now();
+    function chLock(c) {
+      if (g.fameLv < c.lv) { return '명성 Lv.' + c.lv; }
+      return '';
+    }
+    var GRP = [{ id: 'use', name: '용도', desc: '상시 · 계속 추가되는 기본 스테이지', col: '#8A6440' }, { id: 'season', name: '시즌', desc: '기간 한정 · 시즌 이벤트와 함께 열림', col: '#D46A86' }, { id: 'region', name: '지역', desc: '마을 구역이 열리면 함께 추가', col: '#4E6E8E' }];
+    function prog(c) { var got = 0, max = 0, cnt = 0, clr = 0; D.stages.forEach(function (x) { if (x.ch === c.id) { cnt++; max += 3; got += rec[x.id] || 0; if (rec[x.id]) clr++; } }); return { got: got, max: max, cnt: cnt, clr: clr, cur: cnt ? Math.min(cnt, clr + 1) : 0 }; }
+    var groups = GRP.map(function (gr) {
+      return {
+        name: gr.name, desc: gr.desc, tagStyle: 'padding:2px 10px;border-radius:9px;font-family:Jua,sans-serif;font-size:13px;color:#FFF;background:' + gr.col,
+        rows: D.chapters.filter(function (c) { return c.group === gr.id; }).map(function (c) {
+          var on = s.ch === c.id, lk = c.soon ? '' : chLock(c), pr = prog(c), dd = c.until ? Math.max(0, Math.ceil((new Date(c.until + 'T00:00:00+09:00') - now) / 86400000)) : 0;
+          var done = pr.max && pr.got === pr.max;
+          var state = c.soon ? '업데이트 예정' : (lk ? lk : (on ? '선택 중' : (done ? '완료' : '도전')));
+          return {
+            label: c.label, img: c.img, icon: c.icon.replace('ICON_CAT_', ''), count: c.soon ? '?' : pr.cnt, got: pr.got, max: pr.max || 0,
+            aria: c.label + ' · ' + state,
+            state: state,
+            badge: c.until ? 'D-' + dd : '', badgeStyle: c.until ? 'padding:0 6px;border-radius:6px;background:#D46A86;color:#FFF;font-size:10px;font-weight:700' : 'display:none',
+            bar: 'display:block;height:100%;border-radius:4px;background:' + gr.col + ';width:' + (pr.max ? Math.round(pr.got / pr.max * 100) : 0) + '%',
+            style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid ' + gr.col + ';box-shadow:0 0 0 3px rgba(255,214,107,.7)' : 'background:#FFFDF5;border:2px solid #E1CDA9') + (c.soon || lk ? ';opacity:.6' : ''),
+            iconStyle: 'flex:0 0 46px;width:46px;height:46px;object-fit:contain;' + (c.soon ? 'filter:grayscale(1) opacity(.55);' : ''),
+            stateStyle: 'flex:0 0 auto;padding:3px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (on ? 'background:#FFD66B;color:#2B1A0F' : (c.soon ? 'background:#7A5A93;color:#FFF' : (lk ? 'background:#5B3A24;color:#FFE7A8' : (done ? 'background:#C9962E;color:#FFF' : 'background:' + gr.col + ';color:#FFF')))),
+            pick: function () {
+              if (c.soon) { self.say(c.label + ' 스테이지는 다음 업데이트에서 열린다'); return; }
+              self.setState({ ch: c.id, catOpen: false }); self.scrollCur();
+            }
+          };
+        })
+      };
+    });
+    var ch = D.chapters.filter(function (c) { return c.id === s.ch; })[0];
+    var chL = chLock(ch);
+    var extra = chL ? '잠김 · ' + chL : (ch.until ? '남은 기간 D-' + Math.max(0, Math.ceil((new Date(ch.until + 'T00:00:00+09:00') - now) / 86400000)) : '');
+    var list = D.stages.filter(function (x) { return x.ch === ch.id; });
+    var pc = prog(ch), curIdx = pc.cur - 1;
+    var unSt = list.filter(function (x) { return x.newShape; })[0];
+    var ZZ = ['center', 'flex-start', 'center', 'flex-end'];
+    function stLock(st) {
+      if (chL) { return chL; }
+      if (st.idx > 0 && !(rec[list[st.idx - 1].id] > 0)) { return '이전 스테이지'; }
+      return '';
+    }
+    var nodes = list.map(function (st, i) {
+      var best = rec[st.id] || 0, lock = stLock(st), isUn = !!st.newShape, isCur = i === curIdx && !chL;
+      var stars = ''; for (var j = 0; j < 3; j++) { stars += j < best ? '★' : '☆'; }
+      var pot = self.potOf({ prof: st.prof, H: st.H }, lock ? '#D8C6A6' : (best ? GF[st.glaze] : '#F3E3C4'));
+      var C = isUn ? 104 : 88;
+      var bd = lock ? 'background:#E1D3BA;border:4px dashed #A8987C' : (best ? 'background:#FFF4DE;border:5px solid #C9962E;box-shadow:0 4px 0 #8A6410' : 'background:#FFF4DE;border:5px solid #5B3A24;box-shadow:0 4px 0 #3E2616');
+      if (isUn) { bd = (lock ? 'background:#E6DDEC;' : 'background:#F6EEFA;') + 'border:5px solid #7A5A93;box-shadow:0 4px 0 #4E3A60,0 0 0 4px rgba(122,90,147,.25)'; }
+      return {
+        name: st.name, num: i + 1, stars: stars, lock: isCur ? '도전!' : '', pot: pot, sz: isUn ? 82 : 68,
+        stroke: lock ? '#A8987C' : '#5B3A24', dash: best ? '0' : '6 5', domId: isCur ? 'stg-cur' : 'stg-' + st.id,
+        aria: (i + 1) + ' 스테이지 ' + st.name + (lock ? ' · 잠김' : ' · 최고 ' + best + '별') + (isUn ? ' · 신규 모양 ' + st.newName : ''),
+        row: 'position:relative;display:flex;justify-content:' + ZZ[i % 4] + ';padding:0 40px;margin-top:-4px',
+        btn: 'all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;width:124px',
+        rib: isUn ? '신규 모양 · ' + st.newName : '',
+        ribStyle: isUn ? 'padding:2px 10px;border-radius:9px;background:#7A5A93;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;white-space:nowrap;margin-bottom:-6px;position:relative;z-index:1' : 'display:none',
+        circle: 'position:relative;width:' + C + 'px;height:' + C + 'px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;' + bd + ';' + (isCur ? 'animation:glowP 1.6s ease-in-out infinite;' : ''),
+        numStyle: 'position:absolute;left:-4px;top:-4px;min-width:26px;height:26px;padding:0 4px;box-sizing:border-box;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:13px;' + (lock ? 'background:#A8987C;color:#FFF4DE' : (isUn ? 'background:#7A5A93;color:#FFF4DE;border:2px solid #FFF4DE' : 'background:#B9533A;color:#FFF4DE;border:2px solid #FFF4DE')),
+        starStyle: 'font-size:16px;letter-spacing:1px;line-height:1.1;color:' + (best ? '#E3A82B' : '#B9A68A'),
+        lockStyle: isCur ? 'padding:1px 9px;border-radius:8px;background:#B9533A;font-family:Jua,sans-serif;font-size:11.5px;color:#FFF4DE' : 'display:none',
+        tap: function () { self.setState({ det: st.id, pkSel: '' }); }
+      };
+    });
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var cands = (g.order || []).filter(function (id) { var p = g.pieces && g.pieces[id]; return p && (p.where === 'store' || p.where === 'shelf'); });
+    var det = { on: false };
+    var cur = D.stages.filter(function (x) { return x.id === s.det; })[0];
+    var chk = {}, fitN = 0;
+    if (cur) { cands.forEach(function (id) { var c = self.check(cur, g.pieces[id]); chk[id] = c; if (c.fit) { fitN++; } }); }
+    if (cur) {
+      var cch = D.chapters.filter(function (c) { return c.id === cur.ch; })[0];
+      var clist = D.stages.filter(function (x) { return x.ch === cur.ch; });
+      var lk = chLock(cch) ? chLock(cch) + '이 필요하다' : (cur.idx > 0 && !(rec[clist[cur.idx - 1].id] > 0) ? (cur.idx) + ' 스테이지를 ★1 이상으로 클리어하면 열린다' : '');
+      var b = rec[cur.id] || 0, bs = ''; for (var j2 = 0; j2 < 3; j2++) { bs += j2 < b ? '★' : '☆'; }
+      var dis = !!lk || !fitN;
+      det = {
+        on: true, name: (cur.idx + 1) + '. ' + cur.name, kind: cch.label + ' 스테이지', story: cur.story,
+        pot: self.potOf({ prof: cur.prof, H: cur.H }, '#F3E3C4'), dash: '6 5', h: Math.round(cur.H) + 'mm',
+        conds: [GN[cur.glaze], '높이 ' + Math.round(cur.H) + 'mm 안팎', '모양 일치 60%↑', '추천 흙 · ' + (CLN[cur.clay] || '기본 점토')].concat(cur.newShape ? ['신규 모양 · ' + cur.newName] : []),
+        best: bs, reward: '별 1개마다 300G · 파편 5' + (cur.newShape ? ' · 첫 클리어 시 ' + cur.newName + ' 해금' : ''),
+        rule: lk ? '잠김 · ' + lk : '조건을 모두 채운 작품만 출품할 수 있다 · 출품해도 작품은 돌아온다',
+        goDis: dis ? 'true' : 'false',
+        goSub: lk ? '잠김' : (fitN ? '조건 충족 ' + fitN + '점' : '조건에 맞는 작품 없음'),
+        goSubStyle: 'font-size:10.5px;' + (dis ? 'color:#6E6557' : 'color:#E2F3D9'),
+        goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;font-family:Jua,sans-serif;' + (dis ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5'),
+        go: function () { if (lk) { self.say(lk); return; } if (!fitN) { self.say('조건에 맞는 작품이 없다 · 먼저 작품을 만들어 보자'); return; } self.setState({ pkOpen: true, pkSel: '' }); },
+        make: function () { self.setG({ goal: { sid: cur.id, num: cur.idx + 1, name: cur.name, shapeN: cur.shapeN, prof: cur.prof, H: cur.H, glaze: cur.glaze, clay: cur.clay, wshape: cur.wshape }, goalJump: true }); },
+        close: function () { self.setState({ det: '' }); }
+      };
+    }
+    var rows = cur ? cands.slice().sort(function (x, y) { return (chk[y].fit ? 1 : 0) - (chk[x].fit ? 1 : 0); }).map(function (id) {
+      var p = g.pieces[id], c = chk[id], on = s.pkSel === id, ph = self.profileOf(p).H;
+      function ck(ok, t) { return { t: (ok ? '✓ ' : '✗ ') + t, style: 'padding:1px 7px;border-radius:7px;font-size:10.5px;font-weight:700;' + (ok ? 'background:#E2F0DA;color:#2F6328;border:1.5px solid #9BC78E' : 'background:#FBE3D6;color:#B04A1A;border:1.5px solid #E7A98A') }; }
+      return {
+        pot: self.potOf(p, self.fillOf(p, 'glazed')), name: p.name || '작품', on: on ? 'true' : 'false',
+        meta: (p.grade || '') + ' · ' + (CLN[p.clay] || '점토') + ' · ' + (p.where === 'shelf' ? '진열 중' : '보관 중'),
+        aria: (p.name || '작품') + (c.fit ? ' · 조건 충족' : ' · 조건 미충족'),
+        checks: [ck(c.gOk, '유약 ' + (GN[p.glaze] || '없음')), ck(c.sOk, '모양'), ck(c.hOk, '높이 ' + Math.round(ph) + 'mm')],
+        fitStyle: c.fit ? 'flex:0 0 auto;padding:1px 8px;border-radius:8px;background:#FFD66B;border:2px solid #C9962E;font-size:10.5px;font-weight:800;color:#5B3A10;white-space:nowrap' : 'display:none',
+        starStyle: c.fit ? 'position:absolute;right:-8px;top:-8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;background:#E3B23C;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5' : 'display:none',
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : (c.fit ? 'background:#FFFDF5;border:3px solid #E3B23C;box-shadow:0 3px 0 #C9962E' : 'background:#F1EADC;border:2px solid #D6C6A8;opacity:.72')),
+        tap: function () {
+          if (!c.fit) { self.say('조건 미충족 · ' + [c.gOk ? '' : '유약', c.sOk ? '' : '모양', c.hOk ? '' : '높이'].filter(Boolean).join('·') + '이(가) 맞지 않는다'); return; }
+          self.setState({ pkSel: on ? '' : id });
+        }
+      };
+    }) : [];
+    var selOk = !!(s.pkSel && chk[s.pkSel] && chk[s.pkSel].fit);
+    var pk = {
+      on: !!s.pkOpen && !!cur, rows: rows, empty: !rows.length,
+      stage: cur ? (cur.idx + 1) + '. ' + cur.name : '',
+      sub: '보관·진열 중 ' + cands.length + '점 · 조건 충족 ' + fitN + '점',
+      goals: cur ? [GN[cur.glaze], '높이 ' + Math.round(cur.H) + 'mm 안팎', '모양 일치 60%↑'] : [],
+      confirmLabel: selOk ? '이 작품으로 출품하기' : '조건 충족 작품을 골라 주세요',
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (selOk ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default'),
+      confirm: function () { if (selOk) { self.submit(cur, s.pkSel); } },
+      close: function () { self.setState({ pkOpen: false }); }
+    };
+    var nextTxt = '', nextStyle = 'display:none', mark = 'display:none';
+    if (unSt && !chL) {
+      var unDone = rec[unSt.id] > 0, left = unSt.idx + 1 - pc.cur;
+      nextTxt = unDone ? unSt.newName + ' 해금 완료' : (left > 0 ? unSt.newName + ' 해금까지 ' + left : '이번에 ' + unSt.newName + ' 해금!');
+      nextStyle = 'padding:1px 7px;border-radius:8px;background:#7A5A93;color:#FFF;font-size:10.5px;font-weight:700;white-space:nowrap';
+      mark = 'position:absolute;top:-3px;left:calc(' + Math.round((unSt.idx + 1) / pc.cnt * 100) + '% - 8px);width:12px;height:12px;background:#7A5A93;border:2px solid #FFF4DE;transform:rotate(45deg);border-radius:2px';
+    }
+    var res = { on: false };
+    if (s.res) {
+      var R = s.res, st2 = D.stages.filter(function (x) { return x.id === R.sid; })[0], p2 = g.pieces[R.pid] || R.p;
+      var a = this.profileOf(p2), M = 0;
+      a.r.concat(st2.prof).forEach(function (x) { M = Math.max(M, x); });
+      var Hm = Math.max(a.H, st2.H), side = Math.max(2 * M, Hm) + 24;
+      var pd = this.potOf(p2, ''), td = this.potOf({ prof: st2.prof, H: st2.H }, '');
+      res = {
+        on: true, title: st2.name + ' 스테이지 결과', grade: ['다시 도전', '★ 클리어', '★★ 클리어', '★★★ 완벽 재현'][R.j.stars],
+        stars: [0, 1, 2].map(function (i) { var on = i < R.j.stars; return { style: 'font-size:44px;line-height:1;' + (on ? 'color:#E3A82B;text-shadow:0 3px 0 #8A6410;animation:starPop .5s ' + (i * 0.25) + 's both' : 'color:#D8C6A6') }; }),
+        vb: (-side / 2).toFixed(1) + ' ' + (-Hm / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), sw: (side / 60).toFixed(2), dash: (side / 30).toFixed(1) + ' ' + (side / 40).toFixed(1),
+        pd: pd.d, td: td.d, pfill: GF[p2.glaze] || '#ECE8DE',
+        rows: [
+          { k: '모양 일치', v: R.j.shapeS + '%', vs: 'color:#2B1A0F' },
+          { k: '높이 일치', v: R.j.hS + '%', vs: 'color:#2B1A0F' },
+          { k: '유약', v: R.j.glazeOk ? '일치' : '다름 · 최대 1별', vs: R.j.glazeOk ? 'color:#2F6328' : 'color:#C8601E' },
+          { k: '종합 일치도', v: R.j.score + '%', vs: 'font-family:Jua,sans-serif;font-size:16px;color:#7A2F1E' }
+        ],
+        newOn: !!R.newShape, newName: R.newName || '',
+        reward: R.gain ? '새로 얻은 별 ' + R.gain + '개 · 골드 +' + (R.gain * 300) + ' · 파편 +' + (R.gain * 5) : (R.j.stars ? '최고 기록을 넘지 못했다 · 보상 없음' : '별 1개는 일치도 60% 이상'),
+        close: function () { self.setState({ res: null }); }
+      };
+    }
+    return {
+      starTotal: total, groups: groups, nodes: nodes,
+      catOn: !!s.catOpen,
+      openCat: function () { self.setState({ catOpen: true }); },
+      closeCat: function () { self.setState({ catOpen: false }); },
+      ch: { icon: ch.icon, img: ch.img, banner: ({BANNER_CAT_TABLE: '_blob/ba5f37632db41c2b0c557a489fef971c.webp', BANNER_CAT_TEA: '_blob/89749d3555231f5bb73a1bd46bb51f1f.webp', BANNER_CAT_VASE: '_blob/dc1d497fb63010c368d187e0dda27464.webp', BANNER_CAT_JAR: '_blob/f66704fb8dadb2deeed37acf6405462e.webp', BANNER_SEASON_STAGE: '_blob/705d9823330affc47b29e1b604133a97.webp', BANNER_CAT_PLATE: '_blob/45b765471149a7a2bb0fc711290a3f11.webp', BANNER_REGION_HARBOR: '_blob/ea744948b041452daba18e48f0f9d74d.webp', BANNER_REGION_TEMPLE: '_blob/4787cafd5836e5d7c360617e585cc2df.webp'})[ch.res] || '', label: ch.label, cur: prog(ch).cur, cnt: prog(ch).cnt, got: prog(ch).got, max: prog(ch).max, bar: 'height:100%;border-radius:5px;background:linear-gradient(#E3B23C,#C9962E);width:' + (prog(ch).cnt ? Math.round(prog(ch).cur / prog(ch).cnt * 100) : 0) + '%', next: nextTxt, nextStyle: nextStyle, mark: mark, title: ch.title, desc: ch.desc, res: ch.res, bg: ch.bg, extra: extra, extraStyle: extra ? 'padding:1px 8px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;' + (chL ? 'background:#5B3A24;color:#FFE7A8' : 'background:#D46A86;color:#FFF') : 'display:none' },
+      det: det, pk: pk, res: res, endCap: ch.label + ' · ' + list.length + ' 스테이지 · 다음 업데이트로 계속',
+      toast: s.toast, toastOn: s.toast !== ''
+    };
+  }
+  submit(st, pid) {
+    var g = this.loadG(), p = g.pieces[pid], j = this.judge(st, p);
+    var contest = g.contest || { stars: {} }, rec = {}; for (var k in (contest.stars || {})) { rec[k] = contest.stars[k]; }
+    var prev = rec[st.id] || 0, gain = Math.max(0, j.stars - prev);
+    if (j.stars > prev) { rec[st.id] = j.stars; }
+    var sf = {}; for (var k2 in (g.shapesFound || {})) { sf[k2] = g.shapesFound[k2]; }
+    var isNew = j.stars > 0 && st.newShape && !sf[st.newShape];
+    if (isNew) { sf[st.newShape] = true; }
+    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300, shards: g.shards + gain * 5 });
+    this.setState({ pkOpen: false, pkSel: '', det: '', res: { sid: st.id, pid: pid, p: p, j: j, gain: gain, newShape: isNew ? st.newShape : '', newName: st.newName } });
+  }
+}
+</script>
+</body>
+</html>

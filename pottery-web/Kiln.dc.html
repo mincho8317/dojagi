@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>가마 배치</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+</style>
+<style>
+@keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
+.bg-bg-kiln-inside{background:#3A251A url(_blob/9c450e11f4bba913607424d567430c8a.webp) center/cover no-repeat}
+</style>
+</helmet>
+<div style="{{navRoot}}">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
+<linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
+<clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
+<clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
+<filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
+</defs></svg>
+  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+    <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+      <div style="{{navStrip}}">
+        <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
+          <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="{{navFadeL}}"></div>
+      <div aria-hidden="true" style="{{navFadeR}}"></div>
+    </div>
+  </div>
+  <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
+    <div style="{{navDropStyle}}">
+<div style="position:relative;width:390px;height:844px;box-sizing:border-box;overflow:hidden;background:repeating-linear-gradient(135deg,#A98A6E 0 12px,#A28367 12px 24px);color:#2B1A0F;padding:12px 12px 14px;display:flex;flex-direction:column;gap:12px">
+
+  <div aria-hidden="true" style="position:absolute;left:4px;top:4px;right:4px;bottom:4px;border:2px dashed #5B3A24;border-radius:10px"></div>
+
+  <div style="position:relative;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">전기가마 · 재벌</div>
+  </div>
+
+  <div style="position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <sc-for list="{{heats}}" as="opt" hint-placeholder-count="3">
+      <button type="button" aria-pressed="{{opt.on}}" onClick="{{opt.pick}}" style="{{opt.style}}">
+        <img dc-src="{{opt.img}}" alt="" aria-hidden="true" draggable="false" style="{{opt.iconStyle}}">
+        <span style="font-family:'Jua',sans-serif;font-size:15px">{{opt.label}}</span>
+        <span style="font-size:10.5px;font-weight:700;opacity:.9">{{opt.base}}℃ · {{opt.hours}}시간</span>
+        <span style="{{opt.riskStyle}}">{{opt.risk}}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="position:relative;box-sizing:border-box;padding:12px;border-radius:22px;background:#4A2E20;border:4px solid #2B1A0F;box-shadow:inset 0 0 0 3px #6B4429,0 5px 0 rgba(43,26,15,.45)">
+    <div class="bg-bg-kiln-inside" style="position:relative;box-sizing:border-box;padding:10px;border-radius:14px;">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px">
+        <sc-for list="{{cells}}" as="cell" hint-placeholder-count="9">
+          <button type="button" onClick="{{cell.tap}}" aria-label="{{cell.aria}}" style="{{cell.style}}">
+            <span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.75);font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8">{{cell.temp}}℃</span>
+            <span aria-label="깨질 위험 {{cell.risk}}" style="{{cell.riskStyle}}">{{cell.riskIcon}}</span>
+            <sc-if value="{{cell.filled}}" hint-placeholder-val="{{true}}">
+              <svg width="46" height="46" viewBox="{{cell.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{cell.pot.shCy}}" rx="{{cell.pot.shRx}}" ry="{{cell.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{cell.pot.d}}" fill="{{cell.pot.fill}}"></path><path d="{{cell.pot.d}}" fill="url(#potTopLight)"></path><path d="{{cell.pot.d}}" fill="url(#potRings)"></path><path d="{{cell.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{cell.pot.grainOp}}"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.foot}}" fill-opacity="{{cell.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.drip}}" fill-opacity="{{cell.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{cell.pot.d}}" fill="url(#potShade)"></path><path d="{{cell.pot.d}}" fill="none" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{cell.pot.rimY}}" rx="{{cell.pot.rimRx}}" ry="{{cell.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}"></ellipse></svg>
+            </sc-if>
+            <sc-if value="{{cell.empty}}" hint-placeholder-val="{{true}}">
+              <span aria-hidden="true" style="width:30px;height:30px;box-sizing:border-box;border:2px dashed rgba(255,231,168,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:rgba(255,231,168,.8)">+</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
+        <div role="img" aria-label="가마 문 닫힘 · 소성 중" style="position:absolute;inset:0;border-radius:14px;overflow:hidden">
+          <div style="{{door.l}}">
+            <span style="position:absolute;right:10px;top:50%;width:10px;height:54px;margin-top:-27px;border-radius:5px;background:linear-gradient(#C9A27A,#7A5434);border:2px solid #2B1A0F"></span>
+          </div>
+          <div style="{{door.r}}">
+            <span style="position:absolute;left:10px;top:50%;width:10px;height:54px;margin-top:-27px;border-radius:5px;background:linear-gradient(#C9A27A,#7A5434);border:2px solid #2B1A0F"></span>
+          </div>
+          <div style="{{door.lock}}">
+            <span style="{{door.eye}}"></span>
+            <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08">{{door.label}}</span>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="position:relative;box-sizing:border-box;padding:11px 12px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:18px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:11px;min-height:86px">
+    <sc-if value="{{info.has}}" hint-placeholder-val="{{true}}">
+      <span style="flex:0 0 52px;height:52px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;border:3px solid #8A6440;display:flex;align-items:center;justify-content:center">
+        <svg width="44" height="44" viewBox="{{info.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{info.pot.shCy}}" rx="{{info.pot.shRx}}" ry="{{info.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{info.pot.d}}" fill="{{info.pot.fill}}"></path><path d="{{info.pot.d}}" fill="url(#potTopLight)"></path><path d="{{info.pot.d}}" fill="url(#potRings)"></path><path d="{{info.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{info.pot.grainOp}}"></path><path d="{{info.pot.d}}" fill="{{info.pot.foot}}" fill-opacity="{{info.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{info.pot.d}}" fill="{{info.pot.drip}}" fill-opacity="{{info.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{info.pot.d}}" fill="url(#potShade)"></path><path d="{{info.pot.d}}" fill="none" stroke="{{info.pot.edge}}" stroke-width="{{info.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{info.pot.rimY}}" rx="{{info.pot.rimRx}}" ry="{{info.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{info.pot.edge}}" stroke-width="{{info.pot.sw}}"></ellipse></svg>
+      </span>
+      <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{info.name}}</span>
+          <span style="{{info.badge}}">{{info.match}}</span>
+        </div>
+        <span style="font-size:11px;color:#5B3A24">적정 {{info.opt}} · 이 칸 {{info.temp}}℃</span>
+        <span style="font-size:11px;color:#5B3A24">{{info.note}}</span>
+        <span style="{{info.riskStyle}}">{{info.risk}}</span>
+      </div>
+      <button type="button" onClick="{{info.remove}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">꺼내기</button>
+    </sc-if>
+    <sc-if value="{{info.none}}" hint-placeholder-val="{{false}}">
+      <span style="flex:1;font-family:'Jua',sans-serif;font-size:14px;color:#7A5434;text-align:center;line-height:1.5;white-space:pre-line">{{info.hint}}</span>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
+  <button type="button" onClick="{{fire}}" style="all:unset;position:relative;cursor:pointer;box-sizing:border-box;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 5px 0 #8A3D10;border-radius:18px;font-family:'Jua',sans-serif;font-size:22px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">
+    <img src="_blob/d6ffc3828e136b95c04ef29b972105c4.webp" alt="" aria-hidden="true" draggable="false" style="width:34px;height:34px">
+    불 지피기 · {{hours}}시간 · {{count}}점
+  </button>
+  </sc-if>
+  <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:relative;margin-top:auto;box-sizing:border-box;padding:10px 14px 12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 0 #5B3A24;border-radius:18px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-family:'Jua',sans-serif;font-size:17px;color:#5B3A24">{{kt.title}}</span>
+        <span style="flex:1 1 auto;font-size:12px;color:#7A5434">{{kt.note}}</span>
+        <span role="timer" style="{{kt.clockStyle}}">{{kt.clock}}</span>
+      </div>
+      <span style="position:relative;height:14px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:9px;background:#3E2616;overflow:hidden"><span style="{{kt.bar}}"></span></span>
+      <sc-if value="{{kt.done}}" hint-placeholder-val="{{false}}">
+        <a href="KilnOpen.dc.html" style="box-sizing:border-box;text-align:center;padding:11px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328,0 0 14px rgba(255,214,107,.8);border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">가마 열고 꺼내기</a>
+      </sc-if>
+      <sc-if value="{{kt.busy}}" hint-placeholder-val="{{true}}">
+        <button type="button" onClick="{{kt.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:10px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">시간 건너뛰기 · 목업</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:36px;right:36px;top:300px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
+  </sc-if>
+
+
+  <sc-if value="{{pk.on}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:660px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+            <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{pk.title}}</span>
+            <span style="font-size:12px;color:#7A5434">{{pk.sub}}</span>
+          </div>
+          <button type="button" onClick="{{pk.close}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 44px;height:44px;box-sizing:border-box;border-radius:50%;background:#5B3A24;border:3px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:4px 2px 6px">
+          <sc-for list="{{pk.rows}}" as="pr" hint-placeholder-count="4">
+            <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" style="{{pr.style}}">
+              <span style="{{pr.checkStyle}}">{{pr.check}}</span>
+              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="url(#potRings)"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{pr.name}}</span>
+              <span style="font-size:11px;color:#7A5434">{{pr.meta}}</span>
+              <span style="{{pr.tagStyle}}">{{pr.tag}}</span>
+              <span style="{{pr.riskStyle}}">{{pr.risk}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{pk.empty}}" hint-placeholder-val="{{false}}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 0">
+            <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">{{pk.emptyText}}</span>
+            <a href="{{pk.emptyHref}}" style="font-family:'Jua',sans-serif;font-size:14px;color:#2F6328">{{pk.emptyLink}}</a>
+          </div>
+        </sc-if>
+        <sc-if value="{{pk.multi}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{pk.confirm}}" style="{{pk.confirmStyle}}">{{pk.confirmLabel}}</button>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
+  <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navPrevName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navNextName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
+    <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), sel: -1, toast: '' };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      dryList: [
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+      ],
+      glazeList: [
+        { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
+        { id: 'g2', shape: 'cup', clay: 'basic', form: 4, tmin: 4.2, dry: 'ok' }
+      ],
+      kilnList: [],
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef(), need = true;
+    try {
+      var r = localStorage.getItem('pottery-proto-v1');
+      if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } need = o.dryList === undefined || o.glazeList === undefined || o.kilnList === undefined; }
+      if (need) { localStorage.setItem('pottery-proto-v1', JSON.stringify(d)); }
+    } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  takeFocus() {
+    var raw = null;
+    try { raw = JSON.parse(localStorage.getItem('pottery-proto-v1') || 'null'); } catch (e) {}
+    if (!raw || !raw.focusId) { return; }
+    var p = this.focusPatch(raw, raw.focusId);
+    raw.focusId = '';
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(raw)); } catch (e) {}
+    p = p || {};
+    p.g = raw;
+    this.setState(p);
+  }
+  focusPatch(g, id) {
+    var it = (g.kilnList || []).filter(function (x) { return x.id === id; })[0];
+    if (!it || g.kiln === 'firing') { return null; }
+    var fl = g.kilnFilled || {}, order = [4, 1, 3, 5, 7, 0, 2, 6, 8];
+    for (var i = 0; i < order.length; i++) { var v = fl[String(order[i])]; if (!(v && typeof v === 'object')) { return { pkOpen: true, pkCell: order[i], sel: -1 }; } }
+    return null;
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.takeFocus(); } };
+    this.takeFocus();
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (g0.kiln === 'firing' && !self.state.navSw) { self.forceUpdate(); } }, 500);
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick); clearInterval(this.doorT); clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1900);
+  }
+  tables() {
+    return {
+      SH: {
+        dish: { p: 'M10 24h28c0 10-6 16-14 16s-14-6-14-16z', n: '종지', base: 2400 },
+        cup: { p: 'M14 8h20c0 26-4 40-10 40s-10-14-10-40z', n: '찻잔', base: 3000 },
+        bowl: { p: 'M8 18h32c0 16-7 26-16 26s-16-10-16-26z', n: '사발', base: 2800 },
+        jar: { p: 'M14 8h20c6 10 8 20 4 30s-8 10-14 10-10 0-14-10 2-20 4-30z', n: '항아리', base: 4200 }
+      },
+      GL: {
+        white: { n: '백자유', pre: '백자', opt: 1230, raw: '#E3DED2' },
+        celadon: { n: '청자유', pre: '청자', opt: 1200, raw: '#AFC3BD' },
+        black: { n: '흑유', pre: '흑유', opt: 1170, raw: '#9C968B' },
+        jinsa: { n: '진사유', pre: '진사', opt: 1260, raw: '#C9B1A8' }
+      },
+      CLAY: { basic: { q: 0, m: 0.7 }, refined: { q: 6, m: 1.0 }, kaolin: { q: 10, m: 1.25 }, porcelain: { q: 14, m: 1.4 }, premium: { q: 18, m: 1.5 } },
+      THICK: { thin: '얇게 입힘', ok: '고르게 입힘', thick: '두꺼운 편', drip: '흘러내림 위험' }
+    };
+  }
+  matchOf(temp, opt) {
+    var d = Math.abs(temp - opt);
+    return d <= 20 ? '정합' : (d <= 60 ? '근접' : '불일치');
+  }
+  riskOf(item, heat) {
+    var why = [], p = 0.04;
+    if (item.dry === 'early') { p += 0.1; why.push('덜 마름'); }
+    if (item.thick === 'drip') { p += 0.25; why.push('유약 흘러내림'); }
+    if ((item.tmin || 5) < 3.5) { p += 0.15; why.push('벽이 얇음'); }
+    if (heat === 'high') { p += 0.08; why.push('고화도'); }
+    var lv = p < 0.1 ? '낮음' : (p < 0.25 ? '보통' : '높음');
+    var col = { '낮음': '#4A9440', '보통': '#C8901E', '높음': '#C8381E' }[lv];
+    return { p: p, pct: Math.round(p * 100), lv: lv, col: col, why: why };
+  }
+  judge(item, temp, heat) {
+    var T = this.tables();
+    var sh = T.SH[item.shape] || T.SH.dish;
+    var gl = T.GL[item.glaze] || T.GL.white;
+    var cl = T.CLAY[item.clay] || T.CLAY.basic;
+    var match = this.matchOf(temp, gl.opt);
+    var score = (item.form || 3) * 8 + cl.q
+      + ({ thin: -5, ok: 15, thick: 5, drip: -20 }[item.thick] || 0)
+      + ({ '정합': 20, '근접': 5, '불일치': -15 }[match])
+      + ({ early: -5, ok: 5, over: 0 }[item.dry] || 0)
+      + Math.random() * 20;
+    var br = this.riskOf(item, heat).p;
+    var name = gl.pre + ' ' + sh.n;
+    if (Math.random() < br) {
+      return { name: name, grade: '파손', shape: item.shape, glaze: item.glaze, broken: true, form: 0, color: 0, value: 0, prof: item.prof, H: item.H, clay: item.clay };
+    }
+    var grade = score >= 90 ? ((heat === 'high' && Math.random() < 0.4) ? '요변' : '명작') : (score >= 70 ? '수작' : '양작');
+    var glaze = item.glaze;
+    if (grade === '요변' && glaze === 'black') { glaze = 'cheonmok'; name = '천목 ' + sh.n; }
+    var mult = { '양작': 1, '수작': 3, '명작': 8, '요변': 16 }[grade];
+    var value = Math.round(sh.base * mult * cl.m / 100) * 100;
+    var color = Math.max(1, Math.min(5, { '양작': 2, '수작': 3, '명작': 4, '요변': 5 }[grade] + (match === '불일치' ? -1 : 0)));
+    return { name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, color: color, value: value, prof: item.prof, H: item.H, clay: item.clay };
+  }
+  renderVals0() {
+    var self = this;
+    var g = this.state.g;
+    var T = this.tables();
+    var defs = [
+      { id: 'low', label: '저화도', base: 1050, hours: 6, icon: 'FLAME_LOW', img: '_blob/a9cf5a7b8a185263b5311a334289a737.webp' },
+      { id: 'mid', label: '중화도', base: 1200, hours: 8, icon: 'FLAME_MID', img: '_blob/fef78a09e327957d290e2bc20b94e493.webp' },
+      { id: 'high', label: '고화도', base: 1280, hours: 10, icon: 'FLAME_HIGH', img: '_blob/8383a52abc52e17b5f5ff73ba181725d.webp' }
+    ];
+    var cur = defs[1];
+    defs.forEach(function (d) { if (d.id === g.heat) { cur = d; } });
+
+    var btnBase = 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:16px;';
+    var iconBase = 'width:34px;height:30px;box-sizing:border-box;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;text-align:center;line-height:1.1;';
+    var heats = defs.map(function (d) {
+      var on = d.id === cur.id;
+      return {
+        risk: d.id === 'high' ? '파손 +8% · 요변 가능' : '', riskStyle: d.id === 'high' ? 'font-size:9.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
+        label: d.label, base: d.base.toLocaleString(), hours: d.hours, icon: d.icon, img: d.img, on: on,
+        style: btnBase + (on ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;'),
+        iconStyle: 'width:34px;height:30px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),
+        pick: function () { if (g.kiln === 'firing') { self.say('소성 중에는 화도를 바꿀 수 없다'); return; } self.setG({ heat: d.id }); }
+      };
+    });
+
+    var offsets = [-80, -40, -80, -40, 0, -40, -80, -40, -80];
+    var glow = { '-80': 'rgba(232,120,50,.22)', '-40': 'rgba(240,130,45,.45)', '0': 'rgba(255,150,50,.72)' };
+    var firingNow = g.kiln === 'firing';
+    var filled = firingNow ? {} : (g.kilnFilled || {});
+    var waiting = g.kilnList || [];
+    var sel = this.state.sel;
+    var pw = this.state.pickW || (waiting[0] ? waiting[0].id : '');
+    var wait = waiting.map(function (w) {
+      var on = w.id === pw;
+      return {
+        text: (on ? '✓ ' : '') + (T.GL[w.glaze] || T.GL.white).pre + ' ' + (T.SH[w.shape] || T.SH.dish).n, on: on ? 'true' : 'false',
+        style: 'all:unset;cursor:pointer;flex:0 0 auto;padding:5px 11px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px solid #8A6440'),
+        pick: function () { self.setState({ pickW: w.id, sel: -1 }); }
+      };
+    });
+    var cellBase = 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;height:84px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;';
+
+    function itemAt(i) { var v = filled[String(i)]; return v && typeof v === 'object' ? v : null; }
+
+    var cells = offsets.map(function (off, idx) {
+      var it = itemAt(idx);
+      var gl = it ? (T.GL[it.glaze] || T.GL.white) : null;
+      var sh = it ? (T.SH[it.shape] || T.SH.dish) : null;
+      var rk = it ? self.riskOf(it, cur.id) : null;
+      var ring = idx === sel ? 'border:3px solid #FFE7A8;box-shadow:0 0 14px rgba(255,200,90,.8);' : 'border:2px solid rgba(255,231,168,.25);';
+      return {
+        aria: it ? sh.n + ' 선택' : '작품 넣기',
+        risk: rk ? rk.lv : '', riskIcon: rk ? (rk.lv === '높음' ? '!!' : '!') : '',
+        riskStyle: rk && rk.lv !== '낮음' ? 'position:absolute;right:4px;bottom:4px;min-width:20px;height:20px;box-sizing:border-box;padding:0 4px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:12px;line-height:1;color:#FFFDF5;background:' + rk.col + ';border:2px solid #FFF4DE;box-shadow:0 1px 3px rgba(0,0,0,.5)' : 'display:none',
+        temp: (cur.base + off).toLocaleString(),
+        filled: !!it, empty: !it,
+        path: sh ? sh.p : '', fill: gl ? gl.raw : '#ccc', pot: it ? self.potOf(it, self.fillOf(it, 'glazed')) : self.potOf({ shape: 'cup' }, '#ccc'),
+        style: cellBase + 'background:' + glow[String(off)] + ';' + ring,
+        tap: function () {
+          if (firingNow) { self.say('소성 중에는 가마 문을 열 수 없다'); return; }
+          if (it) { self.setState({ sel: idx }); return; }
+          if (!waiting.length) { self.say('가마에 넣을 기물이 없다. 유약부터 바르자'); return; }
+          self.setState({ pkOpen: true, pkCell: idx, sel: -1 });
+        }
+      };
+    });
+
+    var selItem = sel >= 0 ? itemAt(sel) : null;
+    var info;
+    if (selItem) {
+      var sgl = T.GL[selItem.glaze] || T.GL.white;
+      var ssh = T.SH[selItem.shape] || T.SH.dish;
+      var temp = cur.base + offsets[sel];
+      var m = this.matchOf(temp, sgl.opt);
+      var tone = m === '정합' ? '#2F6328' : (m === '근접' ? '#8A6410' : '#A33B22');
+      info = {
+        has: true, none: false,
+        name: sgl.pre + ' ' + ssh.n, path: ssh.p, fill: sgl.raw, pot: self.potOf(selItem, self.fillOf(selItem, 'glazed')),
+        match: m, badge: 'padding:1px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + tone,
+        opt: (sgl.opt - 20).toLocaleString() + '~' + (sgl.opt + 20).toLocaleString() + '℃', temp: temp.toLocaleString(),
+        note: T.THICK[selItem.thick] || '',
+        risk: (function () { var r0 = self.riskOf(selItem, cur.id); return '깨질 위험 ' + r0.lv + ' ' + r0.pct + '%' + (r0.why.length ? ' · ' + r0.why.join(', ') : ''); })(),
+        riskStyle: (function () { var r0 = self.riskOf(selItem, cur.id); return 'align-self:flex-start;padding:1px 8px;border-radius:8px;font-size:11px;font-weight:700;color:#FFFDF5;background:' + r0.col; })(),
+        remove: function () {
+          var next = {}; for (var k in filled) { if (k !== String(sel) && filled[k] && typeof filled[k] === 'object') { next[k] = filled[k]; } }
+          self.setG({ kilnFilled: next, kilnList: [selItem].concat(waiting) });
+          self.setState({ sel: -1 });
+        }
+      };
+    } else {
+      var nx = waiting.filter(function (w) { return w.id === pw; })[0] || waiting[0];
+      info = {
+        has: false, none: true,
+        hint: firingNow ? '가마에서 굽는 중이다\n끝나면 꺼내서 결과를 확인하자' : nx ? '빈 칸을 누르면 넣을 기물을 고른다\n칸마다 온도가 다르니 유약에 맞춰 넣자' : '가마 대기 기물이 없다 · 유약을 먼저 바르자',
+        remove: function () {}
+      };
+    }
+
+    var placed = [];
+    for (var i = 0; i < 9; i++) { var it2 = itemAt(i); if (it2) { placed.push({ it: it2, temp: cur.base + offsets[i] }); } }
+
+    return {
+      heats: heats,
+      wait: wait, noWait: waiting.length === 0,
+      pk: self.pickBox({
+        on: !!this.state.pkOpen, multi: false, title: (this.state.pkCell >= 0 ? (cur.base + offsets[this.state.pkCell]).toLocaleString() + '℃ 칸에 넣을 기물' : '넣을 기물'),
+        sub: '유약 완료 ' + waiting.length + '점 · 적정 온도를 확인하자',
+        rows: waiting.map(function (w) {
+          var wg = T.GL[w.glaze] || T.GL.white;
+          var t2 = self.state.pkCell >= 0 ? cur.base + offsets[self.state.pkCell] : cur.base;
+          var m2 = self.matchOf(t2, wg.opt);
+          return self.pickRow(w, { stage: 'glazed', single: true, prefix: wg.pre + ' ', tag: '적정 ' + (wg.opt - 20) + '~' + (wg.opt + 20) + '℃ · ' + m2, warn: m2 !== '정합', risk: self.riskOf(w, cur.id), tap: function () {
+            var idx2 = self.state.pkCell;
+            var fl2 = self.state.g.kilnFilled || {}, next2 = {};
+            for (var k2 in fl2) { if (fl2[k2] && typeof fl2[k2] === 'object') { next2[k2] = fl2[k2]; } }
+            next2[String(idx2)] = w;
+            self.setG({ kilnFilled: next2, kilnList: (self.state.g.kilnList || []).filter(function (x) { return x !== w && x.id !== w.id; }) });
+            self.setState({ pkOpen: false, sel: idx2 });
+          } });
+        }),
+        emptyText: '가마에 넣을 기물이 없다', emptyHref: 'Glaze.dc.html', emptyLink: '유약대로 →'
+      }),
+      cells: cells,
+      info: info,
+      count: placed.length,
+      hours: cur.hours,
+      kilnQ: waiting.length,
+      batch: (g.batchItems || []).length || g.batch || 3,
+      firingNow: firingNow, idle: !firingNow,
+      door: (function () {
+        var t = (Date.now() - (self.state.closeAt || 0)) / 650, e = t >= 1 ? 1 : (t <= 0 ? 0 : 1 - Math.pow(1 - t, 3));
+        if (!self.state.closeAt) { e = 1; }
+        var ks = g.kilnStart || 0, done = ks && Date.now() >= ks + 20000, pu = 0.6 + 0.4 * Math.sin(Date.now() / 260);
+        var plate = 'position:absolute;top:0;bottom:0;width:50%;box-sizing:border-box;border:4px solid #1A0F08;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,rgba(0,0,0,0) 2px 38px),linear-gradient(90deg,#5A4436,#7A5E4A 45%,#4E3A2E);box-shadow:inset 0 0 0 3px #8A6A52,inset 0 0 18px rgba(0,0,0,.5);';
+        return {
+          l: plate + 'left:0;border-radius:12px 0 0 12px;transform:translateX(' + (-(1 - e) * 100).toFixed(1) + '%)',
+          r: plate + 'right:0;border-radius:0 12px 12px 0;transform:translateX(' + ((1 - e) * 100).toFixed(1) + '%)',
+          lock: 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:' + Math.max(0, e * 1.6 - 0.6).toFixed(2),
+          eye: 'width:54px;height:54px;box-sizing:border-box;border-radius:50%;border:5px solid #2B1A0F;box-shadow:0 0 0 3px #8A6A52,0 0 ' + (done ? 10 : Math.round(10 + 14 * pu)) + 'px ' + (done ? 'rgba(255,214,107,.6)' : 'rgba(255,140,40,.9)') + ';background:radial-gradient(circle,' + (done ? '#FFE7A8,#C9962E' : '#FFD08A,#E0602A 55%,#7A2A0E') + ')',
+          label: done ? '소성 완료' : '문 잠김 · 소성 중'
+        };
+      })(),
+      kt: (function () {
+        var KD = 20000, ks = g.kilnStart || 0, left = ks ? Math.max(0, ks + KD - Date.now()) : 0, sec = Math.ceil(left / 1000), done = left === 0;
+        var pc = ks ? Math.min(100, (Date.now() - ks) / KD * 100) : 100;
+        return {
+          done: done, busy: !done, title: done ? '소성 완료' : '소성 중',
+          clock: done ? '완료!' : '0:' + (sec < 10 ? '0' : '') + sec,
+          clockStyle: 'font-family:Jua,sans-serif;font-size:24px;color:' + (done ? '#4A9440' : '#C8601E'),
+          bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:' + (done ? '#4A9440' : 'linear-gradient(90deg,#E07A2E,#FFB24A)'),
+          note: done ? (g.batchItems || []).length + '점 꺼낼 수 있다' : (g.batchItems || []).length + '점 굽는 중',
+          skip: function () { self.setG({ kilnStart: Date.now() - KD }); }
+        };
+      })(),
+      toast: this.state.toast,
+      toastOn: this.state.toast !== '',
+      fire: function () {
+        if (!placed.length) { self.say('빈 가마는 때줄 수 없다'); return; }
+        var results = placed.map(function (p) { return self.judge(p.it, p.temp, cur.id); });
+        self.setG({ kiln: 'firing', kilnStart: Date.now(), batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 38) + 1, kilnFilled: {} });
+        self.setState({ sel: -1, closeAt: Date.now() });
+        clearInterval(self.doorT); var t0 = Date.now(); self.doorT = setInterval(function () { if (Date.now() - t0 > 750) { clearInterval(self.doorT); } self.setState({ doorTick: Date.now() }); }, 33);
+      }
+    };
+  }
+
+  potOf(it, fill) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    var r = it && it.prof, H = it && it.H;
+    if (!r || r.length < 3) { var tt = T[it && it.shape] || T.cup; r = []; for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); } H = tt.H; }
+    H = H || 110;
+    var n = r.length, M = 0, R = [], L = [];
+    for (var j = 0; j < n; j++) { M = Math.max(M, r[j]); var y = -H * j / (n - 1); R.push([r[j], y]); L.push([-r[j], y]); }
+    function sm(pts) {
+      var d = '';
+      for (var k = 1; k < pts.length - 1; k++) { var mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; d += ' Q' + pts[k][0].toFixed(1) + ' ' + pts[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
+      var la = pts[pts.length - 1];
+      return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
+    }
+    var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
+    var Lr = L.slice().reverse();
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var side = Math.max(2 * M, H) + 20;
+    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+  }
+  fillOf(it, stage) {
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var c = CL[it && it.clay] || CL.basic;
+    if (stage === 'wet') { return c[0]; }
+    if (stage === 'dry') { return c[1]; }
+    if (stage === 'bisque') { return '#EAD8C4'; }
+    return GZ[it && it.glaze] || '#ECE8DE';
+  }
+  pickRow(it, o) {
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
+    var on = !!o.on;
+    return {
+      pot: this.potOf(it, this.fillOf(it, o.stage)),
+      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      risk: o.risk ? '깨질 위험 ' + o.risk.lv + ' ' + o.risk.pct + '%' : '', riskStyle: o.risk ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;color:#FFFDF5;background:' + o.risk.col : 'display:none',
+      tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
+      check: on ? '✓' : '', on: on ? 'true' : 'false',
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      tap: o.tap
+    };
+  }
+  pickBox(o) {
+    var self = this;
+    var n = o.count || 0;
+    return {
+      on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
+      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      multi: !!o.multi,
+      confirmLabel: o.confirmLabel || '확인',
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirm: o.confirm || function () {},
+      close: function () { self.setState({ pkOpen: false }); }
+    };
+  }
+
+  navId() { return 'kiln'; }
+  navFlow() {
+    var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
+    var defs = [
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+    ];
+    return defs.filter(function (d) { return !st[d.id] || d.id === me; });
+  }
+  renderVals() {
+    var v = this.renderVals0();
+    if (!v.pk) { v.pk = this.pickBox({ on: false }); }
+    var n = this.navVals();
+    for (var k in n) { v[k] = n[k]; }
+    return v;
+  }
+  navVals() {
+    var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 696 / 844;
+    var i = 0;
+    fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
+    var prev = fl[i - 1], next = fl[i + 1];
+    var dx = s.navDx || 0;
+    var NB = 59, VW = 312, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
+    var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));
+    var off = s.navOff === undefined || s.navOff === null ? autoOff : Math.max(minOff, Math.min(0, s.navOff));
+    function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
+    return {
+      navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
+      navDropStyle: 'width:390px;height:844px',
+      navDust: 'display:none',
+      navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
+      navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navFadeR: off > minOff + 2 ? 'position:absolute;right:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(270deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navBarDown: function (e) { self.navBar = { x: e.clientX, off: off, moved: false, k: (e.currentTarget.getBoundingClientRect().width / VW) || 1 }; },
+      navBarMove: function (e) {
+        var b = self.navBar; if (!b) { return; }
+        var d = (e.clientX - b.x) / b.k;
+        if (!b.moved && Math.abs(d) > 6) { b.moved = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }
+        if (b.moved) { self.setState({ navOff: Math.max(minOff, Math.min(0, b.off + d)) }); }
+      },
+      navBarUp: function () { var b = self.navBar; self.navBar = null; self.navBarMoved = !!(b && b.moved); if (b && b.moved) { self.setState({ navOff: s.navOff }); } setTimeout(function () { self.navBarMoved = false; }, 60); },
+      navBarClick: function (e) { if (self.navBarMoved) { e.preventDefault(); e.stopPropagation(); self.navBarMoved = false; } },
+      navSteps: fl.map(function (d, j) {
+        var on = j === i;
+        return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
+          style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
+      }),
+      navStage: 'position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:translateX(' + dx + 'px) scale(' + K + ');touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navPrevOn: !!prev, navNextOn: !!next,
+      navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
+      navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
+      navLocked: !!s.navLock,
+      navWip: (function () { var g2 = s.g || {}, kf = g2.kilnFilled || {}, n = 0; for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { n++; } } return (g2.formedList || []).length + (g2.dryList || []).length + (g2.bisqueList || []).length + ((g2.bisque || {}).items || []).length + (g2.glazeList || []).length + (g2.kilnList || []).length + n + (g2.kiln === 'firing' ? (g2.batchItems || []).length : 0) + (function () { var c = 0, ps = g2.pieces || {}; for (var pk in ps) { if (ps[pk] && ps[pk].where === 'store' && ps[pk].fresh) { c++; } } return c; })(); })(),
+      navDown: function (e) {
+        if (isWork(e)) {
+          self.navWork = self.navWork || {};
+          self.navWork[e.pointerId] = true;
+          if (self.navP) { self.navP = null; self.setState({ navSw: false, navDx: 0 }); }
+          if (!self.state.navLock) { self.setState({ navLock: true }); }
+          return;
+        }
+        if (self.state.navLock) { return; }
+        var el = e.currentTarget, rc = el.getBoundingClientRect();
+        self.navP = { x: e.clientX, y: e.clientY, id: e.pointerId, el: el, on: false, kk: (rc.width / ((el.offsetWidth || 390) * K)) || 1 };
+      },
+      navMove: function (e) {
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        var mx = (e.clientX - p.x) / p.kk, my = (e.clientY - p.y) / p.kk;
+        if (!p.on) {
+          if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my)) { return; }
+          p.on = true; self.navMoved = true;
+          try { p.el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        var edge = (!prev && mx > 0) || (!next && mx < 0);
+        self.setState({ navSw: true, navDx: edge ? mx * 0.25 : mx });
+      },
+      navUp: function (e) {
+        var w = self.navWork || {};
+        if (w[e.pointerId]) {
+          delete w[e.pointerId];
+          if (!Object.keys(w).length) { self.setState({ navLock: false }); }
+          return;
+        }
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        self.navP = null;
+        if (!p.on) { return; }
+        var d = self.state.navDx || 0;
+        var dir = d < -80 && next ? 'next' : (d > 80 && prev ? 'prev' : '');
+        if (!dir) { self.setState({ navSw: false, navDx: 0 }); return; }
+        self.setState({ navSw: false, navDx: 0 });
+        var root = p.el.parentNode;
+        setTimeout(function () {
+          var a = root && (root.querySelector('a[data-nav="' + dir + '"]') || root.querySelector('a[aria-label="' + (dir === 'next' ? '다음 공정' : '이전 공정') + '"]'));
+          if (a) { a.click(); } else { self.setState({ navDx: 0 }); }
+        }, 0);
+      },
+      navClickCap: function (e) { if (self.navMoved) { e.preventDefault(); e.stopPropagation(); self.navMoved = false; } }
+    };
+  }
+}
+</script>
+</body>
+</html>

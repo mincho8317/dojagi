@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>그래픽 리소스 목록</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+</style>
+</helmet>
+<div style="width:1330px;height:2880px;box-sizing:border-box;padding:48px 56px;background:#FFF4DE;color:#2B1A0F;display:flex;flex-direction:column;gap:28px">
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h1 style="margin:0;font-family:'Jua',sans-serif;font-size:40px;font-weight:400;color:#5B3A24">그래픽 리소스 목록</h1>
+      <p style="margin:0;font-size:14px;color:#7A5434">목업의 점선 박스와 1:1로 대응. 크기는 1080×2340 기준 @3x 권장값이며, 투명 PNG(배경 제외)로 제작.</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <span style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;border:2px dashed #8A6440;font-size:13px;color:#5B3A24">점선 = 리소스 자리</span>
+      <span style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;background:#5B3A24;font-size:13px;font-weight:700;color:#FFE7A8">총 {{total}}종</span>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;flex:1 1 auto;min-height:0">
+    <sc-for list="{{columns}}" as="col" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <sc-for list="{{col.groups}}" as="g" hint-placeholder-count="3">
+          <section style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:6px;border-bottom:3px solid #5B3A24">
+              <h2 style="margin:0;font-family:'Jua',sans-serif;font-size:20px;font-weight:400;color:#B9533A">{{g.title}}</h2>
+              <span style="font-size:12px;color:#7A5434">{{g.note}}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:200px 1fr 120px 150px;gap:0;font-size:11px;font-weight:900;color:#8A6440;padding:2px 0 4px">
+              <span>ID</span><span>용도</span><span>권장 크기</span><span>사용 화면</span>
+            </div>
+            <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:200px 1fr 120px 150px;gap:0;align-items:center;padding:4px 0;border-bottom:1px solid #EAD8B6;font-size:12.5px">
+                <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#2B1A0F">{{r.id}}</span>
+                <span style="color:#3E2616">{{r.use}}</span>
+                <span style="color:#5B3A24">{{r.size}}</span>
+                <span style="color:#7A5434">{{r.where}}</span>
+              </div>
+            </sc-for>
+          </section>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":2880}}'>
+class Component extends DCLogic {
+  renderVals() {
+    function R(id, use, size, where) { return { id: id, use: use, size: size, where: where }; }
+    var left = [
+      { title: '배경', note: '화면 전체 · 불투명', rows: [
+        R('BG_WORKSHOP', '공방 내부 전경', '1080×2340', '공방 메인, 진열대'),
+        R('BG_WHEEL', '물레 클로즈업', '1080×2340', '물레 성형'),
+        R('BG_GLAZE', '시유 작업대', '1080×2340', '유약 바르기'),
+        R('BG_KILN_INSIDE', '가마 내부 벽돌', '960×960', '가마 배치'),
+        R('BG_KILN_OPEN', '열린 가마, 어두운 톤', '1080×2340', '가마 개봉'),
+        R('BG_QUEST_BOARD', '장부 배경 (나무 · 종이)', '1080×2340', '의뢰 장부'),
+        R('BG_QUEUE_SHELF', '공정별 대기 선반', '1080×2340', '작업 대기함'),
+        R('BG_COUNTER_TALK', '카운터 너머 가게 안 · 창밖 골목', '1080×2340', '카운터 대화'),
+        R('BG_SHOP', '장터 진열', '1080×2340', '상점'),
+        R('BG_RESEARCH_MAP', '양피지 도면', '1098×900', '연구'),
+        R('BG_CODEX', '오래된 장부 펼침면', '1080×2340', '도감'),
+        R('BG_DRYROOM', '볕 드는 건조실', '1080×2340', '건조대'),
+        R('BG_SKY_ROOF', '하늘 · 지붕 (단면 뷰)', '1080×300', '단면 메인'),
+        R('ROOM_WORK / DRY / GLAZE', '방 단면 배경 ×3', '1056×420', '단면 메인'),
+        R('ROOM_KILN / GALLERY', '방 단면 배경 ×2', '1056×420', '단면 메인'),
+        R('ROOM_LOCKED', '미개방 층 (비계·천막)', '1056×360', '단면 메인'),
+        R('BG_TOP_YARD / WALL_TOP', '탑뷰 마당 · 벽 테두리', '1080×2340', '메인 탑뷰'),
+        R('FLOOR_TILE / FLOOR_LOCKED', '나무 바닥 타일 · 확장 구역', '162×162', '메인 탑뷰'),
+        R('ROOM_SIDE_* (설비별)', '측면 파노라마 배경 · 좌우 이음면 맞춤', '1170×2340 ×8', '메인 측면'),
+        R('WALL_DECO', '벽 장식(선반·창·도구)', '288×210', '메인 측면')
+      ]},
+      { title: '오브젝트', note: '공방에 배치 · 투명 PNG', rows: [
+        R('OBJ_WHEEL', '물레 (대기)', '510×450', '공방 메인'),
+        R('OBJ_DRYRACK', '건조대 2슬롯', '516×360', '공방 메인'),
+        R('OBJ_KILN_ELEC', '전기가마 + 불빛 루프', '504×600', '공방 메인'),
+        R('OBJ_GLAZE_TABLE', '유약대', '504×330', '공방 메인'),
+        R('OBJ_SHELF', '진열장 (공방 배치용)', '450×360', '공방 메인'),
+        R('OBJ_WHEEL_HEAD', '회전 물레판 스프라이트', '810×252', '물레 성형'),
+        R('OBJ_GLAZE_TUB', '유약통, 액면 틴트', '834×450', '유약 바르기'),
+        R('OBJ_DISPLAY_SHELF', '3단 진열장 (확장)', '1074×900', '진열대'),
+        R('OBJ_DRYRACK_SHELF', '건조 선반 칸 프레임', '480×630', '건조대'),
+        R('OBJ_*_SIDE', '설비 측면도 (물레·건조대·유약대·가마·진열대)', '300×300 ×5', '단면 메인'),
+        R('OBJ_*_TOP', '설비 탑뷰 (크기 = 칸 수 × 162)', '162~324 ×10', '메인 탑뷰'),
+        R('OBJ_BISQUE_TOP / SIDE', '초벌 가마 (작은 전기가마)', '162 · 660×720', '메인'),
+        R('OBJ_*_SIDE (메인 측면용)', '설비 큰 측면도 · 카운터 포함', '660×720 ×8', '메인 측면')
+      ]},
+      { title: '캐릭터', note: '표정 3종 기본', rows: [
+        R('PORTRAIT_PLAYER', '플레이어 프로필', '162×162', '공방 메인'),
+        R('CHAR_MIN', '민 씨 SD (공방 방문)', '174×210', '공방 메인'),
+        R('PORTRAIT_MIN', '민 씨 흉상', '288×360', '의뢰'),
+        R('PORTRAIT_GUEST', '일반 손님 흉상', '156×156', '의뢰'),
+        R('CHAR_CURATOR', '큐레이터 입상', '570×870', '진열대'),
+        R('PORTRAIT_CAFE', '카페 사장 흉상', '192×192', '의뢰(주간)'),
+        R('ICON_VISITOR', '방문객 재호출', '90×90', '진열대'),
+        R('CHAR_MIN / CURATOR / GUEST', '카운터 앞 손님 입상', '330×600 ×3', '메인 측면'),
+        R('CHAR_MIN / GUEST / CAFE / CURATOR', '대화용 손님 입상 · 표정 3종', '600×900 ×4', '카운터 대화'),
+        R('CHAR_WALK_A ~ F', '일반 손님 입상 6종 (이웃·직장인·여행객·할머니·신혼부부·미대생)', '600×900 ×6', '카운터 대화'),
+        R('ICON_CAT_TABLE / TEA / VASE / JAR / SEASON', '스테이지 분류 아이콘 (식기·찻잔·꽃병·항아리·시즌)', '84×72 ×5', '스테이지'),
+        R('BANNER_CAT_* · BANNER_SEASON_STAGE', '스테이지 분류 배너', '1110×192 ×5', '스테이지'),
+        R('BANNER_SEASON_SPRING', '시즌 메인 배너 · 시즌마다 교체', '1110×354', '시즌 이벤트'),
+        R('GLZ_SAKURA · PTN_PLUM · DECO_TEABED · DECO_FLOWER_LAMP · MAT_SPRING_CLAY · ITEM_INVITE', '봄 시즌 한정 물품 아이콘', '162×162 ×6', '시즌 이벤트'),
+        R('ICON_PETAL · ICON_SEASON · ICON_STAGE · ICON_TOWN', '시즌 재화·메인 바로가기 아이콘', '72×72 ×4', '공방, 시즌'),
+        R('BG_TOWN_MAP', '마을 지도 일러스트 · 구역 추가 시 확장', '1170×2340', '마을 지도'),
+        R('OBJ_TOWN_HOME / MARKET / TEMPLE / HARBOR / GALLERY', '지도 위 매점 건물', '300×270 ×5', '마을 지도'),
+        R('SCENE_SHOP_*', '매점 전경', '1110×360 ×5', '마을 지도'),
+        R('CHAR_MKT_* · CHAR_TMP_* · CHAR_HBR_* · CHAR_GAL_*', '구역별 손님 입상', '600×900 ×11', '마을, 카운터'),
+        R('PORTRAIT_* (장부)', '장부 카드용 흉상', '192×228 ×3', '의뢰 장부')
+      ]},
+      { title: '이펙트', note: '시퀀스 또는 스파인', rows: [
+        R('FX_HAND_GUIDE', '드래그 유도 손', '216×216', '물레 성형'),
+        R('FX_GLAZE_DRIP', '유약 흘러내림', '240×240', '유약 바르기'),
+        R('FX_OPEN_RAYS', '개봉 후광, 등급별 색', '960×960', '가마 개봉'),
+        R('FX_SPARKLE', '반짝임', '174×174', '가마 개봉'),
+        R('FX_DUST_LAND', '설비 착지 먼지 + 화면 흔들림', '840×180', '메인 측면'),
+        R('HAND_L / HAND_R', '감싸기 양손', '90×228 ×2', '물레')
+      ]}
+    ];
+    var right = [
+      { title: '재화 · 보상 아이콘', note: '원형 · 소형 사용 고려', rows: [
+        R('ICON_GOLD', '골드', '108×108', '전 화면'),
+        R('ICON_SHARD', '파편', '108×108', '공방, 연구'),
+        R('ICON_FAME', '명성', '108×108', '의뢰, 진열대'),
+        R('ICON_TRUST', '신뢰도', '108×108', '의뢰'),
+        R('ICON_MUSEUM', '미술관 소장 배지', '108×108', '진열대')
+      ]},
+      { title: 'UI 아이콘', note: '네비게이션 · 버튼', rows: [
+        R('NAV_HOME', '하단 메뉴: 공방', '120×120', '하단 도크'),
+        R('NAV_QUEST', '하단 메뉴: 의뢰', '120×120', '하단 도크'),
+        R('NAV_CRAFT', '하단 메뉴: 제작 (중앙)', '132×132', '하단 도크'),
+        R('NAV_RESEARCH', '하단 메뉴: 연구', '120×120', '하단 도크'),
+        R('NAV_SHOP', '하단 메뉴: 상점', '120×120', '하단 도크'),
+        R('ICON_LOG', '플로팅 의뢰 장부 버튼', '96×84', '공방 메인'),
+        R('ICON_QUEUE', '작업 대기함 버튼 (공방·작업 화면 상단)', '96×84', '공방, 작업 화면'),
+        R('OBJ_COUNTER_TOP / SIDE', '카운터 탑뷰(2×1) · 대화용 계산대', '324×162 · 990×372', '메인, 카운터'),
+        R('ICON_ROTATE / ICON_STORE', '배치 편집: 회전 · 수납', '72×72 ×2', '메인 배치'),
+        R('ICON_BOOK', '플로팅 도감 버튼', '96×84', '공방 메인'),
+        R('ICON_FIRE', '불 지피기', '90×90', '가마 배치'),
+        R('ICON_FLAME_LOW/MID/HIGH', '소성 온도 3단', '102×90 ×3', '가마 배치'),
+        R('ICON_LOCK', '잠김 표시', '102×102', '상점, 연구')
+      ]},
+      { title: '아이템 아이콘', note: '슬롯 프레임 안에 배치', rows: [
+        R('GLZ_WHITE / CELADON / BLACK', '기본 유약 3종', '138×138 ×3', '유약, 의뢰'),
+        R('GLZ_UNKNOWN', '미발견 유약', '138×138', '유약'),
+        R('SHAPE_CUP 외', '형태 아이콘 (찻잔, 밥공기…)', '138×138', '의뢰 조건'),
+        R('FAC_TRIMMING', '굽깎이대', '288×288', '상점'),
+        R('FAC_BRUSH', '붓 · 시유대', '288×288', '상점'),
+        R('FAC_KILN_ELEC', '전기가마 3×3', '288×288', '상점'),
+        R('FAC_KILN_GAS', '가스가마 + 실루엣판', '288×288', '상점'),
+        R('RES_GLAZE1 / CLAY1', '연구 노드: 완료분', '156×156 ×2', '연구'),
+        R('RES_REDUCE', '연구 노드: 환원소성', '156×156', '연구'),
+        R('RES_MIX / YOBYEON', '연구 노드: 잠김분', '156×156 ×2', '연구'),
+        R('RES_* (기법·공방 10종)', '연구 노드 나머지', '156×156 ×10', '연구'),
+        R('CLAY_* / MAT_PLASTER / GLZ_JINSA', '재료 상품', '156×156 ×6', '상점 재료'),
+        R('DECO_LAMP / PLANT / RUG / SIGN', '꾸미기 상품', '240~360 ×4', '상점 꾸미기'),
+        R('SIL_UNKNOWN', '미발견 실루엣', '138×162', '도감')
+      ]}
+    ];
+    var total = 0;
+    [left, right].forEach(function (c) { c.forEach(function (g) { total += g.rows.length; }); });
+    return { columns: [{ groups: left }, { groups: right }], total: total };
+  }
+}
+</script>
+</body>
+</html>

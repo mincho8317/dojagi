@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>카운터</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes enterA{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes enterB{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.bob{animation:bob 2.4s ease-in-out infinite}
+.blink{animation:blink 1s ease-in-out infinite}
+</style>
+<style>
+@keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
+</style>
+</helmet>
+<div style="{{navRoot}}">
+  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+    <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+      <div style="{{navStrip}}">
+        <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
+          <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="{{navFadeL}}"></div>
+      <div aria-hidden="true" style="{{navFadeR}}"></div>
+    </div>
+  </div>
+  <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
+    <div style="{{navDropStyle}}">
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#E3C9A3;color:#2B1A0F">
+
+  <img src="_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-35px;top:0;width:461px;height:922px;pointer-events:none;user-select:none">
+  <img src="_blob/43d55c767a5aa363eaff2cb8c2f845b9.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;right:14px;top:148px;width:83px;height:100px;pointer-events:none">
+
+  <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" onClick="{{backToCounter}}" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">카운터</div>
+    <a href="Commission.dc.html" style="flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24;text-decoration:none">
+      <span style="width:18px;height:18px;box-sizing:border-box;border-radius:4px;font-size:4.5px;font-weight:900;display:flex;align-items:center;justify-content:center"><img src="_blob/1d0e1bb40ced0631fa158d238843ac20.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>의뢰 장부
+    </a>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:66px;display:flex;align-items:center;gap:6px">
+    <div style="flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:5px;overflow-x:auto">
+      <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:12px;color:#5B3A24">줄 선 순서</span>
+      <sc-for list="{{queue}}" as="qq" hint-placeholder-count="3">
+        <span style="{{qq.style}}">{{qq.name}}</span>
+      </sc-for>
+    </div>
+    <button type="button" onClick="{{toggleDel}}" style="{{delBtn}}">납품 {{delN}}</button>
+  </div>
+  <sc-if value="{{delOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:12px;right:12px;top:104px;z-index:20;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">납품 가능한 의뢰 · 누르면 손님이 찾아온다</span>
+      <sc-for list="{{delList}}" as="dl" hint-placeholder-count="2">
+        <button type="button" onClick="{{dl.call}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#F3E3C4;border:3px solid #4A9440">
+          <sc-if value="{{dl.hasP}}" hint-placeholder-val="{{false}}"><img dc-src="{{dl.pimg}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:cover;object-position:50% 20%;border-radius:10px;border:2px solid #8A6440;box-sizing:border-box"></sc-if><sc-if value="{{dl.noP}}" hint-placeholder-val="{{true}}"><span style="flex:0 0 40px;height:40px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24">{{dl.res}}</span></sc-if>
+          <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{dl.name}}</span><span style="font-size:11px;color:#5B3A24">{{dl.title}}</span></span>
+          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#2F6328">부르기 →</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{delEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="font-size:12.5px;color:#7A5434;text-align:center;line-height:1.6">조건을 채운 의뢰가 없다<br>작품이 준비되면 여기서 손님을 부를 수 있다</span>
+      </sc-if>
+      <button type="button" onClick="{{toggleDel}}" style="all:unset;cursor:pointer;align-self:center;padding:5px 16px;border-radius:12px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">닫기</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
+    <div style="{{guestWrap}}">
+      <sc-if value="{{guest.hasImg}}" hint-placeholder-val="{{false}}">
+        <img class="bob" dc-src="{{guest.img}}" alt="{{guest.name}}" draggable="false" style="position:absolute;left:95px;top:0;width:200px;height:300px;object-fit:contain;object-position:50% 100%;pointer-events:none">
+      </sc-if>
+      <sc-if value="{{guest.noImg}}" hint-placeholder-val="{{true}}">
+      <div class="bob" style="position:absolute;left:95px;top:0;width:200px;height:300px;box-sizing:border-box;border:3px dashed {{guest.tone}};border-radius:24px 24px 12px 12px;background:rgba(255,248,235,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#3E2616;text-align:center">
+        <span style="font-size:10px;font-weight:900">{{guest.res}}</span>
+        <span style="font-size:9px">손님 입상 600×900 · 표정 {{guest.face}}</span>
+      </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{noGuest}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:40px;right:40px;top:200px;box-sizing:border-box;padding:18px;border-radius:18px;background:rgba(255,244,222,.92);border:3px solid #5B3A24;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+      <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">지금은 손님이 없다</span>
+      <span style="font-size:12px;color:#7A5434">{{nextGuest}}</span>
+      <a href="Wheel.dc.html" style="padding:9px 18px;border-radius:14px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5;text-decoration:none">물레로</a>
+    </div>
+  </sc-if>
+
+  <img src="_blob/afa5b1b61c1caeaf1edef99c030ed1ea.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:20px;top:380px;width:350px;height:130px;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(43,26,15,.4))">
+
+  <sc-if value="{{showChoices}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:24px;right:24px;top:{{choiceTop}}px;display:flex;flex-direction:column;gap:7px">
+      <sc-for list="{{choices}}" as="ch" hint-placeholder-count="2">
+        <sc-if value="{{ch.isLink}}" hint-placeholder-val="{{false}}">
+          <a href="{{ch.href}}" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</a>
+        </sc-if>
+        <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
+    <button type="button" onClick="{{advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;left:12px;right:12px;bottom:16px;min-height:200px;box-sizing:border-box;padding:24px 18px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+      <span style="position:absolute;left:16px;top:-18px;padding:4px 14px;border-radius:10px;background:#5B3A24;border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{guest.name}}</span>
+      <span style="position:absolute;right:16px;top:-14px;padding:2px 10px;border-radius:9px;background:{{guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{guest.tag}}</span>
+      <span style="font-size:15px;line-height:1.7;color:#2B1A0F">{{line}}</span>
+      <sc-if value="{{showCard}}" hint-placeholder-val="{{false}}">
+        <span style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#F3E3C4;border:2px solid #8A6440">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#B9533A">{{card.title}}</span>
+          <span style="display:flex;flex-wrap:wrap;gap:5px">
+            <sc-for list="{{card.conds}}" as="cd" hint-placeholder-count="2">
+              <span style="padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;font-size:11.5px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+            </sc-for>
+          </span>
+          <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{card.reward}}</span>
+        </span>
+      </sc-if>
+      <span style="{{moreStyle}}">{{moreLabel}}</span>
+    </button>
+  </sc-if>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:30px;right:30px;top:110px;padding:12px 14px;border-radius:16px;background:rgba(47,99,40,.95);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-align:center;pointer-events:none">{{toast}}</div>
+  </sc-if>
+</div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
+  <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navPrevName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navNextName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
+    <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), gi: 0, line: 0, enterN: 0, toast: '' };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [],
+      kiln: 'firing', heat: 'mid', kilnFilled: {}, firings: 38, openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef();
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.wt = setInterval(function () { var sw = self.sweepDue(self.state.g); if (sw) { self.setG(sw); } var p = self.spawnWalk(self.state.g); if (p) { self.setG(p); } else { self.forceUpdate(); } }, 1000);
+    var sw0 = this.sweepDue(this.state.g); if (sw0) { this.setG(sw0); }
+    var p0 = this.spawnWalk(this.state.g); if (p0) { this.setG(p0); }
+  }
+  componentWillUnmount() { clearInterval(this.wt); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
+  walkGap(g) {
+    var n = 0; for (var k in (g.pieces || {})) { if (g.pieces[k].where === 'shelf') { n++; } }
+    return Math.max(15000, 45000 - n * 5000);
+  }
+  makeWalk(g, t) {
+    var NAMES = [['산책하던 이웃', 'CHAR_WALK_A'], ['출근길 직장인', 'CHAR_WALK_B'], ['여행객', 'CHAR_WALK_C'], ['동네 할머니', 'CHAR_WALK_D'], ['신혼부부', 'CHAR_WALK_E'], ['미대생', 'CHAR_WALK_F']];
+    var seed = Math.floor(Math.random() * 1000);
+    var nm = NAMES[seed % NAMES.length];
+    var taste = seed % 10 < 3;
+    var shapes = ['cup', 'bowl', 'dish'], glazes = ['', '', 'white', 'celadon', 'black'];
+    return { id: 'wk' + t + '_' + seed, type: taste ? 'taste' : 'walk', name: nm[0], res: nm[1], seed: seed, at: t, want: taste ? { shape: shapes[seed % 3], glaze: glazes[Math.floor(seed / 3) % glazes.length] } : null };
+  }
+  spawnWalk(g) {
+    var now = Date.now(), w = (g.walkins || []).slice(), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = false;
+    if (!nx) { nx = now + 4000; changed = true; }
+    while (nx <= now && w.length < 4 && guard++ < 8) { w.push(this.makeWalk(g, nx)); nx += gap; changed = true; }
+    if (w.length >= 4 && nx <= now) { nx = now + gap; changed = true; }
+    return changed ? { walkins: w, walkNext: nx } : null;
+  }
+  trend() { var d = new Date(); return ['cup', 'bowl', 'dish'][(d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate()) % 3]; }
+  priceOf(g, p, mul) {
+    var day = new Date().toDateString();
+    var sold = g.soldDay === day ? (g.soldBy || {}) : {};
+    var sat = Math.max(0.6, 1 - 0.08 * (sold[p.shape] || 0));
+    var tr = this.trend() === p.shape ? 1.2 : 1;
+    return Math.round((p.value || 1000) * sat * tr * (mul || 1) / 10) * 10;
+  }
+  sellWalk(w, pid, price) {
+    var g = this.state.g, day = new Date().toDateString();
+    var sold = {}; var src = g.soldDay === day ? (g.soldBy || {}) : {}; for (var k in src) { sold[k] = src[k]; }
+    var sh = g.pieces[pid].shape; sold[sh] = (sold[sh] || 0) + 1;
+    var lv = g.fameLv, x = g.fameXp + 2; while (x >= 100) { lv++; x -= 100; }
+    this.give([pid], { gold: g.gold + price, walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }), soldDay: day, soldBy: sold, fameLv: lv, fameXp: x });
+    this.setState({ line: 0, enterN: this.state.enterN + 1 });
+    this.say(g.pieces[pid].name + ' 판매 · 골드 +' + price.toLocaleString() + ' · 명성 +2');
+  }
+  leaveWalk(w, msg) {
+    var g = this.state.g;
+    this.setG({ walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }) });
+    this.setState({ line: 0, enterN: this.state.enterN + 1 });
+    if (msg) { this.say(msg); }
+  }
+  componentWillUnmount() {
+    clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200);
+  }
+  limits() { return { min: 7 * 86400000, guest: 86400000, week: 7 * 86400000, order: 3 * 86400000 }; }
+  sweepDue(g) {
+    var L = this.limits(), now = Date.now(), q = {}, src = g.quests || {}, changed = false, log = (g.failLog || []).slice();
+    for (var k in src) { q[k] = src[k]; }
+    var TT = { min: ['민 씨', '청자 찻잔 한 점'], guest: ['이름 없는 손님', '밥공기 하나'], week: ['카페 사장', '카페 잔 세트'] };
+    ['min', 'guest', 'week'].forEach(function (key) {
+      if (q[key] && !q[key + 'Done'] && !q[key + 'At']) { q[key + 'At'] = now; changed = true; }
+      if (q[key + 'Done'] && !q[key + 'DoneAt']) { q[key + 'DoneAt'] = now; changed = true; }
+      if (q[key] && !q[key + 'Done'] && q[key + 'At'] && now - q[key + 'At'] > L[key]) {
+        q[key] = false; q[key + 'At'] = 0; changed = true;
+        log.unshift({ id: key + now, who: TT[key][0], title: TT[key][1], at: now });
+      }
+    });
+    var keep = [];
+    (g.tasteOrders || []).forEach(function (o) {
+      if (now - o.at > L.order) { changed = true; log.unshift({ id: o.id, who: o.name, title: '주문', want: o.want, at: now }); } else { keep.push(o); }
+    });
+    return changed ? { quests: q, tasteOrders: keep, failLog: log.slice(0, 10) } : null;
+  }
+  setQ(p, extra) {
+    var q = {}, c = this.state.g.quests || {};
+    for (var k in c) { q[k] = c[k]; }
+    for (var j in p) { q[j] = p[j]; if (p[j] === true && (j === 'min' || j === 'guest' || j === 'week')) { q[j + 'At'] = Date.now(); } }
+    var patch = { quests: q };
+    for (var e in (extra || {})) { patch[e] = extra[e]; }
+    this.setG(patch);
+  }
+  find(g, test) {
+    var out = [];
+    (g.order || []).forEach(function (id) {
+      var p = g.pieces[id];
+      if (p && (p.where === 'store' || p.where === 'shelf') && test(p)) { out.push(id); }
+    });
+    out.sort(function (a, b) { return (g.pieces[b].value || 0) - (g.pieces[a].value || 0); });
+    return out;
+  }
+  give(ids, extra) {
+    var g = this.state.g;
+    var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
+    ids.forEach(function (id) { var p = {}; for (var a in pieces[id]) { p[a] = pieces[id][a]; } p.where = 'sold'; pieces[id] = p; });
+    var patch = { pieces: pieces };
+    for (var e in extra) { patch[e] = extra[e]; }
+    this.setG(patch);
+  }
+  guests(g) {
+    var self = this;
+    var q = g.quests || {};
+    var list = [];
+    var gradeMul = { '양작': 1, '수작': 1.3, '명작': 1.6, '요변': 2 };
+    function fame(xp) { var lv = g.fameLv, x = g.fameXp + xp; while (x >= 100) { lv++; x -= 100; } return { fameLv: lv, fameXp: x }; }
+    var accept = { label: '', run: null };
+
+    if (!q.minThanks) {
+      var cups = this.find(g, function (p) { return p.shape === 'cup' && p.glaze === 'celadon'; });
+      var m = { id: 'min', name: '민 씨', res: 'CHAR_MIN', tone: '#B9533A', tag: '찻집 주인 · 신뢰 ♥♥♥', tagBg: '#B9533A' };
+      m.kind = !q.min ? 'offer' : (!q.minDone ? (cups.length ? 'deliver' : 'wait') : 'thanks');
+      m.qt = '할머님 잔을 닮은 찻잔';
+      if (!q.min) {
+        m.face = '부탁'; m.lines = ['어서 오세요… 아, 여기가 그 할머님 공방 맞죠?', '할머님께 늘 받아 쓰던 찻잔이 깨졌어요. 매일 아침 그 잔으로 차를 마셨거든요.', '비슷한 걸 하나만 부탁드려도 될까요? 청자빛이면 좋겠어요.'];
+        m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }, { t: '선호: 수작 이상' }], reward: '400G · 명성 +2 · 신뢰 +1' };
+        m.choices = [
+          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 장부에 「할머님 잔을 닮은 찻잔」이 적혔다'); } },
+          { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
+        ];
+      } else if (!q.minDone) {
+        if (cups.length) {
+          var best = g.pieces[cups[0]];
+          var pay = Math.round(400 * (gradeMul[best.grade] || 1) / 10) * 10;
+          m.face = '기대'; m.lines = ['잔은 어떻게 되어가나요?', '(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 이 빛깔, 할머님 잔이랑 꼭 닮았어요.'];
+          m.choices = [
+            { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
+              var f = fame(20);
+              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
+              self.setState({ line: 0 });
+              self.say('의뢰 완료 · 골드 +' + pay + ' · 명성 +20 · 신뢰 +1');
+            } },
+            { label: '조금만 더 다듬을게요', tone: '', run: function () { self.next('“네, 천천히 하세요.”'); } }
+          ];
+        } else {
+          m.face = '평온'; m.lines = ['잔은 어떻게 되어가나요?', '천천히 하셔도 괜찮아요. 저는 기다리는 것도 좋아해서요.'];
+          m.choices = [
+            { label: '물레로 가기', tone: 'go', href: 'Wheel.dc.html' },
+            { label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }
+          ];
+        }
+      } else {
+        m.face = '기쁨'; m.lines = ['이 잔으로 차를 마시니 할머님이 곁에 계신 것 같아요.', '가게에도 소문을 내둘게요. 고맙습니다.'];
+        m.choices = [{ label: '또 오세요', tone: 'go', run: function () { self.setQ({ minThanks: true }); self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 }); } }];
+      }
+      list.push(m);
+    }
+
+    if (!q.guestThanks) {
+      var bowls = this.find(g, function (p) { return p.shape === 'bowl'; });
+      var u = { id: 'guest', name: '이름 없는 손님', res: 'CHAR_GUEST', tone: '#5B3A24', tag: '일간 의뢰', tagBg: '#8A7A63' };
+      u.kind = !q.guest ? 'offer' : (!q.guestDone ? (bowls.length ? 'deliver' : 'wait') : 'thanks');
+      u.qt = '둥근 밥공기';
+      if (!q.guest) {
+        u.face = '무심'; u.lines = ['밥공기 하나만 주문해도 될까요?', '모양만 둥글면 유약은 아무거나 괜찮아요.'];
+        u.card = { title: '둥근 밥공기', conds: [{ t: '사발' }, { t: '유약 무관' }], reward: '350G' };
+        u.choices = [
+          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ guest: true }); self.say('의뢰 장부에 「둥근 밥공기」가 적혔다'); } },
+          { label: '다음에요', tone: '', run: function () { self.next(''); } }
+        ];
+      } else if (!q.guestDone) {
+        if (bowls.length) {
+          var b = g.pieces[bowls[0]];
+          u.face = '무심'; u.lines = ['주문한 밥공기 있나요?', '(' + b.name + '을(를) 내민다)'];
+          u.choices = [
+            { label: b.name + ' 건네기 · 350G', tone: 'go', run: function () { self.give([bowls[0]], { gold: g.gold + 350, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.guestDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('의뢰 완료 · 골드 +350'); } },
+            { label: '아직이에요', tone: '', run: function () { self.next(''); } }
+          ];
+        } else {
+          u.face = '무심'; u.lines = ['주문한 밥공기 있나요?', '아직이군요. 내일 또 올게요.'];
+          u.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+        }
+      } else {
+        u.face = '미소'; u.lines = ['밥맛이 좋아졌어요. 그릇 덕인가 봐요.'];
+        u.choices = [{ label: '또 오세요', tone: 'go', run: function () { self.setQ({ guestThanks: true }); self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 }); } }];
+      }
+      list.push(u);
+    }
+
+    if (!q.weekThanks) {
+      var whites = this.find(g, function (p) { return p.shape === 'cup' && p.glaze === 'white'; });
+      var c = { id: 'week', name: '카페 사장', res: 'CHAR_CAFE', tone: '#4E7D74', tag: '주간 의뢰', tagBg: '#4E7D74' };
+      c.kind = !q.week ? 'offer' : (!q.weekDone ? (whites.length >= 3 ? 'deliver' : 'wait') : 'thanks');
+      c.qt = '카페 잔 세트';
+      if (!q.week) {
+        c.face = '설렘'; c.lines = ['새로 카페를 열었어요. 창가 자리에 놓을 잔이 필요해요.', '백자 찻잔 세 점, 높고 단정한 걸로 부탁드려도 될까요?'];
+        c.card = { title: '카페 잔 세트', conds: [{ t: '찻잔 3점' }, { t: '백자유' }], reward: '3,600G · 파편 20 · 신뢰 +3' };
+        c.choices = [
+          { label: '맡을게요 (7일)', tone: 'go', run: function () { self.setQ({ week: true }); self.say('의뢰 장부에 「카페 잔 세트」가 적혔다'); } },
+          { label: '다음에요', tone: '', run: function () { self.next(''); } }
+        ];
+      } else if (!q.weekDone) {
+        if (whites.length >= 3) {
+          c.face = '감탄'; c.lines = ['세 점 다 되었다고요?', '(백자 찻잔 세 점을 나란히 올려둔다)', '와… 창가에 두면 정말 예쁘겠어요.'];
+          c.choices = [
+            { label: '세 점 건네기 · 3,600G', tone: 'go', run: function () { self.give(whites.slice(0, 3), { gold: g.gold + 3600, shards: g.shards + 20, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.weekDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('주간 의뢰 완료 · 골드 +3,600 · 파편 +20'); } },
+            { label: '조금만 더요', tone: '', run: function () { self.next(''); } }
+          ];
+        } else {
+          c.face = '평온'; c.lines = ['잔은 몇 점이나 되었나요?', '지금 ' + whites.length + '점이군요. 세 점이 모이면 다시 올게요.'];
+          c.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+        }
+      } else {
+        c.face = '기쁨'; c.lines = ['손님들이 잔을 보고 어디서 샀냐고 물어요. 공방 이름을 알려드렸어요.'];
+        c.choices = [{ label: '또 오세요', tone: 'go', run: function () { self.setQ({ weekThanks: true }); self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 }); } }];
+      }
+      list.push(c);
+    }
+
+    if (g.curator !== 'done') {
+      var good = this.find(g, function (p) { return p.where === 'shelf' && (p.grade === '수작' || p.grade === '명작' || p.grade === '요변'); });
+      if (good.length) {
+        list.push({
+          id: 'curator', kind: 'curator', name: '미술관 큐레이터', res: 'CHAR_CURATOR', tone: '#7A5A93', tag: '방문객', tagBg: '#7A5A93', face: '관찰',
+          lines: ['진열대의 ' + g.pieces[good[0]].name + ', 소문이 자자하던데요.', '잠시 가까이서 보여주실 수 있을까요?'],
+          choices: [
+            { label: '진열대로 안내하기', tone: 'go', href: 'Display.dc.html', run: function () { self.setG({ curatorCall: Date.now() }); } },
+            { label: '오늘은 어려워요', tone: '', run: function () { self.next('“알겠습니다. 다음에 또 들르지요.”'); } }
+          ]
+        });
+      }
+    }
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사' };
+    var trendS = this.trend();
+    (g.tasteOrders || []).forEach(function (o) {
+      var wantT2 = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
+      var hits2 = self.find(g, function (pp) { return pp.shape === o.want.shape && (!o.want.glaze || pp.glaze === o.want.glaze); });
+      var node2 = { id: o.id, kind: hits2.length ? 'deliver' : 'wait', name: o.name, res: o.res, tone: '#6B5A45', tag: '주문 손님', tagBg: '#C8601E', qt: wantT2 };
+      if (hits2.length) {
+        var op = g.pieces[hits2[hits2.length - 1]], oprice = self.priceOf(g, op, 1.4);
+        node2.face = '반가움'; node2.lines = ['연락 받고 왔어요! ' + wantT2 + ' 다 됐다고요?', '(' + op.name + '을(를) 꺼내 보인다)', '생각했던 그대로예요. 약속한 대로 드릴게요.'];
+        node2.choices = [
+          { label: op.name + ' 건네기 · ' + oprice.toLocaleString() + 'G', tone: 'go', run: function () {
+            var cur = self.state.g, day = new Date().toDateString(), sold = {}, src = cur.soldDay === day ? (cur.soldBy || {}) : {};
+            for (var k in src) { sold[k] = src[k]; } sold[op.shape] = (sold[op.shape] || 0) + 1;
+            var lv = cur.fameLv, x = cur.fameXp + 5; while (x >= 100) { lv++; x -= 100; }
+            var doneO = { id: o.id, name: o.name, want: o.want, price: oprice, at: Date.now() };
+            self.give([hits2[hits2.length - 1]], { gold: cur.gold + oprice, fameLv: lv, fameXp: x, soldDay: day, soldBy: sold, tasteOrders: (cur.tasteOrders || []).filter(function (z) { return z.id !== o.id; }), tasteDone: [doneO].concat(cur.tasteDone || []).slice(0, 10) });
+            self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
+            self.say('주문 완료 · 골드 +' + oprice.toLocaleString() + ' · 명성 +5');
+          } },
+          { label: '조금만 더요', tone: '', run: function () { self.next(''); } }
+        ];
+      } else {
+        node2.face = '평온'; node2.lines = [wantT2 + '은(는) 아직인가요?'];
+        node2.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+      }
+      list.push(node2);
+    });
+    (g.walkins || []).forEach(function (w) {
+      var node = { id: w.id, kind: 'walk', name: w.name, res: w.res, tone: '#6B5A45', tag: w.type === 'taste' ? '취향 손님' : '지나가는 손님', tagBg: w.type === 'taste' ? '#C8601E' : '#8A7A63' };
+      if (w.type === 'walk') {
+        var shelf = (g.order || []).filter(function (id) { return g.pieces[id] && g.pieces[id].where === 'shelf'; });
+        if (!shelf.length) {
+          node.face = '아쉬움'; node.lines = ['(진열대를 둘러본다)', '오늘은 진열된 게 없네요. 다음에 들를게요.'];
+          node.choices = [{ label: '배웅하기', tone: '', run: function () { self.leaveWalk(w, '진열대가 비어 손님이 그냥 돌아갔다'); } }, { label: '진열대 채우러 가기', tone: 'go', href: 'Display.dc.html' }];
+        } else {
+          var pid = shelf[w.seed % shelf.length], p = g.pieces[pid], price = self.priceOf(g, p, 1);
+          node.face = '흥미'; node.lines = ['(진열대를 천천히 둘러본다)', p.name + ', 이거 참 예쁘네요.', '이걸로 할게요. 얼마예요?'];
+          node.card = { title: p.name, conds: [{ t: p.grade }, { t: '평가액 ' + (p.value || 0).toLocaleString() + 'G' }, { t: trendS === p.shape ? '오늘의 유행 +20%' : '오늘 판매 시세' }], reward: price.toLocaleString() + 'G · 명성 +2' };
+          node.choices = [
+            { label: '판매하기 · ' + price.toLocaleString() + 'G', tone: 'go', run: function () { self.sellWalk(w, pid, price); } },
+            { label: '그건 안 팔아요', tone: '', run: function () { self.leaveWalk(w, '“아쉽네요. 또 올게요.”'); } }
+          ];
+        }
+      } else {
+        var wantT = (w.want.glaze ? GN[w.want.glaze] + ' ' : '') + (SN[w.want.shape] || '그릇');
+        var hits = self.find(g, function (pp) { return pp.shape === w.want.shape && (!w.want.glaze || pp.glaze === w.want.glaze); });
+        node.card = { title: wantT + ' 찾는 손님', conds: [{ t: SN[w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '진열대 · 창고 모두 가능' }], reward: '시세 +40%' };
+        if (hits.length) {
+          var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 1.4);
+          node.face = '반가움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '(' + (hp.where === 'shelf' ? '진열대' : '창고') + '에서 ' + hp.name + '을(를) 꺼내 보인다)', '바로 이거예요! 값은 넉넉히 드릴게요.'];
+          node.choices = [
+            { label: '판매하기 · ' + hprice.toLocaleString() + 'G', tone: 'go', run: function () { self.sellWalk(w, hits[hits.length - 1], hprice); } },
+            { label: '그건 안 팔아요', tone: '', run: function () { self.leaveWalk(w, '“그럼 다른 데 알아볼게요.”'); } }
+          ];
+        } else {
+          node.face = '아쉬움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '지금은 없군요…', '혹시 만들어 주실 수 있나요? 값은 넉넉히 드릴게요.'];
+          node.card = { title: wantT + ' 주문', conds: [{ t: SN[w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '기한 3일' }], reward: '시세 +40% · 명성 +5' };
+          node.choices = [
+            { label: '만들어 드릴게요', tone: 'go', run: function () {
+              var cur = self.state.g, ord = { id: 'to' + Date.now(), name: w.name, res: w.res, want: w.want, at: Date.now() };
+              self.setG({ tasteOrders: (cur.tasteOrders || []).concat([ord]), walkins: (cur.walkins || []).filter(function (z) { return z.id !== w.id; }) });
+              self.setState({ line: 0, enterN: self.state.enterN + 1 });
+              self.say('의뢰 장부에 「' + wantT + '」 주문이 적혔다 · 준비되면 납품에서 부르자');
+            } },
+            { label: '어렵겠어요', tone: '', run: function () { self.leaveWalk(w, '“그럼 다른 데 알아볼게요.”'); } }
+          ];
+        }
+      }
+      list.push(node);
+    });
+    return list;
+  }
+  next(msg) {
+    if (this.state.deliver) { this.setState({ deliver: '', line: 0, enterN: this.state.enterN + 1 }); if (msg) { this.say(msg); } return; }
+    var n = this.guests(this.state.g).filter(function (x) { return x.kind !== 'wait' && x.kind !== 'deliver'; }).length || 1;
+    this.setState({ gi: (this.state.gi + 1) % n, line: 0, enterN: this.state.enterN + 1 });
+    if (msg) { this.say(msg); }
+  }
+  renderVals0() {
+    var self = this;
+    var s = this.state;
+    var g = s.g;
+    var all = this.guests(g);
+    var list = all.filter(function (x) { return x.kind === 'offer' || x.kind === 'thanks' || x.kind === 'curator' || x.kind === 'walk'; });
+    var delL = all.filter(function (x) { return x.kind === 'deliver'; });
+    var gi = list.length ? s.gi % list.length : 0;
+    var cur = list[gi];
+    var inDel = false;
+    if (s.deliver) {
+      var dc = all.filter(function (x) { return x.id === s.deliver && (x.kind === 'deliver' || x.kind === 'thanks'); })[0];
+      if (dc) { cur = dc; inDel = true; }
+    }
+    var lines = cur ? cur.lines : [''];
+    var li = Math.min(s.line, lines.length - 1);
+    var atEnd = li >= lines.length - 1;
+    var choices = (cur && atEnd ? cur.choices : []).map(function (c) {
+      var st = 'all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:11px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:16px;text-decoration:none;' + (c.tone === 'go' ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
+      return { label: c.label, style: st, isLink: !!c.href, isBtn: !c.href, href: c.href || '', run: c.run || function () {} };
+    });
+    var ordered = list.slice(gi).concat(list.slice(0, gi));
+    var queue = ordered.map(function (x, i) {
+      var on = i === 0 && !inDel;
+      return {
+        name: (i + 1) + '. ' + x.name + (on ? ' · 응대 중' : ''),
+        style: 'flex:0 0 auto;padding:4px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;' + (on ? 'background:#5B3A24;color:#FFE7A8;border:2px solid #3E2616;' : 'background:rgba(255,244,222,.75);color:#8A6440;border:2px solid #C9B08A;')
+      };
+    });
+    var hasCard = !!(cur && cur.card && atEnd);
+    var nxs = Math.max(0, Math.ceil(((g.walkNext || Date.now()) - Date.now()) / 1000));
+    if ((g.walkins || []).length < 4) { queue.push({ name: '다음 손님 ' + nxs + '초', style: 'flex:0 0 auto;padding:4px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;background:transparent;color:#8A6440;border:2px dashed #C9B08A;' }); }
+    return {
+      delN: delL.length,
+      delBtn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (delL.length ? 'background:#4A9440;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;' : 'background:#FFF4DE;color:#8A6440;border:3px solid #C9B08A;'),
+      delOpen: !!s.delOpen,
+      delEmpty: delL.length === 0,
+      delList: delL.map(function (x) { var PT = { CHAR_WALK_A: '_blob/912e9ec77c6b6ee597e4be541992b73d.webp', CHAR_WALK_B: '_blob/1c635efceb3eed2458ef159692fef35a.webp', CHAR_WALK_C: '_blob/e9395a3a3269153e3fac785a1ba68703.webp', CHAR_WALK_D: '_blob/6c4c9b9d74dd453ef4bb14f386bc3696.webp', CHAR_WALK_E: '_blob/0b20d0a46bf5e6f974caef1040035776.webp', CHAR_WALK_F: '_blob/c5e1a7a95902cf6bc26693fd44bc035c.webp', CHAR_GUEST: '_blob/7feb87572bb027f08ca0e812931ec0f7.webp', CHAR_MIN: '_blob/f4bba7f421b345a6ec6cbcb624274932.webp', CHAR_CAFE: '_blob/24a7c373b7472b0759480f3a740e3c2f.webp' }; return { name: x.name, res: x.res, pimg: PT[x.res] || '', hasP: !!PT[x.res], noP: !PT[x.res], title: x.qt || '', call: function () { self.setState({ deliver: x.id, delOpen: false, line: 0, enterN: s.enterN + 1 }); } }; }),
+      toggleDel: function () { self.setState({ delOpen: !s.delOpen }); },
+      queue: queue,
+      hasGuest: !!cur,
+      noGuest: !cur,
+      nextGuest: '다음 손님까지 ' + Math.max(0, Math.ceil(((g.walkNext || Date.now()) - Date.now()) / 1000)) + '초 · 진열대가 채워질수록 자주 온다',
+      guest: (function () { var CH = { CHAR_WALK_A: ['_blob/5c9039297f4140af280ddc5d8c29f1d8.webp', '_blob/5c9039297f4140af280ddc5d8c29f1d8.webp', '_blob/5c9039297f4140af280ddc5d8c29f1d8.webp'], CHAR_WALK_B: ['_blob/56842aecbfbf36e871d3a88553c994b7.webp', '_blob/56842aecbfbf36e871d3a88553c994b7.webp', '_blob/56842aecbfbf36e871d3a88553c994b7.webp'], CHAR_WALK_C: ['_blob/508d74e08961f6ee6d2842676a07a0ff.webp', '_blob/508d74e08961f6ee6d2842676a07a0ff.webp', '_blob/508d74e08961f6ee6d2842676a07a0ff.webp'], CHAR_WALK_D: ['_blob/ed271278d8689ec7ad4a625c7a394620.webp', '_blob/ed271278d8689ec7ad4a625c7a394620.webp', '_blob/ed271278d8689ec7ad4a625c7a394620.webp'], CHAR_WALK_E: ['_blob/e70f6b87f40eebdb5ea5904560008b54.webp', '_blob/e70f6b87f40eebdb5ea5904560008b54.webp', '_blob/e70f6b87f40eebdb5ea5904560008b54.webp'], CHAR_WALK_F: ['_blob/dff17864488675fa3c1e0591dfe63c72.webp', '_blob/dff17864488675fa3c1e0591dfe63c72.webp', '_blob/dff17864488675fa3c1e0591dfe63c72.webp'], CHAR_GUEST: ['_blob/0a3fb7853f4ae205b33b343c6c1318fb.webp', '_blob/f57631287b2029926da5c35a0d2f0a71.webp', '_blob/0a3fb7853f4ae205b33b343c6c1318fb.webp'], CHAR_CURATOR: ['_blob/23b7b044f48072ca55bab6b54deb1b60.webp', '_blob/03a328d4ea7622f6949c549414b9dd47.webp', '_blob/6233e82f7763126a3822d7602b6e845c.webp'], CHAR_MIN: ['_blob/f5ff87ba961b89436c380e77c10e73d0.webp', '_blob/02631b5878c7fe875dd455d917a1baf3.webp', '_blob/591272dc96dbfdbd6df09d772a76cc92.webp'], CHAR_CAFE: ['_blob/fc84dd5964faa20720f7847eb79ff2bd.webp', '_blob/ea5ca7ccdb67bfa9a1ee010aaa5e181d.webp', '_blob/fab38383f3845ad8a576c2f3e14b8ac5.webp'] }; var FI = { offer: 2, wait: 0, deliver: 1, thanks: 1, curator: 0 }; var set = cur && CH[cur.res]; var im = set ? set[FI[cur.kind] !== undefined ? FI[cur.kind] : 0] : ''; return cur ? { name: cur.name, res: cur.res, tone: cur.tone, tag: cur.tag, tagBg: cur.tagBg, face: cur.face, img: im, hasImg: !!im, noImg: !im } : { name: '', res: '', tone: '#5B3A24', tag: '', tagBg: '#5B3A24', face: '', img: '', hasImg: false, noImg: true }; })(),
+      guestWrap: 'position:absolute;left:0;top:104px;width:390px;height:300px;animation:' + (s.enterN % 2 ? 'enterA' : 'enterB') + ' .45s ease-out both',
+      line: lines[li],
+      showCard: hasCard,
+      card: hasCard ? cur.card : { title: '', conds: [], reward: '' },
+      showChoices: choices.length > 0,
+      choices: choices,
+      choiceTop: hasCard ? 330 - (choices.length - 2) * 30 : 400 - (choices.length - 2) * 30,
+      moreLabel: atEnd ? '위 선택지를 고르자' : '▼ 눌러서 계속',
+      moreStyle: 'align-self:flex-end;font-family:Jua,sans-serif;font-size:12px;color:#8A6440;' + (atEnd ? '' : 'animation:blink 1s ease-in-out infinite;'),
+      advance: function () { if (!atEnd) { self.setState({ line: li + 1 }); } },
+      backToCounter: function () { self.setG({ mainFocus: 'counter' }); },
+      toast: s.toast,
+      toastOn: s.toast !== ''
+    };
+  }
+
+  navId() { return 'counter'; }
+  navFlow() {
+    var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
+    var defs = [
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+    ];
+    return defs.filter(function (d) { return !st[d.id] || d.id === me; });
+  }
+  renderVals() {
+    var v = this.renderVals0();
+    var n = this.navVals();
+    for (var k in n) { v[k] = n[k]; }
+    return v;
+  }
+  navVals() {
+    var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 696 / 844;
+    var i = 0;
+    fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
+    var prev = fl[i - 1], next = fl[i + 1];
+    var dx = s.navDx || 0;
+    var NB = 59, VW = 312, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
+    var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));
+    var off = s.navOff === undefined || s.navOff === null ? autoOff : Math.max(minOff, Math.min(0, s.navOff));
+    function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
+    return {
+      navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
+      navDropStyle: 'width:390px;height:844px',
+      navDust: 'display:none',
+      navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
+      navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navFadeR: off > minOff + 2 ? 'position:absolute;right:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(270deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navBarDown: function (e) { self.navBar = { x: e.clientX, off: off, moved: false, k: (e.currentTarget.getBoundingClientRect().width / VW) || 1 }; },
+      navBarMove: function (e) {
+        var b = self.navBar; if (!b) { return; }
+        var d = (e.clientX - b.x) / b.k;
+        if (!b.moved && Math.abs(d) > 6) { b.moved = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }
+        if (b.moved) { self.setState({ navOff: Math.max(minOff, Math.min(0, b.off + d)) }); }
+      },
+      navBarUp: function () { var b = self.navBar; self.navBar = null; self.navBarMoved = !!(b && b.moved); if (b && b.moved) { self.setState({ navOff: s.navOff }); } setTimeout(function () { self.navBarMoved = false; }, 60); },
+      navBarClick: function (e) { if (self.navBarMoved) { e.preventDefault(); e.stopPropagation(); self.navBarMoved = false; } },
+      navSteps: fl.map(function (d, j) {
+        var on = j === i;
+        return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
+          style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
+      }),
+      navStage: 'position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:translateX(' + dx + 'px) scale(' + K + ');touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navPrevOn: !!prev, navNextOn: !!next,
+      navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
+      navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
+      navLocked: !!s.navLock,
+      navWip: (function () { var g2 = s.g || {}, kf = g2.kilnFilled || {}, n = 0; for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { n++; } } return (g2.formedList || []).length + (g2.dryList || []).length + (g2.bisqueList || []).length + ((g2.bisque || {}).items || []).length + (g2.glazeList || []).length + (g2.kilnList || []).length + n + (g2.kiln === 'firing' ? (g2.batchItems || []).length : 0) + (function () { var c = 0, ps = g2.pieces || {}; for (var pk in ps) { if (ps[pk] && ps[pk].where === 'store' && ps[pk].fresh) { c++; } } return c; })(); })(),
+      navDown: function (e) {
+        if (isWork(e)) {
+          self.navWork = self.navWork || {};
+          self.navWork[e.pointerId] = true;
+          if (self.navP) { self.navP = null; self.setState({ navSw: false, navDx: 0 }); }
+          if (!self.state.navLock) { self.setState({ navLock: true }); }
+          return;
+        }
+        if (self.state.navLock) { return; }
+        var el = e.currentTarget, rc = el.getBoundingClientRect();
+        self.navP = { x: e.clientX, y: e.clientY, id: e.pointerId, el: el, on: false, kk: (rc.width / ((el.offsetWidth || 390) * K)) || 1 };
+      },
+      navMove: function (e) {
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        var mx = (e.clientX - p.x) / p.kk, my = (e.clientY - p.y) / p.kk;
+        if (!p.on) {
+          if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my)) { return; }
+          p.on = true; self.navMoved = true;
+          try { p.el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        var edge = (!prev && mx > 0) || (!next && mx < 0);
+        self.setState({ navSw: true, navDx: edge ? mx * 0.25 : mx });
+      },
+      navUp: function (e) {
+        var w = self.navWork || {};
+        if (w[e.pointerId]) {
+          delete w[e.pointerId];
+          if (!Object.keys(w).length) { self.setState({ navLock: false }); }
+          return;
+        }
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        self.navP = null;
+        if (!p.on) { return; }
+        var d = self.state.navDx || 0;
+        var dir = d < -80 && next ? 'next' : (d > 80 && prev ? 'prev' : '');
+        if (!dir) { self.setState({ navSw: false, navDx: 0 }); return; }
+        self.setState({ navSw: false, navDx: 0 });
+        var root = p.el.parentNode;
+        setTimeout(function () {
+          var a = root && (root.querySelector('a[data-nav="' + dir + '"]') || root.querySelector('a[aria-label="' + (dir === 'next' ? '다음 공정' : '이전 공정') + '"]'));
+          if (a) { a.click(); } else { self.setState({ navDx: 0 }); }
+        }, 0);
+      },
+      navClickCap: function (e) { if (self.navMoved) { e.preventDefault(); e.stopPropagation(); self.navMoved = false; } }
+    };
+  }
+}
+</script>
+</body>
+</html>

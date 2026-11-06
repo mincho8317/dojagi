@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>시즌 이벤트</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+@keyframes starPop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
+@keyframes rise{0%{transform:translateY(30px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes glowP{0%,100%{box-shadow:0 0 0 3px #FFE7A8,0 0 10px rgba(255,214,107,.6)}50%{box-shadow:0 0 0 3px #FFE7A8,0 0 22px rgba(255,214,107,1)}}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#F8E6E6;color:#2B1A0F">
+  <img src="_blob/5b4a8a8955d675b9454f56ec12f43994.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-0px;top:0;width:390px;height:844px;object-fit:cover;pointer-events:none;user-select:none">
+  <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
+    <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
+    <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">시즌 이벤트</div>
+    <span style="flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;background:#D46A86;border:2px solid #A94767;font-family:'Jua',sans-serif;font-size:15px;color:#FFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;font-size:5px;display:flex;align-items:center;justify-content:center"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>{{petals}}</span>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:64px;height:118px;box-sizing:border-box;border:3px solid #A94767;border-radius:18px;overflow:hidden;isolation:isolate;background:#FCEBD8;box-shadow:0 3px 0 rgba(122,47,68,.35);display:flex;flex-direction:column;justify-content:flex-end;padding:10px 14px;gap:2px">
+    <img src="_blob/23194812f55e80eeab54bfa8d94875e6.webp" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;pointer-events:none;z-index:-1">
+    <span style="font-family:'Jua',sans-serif;font-size:24px;color:#7A2F44">봄 다회</span>
+    <span style="max-width:58%;font-size:12px;line-height:1.4;color:#7A2F44">벚꽃 아래 찻자리를 차리는 계절 · 한정 물품은 시즌이 끝나면 사라진다</span>
+    <span style="align-self:flex-start;margin-top:4px;padding:2px 10px;border-radius:9px;background:#7A2F44;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7EE">남은 기간 D-{{dday}}</span>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:192px;bottom:100px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px">
+    <div style="box-sizing:border-box;padding:10px 12px;border-radius:16px;background:#FFF8F5;border:3px solid #A94767;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">축제 미션 · 꽃잎 모으기</span><a href="Contest.dc.html" style="font-family:'Jua',sans-serif;font-size:12px;color:#A94767">시즌 스테이지 →</a></div>
+      <sc-for list="{{missions}}" as="ms" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:12.5px;font-weight:700;color:#3E2616">{{ms.name}}</span>
+            <div style="height:8px;border-radius:4px;background:#F1D5DC;overflow:hidden"><div style="{{ms.bar}}"></div></div>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:#7A2F44;white-space:nowrap">{{ms.prog}}</span>
+          <button type="button" onClick="{{ms.claim}}" style="{{ms.btn}}">{{ms.btnLabel}}</button>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2F44">시즌 한정 상점</span><span style="font-size:11px;color:#7A2F44">시즌 종료 후 판매 종료 · 내년 복각 예정</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="6">
+        <button type="button" onClick="{{it.buy}}" aria-label="{{it.aria}}" style="{{it.card}}">
+          <span style="{{it.kindStyle}}">{{it.kind}}</span>
+          <span style="{{it.icon}}"><img dc-src="{{it.img}}" alt="" aria-hidden="true" style="width:86%;height:86%;object-fit:contain"></span>
+          <span style="font-family:'Jua',sans-serif;font-size:12.5px;color:#2B1A0F;line-height:1.15;text-align:center">{{it.name}}</span>
+          <span style="{{it.priceStyle}}">{{it.price}}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:30px;right:30px;top:300px;z-index:90;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center;pointer-events:none">{{toast}}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { g: this.loadG(), toast: '' }; }
+  loadG() {
+    var d = { gold: 1240, shards: 142, fameLv: 3, fameXp: 62, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, deco: {}, mats: {} };
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.loadG(), g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+  }
+  componentWillUnmount() { clearTimeout(this.tt); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
+  say(m) { var self = this; clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000); }
+
+  renderVals() {
+    var self = this, s = this.state, g = s.g;
+    var sea = g.season || { petals: 25, claimed: {}, bought: {} };
+    var day = new Date().toDateString();
+    var soldN = 0; if (g.soldDay === day) { for (var k in (g.soldBy || {})) { soldN += g.soldBy[k]; } }
+    var rec = (g.contest || {}).stars || {}, springStars = (rec.s1 || 0) + (rec.s2 || 0);
+    var shelf = 0; for (var k2 in (g.pieces || {})) { if (g.pieces[k2].where === 'shelf') { shelf++; } }
+    function save(p) { var n = { petals: sea.petals, claimed: sea.claimed || {}, bought: sea.bought || {} }; for (var x in p) { n[x] = p[x]; } return n; }
+    var M = [
+      { id: 'm1', name: '오늘 작품 3점 판매하기', cur: soldN, max: 3, reward: 10 },
+      { id: 'm2', name: '시즌 스테이지 별 3개', cur: springStars, max: 3, reward: 20 },
+      { id: 'm3', name: '진열대 6칸 가득 채우기', cur: shelf, max: 6, reward: 10 }
+    ];
+    var missions = M.map(function (m) {
+      var done = m.cur >= m.max, got = !!(sea.claimed || {})[m.id];
+      return {
+        name: m.name, prog: Math.min(m.cur, m.max) + '/' + m.max,
+        bar: 'height:100%;border-radius:4px;background:#D46A86;width:' + Math.min(100, m.cur / m.max * 100) + '%',
+        btnLabel: got ? '받음' : '+' + m.reward,
+        btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#A08890;border:2px solid #D8C3C8' : (done ? 'background:#D46A86;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#C9A0AB;border:2px solid #E6C3CC')),
+        claim: function () {
+          if (got) { return; }
+          if (!done) { self.say('아직 조건을 채우지 못했다 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
+          var c = {}; for (var x in (sea.claimed || {})) { c[x] = sea.claimed[x]; } c[m.id] = true;
+          self.setG({ season: save({ petals: sea.petals + m.reward, claimed: c }) });
+          self.say('꽃잎 +' + m.reward);
+        }
+      };
+    });
+    var I = [
+      { id: 'sakura', name: '벚꽃유', kind: '한정 유약', res: 'GLZ_SAKURA', img: '_blob/9dfa7034fc62a520ec428f5b3bdebc0b.webp', price: 30, col: '#F4B6C4', apply: function (p) { var gf = {}; for (var x in (g.glazesFound || {})) { gf[x] = g.glazesFound[x]; } gf.sakura = true; p.glazesFound = gf; } },
+      { id: 'plum', name: '매화 문양', kind: '한정 문양', res: 'PTN_PLUM', img: '_blob/b570ded58d448dba37db6e748cf57424.webp', price: 20, col: '#FCEBD8', apply: function (p) { var pt = {}; for (var x in (g.patterns || {})) { pt[x] = g.patterns[x]; } pt.plum = true; p.patterns = pt; } },
+      { id: 'teabed', name: '다회 평상', kind: '한정 가구', res: 'DECO_TEABED', img: '_blob/7480af1a2e3666be0fe08ab90f2616f2.webp', price: 40, col: '#E8D5B7', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.teabed = true; p.deco = d; } },
+      { id: 'lantern', name: '꽃 등롱', kind: '한정 가구', res: 'DECO_FLOWER_LAMP', img: '_blob/0ddf322aaf48ab6e1f34af33fbd75920.webp', price: 15, col: '#FFE7A8', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.flowerlamp = true; p.deco = d; } },
+      { id: 'clay', name: '봄빛 흙 ×3', kind: '한정 재료', res: 'MAT_SPRING_CLAY', img: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp', price: 25, col: '#F2D7C9', apply: function (p) { var m = {}; for (var x in (g.mats || {})) { m[x] = g.mats[x]; } m.spring = (m.spring || 0) + 3; p.mats = m; } },
+      { id: 'invite', name: '다회 초대장', kind: '특별 손님', res: 'ITEM_INVITE', img: '_blob/efb9f0de474660761633b5ce70321809.webp', price: 35, col: '#EDE3F3', apply: function (p) { p.inviteGuest = true; } }
+    ];
+    var items = I.map(function (it) {
+      var got = !!(sea.bought || {})[it.id], afford = sea.petals >= it.price;
+      return {
+        name: it.name, kind: it.kind, res: it.res, img: it.img, aria: it.name + ' · 꽃잎 ' + it.price + (got ? ' · 구매 완료' : ''),
+        price: got ? '구매 완료' : '꽃잎 ' + it.price,
+        card: 'all:unset;cursor:pointer;position:relative;aspect-ratio:1 / 1.25;box-sizing:border-box;padding:8px 4px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;' + (got ? 'background:#EFE6E8;border:3px solid #D8C3C8;opacity:.75' : 'background:#FFF8F5;border:3px solid #D46A86;box-shadow:0 3px 0 #A94767'),
+        kindStyle: 'position:absolute;left:5px;top:5px;padding:0 5px;border-radius:6px;background:#7A2F44;font-size:9px;font-weight:700;color:#FFE7EE',
+        icon: 'margin-top:8px;width:54px;height:54px;box-sizing:border-box;border:2px solid rgba(91,58,36,.25);border-radius:12px;background:' + it.col + ';display:flex;align-items:center;justify-content:center;text-align:center;color:#7A2F44',
+        priceStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (got ? 'background:#D8C3C8;color:#FFF' : (afford ? 'background:#D46A86;color:#FFF' : 'background:#F1D5DC;color:#A94767')),
+        buy: function () {
+          if (got) { self.say('이미 가지고 있다'); return; }
+          if (!afford) { self.say('꽃잎이 ' + (it.price - sea.petals) + '장 부족하다 · 축제 미션으로 모으자'); return; }
+          var b = {}; for (var x in (sea.bought || {})) { b[x] = sea.bought[x]; } b[it.id] = true;
+          var p = { season: save({ petals: sea.petals - it.price, bought: b }) };
+          it.apply(p);
+          self.setG(p);
+          self.say(it.name + ' 획득 · ' + it.kind);
+        }
+      };
+    });
+    return {
+      petals: sea.petals, dday: Math.max(0, Math.ceil((new Date('2026-11-17T00:00:00+09:00') - Date.now()) / 86400000)),
+      missions: missions, items: items, toast: s.toast, toastOn: s.toast !== ''
+    };
+  }
+}
+</script>
+</body>
+</html>

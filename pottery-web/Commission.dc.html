@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>의뢰 장부</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+.bg-bg-corkboard{background:#B98A5A url(_blob/ad8452910f825451d55f57ca6c6788d1.webp) center/100% 100% no-repeat}
+.memo-peach{border:16px solid transparent;border-image:url(_blob/58dde4dc43c6ef08aba85de3262b47c7.webp) 42 fill / 16px stretch}
+.memo-green{border:16px solid transparent;border-image:url(_blob/96079047112ac758b37affe5c613a01f.webp) 42 fill / 16px stretch}
+.memo-blue{border:16px solid transparent;border-image:url(_blob/67b0a8c19d5e2a6720979e805dd4dacc.webp) 42 fill / 16px stretch}
+.memo-yellow{border:16px solid transparent;border-image:url(_blob/af95aa213ff7c0f323db93fbf7465f01.webp) 42 fill / 16px stretch}
+.pin-img{background:url(_blob/a914a02ebc2fcfa16c70367e94ac6362.webp) center/contain no-repeat}
+.tape-img{background:url(_blob/60aee087091f4eaf9abd2e36acce0fb4.webp) center/100% 100% no-repeat}
+.receipt-paper{background:url(_blob/5e00fd4a450bbb436d3e8f66fe155bef.webp) center/100% 100% no-repeat}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:repeating-linear-gradient(135deg,#9C7552 0 12px,#956E4C 12px 24px);color:#2B1A0F">
+
+  <div style="position:absolute;left:12px;right:12px;top:12px;bottom:92px;display:flex;flex-direction:column;gap:10px">
+
+    <div style="display:flex;align-items:center;gap:8px">
+      <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
+      <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">의뢰 장부</div>
+      <a href="Shop.dc.html" aria-label="골드, 상점 열기" style="position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;margin-left:8px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px;text-decoration:none">
+        <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#7A5A12"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{gold}}</span>
+      </a>
+    </div>
+
+    <div role="tablist" aria-label="장부 분류" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
+        <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
+      </sc-for>
+      <a href="Queue.dc.html" role="tab" aria-selected="false" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">창고 {{wipN}}</a>
+    </div>
+
+    <sc-if value="{{isActive}}" hint-placeholder-val="{{true}}">
+    <div class="bg-bg-corkboard" style="position:relative;flex:1 1 auto;min-height:0;box-sizing:border-box;border:0;border-radius:10px;padding:14px 10px;background-position:0 0,3px 4px;box-shadow:inset 0 0 18px rgba(60,35,15,.55),0 4px 0 rgba(43,26,15,.45);overflow-y:auto">
+      <div style="display:flex;flex-direction:column;gap:14px;padding:8px 12px 16px">
+      <sc-for list="{{cards}}" as="cd" hint-placeholder-count="3">
+        <article class="{{cd.cls}}" style="{{cd.wrap}}">
+          <span class="pin-img" aria-hidden="true" style="{{cd.pin}}"></span>
+          <span class="tape-img" aria-hidden="true" style="{{cd.tape}}"></span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <sc-if value="{{cd.hasP}}" hint-placeholder-val="{{false}}"><img dc-src="{{cd.pimg}}" alt="" aria-hidden="true" style="flex:0 0 42px;width:42px;height:50px;object-fit:cover;border-radius:8px;border:2px solid rgba(91,58,36,.55);box-sizing:border-box"></sc-if><sc-if value="{{cd.noP}}" hint-placeholder-val="{{true}}"><div style="flex:0 0 42px;height:50px;box-sizing:border-box;border:2px dashed rgba(91,58,36,.55);border-radius:8px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:5.5px;font-weight:900;color:#5B3A24">{{cd.portrait}}</div></sc-if>
+            <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:5px;min-width:0">
+                <span style="{{cd.tagStyle}}">{{cd.tag}}</span>
+                <span style="font-family:'Jua',sans-serif;font-size:12.5px;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{cd.who}}</span>
+              </div>
+              <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{cd.need}}</span>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="flex:1 1 auto;height:6px;border-radius:3px;background:rgba(91,58,36,.18);overflow:hidden"><div style="{{cd.bar}}"></div></div>
+                <span style="{{cd.haveStyle}}">{{cd.have}}</span>
+              </div>
+            </div>
+            <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+              <span style="{{cd.timeStyle}}">{{cd.time}}</span>
+              <button type="button" onClick="{{cd.toggle}}" aria-expanded="{{cd.openAttr}}" aria-label="{{cd.toggleAria}}" style="all:unset;cursor:pointer;width:34px;height:34px;box-sizing:border-box;border-radius:50%;background:rgba(255,255,255,.6);border:2px solid rgba(91,58,36,.6);display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">{{cd.chev}}</button>
+            </div>
+          </div>
+          <sc-if value="{{cd.open}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-top:8px;border-top:2px dashed rgba(91,58,36,.3)">
+              <span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{cd.title}} <span style="font-family:'Noto Sans KR',sans-serif;font-size:11px;color:#7A5434">· {{cd.role}}</span></span>
+              <span style="font-size:11.5px;line-height:1.5;color:#5B3A24">{{cd.memo}}</span>
+              <div style="display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.5)">
+                <sc-for list="{{cd.conds}}" as="cn" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#3E2616">
+                    <span style="{{cn.mark}}">{{cn.icon}}</span><span>{{cn.text}}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#5B3A24"><span>납품 기한</span><b>{{cd.dueText}}</b></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">보상</span>
+                <span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{cd.reward}}</span>
+                <a href="{{cd.href}}" style="{{cd.goStyle}}">{{cd.goLabel}}</a>
+              </div>
+            </div>
+          </sc-if>
+        </article>
+      </sc-for>
+      <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+        <div style="margin:30px 10px;padding:18px 14px;transform:rotate(-1.5deg);background:#FFF8DC;box-shadow:0 4px 8px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">{{emptyText}}</span>
+          <a href="Counter.dc.html" style="padding:7px 16px;border-radius:12px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-decoration:none">카운터 가보기</a>
+        </div>
+      </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+    <div style="position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px">
+      <div style="position:relative;display:flex;align-items:center;gap:6px">
+        <button type="button" onClick="{{prevR}}" aria-label="이전 확인서" style="{{prevStyle}}">◀</button>
+        <button type="button" onClick="{{toggleList}}" aria-expanded="{{listOpenAttr}}" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
+          <span style="font-family:'Jua',sans-serif;font-size:12px;color:#B9533A">{{rc.no}}</span>
+          <span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{rc.label}}</span>
+          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">{{listChev}}</span>
+        </button>
+        <button type="button" onClick="{{nextR}}" aria-label="다음 확인서" style="{{nextStyle}}">▶</button>
+        <sc-if value="{{listOpen}}" hint-placeholder-val="{{false}}">
+          <div role="listbox" aria-label="납품 확인서 목록" style="position:absolute;left:44px;right:44px;top:48px;z-index:20;max-height:330px;overflow-y:auto;box-sizing:border-box;padding:6px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 8px 16px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:4px">
+            <sc-for list="{{rlist}}" as="rl" hint-placeholder-count="3">
+              <button type="button" role="option" aria-selected="{{rl.on}}" onClick="{{rl.pick}}" style="{{rl.style}}">
+                <span style="font-family:'Jua',sans-serif;font-size:11px;color:#B9533A">{{rl.no}}</span>
+                <span style="flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{rl.label}}</span>
+                <span style="{{rl.stStyle}}">{{rl.st}}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{hasR}}" hint-placeholder-val="{{true}}">
+        <div onPointerDown="{{rDown}}" onPointerUp="{{rUp}}" onPointerCancel="{{rUp}}" style="position:relative;flex:1 1 auto;min-height:0;touch-action:pan-y;display:flex;align-items:center;justify-content:center">
+          <div class="receipt-paper" style="{{rc.paper}}">
+            <span style="font-family:'Jua',sans-serif;font-size:24px;color:#3E2616;letter-spacing:6px;text-align:center">납품 확인서</span>
+            <span style="text-align:center;font-size:11px;color:#7A5434">{{rc.no}} · 할머니의 공방</span>
+            <div style="height:2px;background:repeating-linear-gradient(90deg,#8A6440 0 6px,transparent 6px 10px)"></div>
+            <sc-for list="{{rc.rows}}" as="rr" hint-placeholder-count="5">
+              <div style="display:flex;justify-content:space-between;gap:10px;padding:5px 2px;border-bottom:1px solid #E1CDA9;font-size:13px"><span style="color:#7A5434">{{rr.k}}</span><b style="color:#2B1A0F;text-align:right">{{rr.v}}</b></div>
+            </sc-for>
+            <span style="margin-top:4px;font-size:11.5px;line-height:1.5;color:#5B3A24">{{rc.note}}</span>
+            <div style="margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between">
+              <span style="font-size:11px;color:#7A5434">{{rc.date}}<br>도공 <b style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">할머니의 공방</b></span>
+              <img src="_blob/dff2c9968fbac8bce41c8af9735ef5b6.webp" alt="공방 낙관" style="width:48px;height:48px;object-fit:contain;transform:rotate(-4deg)">
+            </div>
+            <img dc-src="{{rc.stampImg}}" alt="{{rc.stampText}}" style="{{rc.stamp}}">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:5px">
+          <sc-for list="{{dots}}" as="dt" hint-placeholder-count="3">
+            <span style="{{dt}}"></span>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{noR}}" hint-placeholder-val="{{false}}">
+        <div style="margin-top:40px;padding:24px 16px;background:#FFFDF5;border:3px dashed #8A6440;border-radius:8px;text-align:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">아직 발행된 납품 확인서가 없다</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">이번 주 납품</span>
+      <div style="flex:1 1 auto;display:flex;gap:4px">
+        <sc-for list="{{streak}}" as="sk" hint-placeholder-count="7">
+          <span style="{{sk.style}}">{{sk.d}}</span>
+        </sc-for>
+      </div>
+      <span style="font-family:'Jua',sans-serif;font-size:12px;color:#7A5434">{{streakText}}</span>
+      <button type="button" onClick="{{skipDay}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:3px 8px;border-radius:9px;background:#5B3A24;font-size:10.5px;font-weight:700;color:#FFE7A8">목업 +1일</button>
+    </div>
+  </div>
+
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
+    </a>
+    <a href="Commission.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFD66B">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var g0 = this.loadG(), t0 = g0.commTab === 'done' ? 'done' : 'active';
+    if (g0.commTab) { try { var gg = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); delete gg.commTab; localStorage.setItem('pottery-proto-v1', JSON.stringify(gg)); } catch (e) {} }
+    this.state = { g: g0, tab: t0 };
+  }
+  loadG() {
+    var d = { gold: 1240, shards: 142, quests: {}, pieces: {}, curator: 'waiting' };
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    var sw0 = this.sweepDue(this.state.g); if (sw0) { this.setG(sw0); }
+    this.tk = setInterval(function () { var sw = self.sweepDue(self.loadG()); if (sw) { self.setG(sw); } else { self.forceUpdate(); } }, 30000);
+  }
+  componentWillUnmount() { clearInterval(this.tk); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
+  limits() { return { min: 7 * 86400000, guest: 86400000, week: 7 * 86400000, order: 3 * 86400000 }; }
+  sweepDue(g) {
+    var L = this.limits(), now = Date.now(), q = {}, src = g.quests || {}, changed = false, log = (g.failLog || []).slice();
+    for (var k in src) { q[k] = src[k]; }
+    var TT = { min: ['민 씨', '청자 찻잔 한 점'], guest: ['이름 없는 손님', '밥공기 하나'], week: ['카페 사장', '카페 잔 세트'] };
+    ['min', 'guest', 'week'].forEach(function (key) {
+      if (q[key] && !q[key + 'Done'] && !q[key + 'At']) { q[key + 'At'] = now; changed = true; }
+      if (q[key + 'Done'] && !q[key + 'DoneAt']) { q[key + 'DoneAt'] = now; changed = true; }
+      if (q[key] && !q[key + 'Done'] && q[key + 'At'] && now - q[key + 'At'] > L[key]) {
+        q[key] = false; q[key + 'At'] = 0; changed = true;
+        log.unshift({ id: key + now, who: TT[key][0], title: TT[key][1], at: now });
+      }
+    });
+    var keep = [];
+    (g.tasteOrders || []).forEach(function (o) {
+      if (now - o.at > L.order) { changed = true; log.unshift({ id: o.id, who: o.name, title: '주문', want: o.want, at: now }); } else { keep.push(o); }
+    });
+    return changed ? { quests: q, tasteOrders: keep, failLog: log.slice(0, 10) } : null;
+  }
+  renderVals() {
+    var self = this, s = this.state, g = s.g, q = g.quests || {};
+    var ps = g.pieces || {};
+    function count(test) { var n = 0; for (var k in ps) { var p = ps[k]; if ((p.where === 'store' || p.where === 'shelf') && test(p)) { n++; } } return n; }
+    var celCup = count(function (p) { return p.shape === 'cup' && p.glaze === 'celadon'; });
+    var bowl = count(function (p) { return p.shape === 'bowl'; });
+    var whCup = count(function (p) { return p.shape === 'cup' && p.glaze === 'white'; });
+    var defs = [
+      { id: 'min', who: '민 씨', role: '찻집 주인', portrait: 'PORTRAIT_MIN', tag: '사연', title: '청자 찻잔 한 점', memo: '할머님께 받아 쓰던 잔이 깨졌다. 비슷한 잔을 원한다.', reward: '400G × 등급 · 명성 +20', conds: [{ t: '형태 · 잔', ok: celCup > 0 }, { t: '유약 · 청자', ok: celCup > 0 }, { t: '보유 ' + Math.min(1, celCup) + '/1', ok: celCup > 0 }], ready: celCup > 0, acc: q.min, done: q.minDone, thanks: q.minThanks },
+      { id: 'guest', who: '이름 없는 손님', role: '동네 주민', portrait: 'PORTRAIT_GUEST', tag: '일간', title: '밥공기 하나', memo: '유약은 상관없고 튼튼하면 된다.', reward: '350G · 명성 +8', conds: [{ t: '형태 · 사발/공기', ok: bowl > 0 }, { t: '보유 ' + Math.min(1, bowl) + '/1', ok: bowl > 0 }], ready: bowl > 0, acc: q.guest, done: q.guestDone, thanks: q.guestThanks },
+      { id: 'week', who: '카페 사장', role: '골목 카페', portrait: 'PORTRAIT_CAFE', tag: '주간', title: '카페 잔 세트', memo: '하얀 잔 세 점. 모양이 비슷하면 좋다.', reward: '3,600G · 파편 20', conds: [{ t: '형태 · 잔', ok: whCup >= 3 }, { t: '유약 · 백자', ok: whCup >= 3 }, { t: '보유 ' + Math.min(3, whCup) + '/3', ok: whCup >= 3 }], ready: whCup >= 3, acc: q.week, done: q.weekDone, thanks: q.weekThanks }
+    ];
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사' };
+    (g.tasteOrders || []).forEach(function (o) {
+      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
+      var n = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); });
+      var left = Math.max(0, 3 - Math.floor((Date.now() - o.at) / 86400000));
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했다 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
+    });
+    (g.tasteDone || []).forEach(function (o) {
+      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했다', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
+    });
+    var Lm = this.limits(), now = Date.now();
+    defs[0].need = '청자 찻잔 ×1'; defs[0].req = 1; defs[0].hv = celCup; defs[0].at = q.minAt; defs[0].lim = Lm.min;
+    defs[1].need = '사발 ×1'; defs[1].req = 1; defs[1].hv = bowl; defs[1].at = q.guestAt; defs[1].lim = Lm.guest;
+    defs[2].need = '백자 찻잔 ×3'; defs[2].req = 3; defs[2].hv = whCup; defs[2].at = q.weekAt; defs[2].lim = Lm.week;
+    (g.tasteOrders || []).forEach(function (o) { defs.forEach(function (d) { if (d.id === o.id) { d.need = d.title + ' ×1'; d.req = 1; d.hv = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); }); d.at = o.at; d.lim = Lm.order; d.memo = '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했다'; } }); });
+    (g.failLog || []).forEach(function (f2) {
+      var t2 = f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.shape] || '그릇') : f2.title;
+      defs.push({ id: 'f' + f2.id, who: f2.who, role: '기한 초과', portrait: 'PORTRAIT', tag: '실패', title: t2, need: t2, memo: '기한 안에 건네지 못했다 · 사연·일간·주간 손님은 다시 의뢰하러 온다', reward: '없음', conds: [{ t: '기한 초과', ok: false }], ready: false, acc: true, done: true, thanks: true, failed: true, req: 1, hv: 0 });
+    });
+    function fmt(ms) {
+      if (ms <= 0) { return '기한 초과'; }
+      var d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000), m = Math.floor(ms % 3600000 / 60000);
+      return d > 0 ? d + '일 ' + h + '시간' : (h > 0 ? h + '시간 ' + m + '분' : m + '분');
+    }
+    var active = defs.filter(function (d) { return d.acc && !d.done; });
+    var done = defs.filter(function (d) { return d.done; });
+    var list = s.tab === 'done' ? done : active;
+    var openM = s.open || {};
+    var cards = (s.tab === 'done' ? [] : list).map(function (d, ci) {
+      var mode = s.tab === 'done' ? 'done' : 'active';
+      var tagCol = d.failed ? '#A33B22' : (d.tag === '주간' ? '#5E7DA8' : (d.tag === '사연' ? '#B9533A' : (d.tag === '주문' ? '#C8601E' : '#4A9440')));
+      var left = d.at ? d.at + d.lim - now : (d.lim || 0);
+      var urgent = left < 6 * 3600000;
+      var isOpen = !!openM[d.id];
+      var hv = Math.min(d.req || 1, d.hv || 0);
+      var c = {
+        who: d.who, role: d.role, portrait: d.portrait, pimg: ({ PORTRAIT_MIN: '_blob/f4bba7f421b345a6ec6cbcb624274932.webp', PORTRAIT_CAFE: '_blob/24a7c373b7472b0759480f3a740e3c2f.webp', PORTRAIT_GUEST: '_blob/7feb87572bb027f08ca0e812931ec0f7.webp', PW_CHAR_WALK_A: '_blob/912e9ec77c6b6ee597e4be541992b73d.webp', PW_CHAR_WALK_B: '_blob/1c635efceb3eed2458ef159692fef35a.webp', PW_CHAR_WALK_C: '_blob/e9395a3a3269153e3fac785a1ba68703.webp', PW_CHAR_WALK_D: '_blob/6c4c9b9d74dd453ef4bb14f386bc3696.webp', PW_CHAR_WALK_E: '_blob/0b20d0a46bf5e6f974caef1040035776.webp', PW_CHAR_WALK_F: '_blob/c5e1a7a95902cf6bc26693fd44bc035c.webp' })[d.portrait] || '', hasP: !!({ PORTRAIT_MIN: '_blob/f4bba7f421b345a6ec6cbcb624274932.webp', PORTRAIT_CAFE: '_blob/24a7c373b7472b0759480f3a740e3c2f.webp', PORTRAIT_GUEST: '_blob/7feb87572bb027f08ca0e812931ec0f7.webp', PW_CHAR_WALK_A: '_blob/912e9ec77c6b6ee597e4be541992b73d.webp', PW_CHAR_WALK_B: '_blob/1c635efceb3eed2458ef159692fef35a.webp', PW_CHAR_WALK_C: '_blob/e9395a3a3269153e3fac785a1ba68703.webp', PW_CHAR_WALK_D: '_blob/6c4c9b9d74dd453ef4bb14f386bc3696.webp', PW_CHAR_WALK_E: '_blob/0b20d0a46bf5e6f974caef1040035776.webp', PW_CHAR_WALK_F: '_blob/c5e1a7a95902cf6bc26693fd44bc035c.webp' })[d.portrait], noP: !({ PORTRAIT_MIN: '_blob/f4bba7f421b345a6ec6cbcb624274932.webp', PORTRAIT_CAFE: '_blob/24a7c373b7472b0759480f3a740e3c2f.webp', PORTRAIT_GUEST: '_blob/7feb87572bb027f08ca0e812931ec0f7.webp', PW_CHAR_WALK_A: '_blob/912e9ec77c6b6ee597e4be541992b73d.webp', PW_CHAR_WALK_B: '_blob/1c635efceb3eed2458ef159692fef35a.webp', PW_CHAR_WALK_C: '_blob/e9395a3a3269153e3fac785a1ba68703.webp', PW_CHAR_WALK_D: '_blob/6c4c9b9d74dd453ef4bb14f386bc3696.webp', PW_CHAR_WALK_E: '_blob/0b20d0a46bf5e6f974caef1040035776.webp', PW_CHAR_WALK_F: '_blob/c5e1a7a95902cf6bc26693fd44bc035c.webp' })[d.portrait], title: d.title, memo: d.memo, reward: d.reward, need: d.need || d.title,
+        tag: mode === 'done' ? (d.failed ? '기한 초과' : '완료') : d.tag,
+        tagStyle: 'flex:0 0 auto;padding:0 7px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFF4DE;background:' + (mode === 'done' && !d.failed ? '#8A8A8A' : tagCol),
+        have: mode === 'done' ? (d.failed ? '미납' : '납품함') : (d.ready ? '준비 완료' : '보유 ' + hv + '/' + (d.req || 1)),
+        haveStyle: 'flex:0 0 auto;font-size:11px;font-weight:700;color:' + (mode === 'done' ? (d.failed ? '#A33B22' : '#7A7A7A') : (d.ready ? '#2F6328' : '#7A5434')),
+        bar: 'height:100%;border-radius:4px;background:' + (d.failed ? '#C9A08E' : (d.ready || mode === 'done' ? '#4A9440' : '#C9962E')) + ';width:' + (mode === 'done' ? (d.failed ? 0 : 100) : Math.round(hv / (d.req || 1) * 100)) + '%',
+        time: mode === 'done' ? '' : fmt(left),
+        timeStyle: mode === 'done' ? 'display:none' : 'padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:11.5px;white-space:nowrap;' + (urgent ? 'background:#D0452B;color:#FFF' : 'background:#3E2616;color:#FFE7A8'),
+        dueText: mode === 'done' ? '-' : (d.at ? '수락 후 ' + Math.round(d.lim / 86400000) + '일 · 남은 시간 ' + fmt(left) : '-'),
+        open: isOpen, openAttr: isOpen ? 'true' : 'false', chev: isOpen ? '▴' : '▾', toggleAria: isOpen ? '접기' : '자세히 보기',
+        toggle: function () { var o2 = {}; for (var k in openM) { o2[k] = openM[k]; } if (o2[d.id]) { delete o2[d.id]; } else { o2[d.id] = true; } self.setState({ open: o2 }); },
+        cls: 'memo-' + ({ '사연': 'peach', '일간': 'green', '주간': 'blue', '주문': 'yellow' }[d.tag] || 'yellow'),
+        wrap: 'position:relative;box-sizing:border-box;padding:2px 2px 0;filter:drop-shadow(0 5px 5px rgba(40,20,5,.38));transform:rotate(' + (isOpen ? 0 : [-1.4, 1.1, -0.6, 1.6][ci % 4]) + 'deg);margin:0 ' + (ci % 2 ? '0 0 10px' : '10px 0 0') + ';' + (d.ready ? 'outline:3px solid #4A9440;outline-offset:2px;' : (urgent ? 'outline:3px solid #D0452B;outline-offset:2px;' : '')),
+        pin: ci % 3 === 1 ? 'display:none' : 'position:absolute;left:50%;top:-26px;width:26px;height:30px;margin-left:-13px;z-index:2',
+        tape: ci % 3 === 1 ? 'position:absolute;left:50%;top:-28px;width:84px;height:24px;margin-left:-42px;z-index:2;transform:rotate(-3deg);opacity:.95' : 'display:none',
+        conds: d.conds.map(function (cn) {
+          var ok = (mode === 'done' && !d.failed) || (mode === 'active' && cn.ok);
+          return { text: cn.t, icon: ok ? '✓' : '·', mark: 'width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;' + (ok ? 'background:#4A9440;color:#FFFDF5' : 'background:#D8C6A6;color:#5B3A24') };
+        }),
+        hasGo: mode !== 'done', href: d.ready ? 'Counter.dc.html' : 'Wheel.dc.html',
+        goLabel: d.ready ? '카운터에서 건네기' : '만들러 가기',
+        goStyle: 'margin-left:auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;text-decoration:none;white-space:nowrap;' + (!d.ready ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5')
+      };
+      return c;
+    });
+    var GR = { min: ['민 씨', '청자 찻잔', 1, '400G × 등급 · 명성 +20', '할머님 잔을 닮은 찻잔'], guest: ['이름 없는 손님', '사발', 1, '350G · 명성 +8', '둥근 밥공기'], week: ['카페 사장', '백자 찻잔', 3, '3,600G · 파편 20', '카페 잔 세트'] };
+    var rec = [];
+    ['min', 'guest', 'week'].forEach(function (k) { if (q[k + 'Done']) { var x = GR[k]; rec.push({ ok: true, who: x[0], item: x[1], qty: x[2], reward: x[3], title: x[4], at: q[k + 'DoneAt'] || 0 }); } });
+    (g.tasteDone || []).forEach(function (o) { rec.push({ ok: true, who: o.name, item: (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || ''), qty: 1, reward: (o.price || 0).toLocaleString() + 'G · 명성 +5', title: '취향 주문', at: o.at }); });
+    (g.failLog || []).forEach(function (f2) { rec.push({ ok: false, who: f2.who, item: f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.shape] || '') : f2.title, qty: 1, reward: '없음', title: f2.want ? '취향 주문' : f2.title, at: f2.at }); });
+    rec.sort(function (x, y) { return (y.at || 0) - (x.at || 0); });
+    rec.forEach(function (r, i) { r.no = 'No.' + String(rec.length - i).padStart(3, '0'); });
+    var ri = Math.max(0, Math.min(rec.length - 1, s.ri || 0));
+    var cr = rec[ri];
+    function dstr(t) { if (!t) { return '-'; } var d0 = new Date(t); return d0.getFullYear() + '.' + String(d0.getMonth() + 1).padStart(2, '0') + '.' + String(d0.getDate()).padStart(2, '0'); }
+    var navB = 'all:unset;cursor:pointer;flex:0 0 38px;height:38px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;';
+    var receipts = {
+      isActive: s.tab !== 'done', isDone: s.tab === 'done', hasR: !!cr, noR: !cr,
+      rc: cr ? {
+        no: cr.no, label: cr.who + ' · ' + cr.item + (cr.qty > 1 ? ' ×' + cr.qty : ''),
+        rows: [{ k: '의뢰인', v: cr.who }, { k: '의뢰명', v: cr.title }, { k: '품목', v: cr.item }, { k: '수량', v: cr.qty + '점' }, { k: '보상', v: cr.reward }],
+        note: cr.ok ? '위 물품을 정히 납품하였음을 확인합니다.' : '기한 내 납품하지 못하여 의뢰가 취소되었습니다.',
+        date: (cr.ok ? '납품일 ' : '취소일 ') + dstr(cr.at),
+        paper: 'position:relative;width:300px;height:100%;max-height:440px;box-sizing:border-box;padding:40px 38px 34px;display:flex;flex-direction:column;gap:5px;filter:drop-shadow(0 8px 8px rgba(40,20,5,.35))' + (cr.ok ? ';' : ' saturate(.6);'),
+        stampImg: cr.ok ? '_blob/0ed497a47e3f9b8ce99725d1dc7087b4.webp' : '_blob/ce98050f2847c358672bd6f37e6fe301.webp',
+        stamp: 'position:absolute;right:84px;bottom:22px;width:92px;height:92px;object-fit:contain;transform:rotate(-14deg);opacity:.85;pointer-events:none',
+        stampText: cr.ok ? '납품 완료' : '기한 초과'
+      } : { no: '', label: '확인서 없음', rows: [], note: '', date: '', paper: '', stamp: 'display:none', stampText: '', stampImg: '' },
+      listOpen: !!s.listOpen, listOpenAttr: s.listOpen ? 'true' : 'false', listChev: s.listOpen ? '▴' : '▾',
+      toggleList: function () { self.setState({ listOpen: !s.listOpen }); },
+      rlist: rec.map(function (r, i) { var on = i === ri; return { no: r.no, label: r.who + ' · ' + r.item, on: on ? 'true' : 'false', st: r.ok ? '완료' : '초과', stStyle: 'padding:0 6px;border-radius:6px;font-size:10px;font-weight:700;color:#FFF;background:' + (r.ok ? '#4A9440' : '#8A8A8A'), style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:9px;font-size:12.5px;color:#2B1A0F;' + (on ? 'background:#FFD66B' : 'background:#FFFDF5'), pick: function () { self.setState({ ri: i, listOpen: false }); } }; }),
+      prevR: function () { if (ri > 0) { self.setState({ ri: ri - 1, listOpen: false }); } },
+      nextR: function () { if (ri < rec.length - 1) { self.setState({ ri: ri + 1, listOpen: false }); } },
+      prevStyle: navB + (ri > 0 ? 'background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24' : 'background:rgba(255,244,222,.4);border:3px solid rgba(91,58,36,.3);color:rgba(91,58,36,.35)'),
+      nextStyle: navB + (ri < rec.length - 1 ? 'background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24' : 'background:rgba(255,244,222,.4);border:3px solid rgba(91,58,36,.3);color:rgba(91,58,36,.35)'),
+      dots: rec.map(function (r, i) { return 'width:' + (i === ri ? 16 : 7) + 'px;height:7px;border-radius:4px;background:' + (i === ri ? '#FFD66B' : 'rgba(255,244,222,.6)'); }),
+      rDown: function (e) { self.sx = e.clientX; },
+      rUp: function (e) { if (self.sx == null) { return; } var dx = e.clientX - self.sx; self.sx = null; if (dx < -50 && ri < rec.length - 1) { self.setState({ ri: ri + 1 }); } else if (dx > 50 && ri > 0) { self.setState({ ri: ri - 1 }); } }
+    };
+    var T = [{ id: 'active', label: '진행 중 ' + active.length }, { id: 'done', label: '확인서 ' + rec.length }];
+    var days = ['월', '화', '수', '목', '금', '토', '일'];
+    var dn = 3 + done.filter(function (d) { return !d.failed; }).length;
+    var out = {
+      gold: (g.gold || 0).toLocaleString(),
+      wipN: ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'].reduce(function (a, k) { return a + ((g[k] || []).length); }, 0),
+      tabs: T.map(function (t) {
+        var on = s.tab === t.id;
+        return { label: t.label, on: on ? 'true' : 'false', pick: function () { self.setState({ tab: t.id, tabTouched: true }); }, style: 'all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616;box-shadow:0 3px 0 #3E2616' : 'background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440') };
+      }),
+      cards: cards,
+      empty: cards.length === 0,
+      emptyText: s.tab === 'done' ? '아직 마친 의뢰가 없다' : '진행 중인 의뢰가 없다 · 카운터에서 손님을 만나보자',
+      toCounter: function () {},
+      skipDay: function () {
+        var g2 = self.loadG(), q2 = {}; for (var k in (g2.quests || {})) { q2[k] = g2.quests[k]; }
+        ['min', 'guest', 'week'].forEach(function (key) { if (q2[key + 'At']) { q2[key + 'At'] -= 86400000; } });
+        var to = (g2.tasteOrders || []).map(function (o) { var y = {}; for (var k2 in o) { y[k2] = o[k2]; } y.at -= 86400000; return y; });
+        g2.quests = q2; g2.tasteOrders = to;
+        var sw = self.sweepDue(g2); var patch = { quests: q2, tasteOrders: to }; if (sw) { patch = sw; }
+        self.setG(patch);
+      },
+      streak: days.map(function (d, i) { var on = i < Math.min(7, dn); return { d: d, style: 'flex:1 1 0;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:11px;' + (on ? 'background:#4A9440;color:#FFFDF5' : 'background:#E9DCC3;color:#8A6440') }; }),
+      streakText: Math.min(7, dn) + '/7 · 7일 보너스'
+    };
+    for (var rk in receipts) { out[rk] = receipts[rk]; }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

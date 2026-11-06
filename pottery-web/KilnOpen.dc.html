@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>가마 개봉</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#FFE7A8}a:hover{color:#FFF4DE}
+button{font-family:inherit;cursor:pointer}
+</style>
+<style>
+@keyframes raySpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes auraPulse{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.05);opacity:1}}
+@keyframes auraBoom{0%{transform:scale(.9);opacity:.6}70%{transform:scale(1.3);opacity:1}100%{transform:scale(1.7);opacity:1}}
+@keyframes silBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes silShake{0%{transform:translate(0,0)}10%{transform:translate(-3px,0) rotate(-2deg)}20%{transform:translate(3px,0) rotate(2deg)}30%{transform:translate(-4px,0) rotate(-3deg)}40%{transform:translate(4px,0) rotate(3deg)}50%{transform:translate(-6px,-2px) rotate(-4deg)}60%{transform:translate(6px,-2px) rotate(4deg)}70%{transform:translate(-8px,-4px) rotate(-5deg) scale(1.03)}80%{transform:translate(8px,-6px) rotate(5deg) scale(1.06)}90%{transform:translate(-4px,-10px) scale(1.1)}100%{transform:translate(0,-14px) scale(1.16);filter:brightness(4)}}
+@keyframes hintPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes flashOut{0%{opacity:1}100%{opacity:0}}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+@keyframes popIn{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+@keyframes slamIn{0%{transform:scale(2.4);opacity:0}70%{transform:scale(.92);opacity:1}100%{transform:scale(1)}}
+@keyframes fadeUp{0%{transform:translateY(18px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes bigShake{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(7px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+@keyframes confetti{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:1}100%{transform:translate(var(--dx),560px) rotate(var(--r));opacity:.2}}
+@keyframes twinkle{0%,100%{opacity:.35;transform:scale(.7)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
+.bg-bg-kiln-open{background:#2A1E16 url(_blob/1d6fa25ab84c729719699d840a101dba.webp) center/cover no-repeat}
+</style>
+</helmet>
+<div data-navroot="1" style="{{navRoot}}">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
+<linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
+<clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
+<clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
+<filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
+</defs></svg>
+  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+    <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="transform:{{qTf}};z-index:46;position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+      <div style="{{navStrip}}">
+        <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
+          <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
+        </sc-for>
+      </div>
+      <div aria-hidden="true" style="{{navFadeL}}"></div>
+      <div aria-hidden="true" style="{{navFadeR}}"></div>
+    </div>
+  </div>
+  <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
+    <div style="{{navDropStyle}}">
+<div class="bg-bg-kiln-open" style="position:relative;width:390px;height:844px;overflow:hidden;color:#FFF4DE">
+
+  <div style="position:absolute;left:14px;right:14px;top:16px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:6px">
+      <sc-for list="{{dots}}" as="d" hint-placeholder-count="3">
+        <span style="{{d.style}}"></span>
+      </sc-for>
+      <span style="margin-left:6px;font-family:'Jua',sans-serif;font-size:13px;color:#E8D3B5">{{progress}}</span>
+    </div>
+    <sc-if value="{{opening}}" hint-placeholder-val="{{true}}">
+      <button type="button" onClick="{{openAll}}" style="all:unset;cursor:pointer;box-sizing:border-box;padding:7px 14px;border-radius:14px;background:rgba(255,244,222,.12);border:2px solid #8A7A63;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE">모두 꺼내기 ›</button>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{opening}}" hint-placeholder-val="{{true}}">
+    <sc-if value="{{sealed}}" hint-placeholder-val="{{false}}">
+      <button type="button" onClick="{{reveal}}" aria-label="가마에서 다음 작품 꺼내기" style="all:unset;cursor:pointer;position:absolute;left:0;right:0;top:90px;height:560px;display:block">
+        <div aria-hidden="true" style="{{aura}}"></div>
+        <svg aria-hidden="true" style="{{silStyle}}" width="200" height="236" viewBox="{{it.pot.vb}}"><path d="{{it.pot.d}}" fill="#1A100A" stroke="{{silEdge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path></svg>
+        <span style="{{sealHintStyle}}">{{sealHint}}</span>
+        <span style="position:absolute;left:0;right:0;top:420px;text-align:center;font-size:12px;color:#BFAE94">가마 안에 {{remain}}점이 남았다</span>
+      </button>
+    </sc-if>
+    <sc-if value="{{shownNow}}" hint-placeholder-val="{{true}}">
+    <div style="{{shownWrap}}">
+    <div style="animation:fadeIn .5s .1s both;position:absolute;left:35px;top:110px;width:320px;height:320px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle,{{it.rayFill}},rgba(0,0,0,0) 70%);pointer-events:none">
+      <img src="_blob/b39a9db17420ec563e1ac1bf6ca8c638.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:320px;height:320px;animation:raySpin 24s linear infinite;opacity:.9">
+    </div>
+    <sc-if value="{{it.sparkle}}" hint-placeholder-val="{{true}}">
+      <img src="_blob/d110be735e3f291879ca8ecc1cbe3c90.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:286px;top:150px;width:58px;height:58px;pointer-events:none;animation:twinkle 1.6s ease-in-out infinite">
+      <img src="_blob/d110be735e3f291879ca8ecc1cbe3c90.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:58px;top:300px;width:36px;height:36px;pointer-events:none;animation:twinkle 1.6s ease-in-out .8s infinite">
+    </sc-if>
+
+    <svg style="position:absolute;left:105px;top:362px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
+    <div style="position:absolute;left:95px;top:150px;width:200px;height:236px;animation:popIn .6s cubic-bezier(.2,1.5,.4,1) both">
+    <svg style="position:absolute;left:0;top:0" width="200" height="236" viewBox="{{it.pot.vb}}" role="img" aria-label="{{it.name}}, 빚은 모양 그대로">
+      <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.body}}"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="url(#potRings)"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
+      <ellipse cx="0" cy="{{it.pot.rimY}}" rx="{{it.pot.rimRx}}" ry="{{it.pot.rimRy}}" fill="{{it.inner}}" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}"></ellipse>
+    </svg>
+    </div>
+    <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
+      <svg style="position:absolute;left:115px;top:150px" width="160" height="230" viewBox="0 0 160 230" aria-hidden="true">
+        <path d="M86 40 L74 80 L92 108 L70 142 L84 186" fill="none" stroke="#120B07" stroke-width="4" stroke-linejoin="round"></path>
+        <path d="M74 80 L52 92" fill="none" stroke="#120B07" stroke-width="3"></path>
+      </svg>
+    </sc-if>
+
+    <div style="position:absolute;left:0;right:0;top:420px;display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div style="animation:slamIn .45s .25s both;height:50px;padding:0 54px;display:flex;align-items:center;justify-content:center;background:{{it.ribbon}};clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:#FFFDF5">{{it.grade}}</div>
+      <span style="animation:fadeUp .4s .5s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
+    </div>
+
+    <div style="animation:fadeUp .45s .6s both;position:absolute;left:28px;right:28px;top:520px;box-sizing:border-box;padding:12px 16px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:8px">
+      <sc-if value="{{it.whole}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">형태</span>
+          <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:2px;color:#FFD66B">{{it.form}}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">발색</span>
+          <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:2px;color:#9FD4C6">{{it.color}}</span>
+        </div>
+        <div style="height:2px;background:#2B1A0F"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">예상 평가액</span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <span style="width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5.5px;font-weight:900;color:#FFE7A8"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+            <span style="font-family:'Jua',sans-serif;font-size:22px;color:#FFD66B">{{it.value}}</span>
+          </span>
+        </div>
+        <sc-if value="{{questHit}}" hint-placeholder-val="{{false}}">
+          <span style="padding:4px 10px;border-radius:10px;background:#4A9440;font-family:'Jua',sans-serif;font-size:12.5px;color:#FFFDF5;text-align:center">민 씨 의뢰 조건 충족 · 보관해서 카운터에서 건네자</span>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
+        <span style="font-size:13px;line-height:1.6;color:#E8D3B5;text-align:center">가마 안에서 금이 갔다.<br>파편과 재료 일부는 돌아온다.</span>
+        <div style="display:flex;justify-content:center;gap:16px">
+          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#9FD4C6">파편 +3</span>
+          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#E8D3B5">점토 30% 회수</span>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="animation:fadeUp .45s .8s both;position:absolute;left:20px;right:20px;bottom:40px">
+      <button type="button" onClick="{{next}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;width:100%;text-align:center;padding:14px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">{{nextLabel}}</button>
+    </div>
+      <sc-for list="{{confetti}}" as="cf" hint-placeholder-count="0">
+        <span aria-hidden="true" style="{{cf}}"></span>
+      </sc-for>
+      <div aria-hidden="true" style="{{flash}}"></div>
+    </div>
+    </sc-if>
+  </sc-if>
+
+  <a id="goKiln" href="Kiln.dc.html" aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none"></a>
+  <sc-if value="{{baking}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:35px;top:120px;width:320px;height:320px;border-radius:50%;pointer-events:none;background:{{bk.glow}}"></div>
+    <div style="position:absolute;left:30px;right:30px;top:440px;box-sizing:border-box;padding:30px 20px 20px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="position:absolute;top:-22px;height:42px;padding:0 40px;display:flex;align-items:center;justify-content:center;background:#C8601E;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">소성 중</div>
+      <span role="timer" style="font-family:'Jua',sans-serif;font-size:36px;color:#C8601E">{{bk.clock}}</span>
+      <span style="position:relative;width:100%;height:16px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:10px;background:#3E2616;overflow:hidden"><span style="{{bk.bar}}"></span></span>
+      <span style="font-size:12.5px;color:#5B3A24;text-align:center">{{bk.note}}</span>
+      <button type="button" onClick="{{bk.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">시간 건너뛰기 · 목업</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{results}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:14px;right:14px;top:56px;bottom:30px;box-sizing:border-box;padding:30px 12px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;gap:10px;animation:fadeUp .4s both">
+      <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);height:42px;padding:0 40px;white-space:nowrap;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">이번 가마 결과</div>
+      <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{rs.chips}}" as="c" hint-placeholder-count="3">
+          <span style="{{c.style}}">{{c.text}}</span>
+        </sc-for>
+      </div>
+      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:8px;padding:2px">
+        <sc-for list="{{rs.cards}}" as="r" hint-placeholder-count="3">
+          <div id="{{r.id}}" style="{{r.style}}">
+            <span style="{{r.ribbon}}">{{r.grade}}</span>
+            <svg width="70" height="70" viewBox="{{r.pot.vb}}" aria-hidden="true" style="{{r.potStyle}}"><ellipse cx="0" cy="{{r.pot.shCy}}" rx="{{r.pot.shRx}}" ry="{{r.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{r.pot.d}}" fill="{{r.pot.fill}}"></path><path d="{{r.pot.d}}" fill="url(#potTopLight)"></path><path d="{{r.pot.d}}" fill="url(#potRings)"></path><path d="{{r.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{r.pot.grainOp}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.foot}}" fill-opacity="{{r.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{r.pot.d}}" fill="{{r.pot.drip}}" fill-opacity="{{r.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{r.pot.d}}" fill="url(#potShade)"></path><path d="{{r.pot.d}}" fill="none" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{r.pot.rimY}}" rx="{{r.pot.rimRx}}" ry="{{r.pot.rimRy}}" fill="rgba(43,26,15,.3)" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}"></ellipse></svg>
+            <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:13px;color:#2B1A0F">{{r.name}}</span>
+            <span style="font-size:11px;font-weight:700;color:{{r.subColor}}">{{r.sub}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:12px;background:#F3E3C4">
+        <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">예상 평가액 합계</span>
+        <span style="font-family:'Jua',sans-serif;font-size:19px;color:#B5851C">{{rs.total}} G</span>
+      </div>
+      <button type="button" onClick="{{rs.confirm}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;width:100%;text-align:center;padding:14px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">확인 · 대기함에 넣기</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{summary}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:24px;right:24px;top:180px;box-sizing:border-box;padding:30px 20px 20px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div style="position:absolute;top:-22px;height:42px;padding:0 40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">{{summaryTitle}}</div>
+      <sc-if value="{{hasLog}}" hint-placeholder-val="{{true}}">
+        <div style="width:100%;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{log}}" as="l" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;padding:7px 12px;border-radius:12px;background:#F3E3C4">
+              <span style="font-family:'Jua',sans-serif;font-size:14px">{{l.name}}</span>
+              <span style="font-size:12.5px;font-weight:700;color:#7A5434">{{l.action}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{noLog}}" hint-placeholder-val="{{false}}">
+        <span style="font-size:13px;color:#5B3A24;text-align:center;line-height:1.6">가마가 비어 있다.<br>유약 바른 기물을 넣고 불을 지펴야 한다.</span>
+      </sc-if>
+      <a href="Queue.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">대기함 보기</a>
+      <a href="Kiln.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">가마 채우러 가기</a>
+      <a href="Main.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:11px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:17px;color:#5B3A24">공방으로</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{doorOn}}" hint-placeholder-val="{{false}}">
+    <div role="img" aria-label="가마 문이 열린다" style="position:absolute;left:0;top:0;width:390px;height:844px;overflow:hidden;z-index:30">
+      <div style="{{dr.burst}}"></div>
+      <div style="{{dr.l}}"><span style="position:absolute;right:16px;top:50%;width:14px;height:90px;margin-top:-45px;border-radius:7px;background:linear-gradient(#C9A27A,#7A5434);border:3px solid #2B1A0F"></span></div>
+      <div style="{{dr.r}}"><span style="position:absolute;left:16px;top:50%;width:14px;height:90px;margin-top:-45px;border-radius:7px;background:linear-gradient(#C9A27A,#7A5434);border:3px solid #2B1A0F"></span></div>
+      <div style="{{dr.lock}}">
+        <span style="{{dr.eye}}"></span>
+        <span style="font-family:'Jua',sans-serif;font-size:18px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08">가마 문을 연다…</span>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:30px;right:30px;top:100px;padding:12px 14px;border-radius:16px;background:rgba(255,244,222,.95);border:3px solid #E3B23C;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;text-align:center">{{toast}}</div>
+  </sc-if>
+
+</div>
+    </div>
+  </div>
+  <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
+  <sc-if value="{{flyOn}}" hint-placeholder-val="{{false}}">
+    <sc-for list="{{flyList}}" as="fl" hint-placeholder-count="1">
+      <svg aria-hidden="true" viewBox="{{fl.vb}}" style="{{fl.style}}"><path d="{{fl.d}}" fill="{{fl.fill}}" stroke="#3E2616" stroke-width="{{fl.sw}}" stroke-linejoin="round"></path></svg>
+    </sc-for>
+  </sc-if>
+  <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navPrevName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:2px;top:377px;width:54px;height:54px;z-index:20;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2">{{navNextName}}</span></a>
+  </sc-if>
+  <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
+    <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Contest.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6949a543d34c10b07085e1ed58155f45.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">스테이지</span>
+    </a>
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), toast: '', shownIdx: -1, ph: '' };
+  }
+  gdef() {
+    return {
+      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      drying: 1, glazeQ: 2, kilnQ: 0,
+      kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
+      openIdx: 0, openLog: [],
+      trim: false, mats: {}, deco: {},
+      quests: { min: false, guest: false, week: false, minDone: false },
+      research: {},
+      pieces: {
+        p1: { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 10900 },
+        p2: { name: '백자 달항아리', grade: '명작', shape: 'jar', glaze: 'white', where: 'shelf', value: 24000 },
+        p3: { name: '분청 사발', grade: '양작', shape: 'bowl', glaze: 'white', where: 'shelf', value: 3200 },
+        p4: { name: '청자 잔', grade: '양작', shape: 'cup', glaze: 'celadon', where: 'shelf', value: 2600 }
+      },
+      order: ['p1', 'p2', 'p3', 'p4'],
+      broken: 0, curator: 'waiting',
+      glazesFound: { white: true, celadon: true, black: true },
+      shapesFound: { dish: true, cup: true, bowl: true, jar: true }
+    };
+  }
+  loadG() {
+    var d = this.gdef();
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.state.g, g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {}
+    this.setState({ g: g });
+  }
+  componentDidMount() {
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    if (this.readyIdle(this.state.g)) { this.startDoor(); }
+    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (self.readyIdle(g0)) { self.startDoor(); } if (g0.kiln === 'firing' && g0.kilnStart && Date.now() < g0.kilnStart + 20600 && !self.state.navSw) { self.forceUpdate(); } }, 500);
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick); clearInterval(this.doorT); clearTimeout(this.tt); clearTimeout(this.goT);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  say(msg) {
+    var self = this;
+    clearTimeout(this.tt);
+    this.setState({ toast: msg });
+    this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000);
+  }
+  pool() {
+    return [
+      { name: '백자 종지', grade: '양작', shape: 'dish', glaze: 'white', form: 3, color: 2, value: 2400 },
+      { name: '청자 찻잔', grade: '수작', shape: 'cup', glaze: 'celadon', form: 4, color: 3, value: 9100 },
+      { name: '흑유 화병', grade: '파손', shape: 'vase', glaze: 'black', broken: true },
+      { name: '백자 사발', grade: '양작', shape: 'bowl', glaze: 'white', form: 3, color: 2, value: 2800 },
+      { name: '청자 매병', grade: '명작', shape: 'maebyeong', glaze: 'celadon', form: 5, color: 4, value: 26000 },
+      { name: '천목 찻잔', grade: '요변', shape: 'cup', glaze: 'cheonmok', form: 4, color: 5, value: 48000 }
+    ];
+  }
+  batchItems(g) {
+    if (g.batchItems && g.batchItems.length) { return g.batchItems; }
+    var pool = this.pool();
+    var n = g.batch || 3;
+    var start = (((g.firings || 38) - 38) * 3) % pool.length;
+    var out = [];
+    for (var i = 0; i < n; i++) { out.push(pool[(start + i) % pool.length]); }
+    return out;
+  }
+  record(item, where, extra) {
+    var g = this.state.g;
+    var items = this.batchItems(g);
+    var idx = g.openIdx || 0;
+    var id = 'k' + (g.firings || 38) + '_' + idx + '_' + Date.now();
+    var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
+    var order = (g.order || []).slice();
+    var sf = {}; for (var a in g.shapesFound) { sf[a] = g.shapesFound[a]; }
+    var gf = {}; for (var b in g.glazesFound) { gf[b] = g.glazesFound[b]; }
+    if (!item.broken) {
+      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay };
+      order.push(id);
+      sf[item.shape] = true;
+      gf[item.glaze] = true;
+    }
+    var log = (g.openLog || []).concat([{ name: item.name, action: extra.action }]);
+    var nextIdx = idx + 1;
+    var patch = { pieces: pieces, order: order, shapesFound: sf, glazesFound: gf, openLog: log, openIdx: nextIdx };
+    if (nextIdx >= items.length) { patch.kiln = 'empty'; patch.kilnFilled = {}; }
+    for (var p in extra.patch) { patch[p] = extra.patch[p]; }
+    this.setG(patch);
+    if (extra.toast) { this.say(extra.toast); }
+  }
+  startDoor() {
+    var self = this;
+    if (this.doorAt || this.state.doorDone) { return; }
+    this.doorAt = Date.now(); this.setState({ doorAt: this.doorAt });
+    clearInterval(this.doorT);
+    this.doorT = setInterval(function () { if (Date.now() - self.doorAt > 1500) { clearInterval(self.doorT); self.setState({ doorDone: true }); return; } self.setState({ doorTick: Date.now() }); }, 33);
+  }
+  readyIdle(g) { return g.kiln === 'firing' && (!g.kilnStart || Date.now() >= g.kilnStart + 20000) && (g.openIdx || 0) === 0; }
+  confirmAll() {
+    var self = this, g = this.state.g, items = this.batchItems(g);
+    var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
+    var order = (g.order || []).slice(), log = [], shards = g.shards || 0, broken = g.broken || 0, now = Date.now();
+    var sf = {}; for (var a in g.shapesFound) { sf[a] = g.shapesFound[a]; }
+    var gf = {}; for (var b in g.glazesFound) { gf[b] = g.glazesFound[b]; }
+    var LB = { white: '#EDEAE1', celadon: '#6D9389', black: '#3A3530', cheonmok: '#4A2E1E', jinsa: '#A8443A' };
+    var pots = [], froms = [];
+    items.forEach(function (x, i) {
+      if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
+      var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
+      pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, where: 'store', fresh: true, value: x.value, prof: x.prof, H: x.H, clay: x.clay };
+      order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
+      log.push({ name: x.name, action: x.grade + ' · 대기함' });
+      pots.push(self.potOf(x, LB[x.glaze] || LB.white)); froms.push(self.rootPt('kres-' + i) || self.stagePt(195, 300));
+    });
+    this.flyStart(pots, froms);
+    var wait = pots.length ? (1.45 + 0.12 * (Math.min(9, pots.length) - 1)) * 1000 + 100 : 300;
+    this.state.leaving = true;
+    clearTimeout(this.goT); this.goT = setTimeout(function () { self.goKiln(); }, wait);
+    this.setG({ pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf });
+    this.setState({ shownIdx: -1, ph: '', leaving: true });
+  }
+  goKiln() { try { var a = document.getElementById('goKiln'); if (a) { a.click(); } } catch (e) {} }
+  fame(g, xp) {
+    var lv = g.fameLv, x = g.fameXp + xp;
+    while (x >= 100) { lv++; x -= 100; }
+    return { lv: lv, xp: x };
+  }
+  renderVals0() {
+    var self = this;
+    var g = this.state.g;
+    var items = this.batchItems(g);
+    var idx = g.openIdx || 0;
+    var KD = 20000, ks = g.kilnStart || 0, kLeft = g.kiln === 'firing' && ks ? Math.max(0, ks + KD - Date.now()) : 0;
+    var baking = g.kiln === 'firing' && kLeft > 0;
+    var opening = g.kiln === 'firing' && !baking && idx < items.length;
+    var results = g.kiln === 'firing' && !baking && idx >= items.length;
+    var it = items[Math.min(idx, items.length - 1)];
+    function stars(n, on, off) { var o = ''; for (var k = 0; k < 5; k++) { o += k < n ? on : off; } return o; }
+    var LOOK = {
+      white: { body: '#EDEAE1', rim: '#DCD7CB', inner: '#BDB6A6', edge: '#6E675A' },
+      celadon: { body: '#6D9389', rim: '#8FB3A9', inner: '#3C5A52', edge: '#2E4A43' },
+      black: { body: '#3A3530', rim: '#4A443D', inner: '#1E1B18', edge: '#120B07' },
+      cheonmok: { body: '#4A2E1E', rim: '#8A5A32', inner: '#2A1810', edge: '#120B07' },
+      jinsa: { body: '#A8443A', rim: '#C2645A', inner: '#6E2620', edge: '#3E120E' }
+    };
+    var GR = {
+      '양작': { ribbon: '#8A7A63', ray: '#BFAE94', fill: 'rgba(255,244,222,.14)', xp: 5, sparkle: false },
+      '수작': { ribbon: '#4E7D74', ray: '#9FD4C6', fill: 'rgba(159,212,198,.22)', xp: 15, sparkle: true },
+      '명작': { ribbon: '#C9962E', ray: '#E3B23C', fill: 'rgba(255,214,107,.3)', xp: 30, sparkle: true },
+      '요변': { ribbon: '#7A5A93', ray: '#C7A6E0', fill: 'rgba(199,166,224,.34)', xp: 50, sparkle: true },
+      '파손': { ribbon: '#5A4A38', ray: '#5A4A38', fill: 'rgba(255,255,255,.04)', xp: 0, sparkle: false }
+    };
+    var look = LOOK[it.glaze] || LOOK.white;
+    var gr = GR[it.grade] || GR['양작'];
+    var st = this.state, shownNow = opening && st.shownIdx === idx, sealed = opening && !shownNow, shaking = sealed && st.ph === 'shake';
+    var big = it.grade === '명작' || it.grade === '요변';
+    var tease = it.broken ? '#6E5A44' : gr.ray;
+    var confetti = [];
+    if (shownNow && big) {
+      var CC = it.grade === '요변' ? ['#C7A6E0', '#FFD66B', '#FFF4DE', '#9FD4C6'] : ['#FFD66B', '#E3B23C', '#FFF4DE', '#F4B6C4'];
+      for (var ci = 0; ci < 28; ci++) {
+        var lx = 10 + (ci * 53) % 370, dl = ((ci * 37) % 60) / 100, dx = ((ci * 29) % 120) - 60;
+        confetti.push('position:absolute;left:' + lx + 'px;top:' + (40 + (ci * 17) % 90) + 'px;width:' + (6 + ci % 4 * 2) + 'px;height:' + (10 + ci % 3 * 4) + 'px;border-radius:2px;background:' + CC[ci % CC.length] + ';--dx:' + dx + 'px;--r:' + (180 + ci * 47 % 540) + 'deg;pointer-events:none;animation:confetti ' + (1.6 + (ci % 5) * 0.15) + 's ' + (0.15 + dl) + 's ease-in both');
+      }
+    }
+    var q = g.quests || {};
+    var questHit = opening && !it.broken && it.shape === 'cup' && it.glaze === 'celadon' && q.min && !q.minDone;
+
+    var dots = items.map(function (x, i) {
+      var c = (i < idx && !baking) ? '#8A7A63' : (i === idx && opening ? '#FFD66B' : '#4A3A2C');
+      return { style: 'width:22px;height:8px;border-radius:4px;background:' + c };
+    });
+
+    var log = g.openLog || [];
+    return {
+      dots: dots,
+      progress: baking ? '굽는 중' : (opening ? (idx + 1) + ' / ' + items.length : (results ? '결과 확인' : '완료')),
+      nextLabel: idx + 1 >= items.length ? '결과 보기 ›' : '다음 작품 ›',
+      next: function () { self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: idx + 1 }); },
+      opening: opening,
+      summary: g.kiln !== 'firing' && !this.state.leaving,
+      baking: baking, results: results,
+      bk: (function () {
+        var sec = Math.ceil(kLeft / 1000), pc = ks ? Math.min(100, (Date.now() - ks) / KD * 100) : 0, ph = (Date.now() % 1600) / 1600, pu = 0.55 + 0.25 * Math.sin(ph * Math.PI * 2);
+        return {
+          clock: '0:' + (sec < 10 ? '0' : '') + sec,
+          bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:linear-gradient(90deg,#E07A2E,#FFB24A)',
+          note: items.length + '점이 굽는 중 · 끝나면 하나씩 꺼낸다',
+          glow: 'radial-gradient(circle,rgba(255,150,60,' + pu.toFixed(2) + ') 0%,rgba(0,0,0,0) 66%)',
+          skip: function () { self.setG({ kilnStart: Date.now() - KD }); setTimeout(function () { self.startDoor(); }, 30); }
+        };
+      })(),
+      doorOn: opening && idx === 0 && !st.doorDone,
+      dr: (function () {
+        var t = st.doorAt ? (Date.now() - st.doorAt) / 1000 : 0, q = Math.max(0, Math.min(1, (t - 0.4) / 0.7)), e = 1 - Math.pow(1 - q, 3), fade = Math.max(0, Math.min(1, (t - 1.1) / 0.4));
+        var sh = t < 0.4 && st.doorAt ? Math.sin(t * 60) * 3 * (t / 0.4) : 0;
+        var plate = 'position:absolute;top:0;bottom:0;width:50%;box-sizing:border-box;border:6px solid #1A0F08;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 3px,rgba(0,0,0,0) 3px 70px),linear-gradient(90deg,#5A4436,#7A5E4A 45%,#4E3A2E);box-shadow:inset 0 0 0 4px #8A6A52,inset 0 0 30px rgba(0,0,0,.55);';
+        return {
+          l: plate + 'left:0;transform:translateX(' + (-e * 102 + sh).toFixed(1) + '%)',
+          r: plate + 'right:0;transform:translateX(' + (e * 102 - sh).toFixed(1) + '%)',
+          lock: 'position:absolute;left:0;right:0;top:300px;display:flex;flex-direction:column;align-items:center;gap:12px;opacity:' + (1 - Math.min(1, q * 3)).toFixed(2),
+          eye: 'width:84px;height:84px;box-sizing:border-box;border-radius:50%;border:7px solid #2B1A0F;box-shadow:0 0 0 4px #8A6A52,0 0 ' + Math.round(18 + 30 * Math.min(1, t / 0.4)) + 'px rgba(255,190,90,.95);background:radial-gradient(circle,#FFF4DE,#FFB24A 45%,#C8601E)',
+          burst: 'position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;background:radial-gradient(ellipse ' + Math.round(20 + 380 * e) + 'px 70% at 50% 40%,rgba(255,244,210,' + (0.95 * (1 - fade)).toFixed(2) + '),rgba(255,170,80,' + (0.5 * (1 - fade)).toFixed(2) + ') 50%,rgba(0,0,0,0) 100%)'
+        };
+      })(),
+      rs: (function () {
+        var tot = 0, cnt = {};
+        var cards = items.map(function (x, i) {
+          var lk = LOOK[x.glaze] || LOOK.white, gg = GR[x.grade] || GR['양작'];
+          if (!x.broken) { tot += x.value || 0; }
+          cnt[x.grade] = (cnt[x.grade] || 0) + 1;
+          var hi = x.grade === '명작' || x.grade === '요변';
+          return {
+            id: 'kres-' + i, name: x.name, grade: x.grade, edge: lk.edge,
+            pot: self.potOf(x, x.broken ? '#5A4A38' : lk.body),
+            potStyle: x.broken ? 'opacity:.7;filter:grayscale(.6)' : 'filter:drop-shadow(0 0 6px ' + gg.ray + ')',
+            sub: x.broken ? '파편 +3' : (x.value || 0).toLocaleString() + 'G', subColor: x.broken ? '#4E7D74' : '#8A6410',
+            ribbon: 'padding:1px 10px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + gg.ribbon,
+            style: 'position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 10px;border-radius:14px;background:' + (hi ? 'linear-gradient(#FFF6D8,#FFE7A8)' : '#FFFDF5') + ';border:3px solid ' + (hi ? gg.ribbon : '#C9A27A') + ';box-shadow:0 3px 0 ' + (hi ? gg.ribbon : '#C9A27A') + ';animation:popIn .45s cubic-bezier(.2,1.5,.4,1) ' + (0.15 + i * 0.09).toFixed(2) + 's both'
+          };
+        });
+        var chips = ['요변', '명작', '수작', '양작', '파손'].filter(function (k) { return cnt[k]; }).map(function (k) { return { text: k + ' ' + cnt[k], style: 'padding:2px 10px;border-radius:9px;font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + GR[k].ribbon }; });
+        return { cards: cards, chips: chips, total: tot.toLocaleString(), confirm: function () { self.confirmAll(); } };
+      })(),
+      summaryTitle: log.length ? '이번 가마 정리' : '빈 가마',
+      hasLog: log.length > 0,
+      noLog: log.length === 0,
+      log: log,
+      questHit: questHit,
+      sealed: sealed, shownNow: shownNow, confetti: confetti,
+      remain: Math.max(0, items.length - idx),
+      aura: 'position:absolute;left:35px;top:20px;width:320px;height:320px;border-radius:50%;pointer-events:none;' + (shaking ? 'background:radial-gradient(circle,' + tease + ' 0%,rgba(0,0,0,0) 66%);animation:auraBoom .85s ease-in both' : 'background:radial-gradient(circle,rgba(255,214,150,.5) 0%,rgba(0,0,0,0) 64%);animation:auraPulse 1.6s ease-in-out infinite'),
+      silStyle: 'position:absolute;left:95px;top:60px;' + (shaking ? 'animation:silShake .85s ease-in both;filter:drop-shadow(0 0 14px ' + tease + ')' : 'animation:silBob 2s ease-in-out infinite;filter:drop-shadow(0 0 10px rgba(255,214,150,.8))'),
+      silEdge: shaking ? tease : '#FFD08A',
+      sealHint: shaking ? '…!' : '탭해서 꺼내기',
+      sealHintStyle: 'position:absolute;left:0;right:0;top:330px;text-align:center;font-family:Jua,sans-serif;' + (shaking ? 'font-size:34px;color:' + tease + ';animation:hintPop .3s ease-out both' : 'font-size:20px;color:#FFE7A8;animation:auraPulse 1.6s ease-in-out infinite'),
+      shownWrap: 'position:absolute;left:0;top:0;width:390px;height:844px;' + (big ? 'animation:bigShake .5s .08s both' : ''),
+      flash: 'position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;background:radial-gradient(circle at 50% 32%,#FFFFFF 0%,' + tease + ' 45%,rgba(0,0,0,0) 85%);animation:flashOut ' + (big ? '.9s' : '.55s') + ' ease-out both',
+      reveal: function () {
+        if (st.ph === 'shake') { return; }
+        var my = idx;
+        self.setState({ ph: 'shake' });
+        clearTimeout(self.revT);
+        self.revT = setTimeout(function () { self.setState({ ph: '', shownIdx: my }); }, 850);
+      },
+      it: {
+        name: it.name, grade: it.grade, value: (it.value || 0).toLocaleString(),
+        form: stars(it.form || 0, '★', '☆'), color: stars(it.color || 0, '◆', '◇'),
+        body: look.body, rim: look.rim, inner: look.inner, edge: look.edge, pot: self.potOf(it, look.body),
+        ribbon: gr.ribbon, rayColor: gr.ray, rayFill: gr.fill,
+        sparkle: gr.sparkle, broken: !!it.broken, whole: !it.broken
+      },
+      openAll: function () { clearTimeout(self.revT); self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: items.length }); },
+      toast: this.state.toast,
+      toastOn: this.state.toast !== ''
+    };
+  }
+
+  potOf(it, fill) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    var r = it && it.prof, H = it && it.H;
+    if (!r || r.length < 3) { var tt = T[it && it.shape] || T.cup; r = []; for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); } H = tt.H; }
+    H = H || 110;
+    var n = r.length, M = 0, R = [], L = [];
+    for (var j = 0; j < n; j++) { M = Math.max(M, r[j]); var y = -H * j / (n - 1); R.push([r[j], y]); L.push([-r[j], y]); }
+    function sm(pts) {
+      var d = '';
+      for (var k = 1; k < pts.length - 1; k++) { var mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; d += ' Q' + pts[k][0].toFixed(1) + ' ' + pts[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
+      var la = pts[pts.length - 1];
+      return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
+    }
+    var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
+    var Lr = L.slice().reverse();
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var side = Math.max(2 * M, H) + 20;
+    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+  }
+  fillOf(it, stage) {
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var c = CL[it && it.clay] || CL.basic;
+    if (stage === 'wet') { return c[0]; }
+    if (stage === 'dry') { return c[1]; }
+    if (stage === 'bisque') { return '#EAD8C4'; }
+    return GZ[it && it.glaze] || '#ECE8DE';
+  }
+  pickRow(it, o) {
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
+    var on = !!o.on;
+    return {
+      pot: this.potOf(it, this.fillOf(it, o.stage)),
+      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
+      check: on ? '✓' : '', on: on ? 'true' : 'false',
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      tap: o.tap
+    };
+  }
+  pickBox(o) {
+    var self = this;
+    var n = o.count || 0;
+    return {
+      on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
+      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      multi: !!o.multi,
+      confirmLabel: o.confirmLabel || '확인',
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirm: o.confirm || function () {},
+      close: function () { self.setState({ pkOpen: false }); }
+    };
+  }
+
+  rootPt(id, dx, dy) {
+    try {
+      var el = document.getElementById(id); if (!el) { return null; }
+      var root = el.closest('[data-navroot]'); if (!root) { return null; }
+      var a = el.getBoundingClientRect(), R = root.getBoundingClientRect(), k = R.width / 390;
+      return [(a.left + a.width / 2 - R.left) / k + (dx || 0), (a.top + a.height / 2 - R.top) / k + (dy || 0)];
+    } catch (e) { return null; }
+  }
+  stagePt(x, y) { return [34.2 + 0.824645 * x, 56 + 0.824645 * y]; }
+  flyRun(items) {
+    var self = this, k = Date.now();
+    if (!items || !items.length) { return; }
+    var prev = this.state.flyFx, keep = [];
+    if (prev) { var pt0 = (k - prev.k) / 1000; prev.items.forEach(function (it) { if (pt0 < it.delay + it.dur) { var c = {}; for (var q in it) { c[q] = it[q]; } c.delay = it.delay - pt0; keep.push(c); } }); }
+    var all = keep.concat(items), end = 0;
+    all.forEach(function (it) { end = Math.max(end, it.delay + it.dur + (it.out ? 0.45 : 0.15)); });
+    clearInterval(this.flyT);
+    this.setState({ flyFx: { k: k, items: all, end: end } });
+    this.flyT = setInterval(function () {
+      var F = self.state.flyFx;
+      if (!F || F.k !== k) { clearInterval(self.flyT); return; }
+      if ((Date.now() - k) / 1000 > F.end) { clearInterval(self.flyT); self.setState({ flyFx: null }); return; }
+      self.setState({ flyTick: Date.now() });
+    }, 33);
+  }
+  flyStart(pots, from, delay0) {
+    var Q = [37, 27], f = from || [195, 420];
+    this.flyRun((pots || []).slice(0, 9).map(function (p, i) { var ff = f[0] && f[0].length ? (f[i] || f[0]) : f; return { pot: p, fx: ff[0], fy: ff[1], tx: Q[0], ty: Q[1], s0: 64, s1: 16, delay: (delay0 || 0) + i * 0.12, dur: 1.0, out: true }; }));
+  }
+  flyIn(pots, tos, delay0) {
+    var Q = [37, 27];
+    this.flyRun((pots || []).slice(0, 9).map(function (p, i) { var t = tos[0] && tos[0].length ? (tos[i] || tos[0]) : tos; return { pot: p, fx: Q[0], fy: Q[1], tx: t[0], ty: t[1], s0: 18, s1: 64, delay: (delay0 || 0) + i * 0.12, dur: 0.85, out: false }; }));
+  }
+  navId() { return 'kiln'; }
+  navFlow() {
+    var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
+    var defs = [
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+    ];
+    return defs.filter(function (d) { return !st[d.id] || d.id === me; });
+  }
+  renderVals() {
+    var v = this.renderVals0();
+    var n = this.navVals();
+    for (var k in n) { v[k] = n[k]; }
+    return v;
+  }
+  navVals() {
+    var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 696 / 844;
+    var i = 0;
+    fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
+    var prev = fl[i - 1], next = fl[i + 1];
+    var dx = s.navDx || 0;
+    var NB = 59, VW = 312, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
+    var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));
+    var off = s.navOff === undefined || s.navOff === null ? autoOff : Math.max(minOff, Math.min(0, s.navOff));
+    function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
+    var FF = s.flyFx, flyList = [], qTf = 'none';
+    if (FF) {
+      var ft = (Date.now() - FF.k) / 1000, bumpAt = -9;
+      FF.items.forEach(function (it) {
+        var p = (ft - it.delay) / it.dur;
+        if (it.out) { bumpAt = Math.max(bumpAt, it.delay + it.dur); }
+        if (p <= 0 || p >= 1) { return; }
+        var x, y, sz, op = 1;
+        if (it.out) {
+          if (p < 0.22) { var q = p / 0.22; x = it.fx; y = it.fy - 24 * Math.sin(q * Math.PI / 2); sz = it.s0 * (1 + 0.15 * Math.sin(q * Math.PI)); }
+          else {
+            var q2 = (p - 0.22) / 0.78, e = q2 * q2 * (3 - 2 * q2), x0 = it.fx, y0 = it.fy - 24, cx = (x0 + it.tx) / 2 + 40, cy = Math.min(y0, it.ty) - 70;
+            x = (1 - e) * (1 - e) * x0 + 2 * (1 - e) * e * cx + e * e * it.tx; y = (1 - e) * (1 - e) * y0 + 2 * (1 - e) * e * cy + e * e * it.ty;
+            sz = it.s0 + (it.s1 - it.s0) * e; op = 1 - 0.25 * e;
+          }
+        } else {
+          var e2 = p < 0.8 ? (function (u) { return u * u * (3 - 2 * u); })(p / 0.8) : 1;
+          var cx2 = (it.fx + it.tx) / 2 + 30, cy2 = Math.min(it.fy, it.ty) - 60;
+          x = (1 - e2) * (1 - e2) * it.fx + 2 * (1 - e2) * e2 * cx2 + e2 * e2 * it.tx; y = (1 - e2) * (1 - e2) * it.fy + 2 * (1 - e2) * e2 * cy2 + e2 * e2 * it.ty;
+          sz = it.s0 + (it.s1 - it.s0) * e2;
+          if (p >= 0.8) { var b = (p - 0.8) / 0.2; y = it.ty - 10 * Math.sin(b * Math.PI); sz = it.s1 * (1 + 0.06 * Math.sin(b * Math.PI)); }
+        }
+        var pt = it.pot;
+        flyList.push({ vb: pt.vb, d: pt.d, fill: pt.fill, sw: pt.sw, style: 'position:absolute;left:' + (x - sz / 2).toFixed(1) + 'px;top:' + (y - sz / 2).toFixed(1) + 'px;width:' + sz.toFixed(1) + 'px;height:' + sz.toFixed(1) + 'px;z-index:45;pointer-events:none;opacity:' + op.toFixed(2) + ';filter:drop-shadow(0 3px 3px rgba(0,0,0,.45)) drop-shadow(0 0 6px rgba(255,231,168,.8))' });
+      });
+      var bt = ft - bumpAt;
+      if (bt > -0.05 && bt < 0.4) { qTf = 'scale(' + (1 + 0.3 * Math.sin(Math.PI * Math.max(0, bt + 0.05) / 0.45)).toFixed(3) + ')'; }
+    }
+    return {
+      flyOn: flyList.length > 0, flyList: flyList, qTf: qTf,
+      navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
+      navDropStyle: 'width:390px;height:844px',
+      navDust: 'display:none',
+      navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
+      navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navFadeR: off > minOff + 2 ? 'position:absolute;right:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(270deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
+      navBarDown: function (e) { self.navBar = { x: e.clientX, off: off, moved: false, k: (e.currentTarget.getBoundingClientRect().width / VW) || 1 }; },
+      navBarMove: function (e) {
+        var b = self.navBar; if (!b) { return; }
+        var d = (e.clientX - b.x) / b.k;
+        if (!b.moved && Math.abs(d) > 6) { b.moved = true; try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {} }
+        if (b.moved) { self.setState({ navOff: Math.max(minOff, Math.min(0, b.off + d)) }); }
+      },
+      navBarUp: function () { var b = self.navBar; self.navBar = null; self.navBarMoved = !!(b && b.moved); if (b && b.moved) { self.setState({ navOff: s.navOff }); } setTimeout(function () { self.navBarMoved = false; }, 60); },
+      navBarClick: function (e) { if (self.navBarMoved) { e.preventDefault(); e.stopPropagation(); self.navBarMoved = false; } },
+      navSteps: fl.map(function (d, j) {
+        var on = j === i;
+        return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
+          style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
+      }),
+      navStage: 'position:absolute;left:34.2px;top:56px;width:390px;height:844px;transform-origin:0 0;transform:translateX(' + dx + 'px) scale(' + K + ');touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navPrevOn: !!prev, navNextOn: !!next,
+      navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
+      navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
+      navLocked: !!s.navLock,
+      navWip: (function () { var g2 = s.g || {}, kf = g2.kilnFilled || {}, n = 0; for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { n++; } } return (g2.formedList || []).length + (g2.dryList || []).length + (g2.bisqueList || []).length + ((g2.bisque || {}).items || []).length + (g2.glazeList || []).length + (g2.kilnList || []).length + n + (g2.kiln === 'firing' ? (g2.batchItems || []).length : 0) + (function () { var c = 0, ps = g2.pieces || {}; for (var pk in ps) { if (ps[pk] && ps[pk].where === 'store' && ps[pk].fresh) { c++; } } return c; })(); })(),
+      navDown: function (e) {
+        if (isWork(e)) {
+          self.navWork = self.navWork || {};
+          self.navWork[e.pointerId] = true;
+          if (self.navP) { self.navP = null; self.setState({ navSw: false, navDx: 0 }); }
+          if (!self.state.navLock) { self.setState({ navLock: true }); }
+          return;
+        }
+        if (self.state.navLock) { return; }
+        var el = e.currentTarget, rc = el.getBoundingClientRect();
+        self.navP = { x: e.clientX, y: e.clientY, id: e.pointerId, el: el, on: false, kk: (rc.width / ((el.offsetWidth || 390) * K)) || 1 };
+      },
+      navMove: function (e) {
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        var mx = (e.clientX - p.x) / p.kk, my = (e.clientY - p.y) / p.kk;
+        if (!p.on) {
+          if (Math.abs(mx) < 12 || Math.abs(mx) < Math.abs(my)) { return; }
+          p.on = true; self.navMoved = true;
+          try { p.el.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+        var edge = (!prev && mx > 0) || (!next && mx < 0);
+        self.setState({ navSw: true, navDx: edge ? mx * 0.25 : mx });
+      },
+      navUp: function (e) {
+        var w = self.navWork || {};
+        if (w[e.pointerId]) {
+          delete w[e.pointerId];
+          if (!Object.keys(w).length) { self.setState({ navLock: false }); }
+          return;
+        }
+        var p = self.navP;
+        if (!p || e.pointerId !== p.id) { return; }
+        self.navP = null;
+        if (!p.on) { return; }
+        var d = self.state.navDx || 0;
+        var dir = d < -80 && next ? 'next' : (d > 80 && prev ? 'prev' : '');
+        if (!dir) { self.setState({ navSw: false, navDx: 0 }); return; }
+        self.setState({ navSw: false, navDx: 0 });
+        var root = p.el.parentNode;
+        setTimeout(function () {
+          var a = root && (root.querySelector('a[data-nav="' + dir + '"]') || root.querySelector('a[aria-label="' + (dir === 'next' ? '다음 공정' : '이전 공정') + '"]'));
+          if (a) { a.click(); } else { self.setState({ navDx: 0 }); }
+        }, 0);
+      },
+      navClickCap: function (e) { if (self.navMoved) { e.preventDefault(); e.stopPropagation(); self.navMoved = false; } }
+    };
+  }
+}
+</script>
+</body>
+</html>
