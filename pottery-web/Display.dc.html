@@ -110,8 +110,12 @@ button{font-family:inherit;cursor:pointer}
   </sc-if>
   <sc-if value="{{dragOn}}" hint-placeholder-val="{{false}}">
   <div id="dsell" style="{{sellZone}}">
-    <img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:30px;height:30px">
-    <span style="font-family:'Jua',sans-serif;font-size:16px">{{sellZoneText}}</span>
+    <img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:26px;height:26px">
+    <span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2;text-align:center">{{sellZoneText}}</span>
+  </div>
+  <div id="dsmash" style="{{smashZone}}">
+    <span aria-hidden="true" style="font-size:22px;line-height:1">💥</span>
+    <span style="font-family:'Jua',sans-serif;font-size:14px;line-height:1.2;text-align:center">{{smashZoneText}}</span>
   </div>
   </sc-if>
 
@@ -549,6 +553,161 @@ class Component extends DCLogic {
     this.setState({ toast: msg });
     this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1900);
   }
+  smash(pid) {
+    var self = this, g0 = this.state.g, p0 = (g0.pieces || {})[pid];
+    if (!p0 || document.querySelector('.sm-ov')) { return; }
+    var GC = { white: '#F2EFE6', celadon: '#8FB3A9', black: '#3A3530', cheonmok: '#5A3A22', jinsa: '#A8443A', sakura: '#E9A3B5' };
+    var pot = this.potOf(p0, GC[p0.glaze] || '#F2EFE6');
+    var BASE = { '범작': 2, '양작': 2, '수작': 4, '명작': 8, '요변': 12 }[p0.grade] || 2;
+    var vibOn = ((g0.settings || {}).vib !== false) && navigator.vibrate;
+    function buzz(ms) { try { if (vibOn) { navigator.vibrate(ms); } } catch (e) {} }
+    var host = document.getElementById('__host') || document.querySelector('[data-navroot]');
+    var ov = document.createElement('div'); ov.className = 'sm-ov';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:#1A0F08;touch-action:none;user-select:none;-webkit-user-select:none';
+    var cv = document.createElement('canvas'); cv.style.cssText = 'position:absolute;touch-action:none';
+    ov.appendChild(cv); document.body.appendChild(ov);
+    var W = 390, H = 844, k = 1, ox = 0, oy = 0, dpr = Math.min(2, window.devicePixelRatio || 1);
+    function fit() {
+      var vw = window.innerWidth, vh = window.innerHeight; k = Math.min(vw / W, vh / H); ox = (vw - W * k) / 2; oy = (vh - H * k) / 2;
+      cv.style.left = ox + 'px'; cv.style.top = oy + 'px'; cv.style.width = W * k + 'px'; cv.style.height = H * k + 'px';
+      cv.width = Math.round(W * k * dpr); cv.height = Math.round(H * k * dpr);
+    }
+    fit(); window.addEventListener('resize', fit);
+    var ctx = cv.getContext('2d');
+    var path = new Path2D(pot.d), vb = pot.vb.split(' ').map(Number), PW = vb[2], PH = vb[3];
+    var TGT = { x: 195, y: 250, r: 70 };
+    var st = { ph: 'idle', x: 195, y: 640, rot: 0, sc: 1, vx: 0, vy: 0, t0: performance.now(), shards: [], dust: [], shake: 0, msg: '', mult: 1, gain: 0, hit: null };
+    var trail = [], dragging = false, done = false;
+    function toG(e) { return { x: (e.clientX - ox) / k, y: (e.clientY - oy) / k, t: performance.now() }; }
+    function drawPot(x, y, sc, rot, alpha) {
+      var size = 120 * sc, s2 = size / Math.max(PW, PH);
+      ctx.save(); ctx.globalAlpha = alpha == null ? 1 : alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s2, s2); ctx.translate(-(vb[0] + PW / 2), -(vb[1] + PH / 2));
+      ctx.fillStyle = pot.fill; ctx.fill(path);
+      var gr = ctx.createLinearGradient(vb[0], 0, vb[0] + PW, 0);
+      gr.addColorStop(0, 'rgba(0,0,0,.4)'); gr.addColorStop(.35, 'rgba(255,255,255,0)'); gr.addColorStop(.42, 'rgba(255,255,255,.4)'); gr.addColorStop(.6, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(0,0,0,.45)');
+      ctx.fillStyle = gr; ctx.fill(path);
+      ctx.lineWidth = pot.sw; ctx.strokeStyle = pot.edge; ctx.lineJoin = 'round'; ctx.stroke(path);
+      ctx.beginPath(); ctx.ellipse(0, pot.rimY, pot.rimRx, pot.rimRy, 0, 0, Math.PI * 2); ctx.fillStyle = pot.inner; ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    function bg(now) {
+      var g = ctx.createLinearGradient(0, 0, 0, 520); g.addColorStop(0, '#6E4A33'); g.addColorStop(1, '#4E3222'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, 520);
+      ctx.strokeStyle = 'rgba(30,15,8,.35)'; ctx.lineWidth = 2;
+      for (var row = 0; row < 14; row++) { var yy = row * 38; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy); ctx.stroke(); for (var c = 0; c < 6; c++) { var xx = c * 78 + (row % 2) * 39; ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx, yy + 38); ctx.stroke(); } }
+      var fg = ctx.createLinearGradient(0, 520, 0, H); fg.addColorStop(0, '#8A6A4A'); fg.addColorStop(1, '#5A4030'); ctx.fillStyle = fg; ctx.fillRect(0, 520, W, H - 520);
+      ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, 516, W, 6);
+      var pulse = 1 + 0.04 * Math.sin(now / 220);
+      [[TGT.r * pulse, '#F6E7CC'], [TGT.r * 0.66 * pulse, '#C8601E'], [TGT.r * 0.33 * pulse, '#F6E7CC'], [TGT.r * 0.14 * pulse, '#B9533A']].forEach(function (a) { ctx.beginPath(); ctx.arc(TGT.x, TGT.y, a[0], 0, Math.PI * 2); ctx.fillStyle = a[1]; ctx.fill(); });
+      ctx.lineWidth = 3; ctx.strokeStyle = '#3E2616'; ctx.beginPath(); ctx.arc(TGT.x, TGT.y, TGT.r * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(195, 700, 70, 14, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#7A5434'; ctx.fillRect(140, 690, 110, 16); ctx.fillStyle = '#5B3A24'; ctx.fillRect(150, 706, 90, 60);
+    }
+    function text(t, x, y, size, col, stroke) { ctx.font = size + 'px Jua, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; if (stroke) { ctx.lineWidth = 6; ctx.strokeStyle = stroke; ctx.strokeText(t, x, y); } ctx.fillStyle = col; ctx.fillText(t, x, y); }
+    function shatter(x, y, scl) {
+      buzz([40, 30, 80]);
+      st.shake = 18;
+      var n = 18 + Math.round(Math.random() * 6);
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 9, rr = 6 + Math.random() * 16 * scl;
+        var pts = []; var m = 3 + Math.floor(Math.random() * 3);
+        for (var j = 0; j < m; j++) { var aa = j / m * Math.PI * 2 + Math.random() * 0.8; pts.push([Math.cos(aa) * rr * (0.5 + Math.random() * 0.6), Math.sin(aa) * rr * (0.5 + Math.random() * 0.6)]); }
+        st.shards.push({ x: x + Math.cos(a) * 10, y: y + Math.sin(a) * 10, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.5, pts: pts, rest: false, light: Math.random() < 0.5 });
+      }
+      for (var d = 0; d < 14; d++) { var a2 = Math.random() * Math.PI * 2; st.dust.push({ x: x, y: y, vx: Math.cos(a2) * (1 + Math.random() * 3), vy: Math.sin(a2) * (1 + Math.random() * 3), r: 8 + Math.random() * 10, life: 1 }); }
+    }
+    function finish() {
+      if (done) { return; }
+      done = true;
+      var cur = self.state.g, ps = {}; for (var kk in cur.pieces) { ps[kk] = cur.pieces[kk]; }
+      var np = {}; for (var a in ps[pid]) { np[a] = ps[pid][a]; } np.where = 'smashed'; delete np.fresh; ps[pid] = np;
+      self.setG({ pieces: ps, shards: (cur.shards || 0) + st.gain, broken: (cur.broken || 0) + 1 });
+      self.setState({ sel: '' });
+    }
+    function close() { window.removeEventListener('resize', fit); ov.remove(); cancelAnimationFrame(raf); if (st.ph === 'result') { self.say('와장창! 파편 +' + st.gain); } }
+    var raf = 0;
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      ctx.setTransform(k * dpr, 0, 0, k * dpr, 0, 0);
+      var sx = 0, sy = 0; if (st.shake > 0) { sx = (Math.random() - 0.5) * st.shake; sy = (Math.random() - 0.5) * st.shake; st.shake *= 0.85; if (st.shake < 0.3) { st.shake = 0; } }
+      ctx.save(); ctx.translate(sx, sy);
+      bg(now);
+      if (st.ph === 'idle' || st.ph === 'drag') {
+        var bob = st.ph === 'idle' ? Math.sin(now / 300) * 4 : 0;
+        drawPot(st.x, st.y + bob, 1, st.rot, 1);
+        if (st.ph === 'idle') { ctx.globalAlpha = 0.6 + 0.4 * Math.sin(now / 250); text('↑', 195, 560 - (now / 8 % 30), 34, '#FFE7A8', '#3E2616'); ctx.globalAlpha = 1; }
+      } else if (st.ph === 'fly') {
+        var t = (now - st.t0) / 1000, T = st.T;
+        var p = Math.min(1, t / T);
+        st.x = st.fx + (st.hx - st.fx) * p; st.y = st.fy + (st.hy - st.fy) * p - Math.sin(p * Math.PI) * 60;
+        st.rot += st.spin; var scl = 1 - 0.55 * p;
+        drawPot(st.x, st.y, scl, st.rot, 1);
+        if (p >= 1) { st.ph = 'boom'; st.t0 = now; shatter(st.hx, st.hy, 0.6); }
+      }
+      // shards & dust
+      st.dust.forEach(function (d) { d.x += d.vx; d.y += d.vy; d.r += 0.6; d.life -= 0.02; if (d.life > 0) { ctx.fillStyle = 'rgba(230,210,180,' + (d.life * 0.5).toFixed(2) + ')'; ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill(); } });
+      st.shards.forEach(function (sh) {
+        if (!sh.rest) { sh.vy += 0.45; sh.x += sh.vx; sh.y += sh.vy; sh.r += sh.vr; sh.vx *= 0.99; if (sh.y > 760 + Math.random() * 40) { sh.y = Math.min(sh.y, 800); sh.vy *= -0.3; sh.vx *= 0.6; sh.vr *= 0.5; if (Math.abs(sh.vy) < 1.2) { sh.rest = true; } } }
+        ctx.save(); ctx.translate(sh.x, sh.y); ctx.rotate(sh.r); ctx.beginPath(); sh.pts.forEach(function (pt, i) { if (i) { ctx.lineTo(pt[0], pt[1]); } else { ctx.moveTo(pt[0], pt[1]); } }); ctx.closePath();
+        ctx.fillStyle = pot.fill; ctx.fill(); if (sh.light) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.fill(); } ctx.lineWidth = 1.6; ctx.strokeStyle = pot.edge; ctx.stroke(); ctx.restore();
+      });
+      ctx.restore();
+      if (st.ph === 'boom') {
+        var bt = (now - st.t0) / 1000;
+        if (bt < 0.25) { ctx.fillStyle = 'rgba(255,240,200,' + (0.7 * (1 - bt / 0.25)).toFixed(2) + ')'; ctx.fillRect(0, 0, W, H); }
+        var sz = 64 * Math.min(1, bt * 5) * (1 + 0.1 * Math.sin(bt * 20) * Math.max(0, 1 - bt));
+        text('와장창!', 195, 150, sz, '#FFE7A8', '#7A2F1E');
+        if (st.msg) { text(st.msg, 195, 214, 26, '#FFD66B', '#3E2616'); }
+        if (bt > 1.6) { st.ph = 'result'; finish(); }
+      }
+      if (st.ph === 'result') {
+        ctx.fillStyle = 'rgba(26,15,8,.55)'; ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#FFF4DE'; ctx.strokeStyle = '#5B3A24'; ctx.lineWidth = 4;
+        ctx.beginPath(); if (ctx.roundRect) { ctx.roundRect(45, 300, 300, 230, 24); } else { ctx.rect(45, 300, 300, 230); } ctx.fill(); ctx.stroke();
+        text('와장창!', 195, 340, 30, '#7A2F1E');
+        text(p0.name + ' · ' + p0.grade, 195, 380, 16, '#5B3A24');
+        text('파편 +' + st.gain, 195, 425, 34, '#3F8E7A');
+        if (st.mult > 1) { text(st.msg + ' 보너스 ×' + st.mult, 195, 462, 15, '#C8601E'); }
+        ctx.fillStyle = '#4A9440'; ctx.beginPath(); if (ctx.roundRect) { ctx.roundRect(85, 478, 220, 40, 14); } else { ctx.rect(85, 478, 220, 40); } ctx.fill();
+        text('확인', 195, 498, 19, '#FFFDF5');
+      }
+      if (st.ph === 'idle' || st.ph === 'drag') {
+        ctx.fillStyle = 'rgba(43,26,15,.85)'; ctx.fillRect(0, 0, W, 64);
+        text('도자기를 위로 휙! 던져서 과녁을 맞혀 보세요', 195, 22, 16, '#FFE7A8');
+        text(p0.name + ' · ' + p0.grade + ' · 기본 파편 ' + BASE + '개', 195, 46, 12, '#E8D3B5');
+        ctx.fillStyle = 'rgba(255,244,222,.92)'; ctx.beginPath(); if (ctx.roundRect) { ctx.roundRect(150, 790, 90, 34, 12); } else { ctx.rect(150, 790, 90, 34); } ctx.fill();
+        text('그만두기', 195, 807, 15, '#5B3A24');
+      }
+    }
+    raf = requestAnimationFrame(frame);
+    cv.addEventListener('pointerdown', function (e) {
+      var q = toG(e);
+      if (st.ph === 'result') { if (q.y > 470 && q.y < 530) { close(); } return; }
+      if (st.ph !== 'idle') { return; }
+      if (q.y > 785 && q.y < 830 && Math.abs(q.x - 195) < 50) { close(); return; }
+      if (Math.hypot(q.x - st.x, q.y - st.y) < 90) { dragging = true; st.ph = 'drag'; trail = [q]; try { cv.setPointerCapture(e.pointerId); } catch (er) {} }
+    });
+    cv.addEventListener('pointermove', function (e) {
+      if (!dragging) { return; }
+      var q = toG(e); trail.push(q); if (trail.length > 8) { trail.shift(); }
+      st.x = q.x; st.y = Math.max(420, q.y); st.rot = (q.x - 195) / 300;
+    });
+    function release(e) {
+      if (!dragging) { return; }
+      dragging = false;
+      var a = trail[0], b = trail[trail.length - 1], dt = Math.max(16, (b.t - a.t));
+      var vx = (b.x - a.x) / dt * 16, vy = (b.y - a.y) / dt * 16;
+      if (vy > -6) { st.ph = 'idle'; st.x = 195; st.y = 640; st.rot = 0; return; }
+      var T = 0.55, hx = st.x + vx * 9, hy = TGT.y + (vy + 20) * 6;
+      hx = Math.max(30, Math.min(360, hx)); hy = Math.max(110, Math.min(480, hy));
+      var dist = Math.hypot(hx - TGT.x, hy - TGT.y);
+      st.mult = dist < TGT.r * 0.33 ? 2 : (dist < TGT.r ? 1.5 : 1);
+      st.msg = st.mult === 2 ? '정중앙 명중!' : (st.mult > 1 ? '명중!' : '');
+      st.gain = Math.round(BASE * st.mult);
+      st.fx = st.x; st.fy = st.y; st.hx = hx; st.hy = hy; st.T = T; st.spin = vx / 120 + 0.15; st.t0 = performance.now(); st.ph = 'fly';
+      buzz(20);
+    }
+    cv.addEventListener('pointerup', release); cv.addEventListener('pointercancel', release);
+  }
   togglePick(id) {
     var sp = {}, cur = this.state.sellPick || {};
     for (var k in cur) { sp[k] = cur[k]; }
@@ -567,7 +726,7 @@ class Component extends DCLogic {
     var root = document.querySelector('[data-dsroot]'); if (!root) { return null; }
     var R = root.getBoundingClientRect(), k = R.width / 390;
     function hit(id) { var el = document.getElementById(id); if (!el) { return false; } var r = el.getBoundingClientRect(); return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom; }
-    return { x: (cx - R.left) / k, y: (cy - R.top) / k, over: hit('dsell') ? 'sell' : (hit('dshelf') ? 'shelf' : (hit('dstore') ? 'store' : '')) };
+    return { x: (cx - R.left) / k, y: (cy - R.top) / k, over: hit('dsell') ? 'sell' : hit('dsmash') ? 'smash' : (hit('dshelf') ? 'shelf' : (hit('dstore') ? 'store' : '')) };
   }
   dragDown(e, sid, from) {
     if (this.state.sellMode || (e.button !== undefined && e.button !== 0)) { return; }
@@ -593,6 +752,8 @@ class Component extends DCLogic {
         self.movePiece(sid, 'shelf'); self.setState({ sel: sid }); self.say(p.name + '을(를) 진열대에 올렸다');
       } else if (over === 'store') {
         self.movePiece(sid, 'store'); self.setState({ sel: '' }); self.say(p.name + '을(를) 내려서 보관했다');
+      } else if (over === 'smash') {
+        self.smash(sid);
       } else if (over === 'sell') {
         self.setState({ cfIds: [sid] });
       }
@@ -714,8 +875,10 @@ class Component extends DCLogic {
         if (!sellIds.length) { self.setState({ sellMode: false, sellPick: {} }); return; }
         self.setState({ cfIds: sellIds });
       },
-      sellZone: 'position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;border:3px dashed ' + (D && D.over === 'sell' ? '#FFD66B;background:#2F6328;color:#FFE7A8;box-shadow:0 0 18px rgba(255,214,107,.9)' : '#2F6328;background:rgba(74,148,64,.85);color:#FFFDF5'),
-      sellZoneText: D && D.over === 'sell' ? '놓으면 판매 · ' + (Dp ? (Dp.value || 0).toLocaleString() : 0) + 'G' : '판매 상자 · 여기에 놓기',
+      smashZone: 'position:absolute;left:198px;right:14px;top:420px;height:62px;box-sizing:border-box;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 6px;border:3px dashed ' + (D && D.over === 'smash' ? '#FFD66B;background:#7A2F1E;color:#FFE7A8;box-shadow:0 0 18px rgba(255,140,80,.9)' : '#7A2F1E;background:rgba(185,83,58,.88);color:#FFFDF5'),
+      smashZoneText: D && D.over === 'smash' ? '놓으면 와장창!' : '와장창 · 깨서 파편',
+      sellZone: 'position:absolute;left:14px;right:198px;top:420px;height:62px;box-sizing:border-box;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;border:3px dashed ' + (D && D.over === 'sell' ? '#FFD66B;background:#2F6328;color:#FFE7A8;box-shadow:0 0 18px rgba(255,214,107,.9)' : '#2F6328;background:rgba(74,148,64,.85);color:#FFFDF5'),
+      sellZoneText: D && D.over === 'sell' ? '놓으면 판매 · ' + (Dp ? (Dp.value || 0).toLocaleString() : 0) + 'G' : '판매 상자',
       ghost: D && Dp ? { pot: self.potOf(Dp, GC[Dp.glaze] || '#F2EFE6'), style: 'position:absolute;left:' + (D.x - 34) + 'px;top:' + (D.y - 44) + 'px;width:68px;height:68px;z-index:66;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45));transform:scale(1.1)' } : { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, style: 'display:none' },
       cfOn: cfRows.length > 0,
       cf: { n: cfRows.length, rows: cfRows, sum: cfSum.toLocaleString(), no: function () { self.setState({ cfIds: [] }); }, yes: function () { self.sellMany(cfIds); } },
