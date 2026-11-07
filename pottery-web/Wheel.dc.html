@@ -113,10 +113,19 @@ button{font-family:inherit;cursor:pointer}
         <rect x="0" y="{{grab.y1}}" width="300" height="{{grab.h}}" fill="#FFE7A8" opacity="{{grab.op}}" clip-path="url(#potClip)"></rect>
         <line x1="10" x2="290" y1="{{grab.y}}" y2="{{grab.y}}" stroke="#FFE7A8" stroke-width="1.4" stroke-dasharray="3 5"></line>
         <circle cx="{{grab.hx}}" cy="{{grab.y}}" r="13" fill="#FFF4DE" fill-opacity="0.55" stroke="#2B1A0F" stroke-width="2"></circle>
-        <text x="{{grab.ax}}" y="{{grab.ay}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="22" fill="#FFE7A8" stroke="#2B1A0F" stroke-width="1">{{grab.arrow}}</text>
         <text x="150" y="{{grab.ly}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="12" fill="#FFF4DE" stroke="#2B1A0F" stroke-width="0.6">{{grab.label}}</text>
       </sc-if>
 
+      <sc-if value="{{gd.on}}" hint-placeholder-val="{{false}}">
+        <g aria-hidden="true" style="pointer-events:none">
+          <circle cx="{{gd.cl}}" cy="{{gd.cy}}" r="{{gd.r}}" fill="rgba(255,231,168,.25)" stroke="#FFE7A8" stroke-width="2.5" opacity="{{gd.rop}}"></circle>
+          <circle cx="{{gd.cr}}" cy="{{gd.cy}}" r="{{gd.r}}" fill="rgba(255,231,168,.25)" stroke="#FFE7A8" stroke-width="2.5" opacity="{{gd.rop}}"></circle>
+          <image href="_blob/a795fdcbe57fe24aff00e58aef9dce47.webp" x="{{gd.lx}}" y="{{gd.y}}" width="40" height="111" opacity="{{gd.op}}"></image>
+          <image href="_blob/97dc46d26eb0d59475dcf2e6abaca47b.webp" x="{{gd.rx}}" y="{{gd.y}}" width="40" height="111" opacity="{{gd.op}}"></image>
+          <rect x="{{gd.bx}}" y="{{gd.by}}" width="{{gd.bw}}" height="26" rx="13" fill="#2B1A0F" fill-opacity=".82" stroke="#FFE7A8" stroke-width="1.5" opacity="{{gd.top}}"></rect>
+          <text x="150" y="{{gd.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="15" fill="#FFE7A8" opacity="{{gd.top}}">{{gd.text}}</text>
+        </g>
+      </sc-if>
       <sc-if value="{{wrapping}}" hint-placeholder-val="{{false}}">
         <image href="_blob/a795fdcbe57fe24aff00e58aef9dce47.webp" x="{{hands.ilx}}" y="{{hands.iy}}" width="40" height="111"></image>
         <image href="_blob/97dc46d26eb0d59475dcf2e6abaca47b.webp" x="{{hands.irx}}" y="{{hands.iy}}" width="40" height="111"></image>
@@ -158,7 +167,7 @@ button{font-family:inherit;cursor:pointer}
 
     <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
-    <div role="status" style="position:absolute;left:8px;right:8px;top:8px;box-sizing:border-box;padding:7px 10px;border-radius:12px;background:{{hintBg}};box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:'Jua',sans-serif;font-size:13px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none"><span style="display:inline-block;margin-right:5px;padding:0 6px;border-radius:6px;background:rgba(255,244,222,.25);font-size:11px">가이드</span>{{hint}}</div>
+    <div role="status" style="position:absolute;left:8px;right:8px;top:8px;box-sizing:border-box;padding:7px 10px;border-radius:12px;background:{{hintBg}};box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:'Jua',sans-serif;font-size:15px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none"><span style="display:inline-block;margin-right:5px;padding:0 6px;border-radius:6px;background:rgba(255,244,222,.25);font-size:11px">가이드</span>{{hint}}</div>
     <div aria-live="polite" style="position:absolute;left:8px;top:64px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none">
       <sc-for list="{{tips}}" as="tp" hint-placeholder-count="2">
         <span style="{{tp.style}}">{{tp.text}}</span>
@@ -851,6 +860,21 @@ class Component extends DCLogic {
       hdl: { on: shaping && !s.wrapping, y: (base - s.H - 40).toFixed(1), ty: (base - s.H - 24).toFixed(1), ly1: (base - s.H - 16).toFixed(1), ly2: (base - s.H).toFixed(1), fill: s.grab && s.grab.mode === 'v' ? '#FFD66B' : '#FFF4DE' },
       wrapping: s.wrapping,
       hands: hands,
+      gd: (function () {
+        var on = !shaping && !s.wrapping && !s.squeezePrep && !(s.fx);
+        if (!on) { return { on: false }; }
+        var T = 1800, t = (Date.now() % T) / T, off, op, rr = 0, rop = 0;
+        if (t < 0.32) { var q = t / 0.32, e = 1 - Math.pow(1 - q, 3); off = 34 * (1 - e); op = 0.85 * e; }
+        else if (t < 0.8) { var q2 = (t - 0.32) / 0.48; off = -4 * Math.sin(Math.min(1, q2 * 3) * Math.PI / 2); op = 0.85; rr = 8 + 18 * q2; rop = 1 - q2; }
+        else { var q3 = (t - 0.8) / 0.2; off = -4 + 10 * q3; op = 0.85 * (1 - q3); }
+        var txt = s.touchUI ? '양손으로 동시에 꾸욱!' : '흙을 꾹 누르고 있기';
+        var bw = txt.length * 14 + 24, ty = Math.max(16, hy - 12);
+        return {
+          on: true, lx: (150 - midR - 36 - off).toFixed(1), rx: (150 + midR - 4 + off).toFixed(1), y: (hy - 4).toFixed(1), op: op.toFixed(2),
+          cl: (150 - midR - 4).toFixed(1), cr: (150 + midR + 4).toFixed(1), cy: (hy + 70).toFixed(1), r: rr.toFixed(1), rop: rop.toFixed(2),
+          text: txt, bw: bw, bx: (150 - bw / 2).toFixed(1), by: (ty - 18).toFixed(1), ty: ty.toFixed(1), top: (0.75 + 0.25 * Math.sin(Date.now() / 300)).toFixed(2)
+        };
+      })(),
       segs: segs,
       tmin: '평균 ' + an.tAvg.toFixed(1),
       safeLine: '목표 ' + tg.T[0] + '~' + tg.T[1],
