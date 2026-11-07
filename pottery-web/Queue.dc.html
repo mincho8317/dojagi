@@ -190,7 +190,7 @@ class Component extends DCLogic {
       spotOff(); spotFind = find;
       var el0 = find(); if (!el0 || !vis(el0)) { return false; }
       spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
-      spotEl.style.cssText = 'position:fixed;inset:0;z-index:9995;pointer-events:none';
+      spotEl.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none';
       spotEl.innerHTML = '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center"></div>';
       spotEl.querySelector('.bub').textContent = msg;
       document.body.appendChild(spotEl);
@@ -218,6 +218,11 @@ class Component extends DCLogic {
       var t = g.tut, L = { 1: ['Dry', '바로 말리기', 'dry'], 2: ['Bisque', '바로 완료', 'bq'], 4: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
       if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
       var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
+      var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (L[2] === 'bq' ? ((g.bisque || {}).state === 'firing' && (g.bisque.start || 0) + 1200000 > nowJ + 3000) : g.kiln === 'firing');
+      if (!busy) {
+        if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
+        return;
+      }
       var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
