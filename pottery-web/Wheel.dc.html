@@ -859,7 +859,7 @@ class Component extends DCLogic {
       wrapping: s.wrapping,
       hands: hands,
       gd: (function () {
-        var on = !shaping && !s.wrapping && !s.squeezePrep && !(s.fx);
+        var on = !shaping && !s.wrapping && !s.squeezePrep && !(s.fx) && (g.settings || {}).hints !== false;
         if (!on) { return { on: false }; }
         var T = 1800, t = (Date.now() % T) / T, off, op, rr = 0, rop = 0;
         if (t < 0.32) { var q = t / 0.32, e = 1 - Math.pow(1 - q, 3); off = 34 * (1 - e); op = 0.85 * e; }

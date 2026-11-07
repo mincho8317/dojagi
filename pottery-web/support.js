@@ -34,7 +34,7 @@
     var C=(new Function(src+';return Component;'))();
     var inst=new C({}); window.__inst=inst; var pending=false;
     function render(){ pending=false; var v=inst.renderVals(); var host=document.getElementById('__host'); var frag=document.createElement('div'); tpl.childNodes.forEach(function(c){build(c,v,frag);});
-      morphdom(host, frag, { childrenOnly:true, onBeforeElUpdated:function(from,to){ if(to.__h){ bindH(from,to.__h); } else if(from.__h){ from.__h={}; } return true; } }); }
+      morphdom(host, frag, { childrenOnly:true, onBeforeElUpdated:function(from,to){ if(from.tagName==='TEXTAREA'||(from.tagName==='INPUT'&&from.type!=='checkbox')){ if(to.__h) bindH(from,to.__h); return false; } if(to.__h){ bindH(from,to.__h); } else if(from.__h){ from.__h={}; } return true; } }); }
     window.__sched=function(){ if(!pending){ pending=true; setTimeout(render,0);} };
     xdc.remove(); var host=document.createElement('div'); host.id='__host'; document.body.appendChild(host); fit(); addEventListener('resize',fit);
     render(); if(inst.componentDidMount) inst.componentDidMount();
