@@ -295,7 +295,140 @@ class Component extends DCLogic {
     for (var i = 0; i < order.length; i++) { var v = fl[String(order[i])]; if (!(v && typeof v === 'object')) { return { pkOpen: true, pkCell: order[i], sel: -1 }; } }
     return null;
   }
+  tutBoot() {
+    var PAGE = 'Kiln';
+    if (typeof window === 'undefined' || typeof document === 'undefined') { return; }
+    if (window.__tutBooted) { return; }
+    window.__tutBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var NAMES = { Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 장부', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var UNL = [['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Counter', 'Commission'], ['Shop', 'Contest'], ['Research', 'Codex', 'Season', 'Town']];
+    var STEPS = [
+      { goal: '물레에서 첫 그릇 빚기', hint: '공방의 물레(또는 아래 제작 버튼)를 눌러 흙을 빚어 보세요', next: 'Wheel' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요', next: 'Dry' },
+      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고, 다 구워지면 꺼내 주세요', next: 'Bisque' },
+      { goal: '유약 바르기', hint: '초벌한 그릇을 유약통에 꾹 눌러 담가 보세요', next: 'Glaze' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요', next: 'Kiln' },
+      { goal: '진열대에 작품 올리기', hint: '보관함의 작품을 진열대로 끌어 올려 보세요', next: 'Display' },
+      { goal: '손님에게 팔거나 의뢰 받기', hint: '카운터에서 손님을 맞이해 보세요', next: 'Counter' },
+      { goal: '스테이지에서 첫 별 얻기', hint: '스테이지에서 조건에 맞는 작품을 출품해 보세요', next: 'Contest' }
+    ];
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function save(g) { try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) {} }
+    function len(a) { return (a && a.length) || 0; }
+    function cnt(o) { var n = 0; for (var k in (o || {})) { if (o[k]) { n++; } } return n; }
+    function pieceN(g, w) { var n = 0, ps = g.pieces || {}; for (var k in ps) { if (ps[k] && (!w || w.indexOf(ps[k].where) >= 0)) { n++; } } return n; }
+    function lv(g) {
+      var made = pieceN(g) > 0;
+      var kilnIn = len(g.kilnList) || cnt(g.kilnFilled) || g.kiln === 'firing' || made;
+      var glazed = len(g.glazeList) || kilnIn;
+      var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
+      var formed = len(g.formedList) || len(g.dryList) || bisq;
+      var shown = pieceN(g, ['shelf', 'sold', 'museum']) > 0;
+      var sold = pieceN(g, ['sold']) > 0 || !!(g.quests || {}).min;
+      var star = cnt(((g.contest || {}).stars) || {}) > 0;
+      return [formed, bisq, glazed, kilnIn, made, shown, sold, star];
+    }
+    function locked(g) {
+      var t = g.tut, L = {};
+      if (typeof t !== 'number' || t >= UNL.length) { return L; }
+      for (var i = t; i < UNL.length; i++) { UNL[i].forEach(function (p) { L[p] = true; }); }
+      return L;
+    }
+    function pageOf(href) { var m = /([A-Za-z]+)\.dc\.html/.exec(href || ''); return m ? m[1] : ''; }
+    var css = document.createElement('style');
+    var sel = Object.keys(NAMES).map(function (p) { return 'html[data-tl~="' + p + '"] a[href*="' + p + '.dc.html"]'; });
+    css.textContent = sel.join(',') + '{filter:grayscale(1) brightness(.8)!important;opacity:.45!important}' +
+      Object.keys(NAMES).concat(['Wheel']).map(function (p) { return 'html[data-tn="' + p + '"] a[href="' + p + '.dc.html"]'; }).join(',') + '{animation:tutPulse 1.2s ease-in-out infinite!important;border-radius:14px}' +
+      '@keyframes tutPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,214,107,.9),0 0 10px 2px rgba(255,214,107,.7)}50%{box-shadow:0 0 0 5px rgba(255,214,107,.5),0 0 24px 8px rgba(255,214,107,.9)}}' +
+      '@keyframes tutIn{0%{transform:translate(-50%,-14px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}@keyframes tutPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}' +
+      '.tut-card{position:fixed;left:50%;top:12px;z-index:9998;width:min(352px,92vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
+      '.tut-card b{display:block;font-weight:400;font-size:15px;color:#FFE7A8}.tut-card span{display:block;font-family:"Noto Sans KR",sans-serif;font-size:11.5px;line-height:1.45;color:#F3E3C4;margin-top:2px}' +
+      '.tut-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.66);display:flex;align-items:center;justify-content:center}' +
+      '.tut-box{width:min(320px,86vw);box-sizing:border-box;padding:22px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 0 rgba(43,26,15,.45);text-align:center;color:#2B1A0F;font-family:"Noto Sans KR",sans-serif;animation:tutPop .45s both}' +
+      '.tut-box h3{margin:6px 0 6px;font-family:Jua,sans-serif;font-weight:400;font-size:22px}.tut-box p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#5B3A24;white-space:pre-line}' +
+      '.tut-box .ic{font-size:44px;line-height:1}.tut-box .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 14px}.tut-box .chips i{font-style:normal;padding:4px 10px;border-radius:12px;background:#FFE7A8;border:2px solid #B8923F;font-family:Jua,sans-serif;font-size:14px;color:#5B3A24}' +
+      '.tut-btn{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;padding:12px 0;margin-top:8px;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;text-align:center}' +
+      '.tut-btn.go{background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5}.tut-btn.sub{background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434;font-size:15px}' +
+      '.tut-toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:9999;width:min(320px,86vw);box-sizing:border-box;padding:11px 14px;border-radius:16px;background:rgba(43,26,15,.95);border:3px solid #FFE7A8;font-family:Jua,sans-serif;font-size:14px;line-height:1.45;color:#FFF4DE;text-align:center;pointer-events:none}';
+    document.head.appendChild(css);
+    var cardEl = null, cardT = 0, toastT = 0;
+    function toast(msg) {
+      var el = document.querySelector('.tut-toast');
+      if (!el) { el = document.createElement('div'); el.className = 'tut-toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+      el.textContent = msg; el.style.display = 'block';
+      clearTimeout(toastT); toastT = setTimeout(function () { el.style.display = 'none'; }, 2200);
+    }
+    function overlay(html, btns) {
+      var ov = document.createElement('div'); ov.className = 'tut-ov';
+      var box = document.createElement('div'); box.className = 'tut-box'; box.setAttribute('role', 'dialog'); box.innerHTML = html;
+      btns.forEach(function (b) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'tut-btn ' + (b.cls || 'go'); bt.textContent = b.label; bt.addEventListener('click', function () { ov.remove(); if (b.run) { b.run(); } }); box.appendChild(bt); });
+      ov.appendChild(box); document.body.appendChild(ov); return ov;
+    }
+    function showCard(g, sticky) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } return; }
+      var st = STEPS[t];
+      if (!cardEl) { cardEl = document.createElement('div'); cardEl.className = 'tut-card'; cardEl.setAttribute('role', 'status'); document.body.appendChild(cardEl); }
+      cardEl.innerHTML = '<b>🎯 ' + (t + 1) + '/' + STEPS.length + ' · ' + st.goal + '</b><span>' + st.hint + '</span>';
+      cardEl.style.opacity = '1'; cardEl.style.top = sticky ? '74px' : '12px';
+      clearTimeout(cardT);
+      if (!sticky) { cardT = setTimeout(function () { if (cardEl) { cardEl.style.opacity = '0'; } }, 4500); }
+    }
+    function apply(g) {
+      var L = locked(g), keys = Object.keys(L);
+      document.documentElement.setAttribute('data-tl', keys.join(' '));
+      var t = g.tut;
+      document.documentElement.setAttribute('data-tn', typeof t === 'number' && t < STEPS.length ? STEPS[t].next : '');
+      return L;
+    }
+    function freshStart(keep) {
+      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
+      save(g); return g;
+    }
+    function check(first) {
+      var g = load(), t = g.tut;
+      if (typeof t === 'number' && t < STEPS.length) {
+        var done = lv(g), nt = t, opened = [];
+        while (nt < STEPS.length && done[nt]) { opened = opened.concat(UNL[nt]); nt++; }
+        if (nt !== t) {
+          g.tut = nt; save(g);
+          var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
+          var fin = nt >= STEPS.length;
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); } }]);
+          window.dispatchEvent(new Event('storage'));
+        }
+      }
+      var L = apply(load());
+      if (first && L[PAGE]) {
+        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + (NAMES[PAGE] || '이 화면') + '은(는) 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { location.href = 'Main.dc.html'; } }]);
+      }
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) { return; }
+      var p = pageOf(a.getAttribute('href')), g = load(), L = locked(g);
+      if (p && L[p]) {
+        e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
+        var need = 0; for (var i = 0; i < UNL.length; i++) { if (UNL[i].indexOf(p) >= 0) { need = i; break; } }
+        toast('🔒 ' + (NAMES[p] || p) + ' · 「' + STEPS[need].goal + '」를 마치면 열려요');
+      }
+    }, true);
+    window.addEventListener('storage', function () { apply(load()); });
+    var g0 = load();
+    if (PAGE === 'Main' && g0.tut === undefined) {
+      overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n흙 빚기부터 판매까지 하나씩 배우면서\n새 기능이 차례로 열려요.</p>', [
+        { label: '튜토리얼 시작', run: function () { freshStart(load()); try { location.reload(); } catch (e) {} } },
+        { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
+      ]);
+    } else {
+      check(true);
+      showCard(load(), PAGE === 'Main');
+    }
+    setInterval(function () { check(false); }, 1000);
+  }
   componentDidMount() {
+    try { this.tutBoot(); } catch (e) {}
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.takeFocus(); } };
     this.takeFocus();
