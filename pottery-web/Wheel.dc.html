@@ -105,9 +105,6 @@ button{font-family:inherit;cursor:pointer}
       <path d="{{ghostPath}}" fill="none" stroke="#2B1A0F" stroke-width="4.2" stroke-dasharray="6 6" opacity="0.35" pointer-events="none"></path>
       <path d="{{ghostPath}}" fill="none" stroke="#FFF4DE" stroke-width="2.2" stroke-dasharray="6 6" opacity="0.95" pointer-events="none"></path>
 
-      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="2">
-        <text x="{{mk.x}}" y="{{mk.y}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="20" fill="{{mk.c}}" stroke="#2B1A0F" stroke-width="0.8">{{mk.t}}</text>
-      </sc-for>
 
       <sc-if value="{{grabOn}}" hint-placeholder-val="{{false}}">
         <rect x="0" y="{{grab.y1}}" width="300" height="{{grab.h}}" fill="#FFE7A8" opacity="{{grab.op}}" clip-path="url(#potClip)"></rect>
