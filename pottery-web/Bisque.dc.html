@@ -75,6 +75,20 @@ button{font-family:inherit;cursor:pointer}
   <span style="{{bubble}}">{{bubbleText}}</span>
 
   <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+    <sc-if value="{{fan.on}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:16px;background:#FCEBD8;border:2px solid #E0A06A">
+        <button type="button" onPointerDown="{{fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{fan.btn}}"><span style="font-size:26px;line-height:1">🌬️</span><span style="font-family:'Jua',sans-serif;font-size:13px">풀무질</span></button>
+        <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A2F1E">{{fan.title}}</span><span style="font-size:10.5px;font-weight:700;color:#7A5434">{{fan.left}}</span></div>
+          <div style="position:relative;height:16px;box-sizing:border-box;border:2px solid #3E2616;border-radius:8px;background:#3E2616;overflow:hidden">
+            <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
+            <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
+            <span style="{{fan.bar}}"></span>
+          </div>
+          <span style="font-size:10.5px;color:#7A5434">{{fan.tip}}</span>
+        </div>
+      </div>
+    </sc-if>
     <div style="display:flex;justify-content:space-between;font-size:12px;color:#5B3A24"><span>{{info1}}</span><span>{{info2}}</span></div>
     <div style="height:14px;box-sizing:border-box;border:2px solid #3E2616;border-radius:8px;background:#3E2616;overflow:hidden"><div style="{{bar}}"></div></div>
     <button type="button" onClick="{{run}}" style="{{btn}}">
@@ -214,10 +228,10 @@ class Component extends DCLogic {
     var UNL = [['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Counter', 'Commission'], ['Shop', 'Contest'], ['Research', 'Codex', 'Season', 'Town']];
     var STEPS = [
       { goal: '물레에서 첫 그릇 빚기', hint: '공방의 물레(또는 아래 제작 버튼)를 눌러 흙을 빚어 보세요', next: 'Wheel' },
-      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요', next: 'Dry' },
-      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고, 다 구워지면 꺼내 주세요', next: 'Bisque' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 기다리기 싫으면 💎옥으로 바로 말리기', next: 'Dry' },
+      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
       { goal: '유약 바르기', hint: '초벌한 그릇을 유약통에 꾹 눌러 담가 보세요', next: 'Glaze' },
-      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요', next: 'Kiln' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '진열대에 작품 올리기', hint: '보관함의 작품을 진열대로 끌어 올려 보세요', next: 'Display' },
       { goal: '손님에게 팔거나 의뢰 받기', hint: '카운터에서 손님을 맞이해 보세요', next: 'Counter' },
       { goal: '스테이지에서 첫 별 얻기', hint: '스테이지에서 조건에 맞는 작품을 출품해 보세요', next: 'Contest' }
@@ -274,6 +288,44 @@ class Component extends DCLogic {
       btns.forEach(function (b) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'tut-btn ' + (b.cls || 'go'); bt.textContent = b.label; bt.addEventListener('click', function () { ov.remove(); if (b.run) { b.run(); } }); box.appendChild(bt); });
       ov.appendChild(box); document.body.appendChild(ov); return ov;
     }
+    var spotEl = null, spotT = 0, spotFind = null;
+    function spotOff() { clearInterval(spotT); spotT = 0; if (spotEl) { spotEl.remove(); spotEl = null; } }
+    function vis(el) { if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 12 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) { return null; } var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.3) { return null; } return r; }
+    function spotlight(find, msg) {
+      spotOff(); spotFind = find;
+      var el0 = find(); if (!el0 || !vis(el0)) { return false; }
+      spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
+      spotEl.style.cssText = 'position:fixed;inset:0;z-index:9995;pointer-events:none';
+      spotEl.innerHTML = '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center"></div>';
+      spotEl.querySelector('.bub').textContent = msg;
+      document.body.appendChild(spotEl);
+      function place() {
+        var el = spotFind && spotFind(), r = vis(el); if (!r || !spotEl) { spotOff(); return; }
+        var h = spotEl.querySelector('.hole'), b = spotEl.querySelector('.bub'), pad = 6;
+        h.style.left = (r.left - pad) + 'px'; h.style.top = (r.top - pad) + 'px'; h.style.width = (r.width + pad * 2) + 'px'; h.style.height = (r.height + pad * 2) + 'px';
+        var bw = Math.min(250, window.innerWidth - 20), bl = Math.max(10, Math.min(window.innerWidth - bw - 10, r.left + r.width / 2 - bw / 2));
+        b.style.width = bw + 'px'; b.style.left = bl + 'px';
+        if (r.top > window.innerHeight * 0.45) { b.style.top = 'auto'; b.style.bottom = (window.innerHeight - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
+      }
+      place(); spotT = setInterval(place, 250);
+      setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
+      return true;
+    }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
+    function guideNext(g) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      var nx = STEPS[t].next; if (nx === PAGE) { return; }
+      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+    }
+    function guideJade(g) {
+      var t = g.tut, L = { 1: ['Dry', '바로 말리기', 'dry'], 2: ['Bisque', '바로 완료', 'bq'], 4: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
+      if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
+      var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
+      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
+      if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
+    }
     function showCard(g, sticky) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return; }
       var st = STEPS[t];
@@ -311,7 +363,7 @@ class Component extends DCLogic {
           g.tut = nt; save(g);
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); setTimeout(function () { guideNext(load()); }, 450); } }]);
           window.dispatchEvent(new Event('storage'));
         }
       }
@@ -340,8 +392,9 @@ class Component extends DCLogic {
     } else {
       check(true);
       showCard(load(), PAGE === 'Main');
+      setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200);
     }
-    setInterval(function () { check(false); }, 1000);
+    setInterval(function () { check(false); guideJade(load()); }, 1000);
   }
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
   jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
@@ -444,6 +497,46 @@ class Component extends DCLogic {
     setInterval(render, 1000);
     window.addEventListener('storage', render);
   }
+  fanVals(bq, leftMs) {
+    var self = this, f = this.state.fan || { m: 0 }, now = Date.now(), lock = (f.lock || 0) > now;
+    var used = bq.boost || 0, cap = 600000, room = Math.max(0, cap - used);
+    var m = f.m || 0, good = m >= 55 && m <= 85 && !lock;
+    var col = lock ? '#7A7062' : (m > 95 ? '#D0452B' : (good ? '#5FB052' : (m > 85 ? '#E07A2E' : '#E8B640')));
+    return {
+      on: room > 0 && leftMs > 0,
+      title: lock ? '과열! 잠깐 식히는 중' : (good ? '불꽃 좋아요! 시간 단축 중' : (m > 85 ? '너무 세요 · 살살' : '바람을 불어 불을 키우자')),
+      left: '단축 가능 ' + Math.ceil(room / 60000) + '분',
+      tip: '초록 칸에 맞추면 시간이 15배 빨리 흐른다 · 빨강은 과열',
+      bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, m).toFixed(1) + '%;background:' + col + ';transition:width .05s linear',
+      btn: 'all:unset;cursor:pointer;flex:0 0 66px;height:66px;box-sizing:border-box;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;touch-action:manipulation;user-select:none;' + (lock ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547' : 'background:radial-gradient(circle at 40% 35%,#FFE7A8,#E0A06A);border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#7A2F1E;transform:scale(' + (1 + (now - (f.tapAt || 0) < 120 ? -0.08 : 0)) + ')'),
+      tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
+    };
+  }
+  fanTap() {
+    var self = this, f = this.state.fan || { m: 0 }, now = Date.now();
+    if ((f.lock || 0) > now) { return; }
+    var m = (f.m || 0) + 11;
+    var nf = { m: m, lock: 0, tapAt: now };
+    if (m > 98) { nf.m = 40; nf.lock = now + 1500; this.say('과열! 풀무를 너무 세게 밟았다'); }
+    this.setState({ fan: nf });
+    if (!this.fanT) {
+      this.fanLast = now; this.fanAcc = 0; this.fanFlush = now;
+      this.fanT = setInterval(function () {
+        var t = Date.now(), dt = (t - self.fanLast) / 1000; self.fanLast = t;
+        var F = self.state.fan || { m: 0 }, lk = (F.lock || 0) > t;
+        var mm = Math.max(0, (F.m || 0) - 20 * dt);
+        if (!lk && mm >= 55 && mm <= 85) { self.fanAcc += dt * 14000; }
+        var nf2 = {}; for (var k in F) { nf2[k] = F[k]; } nf2.m = mm;
+        self.setState({ fan: nf2 });
+        if (t - self.fanFlush > 500 && self.fanAcc > 0) {
+          var bq = (self.state.g.bisque || {}), used = bq.boost || 0, add = Math.min(self.fanAcc, Math.max(0, 600000 - used), Math.max(0, bq.start + 1200000 - t));
+          self.fanAcc = 0; self.fanFlush = t;
+          if (add > 0 && bq.state === 'firing') { var nb = {}; for (var q in bq) { nb[q] = bq[q]; } nb.start = bq.start - add; nb.boost = used + add; self.setG({ bisque: nb }); }
+        }
+        if (mm <= 0 && !lk && t - (F.tapAt || 0) > 1500) { clearInterval(self.fanT); self.fanT = null; }
+      }, 50);
+    }
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
     var self = this;
@@ -454,6 +547,7 @@ class Component extends DCLogic {
     if (this.state.g.mainFocus) { this.setG({ mainFocus: '' }); }
   }
   componentWillUnmount() {
+    clearInterval(this.fanT);
     clearInterval(this.tick); clearTimeout(this.tt);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
   }
@@ -518,9 +612,11 @@ class Component extends DCLogic {
       bar: 'height:100%;border-radius:4px;background:#E3B23C;width:' + pct + '%',
       glazeN: (g.glazeList || []).length,
       toGlazeOn: !firing && (g.glazeList || []).length > 0,
-      toast: this.state.toast, toastOn: this.state.toast !== ''
+      toast: this.state.toast, toastOn: this.state.toast !== '',
+      fan: { on: false }
     };
     if (firing && !done) {
+      v.fan = self.fanVals(bq, leftMs);
       v.action = '바로 완료 · 옥 ' + self.jadeCost(leftMs).toLocaleString(); v.actionSub = '굽는 중 · ' + self.fmtLeft(leftMs) + ' 남음 · 보유 옥 ' + self.jadeOf(g).toLocaleString();
       v.btn = base + 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 5px 0 #1E5E48;color:#FFFDF5';
       v.run = function () { var lm = Math.max(0, (self.state.g.bisque || {}).start + 1200000 - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { var b0 = self.state.g.bisque || {}, nb = {}; for (var k in b0) { nb[k] = b0[k]; } nb.start = Date.now() - 1200000; self.setG({ jadeV: 2, jade: nj, bisque: nb }); }); };

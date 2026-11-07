@@ -332,10 +332,10 @@ class Component extends DCLogic {
     var UNL = [['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Counter', 'Commission'], ['Shop', 'Contest'], ['Research', 'Codex', 'Season', 'Town']];
     var STEPS = [
       { goal: '물레에서 첫 그릇 빚기', hint: '공방의 물레(또는 아래 제작 버튼)를 눌러 흙을 빚어 보세요', next: 'Wheel' },
-      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요', next: 'Dry' },
-      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고, 다 구워지면 꺼내 주세요', next: 'Bisque' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 기다리기 싫으면 💎옥으로 바로 말리기', next: 'Dry' },
+      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
       { goal: '유약 바르기', hint: '초벌한 그릇을 유약통에 꾹 눌러 담가 보세요', next: 'Glaze' },
-      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요', next: 'Kiln' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '진열대에 작품 올리기', hint: '보관함의 작품을 진열대로 끌어 올려 보세요', next: 'Display' },
       { goal: '손님에게 팔거나 의뢰 받기', hint: '카운터에서 손님을 맞이해 보세요', next: 'Counter' },
       { goal: '스테이지에서 첫 별 얻기', hint: '스테이지에서 조건에 맞는 작품을 출품해 보세요', next: 'Contest' }
@@ -392,6 +392,44 @@ class Component extends DCLogic {
       btns.forEach(function (b) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'tut-btn ' + (b.cls || 'go'); bt.textContent = b.label; bt.addEventListener('click', function () { ov.remove(); if (b.run) { b.run(); } }); box.appendChild(bt); });
       ov.appendChild(box); document.body.appendChild(ov); return ov;
     }
+    var spotEl = null, spotT = 0, spotFind = null;
+    function spotOff() { clearInterval(spotT); spotT = 0; if (spotEl) { spotEl.remove(); spotEl = null; } }
+    function vis(el) { if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 12 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) { return null; } var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.3) { return null; } return r; }
+    function spotlight(find, msg) {
+      spotOff(); spotFind = find;
+      var el0 = find(); if (!el0 || !vis(el0)) { return false; }
+      spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
+      spotEl.style.cssText = 'position:fixed;inset:0;z-index:9995;pointer-events:none';
+      spotEl.innerHTML = '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center"></div>';
+      spotEl.querySelector('.bub').textContent = msg;
+      document.body.appendChild(spotEl);
+      function place() {
+        var el = spotFind && spotFind(), r = vis(el); if (!r || !spotEl) { spotOff(); return; }
+        var h = spotEl.querySelector('.hole'), b = spotEl.querySelector('.bub'), pad = 6;
+        h.style.left = (r.left - pad) + 'px'; h.style.top = (r.top - pad) + 'px'; h.style.width = (r.width + pad * 2) + 'px'; h.style.height = (r.height + pad * 2) + 'px';
+        var bw = Math.min(250, window.innerWidth - 20), bl = Math.max(10, Math.min(window.innerWidth - bw - 10, r.left + r.width / 2 - bw / 2));
+        b.style.width = bw + 'px'; b.style.left = bl + 'px';
+        if (r.top > window.innerHeight * 0.45) { b.style.top = 'auto'; b.style.bottom = (window.innerHeight - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
+      }
+      place(); spotT = setInterval(place, 250);
+      setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
+      return true;
+    }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
+    function guideNext(g) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      var nx = STEPS[t].next; if (nx === PAGE) { return; }
+      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+    }
+    function guideJade(g) {
+      var t = g.tut, L = { 1: ['Dry', '바로 말리기', 'dry'], 2: ['Bisque', '바로 완료', 'bq'], 4: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
+      if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
+      var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
+      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
+      if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
+    }
     function showCard(g, sticky) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return; }
       var st = STEPS[t];
@@ -429,7 +467,7 @@ class Component extends DCLogic {
           g.tut = nt; save(g);
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); setTimeout(function () { guideNext(load()); }, 450); } }]);
           window.dispatchEvent(new Event('storage'));
         }
       }
@@ -458,8 +496,9 @@ class Component extends DCLogic {
     } else {
       check(true);
       showCard(load(), PAGE === 'Main');
+      setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200);
     }
-    setInterval(function () { check(false); }, 1000);
+    setInterval(function () { check(false); guideJade(load()); }, 1000);
   }
   goalBoot() {
     if (typeof window === 'undefined' || typeof document === 'undefined' || window.__goalBooted) { return; }
