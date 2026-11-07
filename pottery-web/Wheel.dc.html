@@ -181,9 +181,9 @@ button{font-family:inherit;cursor:pointer}
   </div>
 
   <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
-    <div style="display:none;align-items:center;gap:10px">
-      <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">중심</span>
-      <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="중심 이탈 게이지">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">흔들림</span>
+      <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="흔들림 게이지 · 가득 차면 무너짐">
         <div style="{{wBarStyle}}"></div>
         <span aria-hidden="true" style="position:absolute;left:70%;top:0;bottom:0;width:2px;background:#E8B640"></span>
       </div>
@@ -301,7 +301,7 @@ class Component extends DCLogic {
     var r = [], t = [];
     for (var i = 0; i < 12; i++) { r.push(40 + (i < 2 ? 3 : 0)); t.push(8); }
     this.dropN = (this.dropN || 0) + 1;
-    return { r: r, t: t, H: 110, w: 0, stage: 'shape', wrapping: false, grab: null, drop: this.dropN, dropT: Date.now(), dropDelay: 0 };
+    return { r: r, t: t, H: 110, w: 0, wOn: false, stage: 'shape', wrapping: false, grab: null, drop: this.dropN, dropT: Date.now(), dropDelay: 0 };
   }
   gdef() {
     return {
@@ -730,10 +730,10 @@ class Component extends DCLogic {
     this.last = now;
     var s = this.state;
     var w = s.w, t = s.t;
-    if (s.wrapping) {
-      w = Math.max(0, w - 30 * dt);
-    } else if (!this.drag) {
-      w = Math.max(0, w - 0.8 * dt);
+    if (s.wOn && s.stage === 'shape' && !s.fx) {
+      w = w + dt * (s.speed === 'slow' ? 100 / 90 : (s.speed === 'fast' ? 100 / 40 : 100 / 60));
+      if (w >= 100) { this.failWith('시간이 지나 흔들림이 커져 무너졌다'); return; }
+      if (s.w < 70 && w >= 70) { this.say('흔들림이 커진다 · 서둘러 마무리하자'); }
     }
     var stage = s.stage;
     if (stage === 'center' && w < 15) {
@@ -776,7 +776,7 @@ class Component extends DCLogic {
           r[i] = Math.max(14, r[i] + 0.32 * out * wt * m);
         }
       }
-      w = w + 0.01 * Math.abs(dx) * m * (s.speed === 'fast' ? 1.6 : 1);
+      w = w + 0.004 * Math.abs(dx) * m;
       grab = { mode: 'h', ci: ci, side: side, dir: out > 0.3 ? 'out' : (out < -0.3 ? 'in' : (s.grab ? s.grab.dir : '')) };
     } else if (sub === 'wall') {
       var dw = -dy;
@@ -810,7 +810,7 @@ class Component extends DCLogic {
     var tmin = Math.min.apply(null, t);
     if (tmin < this.limit()) { this.failWith('벽이 너무 얇아져 찢어졌다'); return; }
     if (w > 100) { this.failWith('흔들림이 쌓여 중심이 무너졌다'); return; }
-    this.setState({ r: r, t: t, H: H, w: w, grab: grab });
+    this.setState({ r: r, t: t, H: H, w: w, wOn: true, grab: grab });
   }
   analyze(s) {
     var tg = this.shapes()[s.target];
