@@ -226,8 +226,9 @@ class Component extends DCLogic {
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
-    this.wt = setInterval(function () { var sw = self.sweepDue(self.state.g); if (sw) { self.setG(sw); } var p = self.spawnWalk(self.state.g); if (p) { self.setG(p); } else { self.forceUpdate(); } }, 1000);
+    this.wt = setInterval(function () { var sw = self.sweepDue(self.state.g); if (sw) { self.setG(sw); } var p = self.spawnWalk(self.state.g); if (p) { self.setG(p); } else { self.forceUpdate(); } self.autoDel(); }, 1000);
     var sw0 = this.sweepDue(this.state.g); if (sw0) { this.setG(sw0); }
+    setTimeout(function () { self.autoDel(); }, 0);
     var p0 = this.spawnWalk(this.state.g); if (p0) { this.setG(p0); }
   }
   componentWillUnmount() { clearInterval(this.wt); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
@@ -544,7 +545,18 @@ class Component extends DCLogic {
     });
     return list;
   }
+  autoDel() {
+    var s = this.state, g = s.g;
+    if (s.deliver || s.delOpen) { return; }
+    var del = this.guests(g).filter(function (x) { return x.kind === 'deliver'; });
+    var call = g.deliverCall && Date.now() - (g.deliverCall.at || 0) < 120000 ? g.deliverCall.id : '';
+    var skip = s.delSkip || {};
+    var pick = del.filter(function (x) { return x.id === call; })[0] || del.filter(function (x) { return !skip[x.id]; })[0];
+    if (call) { this.setG({ deliverCall: null }); }
+    if (pick) { this.setState({ deliver: pick.id, line: 0, enterN: s.enterN + 1, delOpen: false }); }
+  }
   next(msg) {
+    if (this.state.deliver) { var sk = {}; for (var k0 in (this.state.delSkip || {})) { sk[k0] = true; } sk[this.state.deliver] = true; this.setState({ delSkip: sk }); }
     if (this.state.deliver) { this.setState({ deliver: '', line: 0, enterN: this.state.enterN + 1 }); if (msg) { this.say(msg); } return; }
     var n = this.guests(this.state.g).filter(function (x) { return x.kind !== 'wait' && x.kind !== 'deliver'; }).length || 1;
     this.setState({ gi: (this.state.gi + 1) % n, line: 0, enterN: this.state.enterN + 1 });

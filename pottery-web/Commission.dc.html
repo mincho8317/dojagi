@@ -85,7 +85,7 @@ button{font-family:inherit;cursor:pointer}
               <div style="display:flex;align-items:center;gap:8px">
                 <span style="font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">보상</span>
                 <span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{cd.reward}}</span>
-                <a href="{{cd.href}}" style="{{cd.goStyle}}">{{cd.goLabel}}</a>
+                <a href="{{cd.href}}" onClick="{{cd.go}}" style="{{cd.goStyle}}">{{cd.goLabel}}</a>
               </div>
             </div>
           </sc-if>
@@ -307,7 +307,8 @@ class Component extends DCLogic {
           return { text: cn.t, icon: ok ? '✓' : '·', mark: 'width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;' + (ok ? 'background:#4A9440;color:#FFFDF5' : 'background:#D8C6A6;color:#5B3A24') };
         }),
         hasGo: mode !== 'done', href: d.ready ? 'Counter.dc.html' : 'Wheel.dc.html',
-        goLabel: d.ready ? '카운터에서 건네기' : '만들러 가기',
+        goLabel: d.ready ? '납품하기' : '만들러 가기',
+        go: function () { if (d.ready) { self.setG({ deliverCall: { id: d.id, at: Date.now() } }); } },
         goStyle: 'margin-left:auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;text-decoration:none;white-space:nowrap;' + (!d.ready ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5')
       };
       return c;
