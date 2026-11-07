@@ -237,7 +237,7 @@ button{font-family:inherit;cursor:pointer}
   <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
   <sc-if value="{{flyOn}}" hint-placeholder-val="{{false}}">
     <sc-for list="{{flyList}}" as="fl" hint-placeholder-count="1">
-      <svg aria-hidden="true" viewBox="{{fl.vb}}" style="{{fl.style}}"><path d="{{fl.d}}" fill="{{fl.fill}}" stroke="#3E2616" stroke-width="{{fl.sw}}" stroke-linejoin="round"></path></svg>
+      <svg aria-hidden="true" viewBox="{{fl.vb}}" style="{{fl.style}}"><path d="{{fl.d}}" fill="{{fl.fill}}"></path><path d="{{fl.d}}" fill="url(#potTopLight)"></path><path d="{{fl.d}}" fill="{{fl.rings}}"></path><path d="{{fl.d}}" fill="{{fl.foot}}" fill-opacity="{{fl.footOp}}" clip-path="url(#potFoot)"></path><path d="{{fl.d}}" fill="{{fl.drip}}" fill-opacity="{{fl.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{fl.d}}" fill="url(#potShade)"></path><path d="{{fl.d}}" fill="none" stroke="{{fl.edge}}" stroke-width="{{fl.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{fl.rimY}}" rx="{{fl.rimRx}}" ry="{{fl.rimRy}}" fill="{{fl.inner}}" stroke="{{fl.edge}}" stroke-width="{{fl.sw}}"></ellipse></svg>
     </sc-for>
   </sc-if>
   <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
@@ -562,9 +562,9 @@ class Component extends DCLogic {
     var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     var Lr = L.slice().reverse();
-    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+    return { inner: _dk(_f, 0.5), rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
   }
   fillOf(it, stage) {
     var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
@@ -687,7 +687,7 @@ class Component extends DCLogic {
           if (p >= 0.8) { var b = (p - 0.8) / 0.2; y = it.ty - 10 * Math.sin(b * Math.PI); sz = it.s1 * (1 + 0.06 * Math.sin(b * Math.PI)); }
         }
         var pt = it.pot;
-        flyList.push({ vb: pt.vb, d: pt.d, fill: pt.fill, sw: pt.sw, style: 'position:absolute;left:' + (x - sz / 2).toFixed(1) + 'px;top:' + (y - sz / 2).toFixed(1) + 'px;width:' + sz.toFixed(1) + 'px;height:' + sz.toFixed(1) + 'px;z-index:45;pointer-events:none;opacity:' + op.toFixed(2) + ';filter:drop-shadow(0 3px 3px rgba(0,0,0,.45)) drop-shadow(0 0 6px rgba(255,231,168,.8))' });
+        flyList.push(Object.assign({}, pt, { style: 'position:absolute;left:' + (x - sz / 2).toFixed(1) + 'px;top:' + (y - sz / 2).toFixed(1) + 'px;width:' + sz.toFixed(1) + 'px;height:' + sz.toFixed(1) + 'px;z-index:45;pointer-events:none;opacity:' + op.toFixed(2) + ';filter:drop-shadow(0 3px 3px rgba(0,0,0,.45)) drop-shadow(0 0 6px rgba(255,231,168,.8))' }));
       });
       var bt = ft - bumpAt;
       if (bt > -0.05 && bt < 0.4) { qTf = 'scale(' + (1 + 0.3 * Math.sin(Math.PI * Math.max(0, bt + 0.05) / 0.45)).toFixed(3) + ')'; }
