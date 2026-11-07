@@ -291,7 +291,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -336,7 +336,7 @@ class Component extends DCLogic {
     }
     setInterval(function () { check(false); }, 1000);
   }
-  jadeOf(g) { return g.jade == null ? 5000 : g.jade; }
+  jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
   jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
   jadeSpend(cost, run) {
@@ -424,7 +424,7 @@ class Component extends DCLogic {
     if (firing && !done) {
       v.action = '바로 완료 · 옥 ' + self.jadeCost(leftMs).toLocaleString(); v.actionSub = '굽는 중 · ' + self.fmtLeft(leftMs) + ' 남음 · 보유 옥 ' + self.jadeOf(g).toLocaleString();
       v.btn = base + 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 5px 0 #1E5E48;color:#FFFDF5';
-      v.run = function () { var lm = Math.max(0, (self.state.g.bisque || {}).start + 1200000 - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { var b0 = self.state.g.bisque || {}, nb = {}; for (var k in b0) { nb[k] = b0[k]; } nb.start = Date.now() - 1200000; self.setG({ jade: nj, bisque: nb }); }); };
+      v.run = function () { var lm = Math.max(0, (self.state.g.bisque || {}).start + 1200000 - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { var b0 = self.state.g.bisque || {}, nb = {}; for (var k in b0) { nb[k] = b0[k]; } nb.start = Date.now() - 1200000; self.setG({ jadeV: 2, jade: nj, bisque: nb }); }); };
     } else if (done) {
       v.action = '꺼내서 유약대로'; v.actionSub = (bq.items || []).length + '점 · 초벌 완료';
       v.btn = base + 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 5px 0 #2F6328;color:#FFFDF5';
