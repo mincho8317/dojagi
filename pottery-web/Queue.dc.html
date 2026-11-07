@@ -261,12 +261,12 @@ class Component extends DCLogic {
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function goals(g) {
       var q = g.quests || {}, out = [];
-      if (q.min && !q.minDone) { out.push({ tag: '사연', who: '민 씨', shape: 'cup', glaze: 'celadon', n: 1, col: '#B9533A' }); }
-      if (q.guest && !q.guestDone) { out.push({ tag: '일간', who: '동네 손님', shape: 'bowl', glaze: '', n: 1, col: '#5B8A3A' }); }
-      if (q.week && !q.weekDone) { out.push({ tag: '주간', who: '카페 사장', shape: 'cup', glaze: 'white', n: 3, col: '#3E6E8E' }); }
-      (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '주문', who: o.name || '손님', shape: w.shape, glaze: w.glaze || '', n: 1, col: '#C8901E' }); });
+      if (q.min && !q.minDone) { out.push({ tag: '의뢰', who: '민 씨 · 사연', shape: 'cup', glaze: 'celadon', n: 1, col: '#C8601E' }); }
+      if (q.guest && !q.guestDone) { out.push({ tag: '의뢰', who: '동네 손님 · 일간', shape: 'bowl', glaze: '', n: 1, col: '#C8601E' }); }
+      if (q.week && !q.weekDone) { out.push({ tag: '의뢰', who: '카페 사장 · 주간', shape: 'cup', glaze: 'white', n: 3, col: '#C8601E' }); }
+      (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '의뢰', who: (o.name || '손님') + ' · 주문', shape: w.shape, glaze: w.glaze || '', n: 1, col: '#C8601E' }); });
       var gl = g.goal, st = ((g.contest || {}).stars || {});
-      if (gl && gl.sid && !st[gl.sid]) { out.push({ tag: '스테이지', who: '스테이지 ' + (gl.num || ''), shape: gl.wshape || '', glaze: gl.glaze || '', n: 1, col: '#7A5A93', label: gl.name }); }
+      if (gl && gl.sid && !st[gl.sid]) { out.push({ tag: '스테이지', who: (gl.num || '') + '스테이지', shape: gl.wshape || '', glaze: gl.glaze || '', n: 1, col: '#7A5A93', label: gl.name }); }
       return out;
     }
     function match(it, gq, needGlaze) { return it && (!gq.shape || it.shape === gq.shape) && (!needGlaze || !gq.glaze || it.glaze === gq.glaze); }
