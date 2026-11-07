@@ -152,9 +152,9 @@ class Component extends DCLogic {
     super(props);
     this.state = { g: this.loadG(), fb: false, fbSent: false, star: 0, good: {}, bad: {}, armed: false, toast: '', sending: false };
   }
-  // 피드백 수집 주소 (Google Form 등). 비어 있으면 이 기기에만 저장한다.
+  // 피드백 수집 주소 (구글 시트 Apps Script 웹 앱). 비어 있으면 이 기기에만 저장한다.
   fbEndpoint() {
-    return { url: '', fields: { star: '', good: '', bad: '', meta: '' } };
+    return { url: 'https://script.google.com/macros/s/AKfycbx4J0VLplFVF1OXrAevegP6dJRuJ556-y_fFRJteDANhWKJnAsB80DC5duPF7G2zqqeDw/exec' };
   }
   loadG() {
     var d = { settings: { bgm: 70, sfx: 80, vib: true, notify: true, hints: true }, feedbacks: [] };
@@ -212,12 +212,7 @@ class Component extends DCLogic {
     if (ep.url) {
       this.setState({ sending: true });
       try {
-        var fd = new FormData();
-        fd.append(ep.fields.star, String(fb.star));
-        fd.append(ep.fields.good, (fb.good.join(', ') + (fb.goodText ? '\n' + fb.goodText : '')).trim());
-        fd.append(ep.fields.bad, (fb.bad.join(', ') + (fb.badText ? '\n' + fb.badText : '')).trim());
-        fd.append(ep.fields.meta, JSON.stringify(fb.meta));
-        fetch(ep.url, { method: 'POST', mode: 'no-cors', body: fd }).then(function () { self.setState({ sending: false, fbSent: true, sentRemote: true }); }, function () { self.setState({ sending: false, fbSent: true, sentRemote: false }); });
+        fetch(ep.url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(fb) }).then(function () { self.setState({ sending: false, fbSent: true, sentRemote: true }); }, function () { self.setState({ sending: false, fbSent: true, sentRemote: false }); });
       } catch (e) { this.setState({ sending: false, fbSent: true, sentRemote: false }); }
     } else {
       this.setState({ fbSent: true, sentRemote: false });
