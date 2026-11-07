@@ -397,8 +397,8 @@ class Component extends DCLogic {
     this.resetPointers && this.resetPointers();
     var nf = this.fresh(); nf.g = g; nf.target = 'goal'; nf.clay = own ? gl.clay : 'basic';
     this.setState(nf);
-    var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유' };
-    var CN = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선' };
+    var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
+    var CN = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var self = this;
     setTimeout(function () {
       self.setG({ goalJump: false });
@@ -411,7 +411,8 @@ class Component extends DCLogic {
       { id: 'refined', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp', n: '정제', res: 'CLAY', c: '#B8957C', limit: 2.5 },
       { id: 'kaolin', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp', n: '고령토', res: 'CLAY', c: '#CABBA9', limit: 2.5 },
       { id: 'porcelain', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp', n: '자기토', res: 'CLAY', c: '#D6CFC2', limit: 2.5 },
-      { id: 'premium', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', n: '특선', res: 'CLAY', c: '#DED8CD', limit: 2.0 }
+      { id: 'premium', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', n: '특선', res: 'CLAY', c: '#DED8CD', limit: 2.0 },
+      { id: 'spring', img: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp', n: '봄빛 흙', res: 'CLAY', c: '#E2B4A6', limit: 2.2, event: true }
     ];
   }
   mul() { return this.state.speed === 'slow' ? 0.6 : (this.state.speed === 'fast' ? 1.6 : 1.0); }
@@ -766,7 +767,7 @@ class Component extends DCLogic {
         dot: 'flex:0 0 auto;width:26px;height:20px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 3px rgba(255,231,168,.9))' : ''), img: c.img,
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;padding:4px 4px;border-radius:11px;' + (on ? 'background:#5B3A24;border:2px solid #3E2616;color:#FFE7A8;' : (avail ? 'background:#FFF4DE;border:2px solid #8A6440;color:#5B3A24;' : 'background:#D9CDB6;border:2px dashed #A8987C;color:#7A6A55;')),
         pick: function () {
-          if (!avail) { self.say(c.n + ' 흙이 없다 · 상점 재료 탭에서 산다', 'fail'); return; }
+          if (!avail) { self.say(c.event ? '봄빛 흙이 없다 · 봄 축제 상점에서 꽃잎으로 산다' : c.n + ' 흙이 없다 · 상점 재료 탭에서 산다', 'fail'); return; }
           if (s.clay === c.id) { return; }
           self.resetPointers();
           var nf = self.fresh(); nf.clay = c.id;
@@ -819,8 +820,8 @@ class Component extends DCLogic {
         return {
           name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: '보유 ' + c.own + ' · 최소 두께 ' + clays[i].limit + 'mm', img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
-          tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (c.own === '없음' ? '없음' : '')),
-          tagStyle: (c.on || rec || c.own === '없음') ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : 'background:#A8987C;color:#FFF')) : 'display:none',
+          tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),
+          tagStyle: (c.on || rec || c.own === '없음' || clays[i].event) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : (clays[i].event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))) : 'display:none',
           style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (c.on ? 'background:#FFF;border:3px solid #5B3A24;box-shadow:0 0 0 3px #FFD66B' : (c.own === '없음' ? 'background:#E9DFCC;border:2px dashed #A8987C;opacity:.7' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
           pick: function () { self.setState({ sheet: '' }); c.pick(); }
         };

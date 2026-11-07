@@ -28,6 +28,7 @@ button{font-family:inherit;cursor:pointer}
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
 <linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
 <linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potPlum" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width=".5" height=".3"><g fill="#FFF4F6" fill-opacity=".85"><circle cx=".25" cy=".09" r=".035"></circle><circle cx=".31" cy=".135" r=".035"></circle><circle cx=".285" cy=".2" r=".035"></circle><circle cx=".215" cy=".2" r=".035"></circle><circle cx=".19" cy=".135" r=".035"></circle></g><circle cx=".25" cy=".145" r=".022" fill="#E2607E"></circle><path d="M.02 .27C.1 .24 .14 .2 .19 .16" stroke="#5B3A24" stroke-opacity=".55" stroke-width=".012" fill="none"></path></pattern>
 <pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
 <clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
 <clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
@@ -68,7 +69,7 @@ button{font-family:inherit;cursor:pointer}
       <path d="{{cur.d}}" fill="{{cur.bisque}}"></path>
       <path d="{{cur.d}}" fill="{{cur.coat}}" opacity="{{cur.coatOp}}"></path>
       <path d="{{cur.d}}" fill="url(#potTopLight)" opacity="{{cur.vis}}"></path>
-      <path d="{{cur.d}}" fill="url(#potRings)" opacity="{{cur.vis}}"></path>
+      <path d="{{cur.d}}" fill="{{cur.rings}}" opacity="{{cur.vis}}"></path>
       <path d="{{cur.d}}" fill="#000" filter="url(#potGrain)" opacity="{{cur.grain}}"></path>
       <path d="{{cur.d}}" fill="url(#potShade)" opacity="{{cur.vis}}"></path>
       <path d="{{cur.d}}" fill="none" stroke="{{cur.edge}}" stroke-width="{{cur.sw}}" stroke-linejoin="round"></path>
@@ -88,25 +89,29 @@ button{font-family:inherit;cursor:pointer}
         <span style="{{zoneStyle}}">{{zoneLabel}}</span>
       </div>
       <div style="position:relative;height:22px;box-sizing:border-box;border:3px solid #3E2616;border-radius:12px;background:#3E2616;display:flex;overflow:hidden" role="img" aria-label="담금 시간 게이지">
-        <span style="flex:0 0 33.3%;background:#8EA3A8"></span>
-        <span style="flex:0 0 16.7%;background:#5FB052;box-shadow:inset 0 3px 0 rgba(255,255,255,.3)"></span>
-        <span style="flex:0 0 12.5%;background:#D9A93A"></span>
+        <span style="{{gg.s1}}background:#8EA3A8"></span>
+        <span style="{{gg.s2}}background:#5FB052;box-shadow:inset 0 3px 0 rgba(255,255,255,.3)"></span>
+        <span style="{{gg.s3}}background:#D9A93A"></span>
         <span style="flex:1 1 auto;background:#C9705A"></span>
         <span style="{{needle}}"></span>
       </div>
       <div style="display:flex;font-size:10.5px;font-weight:700;color:#7A5434">
-        <span style="flex:0 0 33.3%">얇음</span><span style="flex:0 0 16.7%;color:#2F6328">적정</span><span style="flex:0 0 12.5%">두껍</span><span style="flex:1 1 auto;text-align:right">흘러내림</span>
+        <span style="{{gg.s1}}">얇음</span><span style="{{gg.s2}}color:#2F6328;white-space:nowrap">적정</span><span style="{{gg.s3}}">두껍</span><span style="flex:1 1 auto;text-align:right">흘러내림</span>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px">
-      <sc-for list="{{glazes}}" as="z" hint-placeholder-count="4">
-        <button type="button" aria-pressed="{{z.on}}" onClick="{{z.pick}}" style="{{z.style}}">
-          <span style="position:relative;width:40px;height:42px;display:flex;align-items:center;justify-content:center"><img dc-src="{{z.img}}" alt="" aria-hidden="true" draggable="false" style="width:38px;height:42px;object-fit:contain"><span style="{{z.chip}}">{{z.chipText}}</span></span>
-          <span style="{{z.nameStyle}}">{{z.name}}</span>
-          <span style="{{z.priceStyle}}">{{z.price}}</span>
-        </button>
-      </sc-for>
+    <div style="display:flex;gap:7px">
+      <button type="button" onClick="{{gsOpen}}" aria-label="유약 고르기 · 지금 {{selGz.name}}" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;border-radius:14px;background:#FFFDF5;border:3px solid #8A6440;box-shadow:0 3px 0 #8A6440">
+        <span style="position:relative;flex:0 0 40px;height:40px;display:flex;align-items:center;justify-content:center"><img dc-src="{{selGz.img}}" alt="" aria-hidden="true" draggable="false" style="width:36px;height:40px;object-fit:contain"><span style="{{selGz.chip}}">{{selGz.chipText}}</span></span>
+        <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
+          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{selGz.name}}</span>
+          <span style="font-size:10.5px;font-weight:700;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{selGz.okText}} · {{selGz.price}}</span>
+        </span>
+        <span style="flex:0 0 auto;padding:3px 9px;border-radius:9px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">바꾸기 ▾</span>
+      </button>
+      <sc-if value="{{plumOn}}" hint-placeholder-val="{{false}}">
+        <button type="button" onClick="{{plumTap}}" aria-pressed="{{plumPressed}}" style="{{plumStyle}}"><img src="_blob/b570ded58d448dba37db6e748cf57424.webp" alt="" aria-hidden="true" style="width:28px;height:28px;object-fit:contain"><span>매화 문양</span></button>
+      </sc-if>
     </div>
 
     <button type="button" data-work="1" onPointerDown="{{holdStart}}" onPointerUp="{{holdEnd}}" onPointerLeave="{{holdEnd}}" onPointerCancel="{{holdEnd}}" onKeyDown="{{keyDown}}" onKeyUp="{{keyUp}}" onContextMenu="{{noMenu}}" style="{{holdStyle}}">
@@ -115,6 +120,26 @@ button{font-family:inherit;cursor:pointer}
     </button>
   </div>
 
+  <sc-if value="{{gsShow}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="유약 고르기" style="width:390px;max-height:640px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 알맞은 담금 시간이 다르다</span></div>
+          <button type="button" onClick="{{gsClose}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8">✕</button>
+        </div>
+        <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:2px">
+          <sc-for list="{{glazes}}" as="z" hint-placeholder-count="4">
+            <button type="button" onClick="{{z.pick}}" aria-pressed="{{z.on}}" aria-label="{{z.name}}" style="{{z.rowStyle}}">
+              <span style="{{z.tagStyle}}">{{z.tag}}</span>
+              <span style="position:relative;width:52px;height:52px;display:flex;align-items:center;justify-content:center"><img dc-src="{{z.img}}" alt="" aria-hidden="true" draggable="false" style="width:48px;height:52px;object-fit:contain"><span style="{{z.chip}}">{{z.chipText}}</span></span>
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{z.name}}</span>
+              <span style="font-size:10.5px;color:#7A5434;text-align:center">{{z.okText}} · {{z.price}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="{{toastStyle}}">{{toast}}</div>
   </sc-if>
@@ -134,7 +159,7 @@ button{font-family:inherit;cursor:pointer}
           <sc-for list="{{pk.rows}}" as="pr" hint-placeholder-count="4">
             <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" style="{{pr.style}}">
               <span style="{{pr.checkStyle}}">{{pr.check}}</span>
-              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="url(#potRings)"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.rings}}"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
               <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{pr.name}}</span>
               <span style="font-size:11px;color:#7A5434">{{pr.meta}}</span>
               <span style="{{pr.tagStyle}}">{{pr.tag}}</span>
@@ -281,10 +306,14 @@ class Component extends DCLogic {
     this.setState({ toast: msg, toastKind: kind || 'ok' });
     this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1900);
   }
+  zoneT(id) {
+    return ({ white: [700, 1100, 1400], celadon: [900, 1300, 1650], black: [550, 850, 1100], jinsa: [1100, 1450, 1800], sakura: [800, 1000, 1250] })[id || this.gz()] || [800, 1200, 1500];
+  }
   zoneOf(ms) {
-    if (ms < 800) { return 'thin'; }
-    if (ms <= 1200) { return 'ok'; }
-    if (ms <= 1500) { return 'thick'; }
+    var T = this.zoneT();
+    if (ms < T[0]) { return 'thin'; }
+    if (ms <= T[1]) { return 'ok'; }
+    if (ms <= T[2]) { return 'thick'; }
     return 'drip';
   }
   gz() {
@@ -311,6 +340,7 @@ class Component extends DCLogic {
     var cur = this.current();
     if (!cur) { this.say('유약 바를 기물이 없다', 'fail'); return; }
     if (this.gz() === 'jinsa' && !(((this.state.g.mats || {}).jinsa || 0) > 0)) { this.say('진사유가 없다 · 상점 재료 탭에서 450G', 'fail'); return; }
+    if (this.gz() === 'sakura' && !((this.state.g.glazesFound || {}).sakura)) { this.say('벚꽃유가 없다 · 봄 축제 상점에서 꽃잎으로 산다', 'fail'); return; }
     var self = this;
     this.t0 = Date.now();
     this.setState({ holding: true, holdMs: 0 });
@@ -333,6 +363,7 @@ class Component extends DCLogic {
     for (var k in cur) { item[k] = cur[k]; }
     item.glaze = this.gz();
     item.thick = zone;
+    item.pattern = this.state.plum && (g.patterns || {}).plum ? 'plum' : '';
     item.mm = Math.round(ms / 10) / 100;
     var rest = (g.glazeList || []).filter(function (x) { return x.id !== cur.id; });
     var patch = { glazeList: rest, kilnList: (g.kilnList || []).concat([item]) };
@@ -358,18 +389,19 @@ class Component extends DCLogic {
       cup: { p: 'M14 8h20c0 26-4 40-10 40s-10-14-10-40z', y: 8, x: 10, n: '찻잔' },
       bowl: { p: 'M8 18h32c0 16-7 26-16 26s-16-10-16-26z', y: 18, x: 16, n: '사발' }
     };
-    var CLAY = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선' };
+    var CLAY = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var DRY = { early: { t: '반건조', c: '#8A6410' }, ok: { t: '완전 건조', c: '#2F6328' }, over: { t: '과건조', c: '#5E5547' } };
     var defs = [
       { id: 'white', name: '백자유', res: 'GLZ\nWHITE', img: '_blob/29256b39b342c74e19efca8372e50e32.webp', fired: '#F7F4EC', raw: '#E3DED2', price: '무료' },
       { id: 'celadon', name: '청자유', res: 'GLZ\nCELADON', img: '_blob/05ca3d7ce00534b3ca8049c64a6ef2cd.webp', fired: '#7FA8A0', raw: '#AFC3BD', price: '무료' },
       { id: 'black', name: '흑유', res: 'GLZ\nBLACK', img: '_blob/0fa83ecba69361215d6c8bb651ec67e0.webp', fired: '#2E2A25', raw: '#9C968B', price: '무료' },
+      { id: 'sakura', name: '벚꽃유', res: 'GLZ\nSAKURA', img: '_blob/9dfa7034fc62a520ec428f5b3bdebc0b.webp', fired: (g.glazesFound || {}).sakura ? '#E9A3B5' : '', raw: '#F2CCD5', price: (g.glazesFound || {}).sakura ? '봄 축제 한정' : '축제 상점', event: true, owned: !!(g.glazesFound || {}).sakura },
       { id: 'jinsa', name: '진사유', res: 'GLZ\nJINSA', img: (g.glazesFound || {}).jinsa ? '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' : '_blob/0caec5ae43f75125c715521e9b5528e2.webp', fired: (g.glazesFound || {}).jinsa ? '#A8443A' : '', raw: '#C9B1A8', price: '보유 ' + ((g.mats || {}).jinsa || 0) }
     ];
     var EG = this.gz(), curI = this.current(), goalG = curI && curI.goalGlaze ? curI.goalGlaze : '';
     var selG = defs[1];
     var glazes = defs.map(function (d) {
-      var on = d.id === EG;
+      var on = d.id === EG; var zt = self.zoneT(d.id);
       if (on) { selG = d; }
       var known = d.fired !== '';
       return {
@@ -379,7 +411,11 @@ class Component extends DCLogic {
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 5px;border-radius:13px;' + (on ? 'background:#FFF9EC;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E;' : 'background:#F3E3C4;border:3px solid #8A6440;'),
         nameStyle: 'font-family:Jua,sans-serif;font-size:12px;color:' + (on ? '#2F6328' : '#5B3A24'),
         priceStyle: 'font-size:9.5px;font-weight:700;color:' + (d.id === goalG ? '#7A5A93' : (d.price === '무료' ? '#2F6328' : '#7A5A12')),
-        pick: function () { if (!s.holding) { var ci = self.current(); self.setState({ glaze: d.id, glazeManual: ci ? ci.id : '' }); } }
+        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초',
+        tag: on ? '사용 중' : (d.id === goalG ? '★ 스테이지' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0) ? '없음' : ''))),
+        tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0))) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
+        rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : ((d.event && !d.owned) || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0)) ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
+        pick: function () { if (!s.holding) { var ci = self.current(); self.setState({ glaze: d.id, glazeManual: ci ? ci.id : '', gsOpen: false }); } }
       };
     });
 
@@ -403,7 +439,7 @@ class Component extends DCLogic {
     var ZL = { thin: ['얇음', '#4E6E78'], ok: ['적정', '#2F6328'], thick: ['두꺼운 편', '#8A6410'], drip: ['흘러내림 위험', '#A33B22'] };
     var dip = s.holding ? Math.min(1, s.holdMs / 600) : 0;
     var curSh = cur ? (SH[cur.shape] || SH.dish) : SH.dish;
-    var coatOp = s.holding ? Math.min(0.95, s.holdMs / 1500) : 0;
+    var coatOp = s.holding ? Math.min(0.95, s.holdMs / this.zoneT(EG)[2]) : 0;
 
     var q = g.quests || {};
     var condOk = EG === 'celadon' && cur && cur.shape === 'cup';
@@ -417,7 +453,16 @@ class Component extends DCLogic {
       noQueue: list.length === 0,
       queue: queue,
       glazes: glazes,
-      cur: (function () { var pp = self.potOf(cur || { shape: 'cup' }, '#E8DCCB'); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; return { d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? '#E8DCCB' : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
+      selGz: (function () { var z0 = glazes.filter(function (z) { return z.on; })[0] || glazes[1]; return z0; })(),
+      gsOpen: function () { if (!s.holding) { self.setState({ gsOpen: true }); } },
+      gsClose: function () { self.setState({ gsOpen: false }); },
+      gsShow: !!s.gsOpen,
+      gg: (function () { var T = self.zoneT(EG), W = 2400; function w(x) { return 'flex:0 0 ' + (x / W * 100).toFixed(2) + '%;'; } return { s1: w(T[0]), s2: w(T[1] - T[0]), s3: w(T[2] - T[1]) }; })(),
+      plumOn: !!(g.patterns || {}).plum,
+      plumPressed: s.plum ? 'true' : 'false',
+      plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐다' : '매화 문양을 넣는다 · 소성 후 값어치 +20%'); } },
+      plumStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 8px;border-radius:14px;font-family:Jua,sans-serif;font-size:11px;' + (s.plum ? 'background:#FCE3EA;border:3px solid #D46A86;box-shadow:0 0 0 2px #F4B6C4;color:#A94767' : 'background:#FFFDF5;border:3px dashed #C9A27A;color:#8A6440'),
+      cur: (function () { var pp = self.potOf(cur || { shape: 'cup' }, '#E8DCCB'); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; return { d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? '#E8DCCB' : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
       ripple: (function () { var top = 208 + Math.round(dip * 125), sub = top + 140 - 390; if (sub <= 4) { return 'display:none'; } var t = Date.now() / 1000, w = 96 + 14 * Math.sin(t * 7), h = w * 0.24; return 'position:absolute;left:' + (195 - w / 2).toFixed(1) + 'px;top:' + (390 - h / 2).toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;box-sizing:border-box;border-radius:50%;border:2.5px solid rgba(255,255,255,.75);box-shadow:0 0 0 5px rgba(255,255,255,.18);pointer-events:none'; })(),
       curPot: self.potOf(cur || { shape: 'cup' }, '#EAD8C4'),
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
@@ -467,18 +512,18 @@ class Component extends DCLogic {
       return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
     }
     var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
-    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#b98a7e', '#f0d3c7', '#ccc', '#cccccc'];
     var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
-    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+    return { rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
   }
   fillOf(it, stage) {
-    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
-    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A', sakura: '#EFB3C2' };
     var c = CL[it && it.clay] || CL.basic;
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
@@ -487,7 +532,7 @@ class Component extends DCLogic {
   }
   pickRow(it, o) {
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
-    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
     var on = !!o.on;
     return {

@@ -449,7 +449,7 @@ class Component extends DCLogic {
         });
       }
     }
-    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사' };
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' };
     var trendS = this.trend();
     (g.tasteOrders || []).forEach(function (o) {
       var wantT2 = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
@@ -476,6 +476,29 @@ class Component extends DCLogic {
       }
       list.push(node2);
     });
+    if (g.inviteGuest) {
+      var inv = { id: 'invite', kind: 'walk', name: '다회 손님', res: 'CHAR_CAFE', tone: '#D46A86', tag: '🌸 봄 다회 초대', tagBg: '#D46A86' };
+      var cands = (g.order || []).filter(function (id) { var pp = g.pieces[id]; return pp && (pp.where === 'shelf' || pp.where === 'store'); });
+      cands.sort(function (x, y) { return (g.pieces[y].value || 0) - (g.pieces[x].value || 0); });
+      if (!cands.length) {
+        inv.face = '평온'; inv.lines = ['초대장 받고 왔어요. 봄 다회에 쓸 그릇을 찾는데…', '아직 내놓을 작품이 없군요. 작품이 생기면 다시 올게요.'];
+        inv.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+      } else {
+        var ipid = cands[0], ip = g.pieces[ipid], iprice = self.priceOf(g, ip, 2);
+        inv.face = '반가움'; inv.lines = ['초대해 주셔서 고마워요. 봄 다회에 쓸 그릇을 찾고 있어요.', '(' + ip.name + '을(를) 한참 바라본다)', '이 작품이라면 다회의 주인공이 되겠어요. 값은 두 배로 드릴게요.'];
+        inv.card = { title: ip.name, conds: [{ t: ip.grade }, { t: '평가액 ' + (ip.value || 0).toLocaleString() + 'G' }, { t: '봄 축제 특별 손님' }], reward: iprice.toLocaleString() + 'G · 명성 +10' };
+        inv.choices = [
+          { label: '판매하기 · ' + iprice.toLocaleString() + 'G', tone: 'go', run: function () {
+            var cur = self.state.g, lv = cur.fameLv, x = cur.fameXp + 10; while (x >= 100) { lv++; x -= 100; }
+            self.give([ipid], { gold: cur.gold + iprice, fameLv: lv, fameXp: x, inviteGuest: false });
+            self.setState({ line: 0, enterN: self.state.enterN + 1 });
+            self.say('다회 손님 · 골드 +' + iprice.toLocaleString() + ' · 명성 +10');
+          } },
+          { label: '다른 작품은 없을까요', tone: '', run: function () { self.next('“천천히 둘러볼게요.”'); } }
+        ];
+      }
+      list.push(inv);
+    }
     (g.walkins || []).forEach(function (w) {
       var node = { id: w.id, kind: 'walk', name: w.name, res: w.res, tone: '#6B5A45', tag: w.type === 'taste' ? '취향 손님' : '지나가는 손님', tagBg: w.type === 'taste' ? '#C8601E' : '#8A7A63' };
       if (w.type === 'walk') {

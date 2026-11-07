@@ -250,7 +250,7 @@ class Component extends DCLogic {
       { id: 'guest', who: '이름 없는 손님', role: '동네 주민', portrait: 'PORTRAIT_GUEST', tag: '일간', title: '밥공기 하나', memo: '유약은 상관없고 튼튼하면 된다.', reward: '350G · 명성 +8', conds: [{ t: '형태 · 사발/공기', ok: bowl > 0 }, { t: '보유 ' + Math.min(1, bowl) + '/1', ok: bowl > 0 }], ready: bowl > 0, acc: q.guest, done: q.guestDone, thanks: q.guestThanks },
       { id: 'week', who: '카페 사장', role: '골목 카페', portrait: 'PORTRAIT_CAFE', tag: '주간', title: '카페 잔 세트', memo: '하얀 잔 세 점. 모양이 비슷하면 좋다.', reward: '3,600G · 파편 20', conds: [{ t: '형태 · 잔', ok: whCup >= 3 }, { t: '유약 · 백자', ok: whCup >= 3 }, { t: '보유 ' + Math.min(3, whCup) + '/3', ok: whCup >= 3 }], ready: whCup >= 3, acc: q.week, done: q.weekDone, thanks: q.weekThanks }
     ];
-    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사' };
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' };
     (g.tasteOrders || []).forEach(function (o) {
       var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
       var n = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); });

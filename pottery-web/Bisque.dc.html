@@ -29,6 +29,7 @@ button{font-family:inherit;cursor:pointer}
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
 <linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
 <linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
+<pattern id="potPlum" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width=".5" height=".3"><g fill="#FFF4F6" fill-opacity=".85"><circle cx=".25" cy=".09" r=".035"></circle><circle cx=".31" cy=".135" r=".035"></circle><circle cx=".285" cy=".2" r=".035"></circle><circle cx=".215" cy=".2" r=".035"></circle><circle cx=".19" cy=".135" r=".035"></circle></g><circle cx=".25" cy=".145" r=".022" fill="#E2607E"></circle><path d="M.02 .27C.1 .24 .14 .2 .19 .16" stroke="#5B3A24" stroke-opacity=".55" stroke-width=".012" fill="none"></path></pattern>
 <pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
 <clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
 <clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
@@ -103,7 +104,7 @@ button{font-family:inherit;cursor:pointer}
           <sc-for list="{{pk.rows}}" as="pr" hint-placeholder-count="4">
             <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" style="{{pr.style}}">
               <span style="{{pr.checkStyle}}">{{pr.check}}</span>
-              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="url(#potRings)"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.rings}}"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="rgba(20,10,4,.42)" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
               <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{pr.name}}</span>
               <span style="font-size:11px;color:#7A5434">{{pr.meta}}</span>
               <span style="{{pr.tagStyle}}">{{pr.tag}}</span>
@@ -330,18 +331,18 @@ class Component extends DCLogic {
       return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
     }
     var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
-    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#ccc', '#cccccc'];
+    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#b98a7e', '#f0d3c7', '#ccc', '#cccccc'];
     var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
-    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3' };
+    var _CLF = { basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' L' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
+    return { rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: fill || '#C9A68C' };
   }
   fillOf(it, stage) {
-    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'] };
-    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A' };
+    var CL = { basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A', sakura: '#EFB3C2' };
     var c = CL[it && it.clay] || CL.basic;
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
@@ -350,7 +351,7 @@ class Component extends DCLogic {
   }
   pickRow(it, o) {
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
-    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
     var on = !!o.on;
     return {
