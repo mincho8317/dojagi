@@ -482,8 +482,124 @@ class Component extends DCLogic {
     setInterval(render, 1000);
     window.addEventListener('storage', render);
   }
+  sndBoot() {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
+    window.__sndBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function vol(k) { var s = load().settings || {}, v = s[k]; return (typeof v === 'number' ? v : (k === 'bgm' ? 70 : 80)) / 100; }
+    var ac = null, mB = null, mS = null, rev = null, noiseBuf = null, bgmOn = false, amb = null, clayG = null, clayLvl = 0, motorG = null;
+    function mkNoise() { var n = ac.sampleRate * 2, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (var i = 0; i < n; i++) { d[i] = Math.random() * 2 - 1; } return b; }
+    function mkRev() { var n = Math.floor(ac.sampleRate * 2.2), b = ac.createBuffer(2, n, ac.sampleRate); for (var c = 0; c < 2; c++) { var d = b.getChannelData(c); for (var i = 0; i < n; i++) { d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3); } } var cv = ac.createConvolver(); cv.buffer = b; var g = ac.createGain(); g.gain.value = 0.32; cv.connect(g); g.connect(mB); return cv; }
+    function upd() { if (!ac) { return; } var b = vol('bgm'), s = vol('sfx'); mB.gain.setTargetAtTime(0.55 * b * b, ac.currentTime, 0.1); mS.gain.setTargetAtTime(0.8 * s * s, ac.currentTime, 0.05); }
+    function init() {
+      if (ac) { if (ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } return; }
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) { return; }
+      try { ac = new C(); } catch (e) { ac = null; return; }
+      var comp = ac.createDynamicsCompressor(); comp.connect(ac.destination);
+      mB = ac.createGain(); mS = ac.createGain(); mB.connect(comp); mS.connect(comp);
+      noiseBuf = mkNoise(); rev = mkRev(); upd();
+      startBgm(); startAmb();
+    }
+    function env(g, t, a, peak, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
+    function tone(type, f, t, a, peak, dec, out, f2) { var o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) { o.frequency.exponentialRampToValueAtTime(f2, t + a + dec); } env(g, t, a, peak, dec); o.connect(g); g.connect(out || mS); o.start(t); o.stop(t + a + dec + 0.05); return o; }
+    function noise(t, dur, type, f, q, peak, out, f2) { var s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f2) { fl.frequency.exponentialRampToValueAtTime(f2, t + dur); } fl.Q.value = q; env(g, t, 0.005, peak, dur); s.connect(fl); fl.connect(g); g.connect(out || mS); s.start(t, Math.random() * 1.5); s.stop(t + dur + 0.05); }
+    function mf(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+    // 가야금 느낌의 뜯는 소리 (배경음)
+    function pluck(m, t, v) {
+      var f = mf(m), o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), lp = ac.createBiquadFilter();
+      o.type = 'triangle'; o2.type = 'sine';
+      o.frequency.setValueAtTime(f * 1.012, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.06);
+      o2.frequency.setValueAtTime(f * 2, t);
+      var lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 5.2; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * 0.008, t + 0.5); lfo.connect(lg); lg.connect(o.frequency);
+      lp.type = 'lowpass'; lp.frequency.setValueAtTime(f * 6, t); lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + 1.2);
+      env(g, t, 0.006, 0.16 * v, 2.2);
+      var g2 = ac.createGain(); g2.gain.value = 0.25; o2.connect(g2); g2.connect(lp);
+      o.connect(lp); lp.connect(g); g.connect(mB); g.connect(rev);
+      [o, o2, lfo].forEach(function (x) { x.start(t); x.stop(t + 2.4); });
+    }
+    function startBgm() {
+      if (bgmOn) { return; } bgmOn = true;
+      var SC = [50, 52, 55, 57, 59, 62, 64, 67, 69, 71, 74];
+      var dr = [ac.createOscillator(), ac.createOscillator()], dg = ac.createGain(), dl = ac.createOscillator(), dlg = ac.createGain();
+      dr[0].frequency.value = mf(43); dr[1].frequency.value = mf(50); dr[0].type = dr[1].type = 'sine';
+      dg.gain.value = 0.035; dl.frequency.value = 0.07; dlg.gain.value = 0.018; dl.connect(dlg); dlg.connect(dg.gain);
+      dr.forEach(function (o) { o.connect(dg); o.start(); }); dl.start(); dg.connect(mB);
+      var idx = 5, next = ac.currentTime + 0.4, beat = 0.62, bar = 0;
+      setInterval(function () {
+        if (!ac || ac.state !== 'running') { return; }
+        while (next < ac.currentTime + 0.6) {
+          bar++;
+          if (Math.random() < 0.22) { next += beat * (Math.random() < 0.5 ? 1 : 2); continue; }
+          var step = [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)];
+          idx = Math.max(1, Math.min(SC.length - 2, idx + step));
+          if (idx > 8 && Math.random() < 0.5) { idx -= 2; }
+          pluck(SC[idx], next, 0.75 + Math.random() * 0.3);
+          if (bar % 8 === 0) { pluck(SC[Math.max(0, idx - 4)] - 12, next, 0.5); }
+          if (Math.random() < 0.12) { pluck(SC[idx + 1], next + beat * 0.25, 0.45); }
+          next += beat * [1, 1, 1, 1.5, 2, 0.5][Math.floor(Math.random() * 6)];
+        }
+      }, 200);
+    }
+    // 장면별 배경 효과 (가마 불 소리, 물레 모터)
+    function firing() { var g = load(); if (PAGE === 'Bisque') { return (g.bisque || {}).state === 'firing'; } if (PAGE === 'Kiln' || PAGE === 'KilnOpen') { return g.kiln === 'firing'; } return false; }
+    function startAmb() {
+      if (PAGE === 'Bisque' || PAGE === 'Kiln' || PAGE === 'KilnOpen') {
+        var s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; s.loop = true; fl.type = 'lowpass'; fl.frequency.value = 380; g.gain.value = 0; s.connect(fl); fl.connect(g); g.connect(mS); s.start(); amb = g;
+        setInterval(function () {
+          if (!ac || ac.state !== 'running') { return; }
+          var on = firing(); amb.gain.setTargetAtTime(on ? 0.05 : 0, ac.currentTime, 0.4);
+          if (on) { var t = ac.currentTime; for (var i = 0; i < 3; i++) { if (Math.random() < 0.55) { noise(t + Math.random() * 0.35, 0.02 + Math.random() * 0.03, 'bandpass', 1500 + Math.random() * 2500, 2, 0.05 + Math.random() * 0.08); } } }
+        }, 400);
+      }
+      if (PAGE === 'Wheel') {
+        var o = ac.createOscillator(), lp = ac.createBiquadFilter(); motorG = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = 52; lp.type = 'lowpass'; lp.frequency.value = 160; motorG.gain.value = 0.018; o.connect(lp); lp.connect(motorG); motorG.connect(mS); o.start();
+        var cs = ac.createBufferSource(), cf = ac.createBiquadFilter(); clayG = ac.createGain(); cs.buffer = noiseBuf; cs.loop = true; cf.type = 'bandpass'; cf.frequency.value = 520; cf.Q.value = 0.9; clayG.gain.value = 0; cs.connect(cf); cf.connect(clayG); clayG.connect(mS); cs.start();
+        setInterval(function () { if (!ac) { return; } clayLvl *= 0.6; clayG.gain.setTargetAtTime(Math.min(0.16, clayLvl), ac.currentTime, 0.05); }, 60);
+      }
+    }
+    var FX = {
+      tap: function (t) { tone('triangle', 640, t, 0.002, 0.11, 0.07, null, 420); noise(t, 0.025, 'bandpass', 2400, 3, 0.05); },
+      ok: function (t) { [67, 71, 74, 79].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.09, 0.004, 0.16, 0.9); tone('sine', mf(m) * 2.76, t + i * 0.09, 0.002, 0.03, 0.35); }); },
+      unlock: function (t) { [62, 67, 71, 74, 79, 83].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.07, 0.004, 0.14, 1.2); tone('triangle', mf(m) * 2, t + i * 0.07, 0.003, 0.03, 0.5); }); },
+      fail: function (t) { noise(t, 0.5, 'lowpass', 900, 0.7, 0.35, null, 120); tone('sine', 160, t, 0.005, 0.3, 0.45, null, 55); },
+      coin: function (t) { tone('square', 1318, t, 0.002, 0.06, 0.08); tone('square', 1760, t + 0.07, 0.002, 0.06, 0.28); tone('sine', 2637, t + 0.07, 0.002, 0.05, 0.3); },
+      jade: function (t) { [84, 88, 91, 96].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.05, 0.002, 0.07, 0.5); }); noise(t, 0.4, 'highpass', 6000, 0.5, 0.05); },
+      whoosh: function (t) { noise(t, 0.32, 'bandpass', 300, 1.2, 0.22, null, 1400); },
+      hiss: function (t) { noise(t, 0.7, 'highpass', 3000, 0.5, 0.18, null, 1200); tone('sine', 220, t, 0.01, 0.1, 0.4, null, 110); },
+      smash: function (t) { noise(t, 0.09, 'lowpass', 1800, 0.7, 0.55); noise(t, 0.6, 'highpass', 2500, 0.6, 0.3, null, 5000); for (var i = 0; i < 9; i++) { var tt = t + 0.04 + Math.random() * 0.45; tone('sine', 2800 + Math.random() * 3800, tt, 0.001, 0.04 + Math.random() * 0.05, 0.08 + Math.random() * 0.12); } tone('sine', 120, t, 0.003, 0.4, 0.25, null, 50); },
+      splash: function (t) { noise(t, 0.35, 'bandpass', 900, 1.5, 0.22, null, 350); for (var i = 0; i < 4; i++) { tone('sine', 500 + Math.random() * 600, t + 0.05 + i * 0.05, 0.003, 0.05, 0.08, null, 1200); } },
+      drip: function (t) { for (var i = 0; i < 3; i++) { tone('sine', 900 + i * 180, t + i * 0.14, 0.002, 0.06, 0.09, null, 1700); } },
+      ignite: function (t) { noise(t, 0.9, 'lowpass', 200, 0.8, 0.4, null, 1200); tone('sine', 80, t, 0.05, 0.2, 0.8, null, 60); },
+      shake: function (t) { for (var i = 0; i < 4; i++) { noise(t + i * 0.12, 0.05, 'bandpass', 700, 3, 0.15); } },
+      reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
+      rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
+      thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
+    };
+    window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };
+    window.__clay = function (a) { clayLvl += Math.min(0.08, a * 0.012); };
+    var lastTap = 0;
+    document.addEventListener('pointerdown', function (e) {
+      init();
+      var el = e.target && e.target.closest ? e.target.closest('button,a,[role=button],[onclick]') : null;
+      if (el && !el.closest('[data-work]') && Date.now() - lastTap > 60) { lastTap = Date.now(); window.__sfx('tap'); }
+    }, true);
+    document.addEventListener('keydown', function () { init(); }, true);
+    // 저장 데이터 변화로 공통 효과음 (골드 증가 · 옥 사용 · 튜토리얼 해금)
+    var prev = load();
+    setInterval(function () {
+      upd();
+      var g = load();
+      if ((g.gold || 0) > (prev.gold || 0)) { window.__sfx('coin'); }
+      if ((g.jade || 0) < (prev.jade || 0)) { window.__sfx('jade'); }
+      if (typeof g.tut === 'number' && typeof prev.tut === 'number' && g.tut > prev.tut) { window.__sfx('unlock'); }
+      prev = g;
+    }, 300);
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
+    try { this.sndBoot(); } catch (e) {}
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
