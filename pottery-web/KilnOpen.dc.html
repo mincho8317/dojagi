@@ -161,10 +161,10 @@ button{font-family:inherit;cursor:pointer}
     <div style="position:absolute;left:35px;top:120px;width:320px;height:320px;border-radius:50%;pointer-events:none;background:{{bk.glow}}"></div>
     <div style="position:absolute;left:30px;right:30px;top:440px;box-sizing:border-box;padding:30px 20px 20px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;align-items:center;gap:12px">
       <div style="position:absolute;top:-22px;height:42px;padding:0 40px;display:flex;align-items:center;justify-content:center;background:#C8601E;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">소성 중</div>
-      <span role="timer" style="font-family:'Jua',sans-serif;font-size:36px;color:#C8601E">{{bk.clock}}</span>
+      <span role="timer" style="font-family:'Jua',sans-serif;font-size:30px;color:#C8601E;white-space:nowrap">{{bk.clock}}</span>
       <span style="position:relative;width:100%;height:16px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:10px;background:#3E2616;overflow:hidden"><span style="{{bk.bar}}"></span></span>
       <span style="font-size:12.5px;color:#5B3A24;text-align:center">{{bk.note}}</span>
-      <button type="button" onClick="{{bk.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">시간 건너뛰기 · 목업</button>
+      <button type="button" onClick="{{bk.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;padding:11px 0;background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #1E5E48"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg><span>바로 완료 · 옥 {{bk.cost}}</span></button>
     </div>
   </sc-if>
 
@@ -402,7 +402,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -447,13 +447,22 @@ class Component extends DCLogic {
     }
     setInterval(function () { check(false); }, 1000);
   }
+  jadeOf(g) { return g.jade == null ? 5000 : g.jade; }
+  jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
+  fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
+  jadeSpend(cost, run) {
+    var have = this.jadeOf(this.state.g);
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (!this.jadeArm || Date.now() - this.jadeArm > 3000) { this.jadeArm = Date.now(); this.say('한 번 더 누르면 옥 ' + cost.toLocaleString() + '개로 바로 완료 (보유 ' + have.toLocaleString() + ')'); return; }
+    this.jadeArm = 0; run(have - cost); this.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!');
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     if (this.readyIdle(this.state.g)) { this.startDoor(); }
-    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (self.readyIdle(g0)) { self.startDoor(); } if (g0.kiln === 'firing' && g0.kilnStart && Date.now() < g0.kilnStart + 20600 && !self.state.navSw) { self.forceUpdate(); } }, 500);
+    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (self.readyIdle(g0)) { self.startDoor(); } if (g0.kiln === 'firing' && g0.kilnStart && Date.now() < g0.kilnStart + (g0.kilnDur || 28800000) + 600 && !self.state.navSw) { self.forceUpdate(); } }, 500);
   }
   componentWillUnmount() {
     clearInterval(this.tick); clearInterval(this.doorT); clearTimeout(this.tt); clearTimeout(this.goT);
@@ -514,7 +523,7 @@ class Component extends DCLogic {
     clearInterval(this.doorT);
     this.doorT = setInterval(function () { if (Date.now() - self.doorAt > 1500) { clearInterval(self.doorT); self.setState({ doorDone: true }); return; } self.setState({ doorTick: Date.now() }); }, 33);
   }
-  readyIdle(g) { return g.kiln === 'firing' && (!g.kilnStart || Date.now() >= g.kilnStart + 20000) && (g.openIdx || 0) === 0; }
+  readyIdle(g) { return g.kiln === 'firing' && (!g.kilnStart || Date.now() >= g.kilnStart + (g.kilnDur || 28800000)) && (g.openIdx || 0) === 0; }
   confirmAll() {
     var self = this, g = this.state.g, items = this.batchItems(g);
     var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
@@ -549,7 +558,7 @@ class Component extends DCLogic {
     var g = this.state.g;
     var items = this.batchItems(g);
     var idx = g.openIdx || 0;
-    var KD = 20000, ks = g.kilnStart || 0, kLeft = g.kiln === 'firing' && ks ? Math.max(0, ks + KD - Date.now()) : 0;
+    var KD = (g.kilnDur || 28800000), ks = g.kilnStart || 0, kLeft = g.kiln === 'firing' && ks ? Math.max(0, ks + KD - Date.now()) : 0;
     var baking = g.kiln === 'firing' && kLeft > 0;
     var opening = g.kiln === 'firing' && !baking && idx < items.length;
     var results = g.kiln === 'firing' && !baking && idx >= items.length;
@@ -603,11 +612,11 @@ class Component extends DCLogic {
       bk: (function () {
         var sec = Math.ceil(kLeft / 1000), pc = ks ? Math.min(100, (Date.now() - ks) / KD * 100) : 0, ph = (Date.now() % 1600) / 1600, pu = 0.55 + 0.25 * Math.sin(ph * Math.PI * 2);
         return {
-          clock: '0:' + (sec < 10 ? '0' : '') + sec,
+          clock: self.fmtLeft(kLeft), cost: self.jadeCost(kLeft).toLocaleString(),
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:linear-gradient(90deg,#E07A2E,#FFB24A)',
           note: items.length + '점이 굽는 중 · 끝나면 하나씩 꺼낸다',
           glow: 'radial-gradient(circle,rgba(255,150,60,' + pu.toFixed(2) + ') 0%,rgba(0,0,0,0) 66%)',
-          skip: function () { self.setG({ kilnStart: Date.now() - KD }); setTimeout(function () { self.startDoor(); }, 30); }
+          skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jade: nj, kilnStart: Date.now() - KD }); setTimeout(function () { self.startDoor(); }, 30); }); }
         };
       })(),
       doorOn: opening && idx === 0 && !st.doorDone,

@@ -121,6 +121,7 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </div>
   <div style="position:absolute;right:12px;top:14px;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+    <a href="Shop.dc.html" aria-label="옥 {{jade}}개, 상점 열기" style="text-decoration:none;position:relative;display:flex;align-items:center;gap:0;height:30px;box-sizing:border-box;padding:0 12px 0 34px;background:rgba(30,94,72,.9);border:2px solid #1E5E48;border-radius:16px"><span style="position:absolute;left:-6px;top:-4px;width:34px;height:34px;display:flex;align-items:center;justify-content:center"><svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg></span><span style="font-family:'Jua',sans-serif;font-size:16px;color:#E6FFF4">{{jade}}</span></a>
     <a href="Shop.dc.html" aria-label="골드, 상점 열기" style="text-decoration:none;position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px">
       <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#7A5A12"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
       <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{gold}}</span>
@@ -248,8 +249,8 @@ class Component extends DCLogic {
     return {
       gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
       dryList: [
-        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
-        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 1140000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 1860000 }
       ],
       bisqueList: [],
       bisque: { state: 'idle', start: 0, items: [] },
@@ -397,7 +398,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -581,16 +582,17 @@ class Component extends DCLogic {
     var G = this.grid();
     var now = Date.now();
     var dryList = g.dryList || [];
-    var dryDone = dryList.filter(function (it) { return (now - it.start) / 30000 >= 1; }).length;
+    var dryDone = dryList.filter(function (it) { return (now - it.start) / 1800000 >= 1; }).length;
     var bq = g.bisque || { state: 'idle', items: [] };
     var bqList = g.bisqueList || [];
-    var bqLeft = bq.state === 'firing' ? Math.max(0, Math.ceil((bq.start + 20000 - now) / 1000)) : 0;
+    var bqLeft = bq.state === 'firing' ? Math.max(0, Math.ceil((bq.start + 1200000 - now) / 1000)) : 0;
     var bqDone = bq.state === 'firing' && bqLeft === 0;
     var glazeN = (g.glazeList || []).length;
     var kilnN = (g.kilnList || []).length;
     var shelf = 0;
     for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { shelf++; } }
     var firing = g.kiln === 'firing';
+    var kLeftS = firing && g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0;
     var kf = g.kilnFilled || {}, kfN = 0; for (var kk in kf) { if (kf[kk] && typeof kf[kk] === 'object') { kfN++; } }
     var wipN = (g.formedList || []).length + dryList.length + bqList.length + (bq.items || []).length + glazeN + kilnN + kfN + (firing ? (g.batchItems || []).length : 0);
     var guests = this.guestInfo(g);
@@ -603,9 +605,9 @@ class Component extends DCLogic {
 
     function status(id) {
       if (id === 'dry') { return { b: dryDone ? '완료 ' + dryDone : dryList.length + '/4', t: dryDone ? 'go' : '' }; }
-      if (id === 'bisque') { return bq.state === 'firing' ? (bqDone ? { b: '초벌 완료', t: 'go' } : { b: '0:' + (bqLeft < 10 ? '0' : '') + bqLeft, t: 'fire' }) : { b: bqList.length ? '대기 ' + bqList.length : '', t: bqList.length ? 'go' : '' }; }
+      if (id === 'bisque') { return bq.state === 'firing' ? (bqDone ? { b: '초벌 완료', t: 'go' } : { b: (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초'), t: 'fire' }) : { b: bqList.length ? '대기 ' + bqList.length : '', t: bqList.length ? 'go' : '' }; }
       if (id === 'glaze') { return { b: glazeN ? '대기 ' + glazeN : '', t: glazeN ? 'go' : '' }; }
-      if (id === 'kiln') { return { b: firing ? '5:12 · 열기' : '대기 ' + kilnN, t: firing ? 'fire' : '' }; }
+      if (id === 'kiln') { return { b: firing ? (kLeftS > 0 ? (kLeftS >= 3600 ? Math.floor(kLeftS / 3600) + '시간 ' + Math.floor(kLeftS % 3600 / 60) + '분' : Math.ceil(kLeftS / 60) + '분') : '꺼내기') : '대기 ' + kilnN, t: firing ? (kLeftS > 0 ? 'fire' : 'go') : '' }; }
       if (id === 'wheel') { return { b: '빚기', t: '' }; }
       if (id === 'shelf') { return { b: '명성 +' + shelf * 3 + '/h', t: '' }; }
       if (id === 'counter') { return { b: guests.length ? '손님 ' + guests.length : '', t: guests.length ? 'go' : '' }; }
@@ -758,9 +760,9 @@ class Component extends DCLogic {
       if (id === 'counter') { return [chip('줄 선 손님 ' + guests.length, guests.length ? 'go' : ''), chip('진행 중 의뢰 ' + activeQ, '')]; }
       if (id === 'wheel') { return [chip('건조대 빈칸 ' + Math.max(0, 4 - dryList.length), dryList.length >= 4 ? 'warn' : '')]; }
       if (id === 'dry') { return [chip('말리는 중 ' + dryList.length + '/4', ''), chip('완전 건조 ' + dryDone, dryDone ? 'go' : '')]; }
-      if (id === 'bisque') { return [chip('초벌 대기 ' + bqList.length, bqList.length ? 'go' : ''), chip(bq.state === 'firing' ? (bqDone ? '다 구웠다' : '굽는 중 ' + bqLeft + '초') : '800℃ · 20분', bq.state === 'firing' ? 'warn' : '')]; }
+      if (id === 'bisque') { return [chip('초벌 대기 ' + bqList.length, bqList.length ? 'go' : ''), chip(bq.state === 'firing' ? (bqDone ? '다 구웠다' : '굽는 중 ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초')) : '800℃ · 20분', bq.state === 'firing' ? 'warn' : '')]; }
       if (id === 'glaze') { return [chip('시유 대기 ' + glazeN, glazeN ? 'go' : ''), chip('재벌 대기 ' + kilnN, '')]; }
-      if (id === 'kiln') { return [chip(firing ? '소성 중 5:12:08' : '비어 있음', firing ? 'warn' : ''), chip('소성 ' + (g.firings || 38) + '회', '')]; }
+      if (id === 'kiln') { return [chip(firing ? (kLeftS > 0 ? '소성 중 ' + Math.floor(kLeftS / 3600) + '시간 ' + Math.floor(kLeftS % 3600 / 60) + '분' : '소성 완료') : '비어 있음', firing ? 'warn' : ''), chip('소성 ' + (g.firings || 38) + '회', '')]; }
       if (id === 'shelf') { return [chip('전시 ' + shelf + '/6', ''), chip('명성 +' + shelf * 3 + '/h', 'go')]; }
       return [chip('보유 설비', '')];
     }
@@ -798,7 +800,7 @@ class Component extends DCLogic {
       if (sid === 'bisque') {
         p.hasBtn = true;
         if (bq.state === 'firing' && !bqDone) {
-          p.action = '굽는 중 · ' + bqLeft + '초'; p.actionSub = '목업 30배속 · 20분 = 20초';
+          p.action = '굽는 중 · ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초'); p.actionSub = '옥으로 바로 완료할 수 있다';
           p.btnStyle = green + 'background:#3E2616;border:3px solid #2B1A0F;color:#FFB979;' + late;
           p.run = function () { self.say('초벌이 끝나길 기다리자'); };
         } else if (bqDone) {
@@ -880,6 +882,7 @@ class Component extends DCLogic {
       prevStyle: navBtn + 'left:8px;' + (idx > 0 ? '' : 'display:none;'),
       nextStyle: navBtn + 'right:8px;' + (idx < flow.length - 1 ? '' : 'display:none;'),
       lv: g.fameLv,
+      jade: (g.jade == null ? 5000 : g.jade).toLocaleString(),
       playerName: (this.props.playerName || g.playerName || '플레이어'),
       fameBar: 'width:' + g.fameXp + '%;height:100%;background:#E3B23C;border-radius:3px',
       gold: g.gold.toLocaleString(),

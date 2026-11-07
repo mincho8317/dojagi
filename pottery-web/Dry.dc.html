@@ -107,8 +107,8 @@ button{font-family:inherit;cursor:pointer}
     </sc-if>
     <div style="display:flex;gap:10px">
       <button type="button" onClick="{{fan}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px">
-        <span style="font-family:'Jua',sans-serif;font-size:17px;color:#5B3A24">더 기다리기</span>
-        <span style="font-size:10px;font-weight:700;color:#8A6440">목업용 시간 +5분</span>
+        <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
+        <span style="font-size:10px;font-weight:700;color:#2F7A5E">{{fanSub}}</span>
       </button>
       <button type="button" onClick="{{pullAll}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px">
         <span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5">다 마른 것 빼기</span>
@@ -209,8 +209,8 @@ class Component extends DCLogic {
     return {
       gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
       dryList: [
-        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
-        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 1140000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 1860000 }
       ],
       glazeList: [
         { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
@@ -354,7 +354,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -399,6 +399,15 @@ class Component extends DCLogic {
     }
     setInterval(function () { check(false); }, 1000);
   }
+  jadeOf(g) { return g.jade == null ? 5000 : g.jade; }
+  jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
+  fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
+  jadeSpend(cost, run) {
+    var have = this.jadeOf(this.state.g);
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (!this.jadeArm || Date.now() - this.jadeArm > 3000) { this.jadeArm = Date.now(); this.say('한 번 더 누르면 옥 ' + cost.toLocaleString() + '개로 바로 완료 (보유 ' + have.toLocaleString() + ')'); return; }
+    this.jadeArm = 0; run(have - cost); this.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!');
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
     var self = this;
@@ -432,7 +441,7 @@ class Component extends DCLogic {
     var g = this.state.g, now = Date.now(), self = this;
     var keep = [], moved = [];
     (g.dryList || []).forEach(function (it) {
-      var pct = (now - it.start) / 30000 * 100;
+      var pct = (now - it.start) / 1800000 * 100;
       if (ids.indexOf(it.id) >= 0 && pct >= 50) {
         var mv = {}; for (var mk in it) { if (mk !== 'start') { mv[mk] = it[mk]; } } mv.dry = self.zone(pct); moved.push(mv);
       } else { keep.push(it); }
@@ -476,7 +485,7 @@ class Component extends DCLogic {
         slots.push({ filled: false, empty: true, add: function () { self.openPick(); }, card: 'position:relative;box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px' });
         continue;
       }
-      var pct = Math.max(0, (now - it.start) / 30000 * 100);
+      var pct = Math.max(0, (now - it.start) / 1800000 * 100);
       var z = this.zone(pct);
       if (z === 'ok' || z === 'over') { doneIds.push(it.id); }
       var sh = SH[it.shape] || SH.dish;
@@ -570,9 +579,11 @@ class Component extends DCLogic {
       glazeQ: (g.bisqueList || []).length,
       goBisque: function () { self.setG({ mainFocus: 'bisque' }); },
       doneCount: doneIds.length,
+      fanSub: (function () { var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); }); return mx > 0 ? '옥 ' + self.jadeCost(mx).toLocaleString() + ' · ' + self.fmtLeft(mx) + ' 남음' : '다 말랐다'; })(),
       fan: function () {
-        if (!list.length) { self.say('말리고 있는 작품이 없다'); return; }
-        self.setG({ dryList: list.map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } y.start = x.start - 5000; return y; }) });
+        var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); });
+        if (!list.length || mx <= 0) { self.say(list.length ? '이미 다 말랐다 · 빼서 초벌로 보내자' : '말리고 있는 작품이 없다'); return; }
+        self.jadeSpend(self.jadeCost(mx), function (nj) { var now0 = Date.now(); self.setG({ jade: nj, dryList: self.state.g.dryList.map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } if (now0 - x.start < 1800000) { y.start = now0 - 1800000; } return y; }) }); });
       },
       pullAll: function () {
         var n = self.pull(doneIds);

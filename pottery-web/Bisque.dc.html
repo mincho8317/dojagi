@@ -291,7 +291,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -336,6 +336,15 @@ class Component extends DCLogic {
     }
     setInterval(function () { check(false); }, 1000);
   }
+  jadeOf(g) { return g.jade == null ? 5000 : g.jade; }
+  jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
+  fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
+  jadeSpend(cost, run) {
+    var have = this.jadeOf(this.state.g);
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (!this.jadeArm || Date.now() - this.jadeArm > 3000) { this.jadeArm = Date.now(); this.say('한 번 더 누르면 옥 ' + cost.toLocaleString() + '개로 바로 완료 (보유 ' + have.toLocaleString() + ')'); return; }
+    this.jadeArm = 0; run(have - cost); this.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!');
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
     var self = this;
@@ -355,9 +364,9 @@ class Component extends DCLogic {
     var bq = g.bisque || { state: 'idle', items: [] };
     var list = g.bisqueList || [];
     var firing = bq.state === 'firing';
-    var left = firing ? Math.max(0, Math.ceil((bq.start + 20000 - now) / 1000)) : 0;
+    var leftMs = firing ? Math.max(0, bq.start + 1200000 - now) : 0, left = Math.ceil(leftMs / 1000);
     var done = firing && left === 0;
-    var pct = firing ? Math.min(100, (now - bq.start) / 200) : 0;
+    var pct = firing ? Math.min(100, (now - bq.start) / 12000) : 0;
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
     var shown = firing ? (bq.items || []) : list;
     var pick = this.state.pick || {};
@@ -404,7 +413,7 @@ class Component extends DCLogic {
       newStyle: done ? 'position:absolute;left:142px;top:138px;z-index:3;padding:2px 9px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,180,80,.9);font-family:Jua,sans-serif;font-size:14px;color:#FFFDF5;animation:glow 1s ease-in-out infinite;pointer-events:none' : 'display:none',
       fireWin: 'position:absolute;left:88px;top:186px;width:38px;height:26px;border-radius:3px;' + (firing && !done ? 'background:#FF9A4D;box-shadow:0 0 12px 4px rgba(255,140,60,.7);animation:glow 1.2s ease-in-out infinite;' : ''),
       bubble: 'position:absolute;top:238px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (done ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (firing ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24')),
-      bubbleText: done ? '초벌 완료' : (firing ? '0:' + (left < 10 ? '0' : '') + left : '대기 ' + list.length),
+      bubbleText: done ? '초벌 완료' : (firing ? self.fmtLeft(leftMs) : '대기 ' + list.length),
       info1: firing ? (done ? '다 구웠다' : '굽는 중') : '반건조 기물은 12% 확률로 터진다',
       info2: firing ? Math.round(pct) + '%' : '',
       bar: 'height:100%;border-radius:4px;background:#E3B23C;width:' + pct + '%',
@@ -413,9 +422,9 @@ class Component extends DCLogic {
       toast: this.state.toast, toastOn: this.state.toast !== ''
     };
     if (firing && !done) {
-      v.action = '굽는 중 · ' + left + '초'; v.actionSub = '목업 30배속 · 20분 = 20초';
-      v.btn = base + 'background:#3E2616;border:3px solid #2B1A0F;color:#FFB979';
-      v.run = function () { self.say('초벌이 끝나길 기다리자'); };
+      v.action = '바로 완료 · 옥 ' + self.jadeCost(leftMs).toLocaleString(); v.actionSub = '굽는 중 · ' + self.fmtLeft(leftMs) + ' 남음 · 보유 옥 ' + self.jadeOf(g).toLocaleString();
+      v.btn = base + 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 5px 0 #1E5E48;color:#FFFDF5';
+      v.run = function () { var lm = Math.max(0, (self.state.g.bisque || {}).start + 1200000 - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { var b0 = self.state.g.bisque || {}, nb = {}; for (var k in b0) { nb[k] = b0[k]; } nb.start = Date.now() - 1200000; self.setG({ jade: nj, bisque: nb }); }); };
     } else if (done) {
       v.action = '꺼내서 유약대로'; v.actionSub = (bq.items || []).length + '점 · 초벌 완료';
       v.btn = base + 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 5px 0 #2F6328;color:#FFFDF5';
@@ -442,7 +451,7 @@ class Component extends DCLogic {
     var idleTap = function () { if (!list.length) { self.say('초벌할 기물이 없다 · 건조대에서 빼오자'); return; } openPk(); };
     v.kilnTap = firing && !done ? v.run : (done ? v.run : idleTap);
     v.kilnAria = firing && !done ? '초벌 가마 · 굽는 중' : (done ? '초벌 가마 열어서 꺼내기' : '초벌 가마에 넣을 기물 고르기');
-    v.kilnHint = firing && !done ? '굽는 중 · ' + left + '초' : (done ? '눌러서 꺼내기' : (list.length ? (selN ? '눌러서 다시 고르기' : '눌러서 기물 넣기') : '비어 있다'));
+    v.kilnHint = firing && !done ? '굽는 중 · ' + self.fmtLeft(leftMs) : (done ? '눌러서 꺼내기' : (list.length ? (selN ? '눌러서 다시 고르기' : '눌러서 기물 넣기') : '비어 있다'));
     v.kilnHintStyle = 'margin-top:12px;padding:5px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (done ? 'background:#4A9440;color:#FFFDF5;box-shadow:0 0 12px rgba(255,230,140,.9)' : (firing ? 'background:#3E2616;color:#FFB979' : (list.length ? 'background:#5B3A24;color:#FFE7A8' : 'background:rgba(43,26,15,.2);color:#7A5434')));
     v.kilnStyle = 'all:unset;cursor:pointer;position:absolute;left:85px;top:262px;width:220px;height:340px;box-sizing:border-box;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:70px;gap:4px;color:#5B3A24;text-align:center;' + (done || (!firing && list.length && !selN) ? 'filter:drop-shadow(0 0 10px rgba(255,214,107,.95));' : '');
     if (done) { v.action = '가마를 눌러 꺼내기'; v.actionSub = (bq.items || []).length + '점 · 초벌 완료 · 이 버튼으로도 꺼낼 수 있다'; }

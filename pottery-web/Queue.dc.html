@@ -200,7 +200,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -290,7 +290,7 @@ class Component extends DCLogic {
     var self = this, g = this.state.g || {}, now = Date.now();
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
     var GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' };
-    var bq = g.bisque || {}, firingB = bq.state === 'firing', bqLeft = firingB ? Math.max(0, Math.ceil((bq.start + 20000 - now) / 1000)) : 0;
+    var bq = g.bisque || {}, firingB = bq.state === 'firing', bqLeft = firingB ? Math.max(0, Math.ceil((bq.start + 1200000 - now) / 1000)) : 0;
     var kf = g.kilnFilled || {}, placed = [];
     for (var k in kf) { if (kf[k] && typeof kf[k] === 'object') { placed.push(kf[k]); } }
     var firingK = g.kiln === 'firing';
@@ -300,13 +300,13 @@ class Component extends DCLogic {
     function add(list, o) { list.forEach(function (it) { var r = o(it); r.it = it; all.push(r); }); }
     var fresh = []; (g.order || []).forEach(function (id) { var p = (g.pieces || {})[id]; if (p && p.where === 'store' && p.fresh) { fresh.push(p); } });
     add(fresh, function () { return { rank: 8, tag: '완성', tone: 'ready', href: 'Display.dc.html', fill: 'glazed', next: '진열·판매' }; });
-    add(batch, function (x) { var kl = g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + 20000 - now) / 1000)) : 0; return { rank: 7, tag: kl ? '재벌 ' + kl + '초' : '재벌 완료', tone: kl ? 'busy' : 'ready', href: 'KilnOpen.dc.html', fill: 'glazed', next: kl ? '굽는 중' : '꺼내기' }; });
+    add(batch, function (x) { var kl = g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0; return { rank: 7, tag: kl ? '재벌 ' + (kl >= 3600 ? Math.floor(kl / 3600) + '시간 ' + Math.floor(kl % 3600 / 60) + '분' : Math.ceil(kl / 60) + '분') : '재벌 완료', tone: kl ? 'busy' : 'ready', href: 'KilnOpen.dc.html', fill: 'glazed', next: kl ? '굽는 중' : '꺼내기' }; });
     add(placed, function () { return { rank: 6, tag: '가마 칸에', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '불 지피기' }; });
     add(g.kilnList || [], function () { return { rank: 5, tag: '소성 대기', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '가마에 넣기' }; });
     add(g.glazeList || [], function () { return { rank: 4, tag: '유약 대기', tone: 'ready', href: 'Glaze.dc.html', fill: 'bisque', next: '유약 바르기' }; });
-    add(firingB ? (bq.items || []) : [], function () { return { rank: 3, tag: bqLeft ? '초벌 ' + bqLeft + '초' : '초벌 완료', tone: bqLeft ? 'busy' : 'ready', href: 'Bisque.dc.html', fill: 'bisque', next: bqLeft ? '초벌 중' : '꺼내기' }; });
+    add(firingB ? (bq.items || []) : [], function () { return { rank: 3, tag: bqLeft ? '초벌 ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초') : '초벌 완료', tone: bqLeft ? 'busy' : 'ready', href: 'Bisque.dc.html', fill: 'bisque', next: bqLeft ? '초벌 중' : '꺼내기' }; });
     add(g.bisqueList || [], function (x) { return { rank: 2, tag: x.dry === 'early' ? '반건조' : '초벌 대기', tone: x.dry === 'early' ? 'warn' : 'ready', href: 'Bisque.dc.html', fill: 'dry', next: '초벌 가마에 넣기' }; });
-    add(g.dryList || [], function (x) { var p = Math.round((now - x.start) / 300); return { rank: 1, tag: '건조 ' + p + '%', tone: p >= 100 && p <= 120 ? 'ready' : (p > 120 ? 'warn' : 'busy'), href: 'Dry.dc.html', fill: p >= 100 ? 'dry' : 'wet', next: '건조대 확인' }; });
+    add(g.dryList || [], function (x) { var p = Math.round((now - x.start) / 18000); return { rank: 1, tag: '건조 ' + p + '%', tone: p >= 100 && p <= 120 ? 'ready' : (p > 120 ? 'warn' : 'busy'), href: 'Dry.dc.html', fill: p >= 100 ? 'dry' : 'wet', next: '건조대 확인' }; });
     add(g.formedList || [], function () { return { rank: 0, tag: '건조 대기', tone: 'ready', href: 'Dry.dc.html', fill: 'wet', next: '건조대에 올리기' }; });
     all.sort(function (a, b) { return b.rank - a.rank; });
     var slots = all.map(function (r, i) {

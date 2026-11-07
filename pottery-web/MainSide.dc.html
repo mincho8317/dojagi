@@ -136,8 +136,8 @@ class Component extends DCLogic {
     return {
       gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
       dryList: [
-        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
-        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 1140000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 1860000 }
       ],
       glazeList: [
         { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
@@ -185,7 +185,7 @@ class Component extends DCLogic {
     var q = g.quests || {};
     var now = Date.now();
     var dryList = g.dryList || [];
-    var dryDone = dryList.filter(function (it) { return (now - it.start) / 30000 >= 1; }).length;
+    var dryDone = dryList.filter(function (it) { return (now - it.start) / 1800000 >= 1; }).length;
     var shelf = 0;
     for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { shelf++; } }
     var firing = g.kiln === 'firing';

@@ -142,7 +142,7 @@ button{font-family:inherit;cursor:pointer}
         <a href="KilnOpen.dc.html" style="box-sizing:border-box;text-align:center;padding:11px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328,0 0 14px rgba(255,214,107,.8);border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">가마 열고 꺼내기</a>
       </sc-if>
       <sc-if value="{{kt.busy}}" hint-placeholder-val="{{true}}">
-        <button type="button" onClick="{{kt.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:10px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">시간 건너뛰기 · 목업</button>
+        <button type="button" onClick="{{kt.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;padding:11px 0;background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #1E5E48"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg><span>바로 완료 · 옥 {{kt.cost}}</span></button>
       </sc-if>
     </div>
   </sc-if>
@@ -236,8 +236,8 @@ class Component extends DCLogic {
     return {
       gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
       dryList: [
-        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
-        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
+        { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 1140000 },
+        { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 1860000 }
       ],
       glazeList: [
         { id: 'g1', shape: 'bowl', clay: 'basic', form: 3, tmin: 5.0, dry: 'ok' },
@@ -382,7 +382,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, jade: 5000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -426,6 +426,15 @@ class Component extends DCLogic {
       showCard(load(), PAGE === 'Main');
     }
     setInterval(function () { check(false); }, 1000);
+  }
+  jadeOf(g) { return g.jade == null ? 5000 : g.jade; }
+  jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
+  fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
+  jadeSpend(cost, run) {
+    var have = this.jadeOf(this.state.g);
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (!this.jadeArm || Date.now() - this.jadeArm > 3000) { this.jadeArm = Date.now(); this.say('한 번 더 누르면 옥 ' + cost.toLocaleString() + '개로 바로 완료 (보유 ' + have.toLocaleString() + ')'); return; }
+    this.jadeArm = 0; run(have - cost); this.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!');
   }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
@@ -635,7 +644,7 @@ class Component extends DCLogic {
       door: (function () {
         var t = (Date.now() - (self.state.closeAt || 0)) / 650, e = t >= 1 ? 1 : (t <= 0 ? 0 : 1 - Math.pow(1 - t, 3));
         if (!self.state.closeAt) { e = 1; }
-        var ks = g.kilnStart || 0, done = ks && Date.now() >= ks + 20000, pu = 0.6 + 0.4 * Math.sin(Date.now() / 260);
+        var ks = g.kilnStart || 0, done = ks && Date.now() >= ks + (g.kilnDur || 28800000), pu = 0.6 + 0.4 * Math.sin(Date.now() / 260);
         var plate = 'position:absolute;top:0;bottom:0;width:50%;box-sizing:border-box;border:4px solid #1A0F08;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,rgba(0,0,0,0) 2px 38px),linear-gradient(90deg,#5A4436,#7A5E4A 45%,#4E3A2E);box-shadow:inset 0 0 0 3px #8A6A52,inset 0 0 18px rgba(0,0,0,.5);';
         return {
           l: plate + 'left:0;border-radius:12px 0 0 12px;transform:translateX(' + (-(1 - e) * 100).toFixed(1) + '%)',
@@ -646,15 +655,15 @@ class Component extends DCLogic {
         };
       })(),
       kt: (function () {
-        var KD = 20000, ks = g.kilnStart || 0, left = ks ? Math.max(0, ks + KD - Date.now()) : 0, sec = Math.ceil(left / 1000), done = left === 0;
+        var KD = (g.kilnDur || 28800000), ks = g.kilnStart || 0, left = ks ? Math.max(0, ks + KD - Date.now()) : 0, sec = Math.ceil(left / 1000), done = left === 0;
         var pc = ks ? Math.min(100, (Date.now() - ks) / KD * 100) : 100;
         return {
           done: done, busy: !done, title: done ? '소성 완료' : '소성 중',
-          clock: done ? '완료!' : '0:' + (sec < 10 ? '0' : '') + sec,
-          clockStyle: 'font-family:Jua,sans-serif;font-size:24px;color:' + (done ? '#4A9440' : '#C8601E'),
+          clock: done ? '완료!' : self.fmtLeft(left), cost: self.jadeCost(left).toLocaleString(),
+          clockStyle: 'font-family:Jua,sans-serif;font-size:20px;white-space:nowrap;color:' + (done ? '#4A9440' : '#C8601E'),
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:' + (done ? '#4A9440' : 'linear-gradient(90deg,#E07A2E,#FFB24A)'),
           note: done ? (g.batchItems || []).length + '점 꺼낼 수 있다' : (g.batchItems || []).length + '점 굽는 중',
-          skip: function () { self.setG({ kilnStart: Date.now() - KD }); }
+          skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jade: nj, kilnStart: Date.now() - KD }); }); }
         };
       })(),
       toast: this.state.toast,
@@ -662,7 +671,7 @@ class Component extends DCLogic {
       fire: function () {
         if (!placed.length) { self.say('빈 가마는 때줄 수 없다'); return; }
         var results = placed.map(function (p) { return self.judge(p.it, p.temp, cur.id); });
-        self.setG({ kiln: 'firing', kilnStart: Date.now(), batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 38) + 1, kilnFilled: {} });
+        self.setG({ kiln: 'firing', kilnStart: Date.now(), kilnDur: cur.hours * 3600000, batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 38) + 1, kilnFilled: {} });
         self.setState({ sel: -1, closeAt: Date.now() });
         clearInterval(self.doorT); var t0 = Date.now(); self.doorT = setInterval(function () { if (Date.now() - t0 > 750) { clearInterval(self.doorT); } self.setState({ doorTick: Date.now() }); }, 33);
       }
