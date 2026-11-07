@@ -434,7 +434,6 @@ class Component extends DCLogic {
   }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
-    try { this.goalBoot(); } catch (e) {}
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}

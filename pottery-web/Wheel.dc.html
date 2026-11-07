@@ -218,6 +218,7 @@ button{font-family:inherit;cursor:pointer}
               <svg width="56" height="56" viewBox="{{sr.icon.vb}}" aria-hidden="true" style="{{sr.svgStyle}}"><path d="{{sr.icon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{sr.icon.sw}}" stroke-linejoin="round"></path></svg>
               <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{sr.name}}</span>
               <span style="font-size:10.5px;color:#7A5434;text-align:center">{{sr.meta}}</span>
+              <span style="{{sr.goalStyle}}">{{sr.goal}}</span>
             </button>
           </sc-for>
         </div>
@@ -528,7 +529,8 @@ class Component extends DCLogic {
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function render() {
       var g = load(), G = goals(g);
-      if (!G.length) { pill.style.display = 'none'; return; }
+      var dlg = document.querySelector('#__host [role="dialog"], x-dc ~ * [role="dialog"], [role="dialog"]:not(.gl-box)');
+      if (!G.length || (dlg && !dlg.closest('.gl-ov'))) { pill.style.display = 'none'; return; }
       pill.style.display = 'flex';
       var rows = G.map(function (gq) { var p = prog(g, gq); return { gq: gq, p: p, ok: p.ready >= gq.n }; });
       var top = rows.filter(function (r) { return !r.ok; })[0] || rows[0];
@@ -554,8 +556,23 @@ class Component extends DCLogic {
       document.body.appendChild(ov);
     });
     render();
-    setInterval(render, 1000);
+    setInterval(render, 250);
     window.addEventListener('storage', render);
+  }
+  goalList(g) {
+    var q = g.quests || {}, out = [];
+    if (q.min && !q.minDone) { out.push({ tag: '사연', shape: 'cup', glaze: 'celadon', col: '#B9533A' }); }
+    if (q.guest && !q.guestDone) { out.push({ tag: '일간', shape: 'bowl', glaze: '', col: '#5B8A3A' }); }
+    if (q.week && !q.weekDone) { out.push({ tag: '주간', shape: 'cup', glaze: 'white', col: '#3E6E8E' }); }
+    (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '주문', shape: w.shape, glaze: w.glaze || '', col: '#C8901E' }); });
+    var gl = g.goal, st = ((g.contest || {}).stars || {});
+    if (gl && gl.sid && !st[gl.sid]) { out.push({ tag: '스테이지', shape: gl.wshape || '', glaze: gl.glaze || '', col: '#7A5A93', stage: true }); }
+    return out;
+  }
+  goalChip(list) {
+    if (!list.length) { return { text: '', style: 'display:none' }; }
+    var tags = []; list.forEach(function (x) { if (tags.indexOf(x.tag) < 0) { tags.push(x.tag); } });
+    return { text: '📋 ' + tags.join(' · '), style: 'margin-top:2px;max-width:100%;box-sizing:border-box;padding:2px 8px;border-radius:9px;background:' + list[0].col + ';color:#FFF;font-family:Jua,sans-serif;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis' };
   }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
@@ -1032,6 +1049,7 @@ class Component extends DCLogic {
         return {
           name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: '보유 ' + c.own + ' · 최소 두께 ' + clays[i].limit + 'mm', img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
+          goal: '', goalStyle: 'display:none',
           tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),
           tagStyle: (c.on || rec || c.own === '없음' || clays[i].event) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : (clays[i].event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))) : 'display:none',
           style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (c.on ? 'background:#FFF;border:3px solid #5B3A24;box-shadow:0 0 0 3px #FFD66B' : (c.own === '없음' ? 'background:#E9DFCC;border:2px dashed #A8987C;opacity:.7' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
@@ -1039,9 +1057,11 @@ class Component extends DCLogic {
         };
       }) : targets.map(function (k) {
         var t = self.shapes()[k], on = s.target === k, isG = k === 'goal';
+        var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.shape === k); }));
         return {
           name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: '', icon: self.iconOf(t),
           on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : ''),
+          goal: isG ? '' : gc.text, goalStyle: isG ? 'display:none' : gc.style,
           tag: isG ? (on ? '선택 중 · ' : '') + '★ ' + g.goal.num + '스테이지 목표' : (on ? '선택 중' : ''),
           tagStyle: (on || isG) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (isG ? 'background:#7A5A93;color:#FFF' : 'background:#5B3A24;color:#FFE7A8') : 'display:none',
           style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid ' + (isG ? '#7A5A93' : '#5B3A24') + ';box-shadow:0 0 0 3px #FFD66B' : (isG ? 'background:#F6EEFA;border:2px solid #7A5A93;box-shadow:0 3px 0 #7A5A93' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
