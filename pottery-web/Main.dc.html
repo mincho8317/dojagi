@@ -446,8 +446,84 @@ class Component extends DCLogic {
     }
     setInterval(function () { check(false); }, 1000);
   }
+  goalBoot() {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__goalBooted) { return; }
+    window.__goalBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리', vase: '화병', plate: '접시', dawan: '다완', maebyeong: '매병', moonjar: '달항아리', lotuscup: '연꽃잔', bottle: '병', box: '합' };
+    var GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' };
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function goals(g) {
+      var q = g.quests || {}, out = [];
+      if (q.min && !q.minDone) { out.push({ tag: '사연', who: '민 씨', shape: 'cup', glaze: 'celadon', n: 1, col: '#B9533A' }); }
+      if (q.guest && !q.guestDone) { out.push({ tag: '일간', who: '동네 손님', shape: 'bowl', glaze: '', n: 1, col: '#5B8A3A' }); }
+      if (q.week && !q.weekDone) { out.push({ tag: '주간', who: '카페 사장', shape: 'cup', glaze: 'white', n: 3, col: '#3E6E8E' }); }
+      (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '주문', who: o.name || '손님', shape: w.shape, glaze: w.glaze || '', n: 1, col: '#C8901E' }); });
+      var gl = g.goal, st = ((g.contest || {}).stars || {});
+      if (gl && gl.sid && !st[gl.sid]) { out.push({ tag: '스테이지', who: '스테이지 ' + (gl.num || ''), shape: gl.wshape || '', glaze: gl.glaze || '', n: 1, col: '#7A5A93', label: gl.name }); }
+      return out;
+    }
+    function match(it, gq, needGlaze) { return it && (!gq.shape || it.shape === gq.shape) && (!needGlaze || !gq.glaze || it.glaze === gq.glaze); }
+    function prog(g, gq) {
+      var ready = 0, wip = 0, ps = g.pieces || {};
+      for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && match(p, gq, true)) { ready++; } }
+      [g.formedList, g.dryList, g.bisqueList, (g.bisque || {}).items].forEach(function (L) { (L || []).forEach(function (it) { if (match(it, gq, false)) { wip++; } }); });
+      (g.glazeList || []).forEach(function (it) { if (match(it, gq, false)) { wip++; } });
+      (g.kilnList || []).forEach(function (it) { if (match(it, gq, true)) { wip++; } });
+      var kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c] && typeof kf[c] === 'object' && match(kf[c], gq, true)) { wip++; } }
+      if (g.kiln === 'firing') { (g.batchItems || []).forEach(function (it) { if (!it.broken && match(it, gq, true)) { wip++; } }); }
+      return { ready: ready, wip: wip };
+    }
+    function title(gq) { return gq.label || ((gq.glaze ? (GN[gq.glaze] || '') + ' ' : '') + (SN[gq.shape] || '그릇') + (gq.n > 1 ? ' ' + gq.n + '점' : '')); }
+    var css = document.createElement('style');
+    css.textContent = '.gl-pill{position:fixed;right:6px;top:calc(50% - 132px);z-index:9996;max-width:172px;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:6px 9px 6px 7px;border-radius:14px;background:rgba(255,244,222,.97);border:2px solid #5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:12.5px;color:#2B1A0F;cursor:pointer;line-height:1.15;text-align:left}' +
+      '.gl-pill .t{flex:0 0 auto;padding:1px 6px;border-radius:7px;font-size:10.5px;color:#FFF}.gl-pill .n{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.gl-pill .c{flex:0 0 auto;font-size:11px;color:#2F6328}.gl-pill .more{flex:0 0 auto;min-width:18px;height:18px;border-radius:9px;background:#D0452B;color:#FFF;font-size:11px;display:flex;align-items:center;justify-content:center}' +
+      '.gl-pill.ok{border-color:#2F6328;box-shadow:0 0 0 2px #A9D69E,0 3px 8px rgba(0,0,0,.35)}' +
+      '.gl-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.55);display:flex;align-items:flex-end;justify-content:center}' +
+      '.gl-box{width:min(390px,100vw);max-height:70vh;overflow-y:auto;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:24px 24px 0 0;font-family:"Noto Sans KR",sans-serif;color:#2B1A0F}' +
+      '.gl-box h3{margin:0 0 2px;font-family:Jua,sans-serif;font-weight:400;font-size:20px}.gl-box .sub{font-size:11.5px;color:#7A5434;margin-bottom:10px}' +
+      '.gl-row{display:flex;align-items:center;gap:8px;padding:9px 10px;margin-bottom:7px;border-radius:14px;background:#FFFDF5;border:2px solid #C9A27A}.gl-row.ok{background:#EAF5E4;border-color:#4A9440}' +
+      '.gl-row .t{flex:0 0 auto;padding:2px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;color:#FFF}.gl-row .m{flex:1 1 auto;min-width:0}.gl-row .m b{display:block;font-family:Jua,sans-serif;font-weight:400;font-size:15px}.gl-row .m span{font-size:11px;color:#7A5434}' +
+      '.gl-row .s{flex:0 0 auto;text-align:right;font-family:Jua,sans-serif;font-size:13px}.gl-close{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;margin-top:6px;padding:11px 0;text-align:center;border-radius:14px;background:#5B3A24;color:#FFE7A8;font-family:Jua,sans-serif;font-size:16px}' +
+      '.gl-link{display:block;margin-top:8px;text-align:center;font-family:Jua,sans-serif;font-size:14px;color:#5B3A24}';
+    document.head.appendChild(css);
+    var pill = document.createElement('button'); pill.type = 'button'; pill.className = 'gl-pill'; pill.setAttribute('aria-label', '지금 만들어야 할 것 보기');
+    document.body.appendChild(pill);
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function render() {
+      var g = load(), G = goals(g);
+      if (!G.length) { pill.style.display = 'none'; return; }
+      pill.style.display = 'flex';
+      var rows = G.map(function (gq) { var p = prog(g, gq); return { gq: gq, p: p, ok: p.ready >= gq.n }; });
+      var top = rows.filter(function (r) { return !r.ok; })[0] || rows[0];
+      var allOk = rows.every(function (r) { return r.ok; });
+      pill.className = 'gl-pill' + (top.ok ? ' ok' : '');
+      pill.innerHTML = '<span class="t" style="background:' + top.gq.col + '">' + esc(top.gq.tag) + '</span><span class="n">' + esc(title(top.gq)) + '</span><span class="c">' + (top.ok ? '✓' : Math.min(top.p.ready, top.gq.n) + '/' + top.gq.n) + '</span>' + (rows.length > 1 ? '<span class="more">' + rows.length + '</span>' : '');
+      pill.title = allOk ? '모두 준비 완료 · 납품하러 가자' : '';
+    }
+    pill.addEventListener('click', function () {
+      var g = load(), G = goals(g);
+      var ov = document.createElement('div'); ov.className = 'gl-ov';
+      var bx = document.createElement('div'); bx.className = 'gl-box'; bx.setAttribute('role', 'dialog'); bx.setAttribute('aria-label', '만들어야 할 것');
+      var html = '<h3>📋 지금 만들어야 할 것</h3><div class="sub">받은 의뢰와 도전 중인 스테이지 · 완성품은 보관함·진열대 기준</div>';
+      G.forEach(function (gq) {
+        var p = prog(g, gq), ok = p.ready >= gq.n;
+        html += '<div class="gl-row' + (ok ? ' ok' : '') + '"><span class="t" style="background:' + gq.col + '">' + esc(gq.tag) + '</span><div class="m"><b>' + esc(title(gq)) + '</b><span>' + esc(gq.who) + (gq.glaze ? '' : ' · 유약 무관') + '</span></div><div class="s">' +
+          (ok ? '<span style="color:#2F6328">✓ 준비 완료</span>' : '<span>완성 ' + p.ready + '/' + gq.n + '</span>') + '<br><span style="font-family:Noto Sans KR,sans-serif;font-size:10.5px;color:#7A5434">' + (p.wip ? '만드는 중 ' + p.wip + '점' : (ok ? '납품하러 가자' : '아직 시작 안 함')) + '</span></div></div>';
+      });
+      bx.innerHTML = html + '<a class="gl-link" href="Commission.dc.html">의뢰 장부 보기 ›</a>';
+      var cl = document.createElement('button'); cl.type = 'button'; cl.className = 'gl-close'; cl.textContent = '닫기'; cl.addEventListener('click', function () { ov.remove(); });
+      bx.appendChild(cl); ov.appendChild(bx);
+      ov.addEventListener('click', function (e) { if (e.target === ov) { ov.remove(); } });
+      document.body.appendChild(ov);
+    });
+    render();
+    setInterval(render, 1000);
+    window.addEventListener('storage', render);
+  }
   componentDidMount() {
     try { this.tutBoot(); } catch (e) {}
+    try { this.goalBoot(); } catch (e) {}
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
