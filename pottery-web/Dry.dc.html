@@ -314,7 +314,7 @@ class Component extends DCLogic {
       Object.keys(NAMES).concat(['Wheel']).map(function (p) { return 'html[data-tn="' + p + '"] a[href="' + p + '.dc.html"]'; }).join(',') + '{animation:tutPulse 1.2s ease-in-out infinite!important;border-radius:14px}' +
       '@keyframes tutPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,214,107,.9),0 0 10px 2px rgba(255,214,107,.7)}50%{box-shadow:0 0 0 5px rgba(255,214,107,.5),0 0 24px 8px rgba(255,214,107,.9)}}' +
       '@keyframes tutIn{0%{transform:translate(-50%,-14px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}@keyframes tutPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}' +
-      '.tut-mini{position:fixed;left:6px;top:calc(50% - 132px);z-index:9997;box-sizing:border-box;padding:6px 9px;border-radius:14px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;box-shadow:0 3px 8px rgba(0,0,0,.35);color:#FFE7A8;font-family:Jua,sans-serif;font-size:13px;cursor:pointer;line-height:1}' + '.tut-card{position:fixed;left:50%;top:38%;z-index:9998;width:min(320px,86vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
+      '.tut-mini{position:fixed;transform-origin:0 0;z-index:9997;box-sizing:border-box;padding:6px 9px;border-radius:14px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;box-shadow:0 3px 8px rgba(0,0,0,.35);color:#FFE7A8;font-family:Jua,sans-serif;font-size:13px;cursor:pointer;line-height:1}' + '.tut-card{position:fixed;left:50%;top:38%;z-index:9998;width:min(320px,86vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
       '.tut-card b{display:block;font-weight:400;font-size:15px;color:#FFE7A8}.tut-card span{display:block;font-family:"Noto Sans KR",sans-serif;font-size:11.5px;line-height:1.45;color:#F3E3C4;margin-top:2px}' +
       '.tut-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.66);display:flex;align-items:center;justify-content:center}' +
       '.tut-box{width:min(320px,86vw);box-sizing:border-box;padding:22px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 0 rgba(43,26,15,.45);text-align:center;color:#2B1A0F;font-family:"Noto Sans KR",sans-serif;animation:tutPop .45s both}' +
@@ -348,7 +348,11 @@ class Component extends DCLogic {
       var mini = document.querySelector('.tut-mini');
       if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), false); }); document.body.appendChild(mini); }
       mini.textContent = '🎯 ' + (t + 1) + '/' + STEPS.length;
+      placeMini();
     }
+    function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
+    function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = (R.l + 6 * R.k).toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
+    setInterval(placeMini, 400); window.addEventListener('resize', placeMini);
     function apply(g) {
       var L = locked(g), keys = Object.keys(L);
       document.documentElement.setAttribute('data-tl', keys.join(' '));
@@ -456,7 +460,7 @@ class Component extends DCLogic {
     }
     function title(gq) { return gq.label || ((gq.glaze ? (GN[gq.glaze] || '') + ' ' : '') + (SN[gq.shape] || '그릇') + (gq.n > 1 ? ' ' + gq.n + '점' : '')); }
     var css = document.createElement('style');
-    css.textContent = '.gl-pill{position:fixed;right:6px;top:calc(50% - 132px);z-index:9996;max-width:172px;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:6px 9px 6px 7px;border-radius:14px;background:rgba(255,244,222,.97);border:2px solid #5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:12.5px;color:#2B1A0F;cursor:pointer;line-height:1.15;text-align:left}' +
+    css.textContent = '.gl-pill{position:fixed;transform-origin:100% 0;z-index:9996;max-width:172px;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:6px 9px 6px 7px;border-radius:14px;background:rgba(255,244,222,.97);border:2px solid #5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:12.5px;color:#2B1A0F;cursor:pointer;line-height:1.15;text-align:left}' +
       '.gl-pill .t{flex:0 0 auto;padding:1px 6px;border-radius:7px;font-size:10.5px;color:#FFF}.gl-pill .n{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.gl-pill .c{flex:0 0 auto;font-size:11px;color:#2F6328}.gl-pill .more{flex:0 0 auto;min-width:18px;height:18px;border-radius:9px;background:#D0452B;color:#FFF;font-size:11px;display:flex;align-items:center;justify-content:center}' +
       '.gl-pill.ok{border-color:#2F6328;box-shadow:0 0 0 2px #A9D69E,0 3px 8px rgba(0,0,0,.35)}' +
       '.gl-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.55);display:flex;align-items:flex-end;justify-content:center}' +
@@ -469,11 +473,13 @@ class Component extends DCLogic {
     document.head.appendChild(css);
     var pill = document.createElement('button'); pill.type = 'button'; pill.className = 'gl-pill'; pill.setAttribute('aria-label', '지금 만들어야 할 것 보기');
     document.body.appendChild(pill);
+    function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function render() {
       var g = load(), G = goals(g);
       if (!G.length) { pill.style.display = 'none'; return; }
       pill.style.display = 'flex';
+      var R = gameRect(); pill.style.left = 'auto'; pill.style.right = (window.innerWidth - (R.l + 390 * R.k) + 8 * R.k).toFixed(1) + 'px'; pill.style.top = (R.t + 104 * R.k).toFixed(1) + 'px'; pill.style.transform = 'scale(' + R.k.toFixed(3) + ')';
       var rows = G.map(function (gq) { var p = prog(g, gq); return { gq: gq, p: p, ok: p.ready >= gq.n }; });
       var top = rows.filter(function (r) { return !r.ok; })[0] || rows[0];
       var allOk = rows.every(function (r) { return r.ok; });
