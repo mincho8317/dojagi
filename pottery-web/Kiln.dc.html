@@ -392,7 +392,7 @@ class Component extends DCLogic {
       setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
       return true;
     }
-    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
@@ -746,12 +746,14 @@ class Component extends DCLogic {
     var d = Math.abs(temp - opt);
     return d <= 20 ? '정합' : (d <= 60 ? '근접' : '불일치');
   }
+  tutSafe() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'), t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return typeof t === 'number' && t < 9; } catch (e) { return false; } }
   riskOf(item, heat) {
     var why = [], p = 0.04;
     if (item.dry === 'early') { p += 0.1; why.push('덜 마름'); }
     if (item.thick === 'drip') { p += 0.25; why.push('유약 흘러내림'); }
     if ((item.tmin || 5) < 3.5) { p += 0.15; why.push('벽이 얇음'); }
     if (heat === 'high') { p += 0.08; why.push('고화도'); }
+    if (this.tutSafe()) { p = 0; why = ['튜토리얼 중엔 깨지지 않아요']; }
     var lv = p < 0.1 ? '낮음' : (p < 0.25 ? '보통' : '높음');
     var col = { '낮음': '#4A9440', '보통': '#C8901E', '높음': '#C8381E' }[lv];
     return { p: p, pct: Math.round(p * 100), lv: lv, col: col, why: why };
@@ -798,7 +800,7 @@ class Component extends DCLogic {
     var heats = defs.map(function (d) {
       var on = d.id === cur.id;
       return {
-        risk: d.id === 'high' ? '파손 +8% · 요변 가능' : '', riskStyle: d.id === 'high' ? 'font-size:9.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
+        risk: d.id === 'high' ? (self.tutSafe() ? '요변 가능' : '파손 +8% · 요변 가능') : '', riskStyle: d.id === 'high' ? 'font-size:9.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
         label: d.label, base: d.base.toLocaleString(), hours: d.hours, icon: d.icon, img: d.img, on: on,
         style: btnBase + (on ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;'),
         iconStyle: 'width:34px;height:30px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),

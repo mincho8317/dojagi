@@ -95,9 +95,6 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-family:'Jua',sans-serif;font-size:20px">{{action}}</span>
       <span style="font-size:10.5px;font-weight:700;opacity:.9">{{actionSub}}</span>
     </button>
-    <sc-if value="{{toGlazeOn}}" hint-placeholder-val="{{false}}">
-      <a href="Glaze.dc.html" style="text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#2F6328">유약대로 가기 · 대기 {{glazeN}}점 →</a>
-    </sc-if>
   </div>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
@@ -315,7 +312,7 @@ class Component extends DCLogic {
       setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
       return true;
     }
-    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
@@ -413,6 +410,7 @@ class Component extends DCLogic {
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
   jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
+  tutSafe() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'), t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return typeof t === 'number' && t < 9; } catch (e) { return false; } }
   jadeSpend(cost, run) {
     var self = this, have = this.jadeOf(this.state.g);
     if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
@@ -712,7 +710,7 @@ class Component extends DCLogic {
         on: !!this.state.pkOpen && !firing, multi: true, count: dN || (selN ? 1 : 0),
         title: '초벌 가마에 넣을 기물', sub: '최대 6점 · 반건조는 터질 수 있다',
         rows: list.map(function (it) {
-          return self.pickRow(it, { stage: 'dry', on: !!draft[it.id], tag: it.dry === 'early' ? '덜 마름 · 깨질 위험 12%' : (it.dry === 'over' ? '과건조 · 안전' : '완전 건조 · 안전'), warn: it.dry === 'early', tap: function () {
+          return self.pickRow(it, { stage: 'dry', on: !!draft[it.id], tag: it.dry === 'early' ? (self.tutSafe() ? '덜 마름 · 튜토리얼 중엔 안전' : '덜 마름 · 깨질 위험 12%') : (it.dry === 'over' ? '과건조 · 안전' : '완전 건조 · 안전'), warn: it.dry === 'early', tap: function () {
             var np = {}; for (var k in draft) { np[k] = draft[k]; }
             if (np[it.id]) { delete np[it.id]; } else { if (dN >= 6) { self.say('초벌 가마에는 6점까지 들어간다'); return; } np[it.id] = true; }
             self.setState({ draft: np });
@@ -739,7 +737,7 @@ class Component extends DCLogic {
       fireWin: 'position:absolute;left:88px;top:186px;width:38px;height:26px;border-radius:3px;' + (firing && !done ? 'background:#FF9A4D;box-shadow:0 0 12px 4px rgba(255,140,60,.7);animation:glow 1.2s ease-in-out infinite;' : ''),
       bubble: 'position:absolute;top:238px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (done ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (firing ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24')),
       bubbleText: done ? '초벌 완료' : (firing ? self.fmtLeft(leftMs) : '대기 ' + list.length),
-      info1: firing ? (done ? '다 구웠다' : '굽는 중') : '반건조 기물은 12% 확률로 터진다',
+      info1: firing ? (done ? '다 구웠다' : '굽는 중') : (self.tutSafe() ? '튜토리얼 중엔 터지지 않아요' : '반건조 기물은 12% 확률로 터진다'),
       info2: firing ? Math.round(pct) + '%' : '',
       bar: 'height:100%;border-radius:4px;background:#E3B23C;width:' + pct + '%',
       glazeN: (g.glazeList || []).length,
@@ -769,7 +767,7 @@ class Component extends DCLogic {
         if (!list.length) { self.say('초벌할 기물이 없다 · 건조대에서 빼오자'); return; }
         if (!selN) { self.say('구울 기물을 먼저 골라주자'); return; }
         var surv = [], brokeN = 0;
-        sel.forEach(function (x) { if (x.dry === 'early' && Math.random() < 0.12) { brokeN++; } else { surv.push(x); } });
+        sel.forEach(function (x) { if (x.dry === 'early' && !self.tutSafe() && Math.random() < 0.12) { brokeN++; } else { surv.push(x); } });
         self.setState({ pick: {} });
         self.setG({ bisqueList: list.filter(function (x) { return !pick[x.id]; }), bisque: { state: 'firing', start: Date.now(), items: surv }, shards: g.shards + brokeN * 2, broken: (g.broken || 0) + brokeN });
         self.say('초벌 시작 · ' + surv.length + '점' + (brokeN ? ' · 반건조 ' + brokeN + '점이 터졌다' : ''));
