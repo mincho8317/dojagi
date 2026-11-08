@@ -892,7 +892,7 @@ class Component extends DCLogic {
     if (rest.length) { this.flyIn([this.potOf(rest[0], this.fillOf(rest[0], 'bisque'))], [gp], 0.6); }
     try { window.__sfx && window.__sfx('drip'); } catch (e) {} 
     this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0 });
-    var label = { thin: '얇게 입혀졌다', ok: '고르게 입혀졌다', thick: '조금 두껍다', drip: '너무 두껍다 · 흘러내릴 수 있다' }[zone];
+    var label = { thin: '얇게 입혀졌다 · 발색 +0', ok: '고르게 입혀졌다 · 발색 +1', thick: '조금 두껍다 · 발색 +0', drip: '너무 두껍다 · 흘러내릴 수 있다 · 발색 -1' }[zone];
     this.say(label + ' · 가마 대기로' + (rest.length ? ' · 다음 기물' : ''), zone === 'ok' ? 'ok' : 'fail');
   }
   renderVals0() {

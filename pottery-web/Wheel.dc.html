@@ -1321,7 +1321,7 @@ class Component extends DCLogic {
       fx: fxV,
       clayName: cur.n, clayImg: cur.img,
       tgIcon: self.iconOf(tg),
-      tgTag: s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지 목표' : '목표',
+      tgTag: s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:9.5px;font-weight:700;white-space:nowrap;color:' + (s.target === 'goal' && g.goal ? '#7A5A93' : '#B9533A'),
       openClay: function () { self.setState({ sheet: 'clay' }); },
       openTarget: function () { self.setState({ sheet: 'target' }); },
@@ -1508,16 +1508,21 @@ class Component extends DCLogic {
         var isGoal = s.target === 'goal' && g.goal;
         var item = { id: 'w' + Date.now(), shape: isGoal ? (g.goal.wshape || 'bowl') : s.target, goalSid: isGoal ? g.goal.sid : '', goalGlaze: isGoal ? g.goal.glaze : '', goalName: isGoal ? (g.goal.shapeN || g.goal.name) : '', clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
-        self.setG({ formedList: (g.formedList || []).concat([item]), mats: mats });
+        var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
+        if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }
+        var up = { formedList: (g.formedList || []).concat([item]), mats: mats };
+        if (qUp) { up.goalQ = Qw; if (nxG) { up.goal = nxG; } }
+        self.setG(up);
         self.resetPointers();
         var nf = self.fresh();
         if (s.clay !== 'basic' && (mats[s.clay] || 0) <= 0) { nf.clay = 'basic'; }
         nf.dropDelay = 1.5;
+        if (nxG) { nf.target = 'goal'; var ownN = nxG.clay === 'basic' || ((mats || {})[nxG.clay] || 0) > 0; nf.clay = ownN ? nxG.clay : 'basic'; }
         try { window.__sfx && window.__sfx('ok'); } catch (e) {} 
         nf.fx = { kind: 'ok', k: Date.now(), path: self.profile(s.r, s.H, 0).path, H: s.H, stars: stars };
         self.setState(nf);
         self.clearFx(nf.fx.k, 1800);
-        self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올리자');
+        if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었다! 건조대로 가자'); } else { self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올리자'); }
       }
     };
   }

@@ -52,7 +52,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
     </div>
   </div>
 
-  <div data-stg-scroll="1" style="position:absolute;left:0;right:0;top:134px;bottom:92px;overflow-y:auto;display:flex;flex-direction:column-reverse">
+  <div data-stg-scroll="1" style="{{scrollStyle}}">
     <div style="position:relative;flex:0 0 auto;display:flex;flex-direction:column-reverse;padding:18px 0 14px">
       <div aria-hidden="true" style="position:absolute;left:50%;top:70px;bottom:70px;width:0;border-left:6px dotted #B08A60;margin-left:-3px"></div>
       <sc-for list="{{nodes}}" as="nd" hint-placeholder-count="3">
@@ -72,6 +72,23 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <div style="position:relative;align-self:center;margin-bottom:10px;padding:4px 14px;border-radius:12px;background:rgba(62,38,22,.82);font-family:'Jua',sans-serif;font-size:12.5px;color:#FFE7A8">{{endCap}}</div>
     </div>
   </div>
+
+  <sc-if value="{{qb.on}}" hint-placeholder-val="{{true}}">
+    <div style="position:absolute;left:12px;right:12px;bottom:98px;z-index:20;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;padding:9px 11px;border-radius:16px;background:rgba(255,244,222,.97);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.35)">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+        <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
+          <span style="font-family:'Jua',sans-serif;font-size:14.5px;color:#2B1A0F">{{qb.title}}</span>
+          <span style="font-size:10.5px;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qb.sub}}</span>
+        </span>
+        <sc-if value="{{qb.clrOn}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{qb.clear}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:5px 10px;border-radius:10px;border:2px solid #C9A27A;font-family:'Jua',sans-serif;font-size:12px;color:#7A5434">비우기</button></sc-if>
+      </div>
+      <div style="display:flex;gap:7px">
+        <sc-if value="{{qb.subOn}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{qb.submitAll}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#C9962E;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">📤 한 번에 출품 {{qb.subN}}</button></sc-if>
+        <sc-if value="{{qb.addOn}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{qb.addAll}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{qb.addLabel}}</button></sc-if>
+        <sc-if value="{{qb.goOn}}" hint-placeholder-val="{{true}}"><a href="Wheel.dc.html" onClick="{{qb.go}}" style="all:unset;cursor:pointer;flex:1.3 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">한꺼번에 만들기 →</a></sc-if>
+      </div>
+    </div>
+  </sc-if>
 
   <sc-if value="{{catOn}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:45;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
@@ -128,6 +145,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <span style="font-size:11.5px;font-weight:700;color:#2E6B5F">{{det.reward}}</span>
         </div>
         <span style="font-size:11px;color:#7A5434;text-align:center">{{det.rule}}</span>
+        <button type="button" onClick="{{det.qTap}}" aria-pressed="{{det.qPressed}}" style="{{det.qStyle}}">{{det.qLabel}}</button>
         <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:8px">
           <a href="Wheel.dc.html" onClick="{{det.make}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;font-family:'Jua',sans-serif;color:#5B3A24"><span style="font-size:16px">작품 제작하기</span><span style="font-size:10.5px;color:#8A6440">목표·흙·유약 자동 선택</span></a>
           <button type="button" onClick="{{det.go}}" aria-disabled="{{det.goDis}}" style="{{det.goStyle}}"><span style="font-size:16px">출품할 작품 고르기</span><span style="{{det.goSubStyle}}">{{det.goSub}}</span></button>
@@ -244,7 +262,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  constructor(props) { super(props); this.state = { g: this.loadG(), ch: 'table', det: '', pkOpen: false, res: null, toast: '' }; }
+  constructor(props) { super(props); this.state = { g: this.loadG(), ch: (function () { try { var p = localStorage.getItem('contestCh'); if (p) { localStorage.removeItem('contestCh'); return p; } return localStorage.getItem('contestChLast') || 'table'; } catch (e) { return 'table'; } })(), det: '', pkOpen: false, res: null, toast: '' }; }
   loadG() {
     var d = { gold: 1240, shards: 142, fameLv: 3, fameXp: 62, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, deco: {}, mats: {} };
     try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
@@ -874,6 +892,7 @@ class Component extends DCLogic {
             stateStyle: 'flex:0 0 auto;padding:3px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (on ? 'background:#FFD66B;color:#2B1A0F' : (c.soon ? 'background:#7A5A93;color:#FFF' : (lk ? 'background:#5B3A24;color:#FFE7A8' : (done ? 'background:#C9962E;color:#FFF' : 'background:' + gr.col + ';color:#FFF')))),
             pick: function () {
               if (c.soon) { self.say(c.label + ' 스테이지는 다음 업데이트에서 열린다'); return; }
+              try { localStorage.setItem('contestChLast', c.id); } catch (e) {}
               self.setState({ ch: c.id, catOpen: false }); self.scrollCur();
             }
           };
@@ -916,6 +935,28 @@ class Component extends DCLogic {
     });
     var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var cands = (g.order || []).filter(function (id) { var p = g.pieces && g.pieces[id]; return p && (p.where === 'store' || p.where === 'shelf'); });
+    var Q = (g.goalQ || []).slice(), inQ = function (sid) { return Q.some(function (q) { return q.sid === sid; }); };
+    var gOf = function (st) { return { sid: st.id, num: st.idx + 1, name: st.name, shapeN: st.shapeN, prof: st.prof, H: st.H, glaze: st.glaze, clay: st.clay, wshape: st.wshape }; };
+    var recSim = {}, batch = []; for (var rk in rec) { recSim[rk] = rec[rk]; }
+    if (!chL) {
+      list.forEach(function (st, i) {
+        if (i > 0 && !(recSim[list[i - 1].id] > 0)) { return; }
+        var best = null;
+        cands.forEach(function (id) { var c = self.check(st, g.pieces[id]); if (c.fit && (!best || c.j.stars > best.stars)) { best = { id: id, stars: c.j.stars }; } });
+        if (best && best.stars > (recSim[st.id] || 0)) { batch.push({ st: st, pid: best.id, stars: best.stars }); recSim[st.id] = best.stars; }
+      });
+    }
+    var addable = chL ? [] : list.filter(function (st) { return !(rec[st.id] > 0) && !inQ(st.id); }).slice(0, Math.max(0, 6 - Q.length));
+    var qb = {
+      on: Q.length > 0 || addable.length > 0 || batch.length > 0,
+      title: Q.length ? '📋 담은 목표 ' + Q.length + '개' : (batch.length ? '📤 출품할 수 있는 스테이지 ' + batch.length + '개' : '🎯 아직 못 깬 스테이지 ' + addable.length + '개'),
+      sub: Q.length ? '스테이지 ' + Q.map(function (q) { return q.num; }).join('·') + ' · 물레에서 완성할 때마다 다음 목표로 바뀌어요' : (batch.length ? '보관함 작품 중 조건에 맞는 것으로 한꺼번에 출품해요' : '목표로 담으면 연달아 빚고 한 가마에 같이 구울 수 있어요'),
+      clrOn: Q.length > 0, clear: function () { self.setG({ goalQ: [] }); },
+      subOn: batch.length > 0, subN: batch.length + '개', submitAll: function () { self.submitAll(batch); },
+      addOn: addable.length > 0 && !batch.length, addLabel: '＋ 미클리어 ' + addable.length + '개 담기',
+      addAll: function () { var nq = Q.concat(addable.map(gOf)); self.setG({ goalQ: nq }); self.say('스테이지 ' + addable.map(function (x) { return x.idx + 1; }).join('·') + '을(를) 목표로 담았다'); },
+      goOn: Q.length > 0, go: function () { self.setG({ goal: Q[0], goalJump: true }); }
+    };
     var det = { on: false };
     var cur = D.stages.filter(function (x) { return x.id === s.det; })[0];
     var chk = {}, fitN = 0;
@@ -938,7 +979,11 @@ class Component extends DCLogic {
         goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;font-family:Jua,sans-serif;' + (dis ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5'),
         go: function () { if (lk) { self.say(lk); return; } if (!fitN) { self.say('조건에 맞는 작품이 없다 · 먼저 작품을 만들어 보자'); return; } self.setState({ pkOpen: true, pkSel: '' }); },
         make: function () { self.setG({ goal: { sid: cur.id, num: cur.idx + 1, name: cur.name, shapeN: cur.shapeN, prof: cur.prof, H: cur.H, glaze: cur.glaze, clay: cur.clay, wshape: cur.wshape }, goalJump: true }); },
-        close: function () { self.setState({ det: '' }); }
+        close: function () { self.setState({ det: '' }); },
+        qPressed: inQ(cur.id) ? 'true' : 'false',
+        qLabel: inQ(cur.id) ? '✓ 목표에 담음 · 눌러서 빼기' : (lk && chLock(cch) ? '잠긴 챕터' : '＋ 목표에 담기 (여러 개 담아 한꺼번에 만들기)'),
+        qStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:13.5px;' + (inQ(cur.id) ? 'background:#E2F0DA;border:2px solid #4A9440;color:#2F6328' : 'background:#FFFDF5;border:2px dashed #8A6440;color:#5B3A24'),
+        qTap: function () { if (chLock(cch)) { self.say(chLock(cch) + '이 필요하다'); return; } if (inQ(cur.id)) { self.setG({ goalQ: Q.filter(function (q) { return q.sid !== cur.id; }) }); return; } if (Q.length >= 6) { self.say('목표는 성형 선반 크기인 6개까지 담을 수 있다'); return; } self.setG({ goalQ: Q.concat([gOf(cur)]) }); self.say((cur.idx + 1) + ' 스테이지를 목표로 담았다 · ' + (Q.length + 1) + '개'); }
       };
     }
     var rows = cur ? cands.slice().sort(function (x, y) { return (chk[y].fit ? 1 : 0) - (chk[x].fit ? 1 : 0); }).map(function (id) {
@@ -1005,9 +1050,27 @@ class Component extends DCLogic {
       openCat: function () { self.setState({ catOpen: true }); },
       closeCat: function () { self.setState({ catOpen: false }); },
       ch: { icon: ch.icon, img: ch.img, banner: ({BANNER_CAT_TABLE: '_blob/ba5f37632db41c2b0c557a489fef971c.webp', BANNER_CAT_TEA: '_blob/89749d3555231f5bb73a1bd46bb51f1f.webp', BANNER_CAT_VASE: '_blob/dc1d497fb63010c368d187e0dda27464.webp', BANNER_CAT_JAR: '_blob/f66704fb8dadb2deeed37acf6405462e.webp', BANNER_SEASON_STAGE: '_blob/705d9823330affc47b29e1b604133a97.webp', BANNER_CAT_PLATE: '_blob/45b765471149a7a2bb0fc711290a3f11.webp', BANNER_REGION_HARBOR: '_blob/ea744948b041452daba18e48f0f9d74d.webp', BANNER_REGION_TEMPLE: '_blob/4787cafd5836e5d7c360617e585cc2df.webp'})[ch.res] || '', label: ch.label, cur: prog(ch).cur, cnt: prog(ch).cnt, got: prog(ch).got, max: prog(ch).max, bar: 'height:100%;border-radius:5px;background:linear-gradient(#E3B23C,#C9962E);width:' + (prog(ch).cnt ? Math.round(prog(ch).cur / prog(ch).cnt * 100) : 0) + '%', next: nextTxt, nextStyle: nextStyle, mark: mark, title: ch.title, desc: ch.desc, res: ch.res, bg: ch.bg, extra: extra, extraStyle: extra ? 'padding:1px 8px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;' + (chL ? 'background:#5B3A24;color:#FFE7A8' : 'background:#D46A86;color:#FFF') : 'display:none' },
-      det: det, pk: pk, res: res, endCap: ch.label + ' · ' + list.length + ' 스테이지 · 다음 업데이트로 계속',
+      det: det, pk: pk, res: res, qb: qb, scrollStyle: 'position:absolute;left:0;right:0;top:134px;bottom:' + (qb.on ? 214 : 92) + 'px;overflow-y:auto;display:flex;flex-direction:column-reverse', endCap: ch.label + ' · ' + list.length + ' 스테이지 · 다음 업데이트로 계속',
       toast: s.toast, toastOn: s.toast !== ''
     };
+  }
+  submitAll(batch) {
+    if (!batch || !batch.length) { return; }
+    var g = this.loadG(), contest = g.contest || { stars: {} }, rec = {}, sf = {}, gain = 0, lines = [];
+    for (var k in (contest.stars || {})) { rec[k] = contest.stars[k]; }
+    for (var k2 in (g.shapesFound || {})) { sf[k2] = g.shapesFound[k2]; }
+    var self = this;
+    batch.forEach(function (b) {
+      var p = g.pieces[b.pid]; if (!p) { return; }
+      var j = self.judge(b.st, p), prev = rec[b.st.id] || 0;
+      if (j.stars > prev) { gain += j.stars - prev; rec[b.st.id] = j.stars; }
+      if (j.stars > 0 && b.st.newShape && !sf[b.st.newShape]) { sf[b.st.newShape] = true; }
+      var st3 = ''; for (var i = 0; i < 3; i++) { st3 += i < j.stars ? '★' : '☆'; }
+      lines.push((b.st.idx + 1) + ' ' + st3);
+    });
+    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300, shards: g.shards + gain * 5, goalQ: (g.goalQ || []).filter(function (q) { return !(rec[q.sid] > 0); }) });
+    try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
+    this.say('📤 ' + lines.join(' · ') + ' · 새 별 ' + gain + '개 · 골드 +' + (gain * 300));
   }
   submit(st, pid) {
     var g = this.loadG(), p = g.pieces[pid], j = this.judge(st, p);

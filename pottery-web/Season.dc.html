@@ -36,7 +36,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 
   <div style="position:absolute;left:12px;right:12px;top:192px;bottom:100px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px">
     <div style="box-sizing:border-box;padding:10px 12px;border-radius:16px;background:#FFF8F5;border:3px solid #A94767;display:flex;flex-direction:column;gap:7px">
-      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">축제 미션 · 꽃잎 모으기</span><a href="Contest.dc.html" style="font-family:'Jua',sans-serif;font-size:12px;color:#A94767">시즌 스테이지 →</a></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">축제 미션 · 꽃잎 모으기</span><a href="Contest.dc.html" onClick="{{goSeasonStage}}" style="font-family:'Jua',sans-serif;font-size:12px;color:#A94767">시즌 스테이지 →</a></div>
       <sc-for list="{{missions}}" as="ms" hint-placeholder-count="3">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
@@ -589,6 +589,7 @@ class Component extends DCLogic {
       };
     });
     return {
+      goSeasonStage: function () { try { localStorage.setItem('contestCh', 'season'); } catch (e) {} },
       petals: sea.petals, dday: Math.max(0, Math.ceil((new Date('2026-11-17T00:00:00+09:00') - Date.now()) / 86400000)),
       missions: missions, items: items, toast: s.toast, toastOn: s.toast !== ''
     };

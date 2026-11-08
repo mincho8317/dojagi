@@ -115,6 +115,7 @@ button{font-family:inherit;cursor:pointer}
         </div>
         <span style="font-size:11px;color:#5B3A24">적정 {{info.opt}} · 이 칸 {{info.temp}}℃</span>
         <span style="font-size:11px;color:#5B3A24">{{info.note}}</span>
+        <span style="font-size:10px;color:#2E6B5F;line-height:1.3">{{info.colorWhy}}</span>
         <span style="{{info.riskStyle}}">{{info.risk}}</span>
       </div>
       <button type="button" onClick="{{info.remove}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">꺼내기</button>
@@ -850,6 +851,12 @@ class Component extends DCLogic {
       THICK: { thin: '얇게 입힘', ok: '고르게 입힘', thick: '두꺼운 편', drip: '흘러내림 위험' }
     };
   }
+  colorOf(item, match) {
+    var T = this.tables(), cl = T.CLAY[item.clay] || T.CLAY.basic;
+    var a = { '정합': 2, '근접': 1, '불일치': 0 }[match] || 0, b = { ok: 1, drip: -1 }[item.thick] || 0, c = cl.q >= 6 ? 1 : 0;
+    var n = Math.max(1, Math.min(5, 1 + a + b + c));
+    return { n: n, why: '기본 1 · 온도 ' + match + ' +' + a + ' · 유약 ' + ({ thin: '얇음', ok: '고르게', thick: '두꺼움', drip: '흘러내림' }[item.thick] || '-') + ' ' + (b < 0 ? b : '+' + b) + ' · 흙 ' + (c ? '정제 이상 +1' : '기본 +0') };
+  }
   matchOf(temp, opt) {
     var d = Math.abs(temp - opt);
     return d <= 20 ? '정합' : (d <= 60 ? '근접' : '불일치');
@@ -888,8 +895,8 @@ class Component extends DCLogic {
     var mult = { '양작': 1, '수작': 3, '명작': 8, '요변': 16 }[grade];
     var value = Math.round(sh.base * mult * cl.m * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 100;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
-    var color = Math.max(1, Math.min(5, { '양작': 2, '수작': 3, '명작': 4, '요변': 5 }[grade] + (match === '불일치' ? -1 : 0)));
-    return { pattern: item.pattern || '', name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, color: color, value: value, prof: item.prof, H: item.H, clay: item.clay };
+    var cc = this.colorOf(item, match), color = grade === '요변' ? 5 : cc.n;
+    return { colorWhy: grade === '요변' ? '요변 · 발색 최고 ◆5' : cc.why, pattern: item.pattern || '', name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, color: color, value: value, prof: item.prof, H: item.H, clay: item.clay };
   }
   renderVals0() {
     var self = this;
@@ -971,7 +978,8 @@ class Component extends DCLogic {
         name: sgl.pre + ' ' + ssh.n, path: ssh.p, fill: sgl.raw, pot: self.potOf(selItem, self.fillOf(selItem, 'glazed')),
         match: m, badge: 'padding:1px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + tone,
         opt: (sgl.opt - 20).toLocaleString() + '~' + (sgl.opt + 20).toLocaleString() + '℃', temp: temp.toLocaleString(),
-        note: T.THICK[selItem.thick] || '',
+        note: (T.THICK[selItem.thick] || '') + ' · 예상 발색 ' + '◆◆◆◆◆'.slice(0, this.colorOf(selItem, m).n) + '◇◇◇◇◇'.slice(0, 5 - this.colorOf(selItem, m).n),
+        colorWhy: '발색 = ' + this.colorOf(selItem, m).why,
         risk: (function () { var r0 = self.riskOf(selItem, cur.id); return '깨질 위험 ' + r0.lv + ' ' + r0.pct + '%' + (r0.why.length ? ' · ' + r0.why.join(', ') : ''); })(),
         riskStyle: (function () { var r0 = self.riskOf(selItem, cur.id); return 'align-self:flex-start;padding:1px 8px;border-radius:8px;font-size:11px;font-weight:700;color:#FFFDF5;background:' + r0.col; })(),
         remove: function () {

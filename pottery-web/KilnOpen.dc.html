@@ -124,6 +124,7 @@ button{font-family:inherit;cursor:pointer}
           <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">발색</span>
           <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:2px;color:#9FD4C6">{{it.color}}</span>
         </div>
+        <span style="margin-top:-4px;font-size:10px;line-height:1.3;color:#B9A88E;text-align:right">{{it.colorWhy}}</span>
         <div style="height:2px;background:#2B1A0F"></div>
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">예상 평가액</span>
@@ -1052,7 +1053,7 @@ class Component extends DCLogic {
       },
       it: {
         name: it.name, grade: it.grade, value: (it.value || 0).toLocaleString(),
-        form: stars(it.form || 0, '★', '☆'), color: stars(it.color || 0, '◆', '◇'),
+        form: stars(it.form || 0, '★', '☆'), color: stars(it.color || 0, '◆', '◇'), colorWhy: it.colorWhy || '',
         body: look.body, rim: look.rim, inner: look.inner, edge: look.edge, pot: self.potOf(it, look.body),
         ribbon: gr.ribbon, rayColor: gr.ray, rayFill: gr.fill,
         sparkle: gr.sparkle, broken: !!it.broken, whole: !it.broken
