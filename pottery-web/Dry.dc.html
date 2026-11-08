@@ -19,6 +19,7 @@ button{font-family:inherit;cursor:pointer}
 <style>
 @keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
 @keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
+@keyframes dryWindA{0%{transform:translateX(-140px);opacity:0}30%{opacity:1}100%{transform:translateX(360px);opacity:0}}@keyframes dryFanA{0%{transform:rotate(-24deg)}50%{transform:rotate(18deg)}100%{transform:rotate(0)}}@keyframes dryPopA{0%{opacity:0;transform:translateY(6px)}20%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}@keyframes dryWindB{0%{transform:translateX(-140px);opacity:0}30%{opacity:1}100%{transform:translateX(360px);opacity:0}}@keyframes dryFanB{0%{transform:rotate(-24deg)}50%{transform:rotate(18deg)}100%{transform:rotate(0)}}@keyframes dryPopB{0%{opacity:0;transform:translateY(6px)}20%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-16px)}}
 @keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .bg-bg-dryroom{background:#C9B395 url(_blob/6a0d3fc55db40a2ea6a6a8f8083a01a3.webp) center/cover no-repeat}
@@ -105,6 +106,23 @@ button{font-family:inherit;cursor:pointer}
     <sc-if value="{{selNone}}" hint-placeholder-val="{{false}}">
       <span style="text-align:center;font-size:12px;color:#7A5434;padding-bottom:8px;border-bottom:2px dashed #E1CDA9">{{selHint}}</span>
     </sc-if>
+    <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
+      <div style="position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:16px;background:#EEF6F1;border:2px solid #9ED9C0">
+        <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 바람으로 빨리 말리기" style="{{bf.btn}}">
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="{{bf.svg}}"><path d="M20 34 L5 12 A19 19 0 0 1 35 12 Z" fill="#F4E3C0" stroke="#5B3A24" stroke-width="2" stroke-linejoin="round"></path><path d="M20 34 L10 10 M20 34 L15 8 M20 34 L20 7 M20 34 L25 8 M20 34 L30 10" stroke="#B9533A" stroke-width="1.4"></path><path d="M5 12 A19 19 0 0 1 35 12" fill="none" stroke="#B9533A" stroke-width="3"></path><rect x="18" y="31" width="4" height="8" rx="1.5" fill="#7A4A2A" stroke="#3E2616" stroke-width="1"></rect></svg>
+          <span style="font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F;line-height:1">부채질</span>
+        </button>
+        <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span style="font-family:'Jua',sans-serif;font-size:14px;color:#1E5E48">{{bf.title}}</span>
+            <span style="margin-left:auto;font-size:10.5px;font-weight:700;color:#2F7A5E;white-space:nowrap">{{bf.left}}</span>
+          </div>
+          <div style="position:relative;height:12px;border-radius:6px;background:#D6E9DF;border:2px solid #2F7A5E;overflow:hidden" role="img" aria-label="{{bf.aria}}"><div style="{{bf.bar}}"></div></div>
+          <span style="font-size:10.5px;color:#4E6B5E;line-height:1.3">{{bf.tip}}</span>
+        </div>
+        <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
+      </div>
+    </sc-if>
     <div style="display:flex;gap:10px">
       <button type="button" onClick="{{fan}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px">
         <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
@@ -116,6 +134,15 @@ button{font-family:inherit;cursor:pointer}
       </button>
     </div>
   </div>
+
+  <sc-if value="{{bf.wind}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position:absolute;left:40px;right:40px;top:150px;height:330px;pointer-events:none;z-index:30;overflow:hidden">
+      <div style="position:absolute;left:0;top:40px;width:120px;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));animation-duration:.6s;animation-delay:0s;animation-timing-function:ease-out;animation-fill-mode:both;{{bf.wa}}"></div>
+      <div style="position:absolute;left:0;top:130px;width:160px;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85),rgba(255,255,255,0));animation-duration:.7s;animation-delay:.08s;animation-timing-function:ease-out;animation-fill-mode:both;{{bf.wa}}"></div>
+      <div style="position:absolute;left:0;top:220px;width:130px;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));animation-duration:.6s;animation-delay:.15s;animation-timing-function:ease-out;animation-fill-mode:both;{{bf.wa}}"></div>
+      <div style="position:absolute;left:0;top:290px;width:110px;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.8),rgba(255,255,255,0));animation-duration:.65s;animation-delay:.05s;animation-timing-function:ease-out;animation-fill-mode:both;{{bf.wa}}"></div>
+    </div>
+  </sc-if>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:30px;right:30px;top:380px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
@@ -278,7 +305,7 @@ class Component extends DCLogic {
     var STEPS = [
       { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
-      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 기다리기 싫으면 💎옥으로 바로 말리기', next: 'Dry' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 부채질을 연타하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
       { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
       { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
@@ -444,7 +471,7 @@ class Component extends DCLogic {
           var drying = (g.dryList || []).some(function (x) { return x && now - x.start < 1800000; });
           if (btnWith('점 올리기')()) { act('dryIn', true, btnWith('점 올리기'), '골랐으면 올려요'); }
           else if (btnWith('성형 완료')()) { act('drySel', true, btnWith('성형 완료'), '올릴 그릇을 골라요'); }
-          else if (drying) { act('dryJade', true, btnWith('바로 말리기'), '💎옥으로 바로 말릴 수 있어요'); }
+          else if (drying) { act('dryJade', true, qsel('button[aria-label^="부채질"]'), '부채질을 연타하면 빨리 말라요 · 💎옥으로 바로 말릴 수도 있어요'); }
           else if ((g.formedList || []).length) { act('dryPut', true, qsel('button[aria-label="빈 칸 · 기물 올리기"]'), '빚은 그릇을 건조대에 올려요'); }
         }
       }
@@ -779,7 +806,30 @@ class Component extends DCLogic {
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     this.tick = setInterval(function () { self.forceUpdate(); }, 500);
   }
+  fanTap() {
+    var self = this, now = Date.now(), s = this.state;
+    var combo = now - (this.fanLast || 0) < 450 ? Math.min(5, (s.fanCombo || 1) + 1) : 1;
+    this.fanLast = now;
+    this.fanAcc = (this.fanAcc || 0) + 4000 * combo;
+    this.setState({ fanAt: now, fanCombo: combo, fanN: (s.fanN || 0) + 1 });
+    try { window.__sfx && window.__sfx('whoosh'); } catch (e) {}
+    clearTimeout(this.fanHide); this.fanHide = setTimeout(function () { self.setState({ fanAt: 0 }); }, 750);
+    if (!this.fanFlush) {
+      this.fanFlush = setTimeout(function () {
+        self.fanFlush = 0;
+        var add = self.fanAcc || 0; self.fanAcc = 0; if (!add) { return; }
+        var t0 = Date.now(), list = (self.state.g.dryList || []);
+        self.setG({ dryList: list.map(function (x) {
+          var y = {}; for (var k in x) { y[k] = x[k]; }
+          var left = x.start + 1800000 - t0, f0 = x.fan || 0;
+          if (left > 0 && f0 < 600000) { var d = Math.min(add, 600000 - f0, left); y.start = x.start - d; y.fan = f0 + d; }
+          return y;
+        }) });
+      }, 300);
+    }
+  }
   componentWillUnmount() {
+    clearTimeout(this.fanFlush); clearTimeout(this.fanHide);
     clearTimeout(this.tt);
     clearInterval(this.tick);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
@@ -942,6 +992,25 @@ class Component extends DCLogic {
       glazeQ: (g.bisqueList || []).length,
       goBisque: function () { self.setG({ mainFocus: 'bisque' }); },
       doneCount: doneIds.length,
+      bf: (function () {
+        var now0 = Date.now(), drying = list.filter(function (x) { return now0 - x.start < 1800000; });
+        if (!drying.length) { return { on: false, wind: false, popOn: false }; }
+        var cut = 0, room = 0; drying.forEach(function (x) { cut = Math.max(cut, x.fan || 0); room = Math.max(room, 600000 - (x.fan || 0)); });
+        var sfx = (self.state.fanN || 0) % 2 ? 'A' : 'B', fa = self.state.fanAt || 0, recent = now0 - fa < 700, combo = self.state.fanCombo || 1, full = room <= 0;
+        return {
+          on: true, wind: recent && !full,
+          btn: 'all:unset;cursor:pointer;flex:0 0 64px;height:64px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;background:' + (full ? '#E4DCCB' : '#FFFDF5') + ';border:3px solid ' + (full ? '#A8977C' : '#2F7A5E') + ';box-shadow:0 4px 0 ' + (full ? '#A8977C' : '#2F7A5E') + (full ? ';opacity:.6' : ''),
+          svg: 'transform-origin:20px 36px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), wa: 'animation-name:dryWind' + sfx,
+          title: full ? '부채질 최대치!' : (combo >= 3 ? '바람이 세다! ×' + combo : '부채질로 빨리 말리기'),
+          left: '단축 ' + Math.floor(cut / 60000) + '분 / 10분',
+          bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, cut / 6000).toFixed(1) + '%;background:linear-gradient(90deg,#7FD1AE,#3FB58E);transition:width .25s',
+          aria: '부채질 단축 ' + Math.floor(cut / 60000) + '분, 최대 10분',
+          tip: full ? '더 줄이려면 💎옥으로 바로 말리기' : '빠르게 연타할수록 바람이 세져요 (최대 ×5)',
+          popOn: recent && !full, popTxt: '-' + (4 * combo) + '초' + (combo > 1 ? ' ×' + combo : ''),
+          pop: 'position:absolute;left:58px;top:-6px;font-family:Jua,sans-serif;font-size:13px;color:#1E5E48;pointer-events:none;animation:dryPop' + sfx + ' .7s ease-out both',
+          tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
+        };
+      })(),
       fanSub: (function () { var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); }); return mx > 0 ? (self.jadeCost(mx) ? '옥 ' + self.jadeCost(mx).toLocaleString() : '무료') + ' · ' + self.fmtLeft(mx) + ' 남음' : '다 말랐다'; })(),
       fan: function () {
         var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); });

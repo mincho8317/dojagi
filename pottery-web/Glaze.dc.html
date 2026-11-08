@@ -302,7 +302,7 @@ class Component extends DCLogic {
     var STEPS = [
       { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
-      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 기다리기 싫으면 💎옥으로 바로 말리기', next: 'Dry' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 부채질을 연타하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
       { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
       { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
@@ -468,7 +468,7 @@ class Component extends DCLogic {
           var drying = (g.dryList || []).some(function (x) { return x && now - x.start < 1800000; });
           if (btnWith('점 올리기')()) { act('dryIn', true, btnWith('점 올리기'), '골랐으면 올려요'); }
           else if (btnWith('성형 완료')()) { act('drySel', true, btnWith('성형 완료'), '올릴 그릇을 골라요'); }
-          else if (drying) { act('dryJade', true, btnWith('바로 말리기'), '💎옥으로 바로 말릴 수 있어요'); }
+          else if (drying) { act('dryJade', true, qsel('button[aria-label^="부채질"]'), '부채질을 연타하면 빨리 말라요 · 💎옥으로 바로 말릴 수도 있어요'); }
           else if ((g.formedList || []).length) { act('dryPut', true, qsel('button[aria-label="빈 칸 · 기물 올리기"]'), '빚은 그릇을 건조대에 올려요'); }
         }
       }
