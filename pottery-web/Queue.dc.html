@@ -130,10 +130,13 @@ class Component extends DCLogic {
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' },
       { goal: '진열대에 작품 올리기', hint: '보관함의 작품을 진열대로 끌어 올려 보세요', next: 'Display' },
-      { goal: '스테이지에서 첫 별 얻기', hint: '스테이지에서 조건에 맞는 작품을 출품해 보세요', next: 'Contest' }
+      { goal: '스테이지에서 첫 별 얻기', hint: '스테이지 1을 골라 「작품 제작하기」를 누르면 목표 모양·유약이 자동으로 잡혀요 · 완성해서 출품해 보세요', next: 'Contest' }
     ];
-    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
-    function save(g) { try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) {} }
+    function raw() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function prog() { try { var v = localStorage.getItem('tutProg'); return v === null ? null : +v; } catch (e) { return null; } }
+    function load() { var g = raw(), p = prog(); if (typeof g.tut === 'number' && p !== null && p > g.tut) { g.tut = p; } return g; }
+    function save(g) { try { localStorage.setItem(KEY, JSON.stringify(g)); if (typeof g.tut === 'number') { localStorage.setItem('tutProg', String(g.tut)); } if (g.tutV === 2) { localStorage.setItem('tutMig', '2'); } } catch (e) {} }
+    function notify() { try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) { try { var ev = document.createEvent('Event'); ev.initEvent('storage', false, false); ev.key = KEY; window.dispatchEvent(ev); } catch (e2) {} } }
     function len(a) { return (a && a.length) || 0; }
     function cnt(o) { var n = 0; for (var k in (o || {})) { if (o[k]) { n++; } } return n; }
     function pieceN(g, w) { var n = 0, ps = g.pieces || {}; for (var k in ps) { if (ps[k] && (!w || w.indexOf(ps[k].where) >= 0)) { n++; } } return n; }
@@ -143,7 +146,7 @@ class Component extends DCLogic {
       var glazed = len(g.glazeList) || kilnIn;
       var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
       var formed = len(g.formedList) || len(g.dryList) || bisq;
-      var shown = pieceN(g, ['shelf', 'sold', 'museum']) > 0;
+      var shown = pieceN(g, ['shelf', 'museum']) > 0;
       var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
       var star = cnt(((g.contest || {}).stars) || {}) > 0;
       return [took, formed, bisq, glazed, kilnIn, made, gave, shown, star];
@@ -161,7 +164,7 @@ class Component extends DCLogic {
       Object.keys(NAMES).concat(['Wheel']).map(function (p) { return 'html[data-tn="' + p + '"] a[href="' + p + '.dc.html"]'; }).join(',') + '{animation:tutPulse 1.2s ease-in-out infinite!important;border-radius:14px}' +
       '@keyframes tutPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,214,107,.9),0 0 10px 2px rgba(255,214,107,.7)}50%{box-shadow:0 0 0 5px rgba(255,214,107,.5),0 0 24px 8px rgba(255,214,107,.9)}}' +
       '@keyframes tutIn{0%{transform:translate(-50%,-14px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}@keyframes tutPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}' +
-      '.tut-mini{position:fixed;transform-origin:0 0;z-index:9997;box-sizing:border-box;padding:6px 9px;border-radius:14px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;box-shadow:0 3px 8px rgba(0,0,0,.35);color:#FFE7A8;font-family:Jua,sans-serif;font-size:13px;cursor:pointer;line-height:1}' + '.tut-card{position:fixed;left:50%;top:38%;z-index:9998;width:min(320px,86vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
+      '.tut-mini{position:fixed;transform-origin:0 0;z-index:9997;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:2px;width:32px;padding:6px 0 5px;border-radius:0 12px 12px 0;background:rgba(43,26,15,.92);border:2px solid #FFD66B;border-left:0;box-shadow:0 3px 8px rgba(0,0,0,.35);color:#FFE7A8;font-family:Jua,sans-serif;font-size:15px;cursor:pointer;line-height:1}.tut-mini b{font-weight:400;font-size:10.5px}' + '.tut-card{position:fixed;left:50%;top:38%;z-index:9998;width:min(320px,86vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
       '.tut-card b{display:block;font-weight:400;font-size:15px;color:#FFE7A8}.tut-card span{display:block;font-family:"Noto Sans KR",sans-serif;font-size:11.5px;line-height:1.45;color:#F3E3C4;margin-top:2px}' +
       '.tut-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.66);display:flex;align-items:center;justify-content:center}' +
       '.tut-box{width:min(320px,86vw);box-sizing:border-box;padding:22px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 0 rgba(43,26,15,.45);text-align:center;color:#2B1A0F;font-family:"Noto Sans KR",sans-serif;animation:tutPop .45s both}' +
@@ -232,7 +235,7 @@ class Component extends DCLogic {
       var st = STEPS[t];
       var mini = document.querySelector('.tut-mini');
       if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
-      mini.textContent = '🎯 ' + (t + 1) + '/' + STEPS.length;
+      mini.innerHTML = '🎯<b>' + (t + 1) + '/' + STEPS.length + '</b>';
       placeMini();
       var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
       if (!force && seen === t) { return false; }
@@ -242,7 +245,7 @@ class Component extends DCLogic {
       return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
-    function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = (R.l + 6 * R.k).toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
+    function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = R.l.toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
     setInterval(placeMini, 400); window.addEventListener('resize', placeMini);
     function apply(g) {
       var L = locked(g), keys = Object.keys(L);
@@ -257,21 +260,23 @@ class Component extends DCLogic {
       save(g); return g;
     }
     function check(first) {
-      var g = load(), t = g.tut;
+      var g = load(), t = g.tut, rw = raw();
+      if (typeof t === 'number' && rw.tut !== t) { rw.tut = t; save(rw); notify(); }
       if (typeof t === 'number' && t < STEPS.length) {
         var done = lv(g), nt = t, opened = [];
         while (nt < STEPS.length && done[nt]) { opened = opened.concat(UNL[nt]); nt++; }
         if (nt !== t) {
           g.tut = nt; save(g);
+          try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
           overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
-          window.dispatchEvent(new Event('storage'));
+          notify();
         }
       }
       var L = apply(load());
       if (first && L[PAGE]) {
-        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + (NAMES[PAGE] || '이 화면') + '은(는) 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { location.href = 'Main.dc.html'; } }]);
+        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { location.href = 'Main.dc.html'; } }]);
       }
     }
     document.addEventListener('click', function (e) {
@@ -286,10 +291,11 @@ class Component extends DCLogic {
     }, true);
     window.addEventListener('storage', function () { apply(load()); });
     var g0 = load();
-    if (typeof g0.tut === 'number' && g0.tutV !== 2) { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
+    var mig = null; try { mig = localStorage.getItem('tutMig'); } catch (e) {}
+    if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (PAGE === 'Main' && g0.tut === undefined) {
       overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
-        { label: '튜토리얼 시작', run: function () { freshStart(load()); apply(load()); try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) { try { window.dispatchEvent(new Event('storage')); } catch (e2) {} } setTimeout(function () { showCard(load(), true); }, 500); } },
+        { label: '튜토리얼 시작', run: function () { freshStart(load()); apply(load()); notify(); setTimeout(function () { showCard(load(), true); }, 500); } },
         { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
       ]);
     } else {
