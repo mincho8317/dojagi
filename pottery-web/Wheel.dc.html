@@ -181,7 +181,7 @@ button{font-family:inherit;cursor:pointer}
   </div>
 
   <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
-    <div style="display:flex;align-items:center;gap:10px">
+    <div style="display:none;align-items:center;gap:10px">
       <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">흔들림</span>
       <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="흔들림 게이지 · 가득 차면 무너짐">
         <div style="{{wBarStyle}}"></div>
@@ -461,18 +461,19 @@ class Component extends DCLogic {
       var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
-    function showCard(g, sticky) {
-      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return; }
+    function showCard(g, force) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return false; }
       var st = STEPS[t];
-      if (!cardEl) { cardEl = document.createElement('div'); cardEl.className = 'tut-card'; cardEl.setAttribute('role', 'status'); document.body.appendChild(cardEl); }
-      cardEl.innerHTML = '<b>🎯 ' + (t + 1) + '/' + STEPS.length + ' · ' + st.goal + '</b><span>' + st.hint + '</span>';
-      cardEl.style.opacity = '1'; cardEl.style.display = 'block';
-      clearTimeout(cardT);
-      cardT = setTimeout(function () { if (cardEl) { cardEl.style.opacity = '0'; setTimeout(function () { if (cardEl && cardEl.style.opacity === '0') { cardEl.style.display = 'none'; } }, 450); } }, sticky ? 5000 : 3500);
       var mini = document.querySelector('.tut-mini');
-      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), false); }); document.body.appendChild(mini); }
+      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
       mini.textContent = '🎯 ' + (t + 1) + '/' + STEPS.length;
       placeMini();
+      var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
+      if (!force && seen === t) { return false; }
+      if (document.querySelector('.tut-ov')) { return false; }
+      try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
+      overlay('<div class="ic">🎯</div><h3>목표 ' + (t + 1) + '/' + STEPS.length + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
     function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = (R.l + 6 * R.k).toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
@@ -498,7 +499,7 @@ class Component extends DCLogic {
           g.tut = nt; save(g);
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
           window.dispatchEvent(new Event('storage'));
         }
       }
@@ -526,8 +527,8 @@ class Component extends DCLogic {
       ]);
     } else {
       check(true);
-      showCard(load(), PAGE === 'Main');
-      setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200);
+      var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
+      if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
     }
     setInterval(function () { check(false); guideJade(load()); }, 1000);
   }
@@ -717,6 +718,7 @@ class Component extends DCLogic {
       shake: function (t) { for (var i = 0; i < 4; i++) { noise(t + i * 0.12, 0.05, 'bandpass', 700, 3, 0.15); } },
       reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
       rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
+      meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
       thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
     };
     window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };
@@ -852,7 +854,7 @@ class Component extends DCLogic {
     this.last = now;
     var s = this.state;
     var w = s.w, t = s.t;
-    if (s.wOn && s.stage === 'shape' && !s.fx) {
+    if (false) {
       w = w + dt * (s.speed === 'slow' ? 100 / 90 : (s.speed === 'fast' ? 100 / 40 : 100 / 60));
       if (w >= 100) { this.failWith('시간이 지나 흔들림이 커져 무너졌다'); return; }
       if (s.w < 70 && w >= 70) { this.say('흔들림이 커진다 · 서둘러 마무리하자'); }
@@ -898,7 +900,7 @@ class Component extends DCLogic {
           r[i] = Math.max(14, r[i] + 0.32 * out * wt * m);
         }
       }
-      w = w + 0.004 * Math.abs(dx) * m;
+      
       grab = { mode: 'h', ci: ci, side: side, dir: out > 0.3 ? 'out' : (out < -0.3 ? 'in' : (s.grab ? s.grab.dir : '')) };
     } else if (sub === 'wall') {
       var dw = -dy;
@@ -1087,7 +1089,7 @@ class Component extends DCLogic {
           y1: 0, h: 330, y: ty.toFixed(1), hx: (150 + wob).toFixed(1), op: 0.14,
           ax: (150 + wob).toFixed(1), ay: (ty - 18).toFixed(1),
           arrow: s.grab.dir === 'up' ? '▲' : (s.grab.dir === 'down' ? '▼' : ''),
-          label: s.grab.dir === 'down' ? '전체를 누르는 중 · 흔들림 ↑' : '전체를 끌어올리는 중',
+          label: s.grab.dir === 'down' ? '전체를 누르는 중' : '전체를 끌어올리는 중',
           ly: Math.max(14, ty - 38).toFixed(1)
         };
       }

@@ -266,18 +266,19 @@ class Component extends DCLogic {
       var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
-    function showCard(g, sticky) {
-      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return; }
+    function showCard(g, force) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return false; }
       var st = STEPS[t];
-      if (!cardEl) { cardEl = document.createElement('div'); cardEl.className = 'tut-card'; cardEl.setAttribute('role', 'status'); document.body.appendChild(cardEl); }
-      cardEl.innerHTML = '<b>🎯 ' + (t + 1) + '/' + STEPS.length + ' · ' + st.goal + '</b><span>' + st.hint + '</span>';
-      cardEl.style.opacity = '1'; cardEl.style.display = 'block';
-      clearTimeout(cardT);
-      cardT = setTimeout(function () { if (cardEl) { cardEl.style.opacity = '0'; setTimeout(function () { if (cardEl && cardEl.style.opacity === '0') { cardEl.style.display = 'none'; } }, 450); } }, sticky ? 5000 : 3500);
       var mini = document.querySelector('.tut-mini');
-      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), false); }); document.body.appendChild(mini); }
+      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
       mini.textContent = '🎯 ' + (t + 1) + '/' + STEPS.length;
       placeMini();
+      var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
+      if (!force && seen === t) { return false; }
+      if (document.querySelector('.tut-ov')) { return false; }
+      try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
+      overlay('<div class="ic">🎯</div><h3>목표 ' + (t + 1) + '/' + STEPS.length + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
     function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = (R.l + 6 * R.k).toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
@@ -303,7 +304,7 @@ class Component extends DCLogic {
           g.tut = nt; save(g);
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
           window.dispatchEvent(new Event('storage'));
         }
       }
@@ -331,8 +332,8 @@ class Component extends DCLogic {
       ]);
     } else {
       check(true);
-      showCard(load(), PAGE === 'Main');
-      setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200);
+      var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
+      if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
     }
     setInterval(function () { check(false); guideJade(load()); }, 1000);
   }
@@ -429,6 +430,7 @@ class Component extends DCLogic {
       shake: function (t) { for (var i = 0; i < 4; i++) { noise(t + i * 0.12, 0.05, 'bandpass', 700, 3, 0.15); } },
       reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
       rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
+      meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
       thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
     };
     window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };

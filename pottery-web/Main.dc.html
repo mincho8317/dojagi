@@ -26,6 +26,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes fadeLateA{0%,70%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes fadeLateB{0%,70%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.cat-la{animation:catLeg .5s ease-in-out infinite}.cat-lb{animation:catLeg .5s ease-in-out -.25s infinite}@keyframes catLeg{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-22deg)}}.cat-tail{animation:catTail 1s ease-in-out infinite}@keyframes catTail{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}.cat-bob{animation:catBob .5s ease-in-out infinite}@keyframes catBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px)}}.cat-swish{animation:catSwish 2.6s ease-in-out infinite}@keyframes catSwish{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-7deg)}90%{transform:rotate(4deg)}}.cat-look{animation:catLook 5s ease-in-out infinite}@keyframes catLook{0%,40%,100%{transform:rotate(0)}50%,70%{transform:rotate(-8deg)}}.cat-breath{animation:catBreath 2.8s ease-in-out infinite}@keyframes catBreath{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.05)}}@keyframes catZ{0%{opacity:0;transform:translate(0,4px)}30%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}@keyframes catHeart{0%{opacity:0;transform:translateY(6px) scale(.6)}15%{opacity:1;transform:translateY(0) scale(1.08)}25%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
 .bg-floor-tile{background:#C9A27A url(_blob/89f7470c85eef2586f983569345fd495.webp) 1px 1px/48px 48px repeat}
 .bg-floor-locked{background:linear-gradient(rgba(43,26,15,.4),rgba(43,26,15,.4)),url(_blob/d46f5c994b4cbbbb9a05bf054185c1c5.webp) 0 0/48px 48px repeat}
 </style>
@@ -86,6 +87,22 @@ button{font-family:inherit;cursor:pointer}
           </button>
           </sc-if>
         </sc-for>
+
+        <sc-if value="{{cat.on}}" hint-placeholder-val="{{true}}">
+          <button type="button" onClick="{{cat.tap}}" aria-label="러시안블루 고양이 쓰다듬기" style="{{cat.box}}">
+            <div style="{{cat.flip}}">
+              <sc-if value="{{cat.walk}}" hint-placeholder-val="{{true}}"><svg viewBox="0 0 60 50" width="48" height="40" style="overflow:visible;display:block" aria-hidden="true"><ellipse cx="30" cy="46" rx="16" ry="3" fill="rgba(43,26,15,.25)"/><g class="cat-la" style="transform-origin:22px 33px"><line x1="22" y1="33" x2="22" y2="44" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="22" y1="33" x2="22" y2="44" stroke="#6E7D90" stroke-width="3.4" stroke-linecap="round"/></g><g class="cat-lb" style="transform-origin:40px 33px"><line x1="40" y1="33" x2="40" y2="44" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="40" y1="33" x2="40" y2="44" stroke="#6E7D90" stroke-width="3.4" stroke-linecap="round"/></g><g class="cat-tail" style="transform-origin:15px 28px"><path d="M15.5 28 C7 27 5 18 9.5 11.5" fill="none" stroke="#2F3A47" stroke-width="6.6" stroke-linecap="round"/><path d="M15.5 28 C7 27 5 18 9.5 11.5" fill="none" stroke="#8696A8" stroke-width="3.8" stroke-linecap="round"/></g><ellipse cx="29" cy="30" rx="15" ry="8.6" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><ellipse cx="30" cy="34.2" rx="10" ry="3.3" fill="#A9B6C4" opacity=".75"/><path d="M19 23.6 Q29 20 38.5 23.4" stroke="#BFCAD6" stroke-width="1.4" fill="none" opacity=".85"/><g class="cat-lb" style="transform-origin:18px 33px"><line x1="18" y1="33" x2="18" y2="44.5" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="18" y1="33" x2="18" y2="44.5" stroke="#8696A8" stroke-width="3.4" stroke-linecap="round"/></g><g class="cat-la" style="transform-origin:36px 33px"><line x1="36" y1="33" x2="36" y2="44.5" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="36" y1="33" x2="36" y2="44.5" stroke="#8696A8" stroke-width="3.4" stroke-linecap="round"/></g><g class="cat-bob"><path d="M37.2 15 L38.6 5.2 L44.2 12 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6" stroke-linejoin="round"/><path d="M38.9 12.6 L39.5 8.2 L42.2 11.4 Z" fill="#C9A5B0"/><path d="M47 11.4 L52.8 5.2 L53.4 15.2 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6" stroke-linejoin="round"/><path d="M48.7 11.8 L52 8.4 L52.2 13.4 Z" fill="#C9A5B0"/><ellipse cx="46" cy="20" rx="10.2" ry="9" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><path d="M39 14.5 Q46 11.8 52.5 14.5" stroke="#BFCAD6" stroke-width="1.3" fill="none" opacity=".8"/><ellipse cx="50.2" cy="24.2" rx="4.6" ry="3" fill="#A9B6C4"/><ellipse cx="43.8" cy="19.4" rx="2.2" ry="2.6" fill="#7BC74D" stroke="#2F3A47" stroke-width=".8"/><ellipse cx="44.1" cy="19.7" rx=".75" ry="1.9" fill="#1D2B1A"/><circle cx="43.3" cy="18.5" r=".65" fill="#FFF"/><ellipse cx="50.6" cy="19.4" rx="1.9" ry="2.5" fill="#7BC74D" stroke="#2F3A47" stroke-width=".8"/><ellipse cx="50.9" cy="19.7" rx=".7" ry="1.8" fill="#1D2B1A"/><circle cx="50.2" cy="18.6" r=".6" fill="#FFF"/><path d="M53.4 22.6 h1.8 l-.9 1.1 z" fill="#9C7F8C"/><path d="M54.3 23.7 q-.3 1.3 -1.6 1.2 M54.3 23.7 q.4 1.2 1.5 1" stroke="#2F3A47" stroke-width=".7" fill="none" stroke-linecap="round"/><ellipse cx="47.6" cy="24" rx="1.6" ry="1" fill="#E7A4A8" opacity=".55"/><path d="M52 25.2 L59.5 24.2 M52 26.3 L59.5 27.6" stroke="#EEF3F8" stroke-width=".6" stroke-linecap="round"/></g></svg></sc-if>
+              <sc-if value="{{cat.sit}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 60 50" width="48" height="40" style="overflow:visible;display:block" aria-hidden="true"><ellipse cx="30" cy="46" rx="13" ry="3" fill="rgba(43,26,15,.25)"/><ellipse cx="28" cy="34" rx="11.5" ry="11" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><ellipse cx="32.5" cy="33" rx="5" ry="6.5" fill="#A9B6C4" opacity=".8"/><g class="" style="transform-origin:30px 36px"><line x1="30" y1="36" x2="30" y2="44.5" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="30" y1="36" x2="30" y2="44.5" stroke="#8696A8" stroke-width="3.4" stroke-linecap="round"/></g><g class="" style="transform-origin:35.5px 36px"><line x1="35.5" y1="36" x2="35.5" y2="44.5" stroke="#2F3A47" stroke-width="5.6" stroke-linecap="round"/><line x1="35.5" y1="36" x2="35.5" y2="44.5" stroke="#8696A8" stroke-width="3.4" stroke-linecap="round"/></g><g class="cat-swish" style="transform-origin:20px 43px"><path d="M19 42.5 C25 47.5 38 47.5 43 43.5" fill="none" stroke="#2F3A47" stroke-width="6.4" stroke-linecap="round"/><path d="M19 42.5 C25 47.5 38 47.5 43 43.5" fill="none" stroke="#6E7D90" stroke-width="3.6" stroke-linecap="round"/></g><g transform="translate(-13 -1)"><g class="cat-look" style="transform-origin:46px 26px"><path d="M37.2 15 L38.6 5.2 L44.2 12 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6" stroke-linejoin="round"/><path d="M38.9 12.6 L39.5 8.2 L42.2 11.4 Z" fill="#C9A5B0"/><path d="M47 11.4 L52.8 5.2 L53.4 15.2 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6" stroke-linejoin="round"/><path d="M48.7 11.8 L52 8.4 L52.2 13.4 Z" fill="#C9A5B0"/><ellipse cx="46" cy="20" rx="10.2" ry="9" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><path d="M39 14.5 Q46 11.8 52.5 14.5" stroke="#BFCAD6" stroke-width="1.3" fill="none" opacity=".8"/><ellipse cx="50.2" cy="24.2" rx="4.6" ry="3" fill="#A9B6C4"/><ellipse cx="43.8" cy="19.4" rx="2.2" ry="2.6" fill="#7BC74D" stroke="#2F3A47" stroke-width=".8"/><ellipse cx="44.1" cy="19.7" rx=".75" ry="1.9" fill="#1D2B1A"/><circle cx="43.3" cy="18.5" r=".65" fill="#FFF"/><ellipse cx="50.6" cy="19.4" rx="1.9" ry="2.5" fill="#7BC74D" stroke="#2F3A47" stroke-width=".8"/><ellipse cx="50.9" cy="19.7" rx=".7" ry="1.8" fill="#1D2B1A"/><circle cx="50.2" cy="18.6" r=".6" fill="#FFF"/><path d="M53.4 22.6 h1.8 l-.9 1.1 z" fill="#9C7F8C"/><path d="M54.3 23.7 q-.3 1.3 -1.6 1.2 M54.3 23.7 q.4 1.2 1.5 1" stroke="#2F3A47" stroke-width=".7" fill="none" stroke-linecap="round"/><ellipse cx="47.6" cy="24" rx="1.6" ry="1" fill="#E7A4A8" opacity=".55"/><path d="M52 25.2 L59.5 24.2 M52 26.3 L59.5 27.6" stroke="#EEF3F8" stroke-width=".6" stroke-linecap="round"/></g></g></svg></sc-if>
+              <sc-if value="{{cat.sleep}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 60 50" width="48" height="40" style="overflow:visible;display:block" aria-hidden="true"><ellipse cx="29" cy="46" rx="18" ry="3" fill="rgba(43,26,15,.25)"/><g class="cat-breath" style="transform-origin:28px 45px"><ellipse cx="27" cy="37" rx="17" ry="9" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><path d="M15 31 Q27 26.5 39 30.5" stroke="#BFCAD6" stroke-width="1.4" fill="none" opacity=".85"/></g><path d="M37.4 31.5 L38.6 23.6 L43 29 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.5" stroke-linejoin="round"/><path d="M45.6 28.6 L50.6 23.8 L50.6 31.6 Z" fill="#8696A8" stroke="#2F3A47" stroke-width="1.5" stroke-linejoin="round"/><ellipse cx="44" cy="36" rx="8.8" ry="7.8" fill="#8696A8" stroke="#2F3A47" stroke-width="1.6"/><ellipse cx="47" cy="39.4" rx="4" ry="2.6" fill="#A9B6C4"/><path d="M39.6 35.6 q1.6 1.4 3.2 0 M45.4 35.6 q1.5 1.3 3 0" stroke="#2F3A47" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M49.6 38 h1.6 l-.8 1 z" fill="#9C7F8C"/><path d="M10.5 40 C11 47.5 33 48.5 41 44.6" fill="none" stroke="#2F3A47" stroke-width="6.4" stroke-linecap="round"/><path d="M10.5 40 C11 47.5 33 48.5 41 44.6" fill="none" stroke="#6E7D90" stroke-width="3.6" stroke-linecap="round"/></svg></sc-if>
+            </div>
+            <sc-if value="{{cat.sleep}}" hint-placeholder-val="{{false}}">
+              <span aria-hidden="true" style="position:absolute;left:34px;top:-6px;font-family:'Jua',sans-serif;font-size:11px;color:#E8EEF8;text-shadow:0 1px 2px rgba(0,0,0,.6);animation:catZ 2.4s ease-in-out infinite">z<span style="font-size:8px">z</span></span>
+            </sc-if>
+            <sc-if value="{{cat.heart}}" hint-placeholder-val="{{false}}">
+              <span aria-hidden="true" style="position:absolute;left:4px;top:-20px;white-space:nowrap;padding:2px 7px;border-radius:10px;background:#FFF4DE;border:2px solid #5B3A24;font-family:'Jua',sans-serif;font-size:11px;color:#C2416B;animation:catHeart 2.2s ease-out both">♥ {{cat.word}}</span>
+            </sc-if>
+          </button>
+        </sc-if>
 
         <sc-if value="{{selOn}}" hint-placeholder-val="{{false}}">
           <div style="{{selPop}}">
@@ -424,18 +441,19 @@ class Component extends DCLogic {
       var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
-    function showCard(g, sticky) {
-      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { if (cardEl) { cardEl.remove(); cardEl = null; } var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return; }
+    function showCard(g, force) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return false; }
       var st = STEPS[t];
-      if (!cardEl) { cardEl = document.createElement('div'); cardEl.className = 'tut-card'; cardEl.setAttribute('role', 'status'); document.body.appendChild(cardEl); }
-      cardEl.innerHTML = '<b>🎯 ' + (t + 1) + '/' + STEPS.length + ' · ' + st.goal + '</b><span>' + st.hint + '</span>';
-      cardEl.style.opacity = '1'; cardEl.style.display = 'block';
-      clearTimeout(cardT);
-      cardT = setTimeout(function () { if (cardEl) { cardEl.style.opacity = '0'; setTimeout(function () { if (cardEl && cardEl.style.opacity === '0') { cardEl.style.display = 'none'; } }, 450); } }, sticky ? 5000 : 3500);
       var mini = document.querySelector('.tut-mini');
-      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), false); }); document.body.appendChild(mini); }
+      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
       mini.textContent = '🎯 ' + (t + 1) + '/' + STEPS.length;
       placeMini();
+      var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
+      if (!force && seen === t) { return false; }
+      if (document.querySelector('.tut-ov')) { return false; }
+      try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
+      overlay('<div class="ic">🎯</div><h3>목표 ' + (t + 1) + '/' + STEPS.length + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
     function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = (R.l + 6 * R.k).toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
@@ -461,7 +479,7 @@ class Component extends DCLogic {
           g.tut = nt; save(g);
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { showCard(load(), PAGE === 'Main'); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
           window.dispatchEvent(new Event('storage'));
         }
       }
@@ -489,8 +507,8 @@ class Component extends DCLogic {
       ]);
     } else {
       check(true);
-      showCard(load(), PAGE === 'Main');
-      setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200);
+      var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
+      if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
     }
     setInterval(function () { check(false); guideJade(load()); }, 1000);
   }
@@ -664,6 +682,7 @@ class Component extends DCLogic {
       shake: function (t) { for (var i = 0; i < 4; i++) { noise(t + i * 0.12, 0.05, 'bandpass', 700, 3, 0.15); } },
       reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
       rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
+      meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
       thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
     };
     window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };
@@ -692,6 +711,7 @@ class Component extends DCLogic {
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    try { this.catInit(); } catch (e) {}
     this.tick = setInterval(function () { if (!self.state.dragging && !self.dg) { var p = self.spawnWalk(self.state.g); if (p) { self.setG(p); } else { self.forceUpdate(); } } }, 1000);
     if (this.state.g.mainFocus) { this.setG({ mainFocus: '' }); }
   }
@@ -699,6 +719,7 @@ class Component extends DCLogic {
     clearTimeout(this.tt);
     clearTimeout(this.zt);
     clearInterval(this.tick);
+    clearTimeout(this.catT); clearTimeout(this.catHT);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
   }
   say(msg) {
@@ -706,6 +727,72 @@ class Component extends DCLogic {
     clearTimeout(this.tt);
     this.setState({ toast: msg });
     this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1800);
+  }
+  catFree() {
+    var G = this.grid(), occ = this.occupiedOf(this.layoutFor(this.state.g)), out = [];
+    for (var r = 0; r < G.R; r++) { for (var c = 0; c < G.C; c++) { if (!occ[c + ',' + r]) { out.push([c, r]); } } }
+    return out;
+  }
+  catPos() {
+    var c = this.state.cat; if (!c) { return null; }
+    if (c.mode !== 'walk' || !c.dur) { return { x: c.x, y: c.y }; }
+    var k = Math.max(0, Math.min(1, (Date.now() - c.t0) / c.dur));
+    return { x: c.sx + (c.x - c.sx) * k, y: c.sy + (c.y - c.sy) * k };
+  }
+  catPath(from, to) {
+    var G = this.grid(), occ = this.occupiedOf(this.layoutFor(this.state.g)), prev = {}, q = [from], key = function (p) { return p[0] + ',' + p[1]; };
+    prev[key(from)] = null;
+    while (q.length) {
+      var p = q.shift(); if (p[0] === to[0] && p[1] === to[1]) { break; }
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) { var n = [p[0] + d[0], p[1] + d[1]], k = key(n); if (n[0] < 0 || n[1] < 0 || n[0] >= G.C || n[1] >= G.R || occ[k] || prev.hasOwnProperty(k)) { return; } prev[k] = p; q.push(n); });
+    }
+    if (!prev.hasOwnProperty(key(to))) { return null; }
+    var out = [], cur = to; while (cur) { out.unshift(cur); cur = prev[key(cur)]; }
+    var pts = [];
+    for (var i = 1; i < out.length; i++) {
+      var a = out[i - 1], b = out[i], nx = out[i + 1];
+      if (nx && (nx[0] - b[0] === b[0] - a[0]) && (nx[1] - b[1] === b[1] - a[1])) { continue; }
+      pts.push(b);
+    }
+    return pts;
+  }
+  catAt(cell) { var G = this.grid(); return { x: G.X0 + cell[0] * G.T + 24 + (Math.random() * 10 - 5), y: G.Y0 + cell[1] * G.T + 30 + (Math.random() * 6 - 3) }; }
+  catCell(p) { var G = this.grid(); return [Math.max(0, Math.min(G.C - 1, Math.floor((p.x - G.X0) / G.T))), Math.max(0, Math.min(G.R - 1, Math.floor((p.y - 6 - G.Y0) / G.T)))]; }
+  catInit() {
+    var self = this, free = this.catFree(); if (!free.length) { return; }
+    var c = free[Math.floor(Math.random() * free.length)], p = this.catAt(c);
+    this.setState({ cat: { x: p.x, y: p.y, sx: p.x, sy: p.y, t0: 0, dur: 0, face: Math.random() < 0.5 ? 1 : -1, mode: Math.random() < 0.4 ? 'sleep' : 'sit', heart: 0, word: '' } });
+    clearTimeout(this.catT); this.catT = setTimeout(function () { self.catNext(); }, 2500 + Math.random() * 3000);
+  }
+  catSet(o) { var c = this.state.cat || {}, n = {}; for (var k in c) { n[k] = c[k]; } for (var k2 in o) { n[k2] = o[k2]; } this.setState({ cat: n }); }
+  catNext() {
+    var self = this, s = this.state, c = s.cat; clearTimeout(this.catT);
+    if (!c) { return; }
+    if (s.editing || s.view !== 'top' || s.dragging) { this.catT = setTimeout(function () { self.catNext(); }, 2000); return; }
+    var r = Math.random();
+    if (r < 0.62) {
+      var free = this.catFree(), from = this.catCell(c), tries = 0, pts = null;
+      while (tries++ < 6 && !pts) { var to = free[Math.floor(Math.random() * free.length)]; if (to && (to[0] !== from[0] || to[1] !== from[1])) { pts = this.catPath(from, to); } }
+      if (pts && pts.length) { this.catWalk(pts.map(function (p) { return self.catAt(p); })); return; }
+    }
+    if (r < 0.85) { this.catSet({ mode: 'sit', dur: 0 }); this.catT = setTimeout(function () { self.catNext(); }, 3000 + Math.random() * 4000); return; }
+    this.catSet({ mode: 'sleep', dur: 0 }); this.catT = setTimeout(function () { self.catNext(); }, 9000 + Math.random() * 9000);
+  }
+  catWalk(pts) {
+    var self = this, c = this.state.cat; clearTimeout(this.catT);
+    if (!pts.length) { this.catSet({ mode: 'sit', dur: 0 }); this.catT = setTimeout(function () { self.catNext(); }, 1500 + Math.random() * 2500); return; }
+    var p = pts.shift(), dx = p.x - c.x, dy = p.y - c.y, dur = Math.max(250, Math.hypot(dx, dy) / 36 * 1000);
+    this.catSet({ mode: 'walk', sx: c.x, sy: c.y, x: p.x, y: p.y, t0: Date.now(), dur: Math.round(dur), face: Math.abs(dx) > 2 ? (dx > 0 ? 1 : -1) : c.face });
+    this.catT = setTimeout(function () { self.catWalk(pts); }, dur);
+  }
+  catPet() {
+    var self = this, c = this.state.cat; if (!c) { return; }
+    clearTimeout(this.catT); clearTimeout(this.catHT);
+    var p = this.catPos(), words = ['야옹', '냐아', '골골골', '먀앙', '냥'];
+    this.catSet({ mode: 'sit', x: p.x, y: p.y, sx: p.x, sy: p.y, dur: 0, heart: Date.now(), word: words[Math.floor(Math.random() * words.length)] });
+    try { window.__sfx && window.__sfx('meow'); } catch (e) {}
+    this.catHT = setTimeout(function () { self.catSet({ heart: 0 }); }, 2200);
+    this.catT = setTimeout(function () { self.catNext(); }, 3500);
   }
   grid() { return { X0: 27, Y0: 131, T: 48, C: 7, R: 7 }; }
   catalog() {
@@ -1092,6 +1179,17 @@ class Component extends DCLogic {
       topLayer: 'position:absolute;left:0;top:0;width:390px;height:844px;transition:opacity .3s,transform .3s;' + (isSide ? 'opacity:0;transform:scale(1.25);pointer-events:none' : 'opacity:1;transform:scale(1)'),
       sideLayer: 'position:absolute;left:0;top:0;width:390px;height:844px;transition:opacity .3s,transform .3s;' + (isSide ? 'opacity:1;transform:scale(1)' : 'opacity:0;transform:scale(.85);pointer-events:none'),
       worldStyle: worldStyle,
+      cat: (function () {
+        var ct = s.cat; if (!ct) { return { on: false }; }
+        return {
+          on: !s.editing && s.view === 'top',
+          box: 'all:unset;cursor:pointer;position:absolute;left:' + (ct.x - 24).toFixed(1) + 'px;top:' + (ct.y - 38).toFixed(1) + 'px;width:48px;height:40px;z-index:4;-webkit-tap-highlight-color:transparent;transition:left ' + (ct.mode === 'walk' ? ct.dur : 0) + 'ms linear,top ' + (ct.mode === 'walk' ? ct.dur : 0) + 'ms linear',
+          flip: 'width:48px;height:40px;transform:scaleX(' + (ct.face < 0 ? -1 : 1) + ')',
+          walk: ct.mode === 'walk', sit: ct.mode === 'sit', sleep: ct.mode === 'sleep',
+          heart: !!ct.heart, word: ct.word || '야옹',
+          tap: function (e) { if (e && e.stopPropagation) { e.stopPropagation(); } self.catPet(); }
+        };
+      })(),
       zoomPct: Math.round(s.zoom * 100),
       firstHref: SCR[firstId], firstName: FN[firstId],
       isSide: isSide,
