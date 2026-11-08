@@ -340,7 +340,7 @@ class Component extends DCLogic {
         if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
         return;
       }
-      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
+      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요 · 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
     function showCard(g, force) {
@@ -501,7 +501,8 @@ class Component extends DCLogic {
     setInterval(function () { check(false); guideJade(load()); guideAct(load()); var gN = load(); if (gN.tut === 8) { apply(gN); if (!spotEl && !document.querySelector('.tut-ov')) { guideNext(gN); } } }, 1000);
   }
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
-  jadeCost(ms) { return Math.max(1, Math.ceil(ms / 60000)); }
+  tutFree() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'), t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return typeof t === 'number' && t < 9; } catch (e) { return false; } }
+  jadeCost(ms) { return this.tutFree() ? 0 : Math.max(1, Math.ceil(ms / 60000)); }
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
   tutSafe() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'), t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return typeof t === 'number' && t < 9; } catch (e) { return false; } }
   jadeSpend(cost, run) {
@@ -515,8 +516,8 @@ class Component extends DCLogic {
     bx.style.cssText = 'width:min(310px,86vw);box-sizing:border-box;padding:20px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #1E5E48;box-shadow:inset 0 0 0 3px #CDEFE0,0 8px 0 rgba(20,60,45,.45);text-align:center;font-family:Noto Sans KR,sans-serif;color:#2B1A0F';
     bx.innerHTML = gem + '<div style="margin:6px 0 4px;font-family:Jua,sans-serif;font-size:21px">옥을 사용할까요?</div>' +
       '<div style="font-size:13px;line-height:1.6;color:#5B3A24">남은 대기 시간을 바로 완료합니다</div>' +
-      '<div style="margin:12px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:Jua,sans-serif;font-size:18px;color:#1E5E48">옥 ' + cost.toLocaleString() + '개 사용</div>' +
-      '<div style="font-size:11.5px;color:#7A5434;margin-bottom:12px">보유 ' + have.toLocaleString() + ' → ' + (have - cost).toLocaleString() + '</div>';
+      '<div style="margin:12px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:Jua,sans-serif;font-size:18px;color:#1E5E48">' + (cost ? '옥 ' + cost.toLocaleString() + '개 사용' : '🎁 튜토리얼 중엔 무료!') + '</div>' +
+      '<div style="font-size:11.5px;color:#7A5434;margin-bottom:12px">' + (cost ? '보유 ' + have.toLocaleString() + ' → ' + (have - cost).toLocaleString() : '옥이 줄어들지 않아요 · 보유 ' + have.toLocaleString()) + '</div>';
     var row = document.createElement('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
     function btn(label, css, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:17px;' + css; b.addEventListener('click', fn); return b; }
     row.appendChild(btn('취소', 'background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434', function () { ov.remove(); }));
@@ -840,7 +841,7 @@ class Component extends DCLogic {
     };
     if (firing && !done) {
       v.fan = self.fanVals(bq, leftMs);
-      v.action = '바로 완료 · 옥 ' + self.jadeCost(leftMs).toLocaleString(); v.actionSub = '굽는 중 · ' + self.fmtLeft(leftMs) + ' 남음 · 보유 옥 ' + self.jadeOf(g).toLocaleString();
+      v.action = '바로 완료 · ' + (self.jadeCost(leftMs) ? '옥 ' + self.jadeCost(leftMs).toLocaleString() : '무료'); v.actionSub = '굽는 중 · ' + self.fmtLeft(leftMs) + ' 남음 · 보유 옥 ' + self.jadeOf(g).toLocaleString();
       v.btn = base + 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 5px 0 #1E5E48;color:#FFFDF5';
       v.run = function () { var lm = Math.max(0, (self.state.g.bisque || {}).start + 1200000 - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { var b0 = self.state.g.bisque || {}, nb = {}; for (var k in b0) { nb[k] = b0[k]; } nb.start = Date.now() - 1200000; self.setG({ jadeV: 2, jade: nj, bisque: nb }); }); };
     } else if (done) {

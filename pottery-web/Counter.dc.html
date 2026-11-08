@@ -347,7 +347,7 @@ class Component extends DCLogic {
         if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
         return;
       }
-      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료할 수 있어요';
+      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요 · 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요';
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
     function showCard(g, force) {
