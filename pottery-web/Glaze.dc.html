@@ -297,16 +297,17 @@ class Component extends DCLogic {
     if (window.__tutBooted) { return; }
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
-    var NAMES = { Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 장부', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
-    var UNL = [['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Counter', 'Commission'], ['Shop', 'Contest'], ['Research', 'Codex', 'Season', 'Town']];
+    var NAMES = { Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 장부', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop'], ['Contest'], ['Research', 'Codex', 'Season', 'Town']];
     var STEPS = [
-      { goal: '물레에서 첫 그릇 빚기', hint: '공방의 물레(또는 아래 제작 버튼)를 눌러 흙을 빚어 보세요', next: 'Wheel' },
+      { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
+      { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
       { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 기다리기 싫으면 💎옥으로 바로 말리기', next: 'Dry' },
       { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
-      { goal: '유약 바르기', hint: '초벌한 그릇을 유약통에 꾹 눌러 담가 보세요', next: 'Glaze' },
+      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
+      { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' },
       { goal: '진열대에 작품 올리기', hint: '보관함의 작품을 진열대로 끌어 올려 보세요', next: 'Display' },
-      { goal: '손님에게 팔거나 의뢰 받기', hint: '카운터에서 손님을 맞이해 보세요', next: 'Counter' },
       { goal: '스테이지에서 첫 별 얻기', hint: '스테이지에서 조건에 맞는 작품을 출품해 보세요', next: 'Contest' }
     ];
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
@@ -321,9 +322,9 @@ class Component extends DCLogic {
       var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
       var formed = len(g.formedList) || len(g.dryList) || bisq;
       var shown = pieceN(g, ['shelf', 'sold', 'museum']) > 0;
-      var sold = pieceN(g, ['sold']) > 0 || !!(g.quests || {}).min;
+      var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
       var star = cnt(((g.contest || {}).stars) || {}) > 0;
-      return [formed, bisq, glazed, kilnIn, made, shown, sold, star];
+      return [took, formed, bisq, glazed, kilnIn, made, gave, shown, star];
     }
     function locked(g) {
       var t = g.tut, L = {};
@@ -393,7 +394,7 @@ class Component extends DCLogic {
       if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
     }
     function guideJade(g) {
-      var t = g.tut, L = { 1: ['Dry', '바로 말리기', 'dry'], 2: ['Bisque', '바로 완료', 'bq'], 4: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
+      var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 3: ['Bisque', '바로 완료', 'bq'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
       if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
       var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
       var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (L[2] === 'bq' ? ((g.bisque || {}).state === 'firing' && (g.bisque.start || 0) + 1200000 > nowJ + 3000) : g.kiln === 'firing');
@@ -429,7 +430,7 @@ class Component extends DCLogic {
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); return g;
     }
@@ -463,8 +464,9 @@ class Component extends DCLogic {
     }, true);
     window.addEventListener('storage', function () { apply(load()); });
     var g0 = load();
+    if (typeof g0.tut === 'number' && g0.tutV !== 2) { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (PAGE === 'Main' && g0.tut === undefined) {
-      overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n흙 빚기부터 판매까지 하나씩 배우면서\n새 기능이 차례로 열려요.</p>', [
+      overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
         { label: '튜토리얼 시작', run: function () { freshStart(load()); try { location.reload(); } catch (e) {} } },
         { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
       ]);
