@@ -190,7 +190,7 @@ class Component extends DCLogic {
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' },
       { goal: '명작 진열하고 망작 와장창', hint: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요 · 명작은 진열대에 올리고, 망작은 💥 와장창으로 깨 보세요', next: 'Display' },
-      { goal: '스테이지에서 첫 별 얻기', hint: '스테이지 1을 골라 「작품 제작하기」를 누르면 목표 모양·유약이 자동으로 잡혀요 · 완성해서 출품해 보세요', next: 'Contest' }
+      { goal: '스테이지에서 첫 별 얻기', hint: '스테이지 1에서 「작품 제작하기」를 누르면 목표가 잡혀요 · 성형부터 소성까지 마친 뒤 스테이지로 돌아와 출품해요', next: 'Contest' }
     ];
     function raw() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function prog() { try { var v = localStorage.getItem('tutProg'); return v === null ? null : +v; } catch (e) { return null; } }
@@ -272,10 +272,21 @@ class Component extends DCLogic {
     }
     function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
+    function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
+    function nextOf(g) {
+      var t = g.tut; if (t !== 8) { return STEPS[t].next; }
+      var gl = g.goal; if (!gl || !gl.sid) { return 'Contest'; }
+      var m = function (it) { return it && it.goalSid === gl.sid; }, kf = g.kilnFilled || {}, inK = false; for (var c in kf) { if (m(kf[c])) { inK = true; } }
+      if (g.kiln === 'firing' || inK || (g.kilnList || []).some(m)) { return 'Kiln'; }
+      if ((g.glazeList || []).some(m)) { return 'Glaze'; }
+      if ((g.bisqueList || []).some(m) || ((g.bisque || {}).items || []).some(m)) { return 'Bisque'; }
+      if ((g.dryList || []).some(m) || (g.formedList || []).some(m)) { return 'Dry'; }
+      return goalReady(g) && PAGE !== 'Wheel' ? 'Contest' : 'Wheel';
+    }
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
-      var nx = STEPS[t].next; if (nx === PAGE) { return; }
-      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      var nx = nextOf(g); if (nx === PAGE) { return; }
+      var key = 'tutSpot_' + t + '_' + PAGE + (t === 8 ? '_' + nx : ''); try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
       if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
     }
     function guideJade(g) {
@@ -311,7 +322,7 @@ class Component extends DCLogic {
       var L = locked(g), keys = Object.keys(L);
       document.documentElement.setAttribute('data-tl', keys.join(' '));
       var t = g.tut;
-      document.documentElement.setAttribute('data-tn', typeof t === 'number' && t < STEPS.length ? STEPS[t].next : '');
+      document.documentElement.setAttribute('data-tn', typeof t === 'number' && t < STEPS.length ? nextOf(g) : '');
       return L;
     }
     function freshStart(keep) {
@@ -333,12 +344,19 @@ class Component extends DCLogic {
     function guideAct(g) {
       var t = g.tut, now = Date.now();
       if (typeof t !== 'number' || t >= STEPS.length) { return; }
-      if (PAGE === 'Dry' && t === 2) {
+      if (PAGE === 'Dry' && (t === 2 || t === 8)) {
         act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');
+        if (t === 8) {
+          var drying = (g.dryList || []).some(function (x) { return x && now - x.start < 1800000; });
+          if (btnWith('점 올리기')()) { act('dryIn', true, btnWith('점 올리기'), '골랐으면 올려요'); }
+          else if (btnWith('성형 완료')()) { act('drySel', true, btnWith('성형 완료'), '올릴 그릇을 골라요'); }
+          else if (drying) { act('dryJade', true, btnWith('바로 말리기'), '💎옥으로 바로 말릴 수 있어요'); }
+          else if ((g.formedList || []).length) { act('dryPut', true, qsel('button[aria-label="빈 칸 · 기물 올리기"]'), '빚은 그릇을 건조대에 올려요'); }
+        }
       }
-      if (PAGE === 'Bisque' && t === 3) {
+      if (PAGE === 'Bisque' && (t === 3 || t === 8)) {
         var bq = g.bisque || {};
-        if (bq.state === 'firing') { act('bqOut', (bq.start || 0) + 1200000 <= now, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); }
+        if (bq.state === 'firing') { if ((bq.start || 0) + 1200000 <= now) { act('bqOut', true, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); } else if (t === 8) { act('bqJade', true, btnWith('바로 완료'), '풀무질로 시간을 줄이거나 💎옥으로 바로 완료해요'); } }
         else if (btnWith('점 넣기')()) { act('bqIn', true, btnWith('점 넣기'), '골랐으면 가마에 넣어요'); }
         else if (btnWith('완전 건조')()) { act('bqSel', true, btnWith('완전 건조'), '구울 기물을 골라요'); }
         else if (btnWith('초벌 굽기')()) { act('bqFire', true, btnWith('초벌 굽기'), '이제 불을 지펴 초벌을 구워요'); }
@@ -350,12 +368,21 @@ class Component extends DCLogic {
         else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
         else { act('gzDip', true, btnWith('꾹 눌러 담그기'), '꾹 눌러 담갔다가 초록 칸에서 손을 떼요'); }
       }
-      if (PAGE === 'Kiln' && t === 5) {
+      if (PAGE === 'Kiln' && (t === 5 || t === 8)) {
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
-        if (g.kiln === 'firing') { act('knOpen', !!anyWith('가마 열고 꺼내기')(), anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); }
+        if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } else if (t === 8) { act('knJade', true, btnWith('바로 완료'), '💎옥으로 바로 완료할 수 있어요'); } }
         else if (btnWith('적정')()) { act('knSel', true, btnWith('적정'), '넣을 그릇을 골라요'); }
         else if ((g.kilnList || []).length) { act('knPut', true, qsel('button[aria-label="작품 넣기"]'), '빈 칸을 눌러 유약 바른 그릇을 넣어요'); }
         else if (filled) { act('knFire', true, btnWith('불 지피기'), '다 넣었으면 불을 지펴요'); }
+      }
+      if (PAGE === 'Glaze' && t === 8 && (g.glazeList || []).length) { act('gzDip8', true, btnWith('꾹 눌러 담그기'), '목표 유약이 자동으로 골라져 있어요 · 꾹 눌러 담가요'); }
+      if (PAGE === 'Contest' && t === 8) {
+        var subB = anyWith('출품할 작품 고르기')(), mk = anyWith('작품 제작하기')();
+        if (anyWith('이 작품으로 출품하기')()) { act('ctGo', true, anyWith('이 작품으로 출품하기'), '출품해서 별을 받아요!'); }
+        else if (anyWith('조건 충족 작품을 골라')()) { act('ctRow', true, qsel('button[aria-label$="· 조건 충족"]'), '조건을 충족한 작품을 골라요'); }
+        else if (subB && (subB.textContent || '').indexOf('조건 충족') >= 0) { act('ctSubmit', true, anyWith('출품할 작품 고르기'), '조건에 맞는 작품이 있어요! 눌러서 출품해요'); }
+        else if (mk) { act(goalReady(g) ? 'ctRetry' : 'ctMake', true, anyWith('작품 제작하기'), goalReady(g) ? '완성품 모양이 목표와 조금 달라요 · 점선 모양에 맞춰 다시 빚어 봐요' : '눌러서 이 스테이지 작품을 만들러 가요 · 모양·흙·유약이 자동으로 골라져요'); }
+        else { act('ctNode' + (g.goal && g.goal.sid ? 'G' : ''), true, qsel('button[aria-label^="' + ((g.goal && g.goal.num) || 1) + ' 스테이지"]'), g.goal && g.goal.sid ? (goalReady(g) ? '완성한 작품으로 도전해요 · 스테이지를 눌러요' : '도전 중인 스테이지예요') : '스테이지 1을 눌러 목표를 확인해요'); }
       }
       if (PAGE === 'Counter' && t === 6) {
         act('ctGive', !!btnWith('건네기')(), btnWith('건네기'), '청자 찻잔을 민 씨에게 건네요');
@@ -429,7 +456,7 @@ class Component extends DCLogic {
       var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
       if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
     }
-    setInterval(function () { check(false); guideJade(load()); guideAct(load()); }, 1000);
+    setInterval(function () { check(false); guideJade(load()); guideAct(load()); var gN = load(); if (gN.tut === 8) { apply(gN); if (!spotEl && !document.querySelector('.tut-ov')) { guideNext(gN); } } }, 1000);
   }
   sndBoot() {
     if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
