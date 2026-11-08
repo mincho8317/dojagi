@@ -398,7 +398,7 @@ class Component extends DCLogic {
     if (typeof g0.tut === 'number' && g0.tutV !== 2) { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (PAGE === 'Main' && g0.tut === undefined) {
       overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
-        { label: '튜토리얼 시작', run: function () { freshStart(load()); try { location.reload(); } catch (e) {} } },
+        { label: '튜토리얼 시작', run: function () { freshStart(load()); apply(load()); try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) { try { window.dispatchEvent(new Event('storage')); } catch (e2) {} } setTimeout(function () { showCard(load(), true); }, 500); } },
         { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
       ]);
     } else {
