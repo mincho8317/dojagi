@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>채집</title>
+<script src="./support.js"></script>
+<script src="./shared.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}a:hover{color:#3E2616}
+button{font-family:inherit;cursor:pointer}
+@keyframes gPop{0%{transform:translate(-50%,40%) scale(.3)}60%{transform:translate(-50%,-8%) scale(1.12)}100%{transform:translate(-50%,0) scale(1)}}
+@keyframes gHit{0%{transform:translate(-50%,0) scale(1);opacity:1}100%{transform:translate(-50%,-60%) scale(1.5);opacity:0}}
+@keyframes gFloat{0%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-46px);opacity:0}}
+@keyframes gShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes gCount{0%{transform:scale(2.2);opacity:0}30%{transform:scale(1);opacity:1}100%{transform:scale(.8);opacity:0}}
+@keyframes gFever{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(-20deg) brightness(1.25)}}
+@keyframes gBlink{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:linear-gradient(#BFE0E8 0,#E6EFD9 34%,#B8C98E 35%,#8FA866 62%,#7A5A3C 63%,#5E4129 100%);color:#2B1A0F">
+  <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:8px">
+    <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">채집 · 강가와 광산</div>
+    <div aria-label="채집권 {{tix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #FFD66B;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
+      <span style="font-size:16px">🎫 {{tix}}/{{tixMax}}</span>
+      <span style="font-size:10px;color:#FFE7A8">{{tixNext}}</span>
+    </div>
+  </div>
+
+  <div aria-label="보유 재료" style="position:absolute;left:12px;right:12px;top:62px;display:flex;gap:5px;padding:6px;border-radius:14px;background:rgba(255,250,240,.9);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+    <sc-for list="{{inv}}" as="iv" hint-placeholder-count="5">
+      <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0;font-family:'Jua',sans-serif">
+        <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
+        <span style="font-size:11px;color:#5B3A24;white-space:nowrap">{{iv.name}}</span>
+        <span style="font-size:15px;color:#2B1A0F">{{iv.n}}</span>
+      </span>
+    </sc-for>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:150px;bottom:104px;display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+      <div style="{{md.box}}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="{{md.iconBox}}"><img dc-src="{{md.img}}" alt="" aria-hidden="true" style="width:58px;height:58px;object-fit:contain"></span>
+          <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
+            <span style="font-family:'Jua',sans-serif;font-size:21px;color:#2B1A0F">{{md.name}}</span>
+            <span style="font-size:12.5px;font-weight:700;line-height:1.4;color:#5B3A24">{{md.desc}}</span>
+          </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <sc-for list="{{md.drops}}" as="dp" hint-placeholder-count="3">
+            <span style="display:flex;align-items:center;gap:3px;padding:2px 8px 2px 3px;border-radius:10px;background:#F6EBD6;border:2px solid #D9C29B;font-size:11.5px;font-weight:700;color:#5B3A24"><img dc-src="{{dp.img}}" alt="" aria-hidden="true" style="width:20px;height:20px;object-fit:contain">{{dp.t}}</span>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="flex:1 1 auto;font-family:'Jua',sans-serif;font-size:13px;color:#8A6440">최고 기록 {{md.best}}</span>
+          <button type="button" onClick="{{md.start}}" style="{{md.btn}}">{{md.btnText}}</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
+    <div role="dialog" aria-label="{{gameName}}" style="{{fieldBg}}">
+      <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
+        <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:18px;color:#FFF4DE;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{gameName}}</span>
+        <div aria-label="남은 시간 {{secLeft}}초" style="flex:1 1 auto;height:16px;box-sizing:border-box;border:2.5px solid #2B1A0F;border-radius:9px;background:#3E2616;overflow:hidden"><div style="{{timeBar}}"></div></div>
+        <span style="{{secStyle}}">{{secLeft}}</span>
+      </div>
+      <div style="position:absolute;left:12px;right:12px;top:42px;display:flex;align-items:center;gap:6px;z-index:5">
+        <span style="padding:3px 10px;border-radius:10px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">점수 {{score}}</span>
+        <span style="{{comboStyle}}">{{comboText}}</span>
+        <span style="margin-left:auto;font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{lifeText}}</span>
+      </div>
+
+      <sc-if value="{{isClay}}" hint-placeholder-val="{{true}}">
+        <div style="position:absolute;left:14px;right:14px;top:110px;bottom:24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:6px">
+          <sc-for list="{{holes}}" as="h" hint-placeholder-count="12">
+            <button type="button" data-work="1" onPointerDown="{{h.tap}}" aria-label="{{h.aria}}" style="all:unset;cursor:pointer;position:relative;overflow:hidden;touch-action:none;-webkit-tap-highlight-color:transparent">
+              <span aria-hidden="true" style="position:absolute;left:8%;right:8%;bottom:8%;height:34%;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#2B1A0F 0,#3E2616 55%,#6B4429 72%,transparent 74%)"></span>
+              <span aria-hidden="true" style="{{h.lump}}"><img dc-src="{{h.img}}" alt="" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))"></span>
+              <span aria-hidden="true" style="{{h.pop}}">{{h.popText}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isGlaze}}" hint-placeholder-val="{{false}}">
+        <div id="gfield" data-work="1" onPointerDown="{{fieldMove}}" onPointerMove="{{fieldMove}}" style="position:absolute;left:0;right:0;top:80px;bottom:0;touch-action:none;overflow:hidden">
+          <sc-for list="{{drops}}" as="d" hint-placeholder-count="5">
+            <span aria-hidden="true" style="{{d.style}}"><img dc-src="{{d.img}}" alt="" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(0,0,0,.5))"></span>
+          </sc-for>
+          <sc-for list="{{floats}}" as="fl" hint-placeholder-count="0">
+            <span aria-hidden="true" style="{{fl.style}}">{{fl.t}}</span>
+          </sc-for>
+          <div aria-label="광주리" style="{{basket}}">
+            <svg width="96" height="46" viewBox="0 0 96 46" aria-hidden="true"><path d="M4 6h88l-10 34a6 6 0 0 1-6 4H20a6 6 0 0 1-6-4z" fill="#B98A58" stroke="#5B3A24" stroke-width="3"></path><path d="M10 16h76M14 27h68" stroke="#7A5434" stroke-width="2.5"></path><ellipse cx="48" cy="6" rx="44" ry="5" fill="#8A6440" stroke="#5B3A24" stroke-width="3"></ellipse></svg>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{counting}}" hint-placeholder-val="{{false}}">
+        <div aria-live="assertive" style="position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(26,15,8,.35);pointer-events:none">
+          <span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE;text-shadow:0 2px 0 rgba(0,0,0,.6);text-align:center;white-space:pre-line">{{howTo}}</span>
+          <span style="{{countStyle}}">{{countText}}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ended}}" hint-placeholder-val="{{false}}">
+        <div style="position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.6)">
+          <div role="dialog" aria-label="채집 결과" style="width:310px;box-sizing:border-box;padding:18px 16px 14px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+            <span style="font-family:'Jua',sans-serif;font-size:24px;color:#B9533A">{{resTitle}}</span>
+            <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">점수 {{score}} · 최고 콤보 {{maxCombo}}{{newBest}}</span>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:4px 0">
+              <sc-for list="{{rewards}}" as="rw" hint-placeholder-count="3">
+                <span style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:62px;padding:6px 4px;border-radius:12px;background:#FFFDF5;border:2px solid #C9A27A;font-family:'Jua',sans-serif"><img dc-src="{{rw.img}}" alt="" aria-hidden="true" style="width:34px;height:34px;object-fit:contain"><span style="font-size:11.5px;color:#5B3A24">{{rw.name}}</span><span style="font-size:16px;color:#2F6328">+{{rw.n}}</span></span>
+              </sc-for>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:#8A6440">{{resHint}}</span>
+            <div style="display:flex;gap:8px;width:100%">
+              <button type="button" onClick="{{closeGame}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:16px;color:#5B3A24;text-align:center">닫기</button>
+              <button type="button" onClick="{{again}}" style="{{againBtn}}">{{againText}}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:50%;top:120px;transform:translateX(-50%);z-index:30;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.92);font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;white-space:nowrap">{{toast}}</div>
+  </sc-if>
+
+    <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Gather.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none;background:rgba(255,214,107,.22)">
+      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFD66B">채집</span>
+    </a>
+    <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+      </span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
+    </a>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { g: this.loadG(), mode: '', phase: '', toast: '', tick: 0 };
+    this.G = null;
+  }
+  gdef() { return { gold: 0, mats: {}, gather: { tix: 5, at: Date.now(), best: {} } }; }
+  loadG() {
+    var d = this.gdef();
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) {
+    var c = this.loadG(), g = {};
+    for (var k in c) { g[k] = c[k]; }
+    for (var j in p) { g[j] = p[j]; }
+    try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); window.dispatchEvent(new StorageEvent('storage', { key: 'pottery-proto-v1' })); } catch (e) {}
+    this.setState({ g: g });
+  }
+  tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Gather'); }
+  sndBoot() { return window.PotteryShared.sndBoot.call(this); }
+  qlib() { return window.PotteryShared.qlib.call(this); }
+  navBoot() { return window.PotteryShared.navBoot.call(this); }
+  sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
+  // 채집권 · 최대 5장, 20분마다 1장 충전
+  tixState(g) {
+    var MAX = 5, REG = 1200000, ga = g.gather || { tix: MAX, at: Date.now(), best: {} }, now = Date.now();
+    var tix = ga.tix == null ? MAX : ga.tix, at = ga.at || now;
+    if (tix >= MAX) { return { tix: MAX, at: now, next: 0, max: MAX }; }
+    var gain = Math.floor((now - at) / REG); tix = Math.min(MAX, tix + gain); at = at + gain * REG;
+    return { tix: tix, at: tix >= MAX ? now : at, next: tix >= MAX ? 0 : at + REG - now, max: MAX };
+  }
+  defs() {
+    return {
+      refined: { name: '정제', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp' },
+      kaolin: { name: '고령토', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp' },
+      porcelain: { name: '자기토', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp' },
+      premium: { name: '특선', img: '_blob/79f22235a775734d2bfb0397256165e3.webp' },
+      jinsa: { name: '진사유', img: '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' }
+    };
+  }
+  start(mode) {
+    var g = this.loadG(), T = this.tixState(g);
+    if (T.tix <= 0) { this.say('채집권이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
+    var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
+    ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at; if (!ga.best) { ga.best = {}; }
+    this.setG({ gather: ga });
+    var DUR = 25000;
+    this.G = { mode: mode, phase: 'count', t0: Date.now() + 2400, dur: DUR, score: 0, combo: 0, maxCombo: 0, hits: {}, holes: [], drops: [], floats: [], bx: 195, life: 3, nextSpawn: 0, uid: 0, shake: 0, fever: 0 };
+    for (var i = 0; i < 12; i++) { this.G.holes.push({ type: '', born: 0, life: 0, hitAt: 0, hitType: '', missAt: 0 }); }
+    this.setState({ mode: mode, phase: 'count' });
+    var self = this; clearInterval(this.loop); this.loop = setInterval(function () { self.step(); }, 40);
+    this.sfx('whoosh');
+  }
+  // 흙 캐기 : 구멍에서 흙덩이가 잠깐 솟는다 · 돌은 피한다 · 시간이 갈수록 빨라진다
+  clayPick(r) {
+    var t = Math.random() * 100;
+    if (t < 13 + r * 7) { return 'rock'; }
+    if (t < 20 + r * 7) { return Math.random() < 0.18 ? 'premium' : 'porcelain'; }
+    if (t < 42 + r * 5) { return 'kaolin'; }
+    return 'refined';
+  }
+  step() {
+    var G = this.G; if (!G) { return; }
+    var now = Date.now();
+    if (G.phase === 'count') { if (now >= G.t0) { G.phase = 'play'; this.sfx('ignite'); } this.setState({ phase: G.phase, tick: now }); return; }
+    if (G.phase !== 'play') { return; }
+    var el = now - G.t0, r = Math.min(1, el / G.dur);
+    if (el >= G.dur || G.life <= 0) { this.finish(); return; }
+    if (G.mode === 'clay') {
+      var self = this;
+      G.holes.forEach(function (h) {
+        if (h.type && !h.hitAt && now - h.born > h.life) { if (h.type !== 'rock') { G.combo = 0; h.missAt = now; } h.type = ''; }
+        if (h.hitAt && now - h.hitAt > 380) { h.hitAt = 0; h.type = ''; }
+      });
+      if (now >= G.nextSpawn) {
+        var free = []; G.holes.forEach(function (h, i) { if (!h.type && !h.hitAt) { free.push(i); } });
+        var n = Math.random() < 0.25 + r * 0.45 ? 2 : 1;
+        for (var k = 0; k < n && free.length; k++) {
+          var pi = free.splice(Math.floor(Math.random() * free.length), 1)[0], hh = G.holes[pi];
+          hh.type = self.clayPick(r); hh.born = now; hh.life = Math.round(1150 - 600 * r + (hh.type === 'premium' ? -150 : 0));
+        }
+        G.nextSpawn = now + Math.round(620 - 360 * r);
+      }
+    } else {
+      var bx = G.bx, W = 390, H = 640, BY = H - 70;
+      if (now >= G.nextSpawn) {
+        var t = Math.random() * 100, ty = t < 22 + r * 14 ? 'rock' : (t < 30 + r * 14 ? 'gem' : 'ore');
+        G.drops.push({ id: ++G.uid, type: ty, x: 30 + Math.random() * (W - 60), y: -40, vy: (3.6 + r * 5.2 + Math.random() * 1.6) * (ty === 'gem' ? 1.25 : 1), vx: ty === 'gem' ? (Math.random() < 0.5 ? -1.2 : 1.2) : 0 });
+        G.nextSpawn = now + Math.round(560 - 330 * r);
+      }
+      var keep = [];
+      for (var d = 0; d < G.drops.length; d++) {
+        var o = G.drops[d]; o.y += o.vy; o.x += o.vx; if (o.x < 24 || o.x > W - 24) { o.vx = -o.vx; }
+        if (o.y >= BY - 18 && o.y <= BY + 16 && Math.abs(o.x - bx) < 52) {
+          if (o.type === 'rock') { G.life--; G.combo = 0; G.shake = now; this.sfx('thud'); G.floats.push({ x: o.x, y: BY - 20, t: '쿵!', c: '#FF8A6B', at: now }); }
+          else { G.combo++; G.maxCombo = Math.max(G.maxCombo, G.combo); var pts = (o.type === 'gem' ? 50 : 10) * (G.combo >= 10 ? 2 : 1); G.score += pts; G.hits[o.type] = (G.hits[o.type] || 0) + 1; this.sfx(o.type === 'gem' ? 'rare' : 'tap'); G.floats.push({ x: o.x, y: BY - 20, t: '+' + pts, c: o.type === 'gem' ? '#9FE8FF' : '#FFD66B', at: now }); }
+          continue;
+        }
+        if (o.y > H + 30) { if (o.type !== 'rock') { G.combo = 0; } continue; }
+        keep.push(o);
+      }
+      G.drops = keep;
+      G.floats = G.floats.filter(function (f) { return now - f.at < 700; });
+    }
+    this.setState({ tick: now });
+  }
+  hit(i) {
+    var G = this.G; if (!G || G.phase !== 'play') { return; }
+    var h = G.holes[i], now = Date.now();
+    if (!h.type || h.hitAt) { G.combo = 0; return; }
+    if (h.type === 'rock') { G.combo = 0; G.t0 -= 2000; G.shake = now; h.hitAt = now; h.hitType = 'rock'; this.sfx('thud'); this.setState({ tick: now }); return; }
+    G.combo++; G.maxCombo = Math.max(G.maxCombo, G.combo);
+    var base = { refined: 10, kaolin: 20, porcelain: 35, premium: 80 }[h.type] || 10, pts = base * (G.combo >= 10 ? 2 : 1);
+    G.score += pts; G.hits[h.type] = (G.hits[h.type] || 0) + 1; h.hitAt = now; h.hitType = h.type; h.pts = pts;
+    this.sfx(h.type === 'premium' ? 'rare' : 'tap');
+    this.setState({ tick: now });
+  }
+  rewardsOf(G) {
+    var h = G.hits, R = {};
+    if (G.mode === 'clay') {
+      R.refined = Math.floor((h.refined || 0) / 5); R.kaolin = Math.floor((h.kaolin || 0) / 4); R.porcelain = Math.floor((h.porcelain || 0) / 3); R.premium = h.premium || 0;
+    } else { R.jinsa = Math.floor((h.ore || 0) / 5) + (h.gem || 0); }
+    return R;
+  }
+  finish() {
+    var G = this.G; clearInterval(this.loop); G.phase = 'end';
+    var R = this.rewardsOf(G), g = this.loadG(), m = {}; for (var k in (g.mats || {})) { m[k] = g.mats[k]; }
+    var any = false; for (var r in R) { if (R[r] > 0) { m[r] = (m[r] || 0) + R[r]; any = true; } }
+    var ga = {}; for (var a in (g.gather || {})) { ga[a] = g.gather[a]; } var best = {}; for (var b in (ga.best || {})) { best[b] = ga.best[b]; }
+    G.newBest = G.score > (best[G.mode] || 0); if (G.newBest) { best[G.mode] = G.score; } ga.best = best;
+    var patch = { mats: m, gather: ga };
+    if (R.jinsa > 0) { var gf = {}; for (var f in (g.glazesFound || {})) { gf[f] = g.glazesFound[f]; } patch.glazesFound = gf; }
+    this.setG(patch);
+    G.R = R; this.sfx(any ? 'reveal' : 'fail');
+    this.setState({ phase: 'end', tick: Date.now() });
+  }
+  closeGame() { clearInterval(this.loop); this.G = null; this.setState({ mode: '', phase: '' }); }
+  fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), mm = Math.floor(s / 60), ss = s % 60; return mm + ':' + (ss < 10 ? '0' : '') + ss; }
+  say(msg) { var self = this; this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200); }
+  componentDidMount() {
+    try { this.tutBoot(); } catch (e) {}
+    try { this.sndBoot(); } catch (e) {}
+    var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} }, 0);
+    var self = this;
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
+    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.clock = setInterval(function () { if (!self.G) { self.setState({ tick: Date.now() }); } }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.loop); clearInterval(this.clock); clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
+  }
+  renderVals() {
+    var self = this, s = this.state, g = s.g, D = this.defs(), T = this.tixState(g), G = this.G, now = Date.now();
+    var mats = g.mats || {}, best = (g.gather || {}).best || {};
+    var inv = ['refined', 'kaolin', 'porcelain', 'premium', 'jinsa'].map(function (k) { return { name: D[k].name, img: D[k].img, n: mats[k] || 0, aria: D[k].name + ' ' + (mats[k] || 0) + '개' }; });
+    var can = T.tix > 0;
+    var btn = function (c) { return 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:10px 18px;border-radius:14px;font-family:Jua,sans-serif;font-size:17px;text-align:center;' + (can ? 'background:' + c + ';border:3px solid #2B1A0F;box-shadow:0 4px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55'); };
+    var box = 'flex:1 1 0;min-height:0;box-sizing:border-box;padding:14px;border-radius:20px;background:rgba(255,250,240,.95);border:3.5px solid #5B3A24;box-shadow:0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;justify-content:space-between;gap:8px';
+    var modes = [
+      { name: '흙 캐기 · 강가', img: D.kaolin.img, desc: '구멍에서 솟는 흙덩이를 재빨리 톡! 25초 동안 점점 빨라져요 · 돌을 치면 2초 감소', drops: [{ img: D.refined.img, t: '정제 5개당 1' }, { img: D.kaolin.img, t: '고령토 4개당 1' }, { img: D.porcelain.img, t: '자기토 3개당 1' }, { img: D.premium.img, t: '특선 1개당 1 · 희귀' }], best: best.clay || 0, start: function () { self.start('clay'); }, c: '#B9533A', bg: 'background:linear-gradient(#E9D7B8,#C9A27A)' },
+      { name: '유약석 받기 · 광산', img: D.jinsa.img, desc: '쏟아지는 붉은 진사 광석을 광주리로 받아요 · 회색 돌 3번 맞으면 끝 · 푸른 결정은 대박', drops: [{ img: D.jinsa.img, t: '붉은 광석 5개당 진사유 1' }, { img: D.jinsa.img, t: '푸른 결정 1개당 진사유 1' }], best: best.glaze || 0, start: function () { self.start('glaze'); }, c: '#2E6B5F', bg: 'background:linear-gradient(#D7E3DE,#9DB8AE)' }
+    ].map(function (m) { return { name: m.name, img: m.img, desc: m.desc, drops: m.drops, best: m.best, start: m.start, btn: btn(m.c), btnText: '시작 · 🎫1', box: box, iconBox: 'flex:0 0 72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;border:2.5px solid #5B3A24;' + m.bg }; });
+    var out = { inv: inv, modes: modes, tix: T.tix, tixMax: T.max, tixNext: T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1', toastOn: !!s.toast, toast: s.toast,
+      playing: !!G, isClay: !!G && G.mode === 'clay', isGlaze: !!G && G.mode === 'glaze', counting: !!G && G.phase === 'count', ended: !!G && G.phase === 'end' };
+    if (!G) { return Object.assign(out, { gameName: '', fieldBg: '', timeBar: '', secLeft: 0, secStyle: '', score: 0, comboText: '', comboStyle: '', lifeText: '', holes: [], drops: [], floats: [], basket: '', howTo: '', countText: '', countStyle: '', resTitle: '', maxCombo: 0, newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: '', fieldMove: function () {} }); }
+    var el = G.phase === 'play' ? now - G.t0 : (G.phase === 'count' ? 0 : G.dur), left = Math.max(0, G.dur - el), lr = left / G.dur;
+    var fever = G.combo >= 10, shaking = now - (G.shake || 0) < 300;
+    out.gameName = G.mode === 'clay' ? '흙 캐기' : '유약석 받기';
+    out.fieldBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:20;overflow:hidden;' + (G.mode === 'clay' ? 'background:linear-gradient(#9FC7D6 0,#CFE3C9 14%,#8E7350 15%,#7A5A3C 100%);' : 'background:radial-gradient(ellipse at 50% 0,#5B4A3A 0,#2E2219 60%,#1C130D 100%);') + (shaking ? 'animation:gShake .3s;' : '') + (fever && G.phase === 'play' ? 'box-shadow:inset 0 0 40px 8px rgba(255,180,60,.55);' : '');
+    out.timeBar = 'height:100%;width:' + (lr * 100).toFixed(1) + '%;background:' + (lr < 0.25 ? '#D0452B' : (lr < 0.5 ? '#E8B640' : '#5FB052')) + ';' + (lr < 0.25 ? 'animation:gBlink .5s infinite;' : '');
+    out.secLeft = Math.ceil(left / 1000);
+    out.secStyle = "flex:0 0 34px;text-align:right;font-family:'Jua',sans-serif;font-size:22px;color:" + (lr < 0.25 ? '#FF8A6B' : '#FFF4DE') + ';text-shadow:0 2px 0 rgba(0,0,0,.6)';
+    out.score = G.score;
+    out.comboText = G.combo >= 2 ? (fever ? '🔥 피버 ×2 · ' : '') + G.combo + ' 콤보' : '';
+    out.comboStyle = G.combo >= 2 ? "padding:3px 10px;border-radius:10px;font-family:'Jua',sans-serif;font-size:15px;" + (fever ? 'background:#FFD66B;color:#7A2F1E;animation:gFever .6s infinite' : 'background:rgba(255,231,168,.9);color:#5B3A24') : 'display:none';
+    out.lifeText = G.mode === 'glaze' ? '❤'.repeat(Math.max(0, G.life)) + '🤍'.repeat(Math.max(0, 3 - G.life)) : '';
+    out.holes = G.holes.map(function (h, i) {
+      var up = !!h.type, hitA = !!h.hitAt, img = h.type === 'rock' || h.hitType === 'rock' && hitA ? '' : (D[h.hitAt ? h.hitType : h.type] || {}).img || '';
+      var rock = (h.type === 'rock' && !hitA) || (hitA && h.hitType === 'rock');
+      var lump = up || hitA ? 'position:absolute;left:50%;bottom:16%;width:62%;aspect-ratio:1;' + (hitA ? 'animation:gHit .38s ease-out forwards;' : 'animation:gPop .18s ease-out;transform:translate(-50%,0);') + (rock ? 'background:radial-gradient(circle at 35% 30%,#B7B2AA 0,#7D776F 55%,#4E4943 100%);border-radius:46% 54% 50% 50%;border:3px solid #2B2622;box-sizing:border-box;' : '') : 'display:none';
+      var pop = hitA ? "position:absolute;left:50%;top:6%;animation:gFloat .38s ease-out forwards;font-family:'Jua',sans-serif;font-size:18px;white-space:nowrap;color:" + (rock ? '#FF8A6B' : '#FFE7A8') + ';text-shadow:0 2px 0 rgba(0,0,0,.6)' : 'display:none';
+      return { tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.hit(i); }, aria: up ? (rock ? '돌 · 치지 말 것' : (D[h.type] || {}).name + ' 흙덩이') : '빈 구멍', img: rock ? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' : img, lump: lump, pop: pop, popText: hitA ? (rock ? '-2초' : '+' + (h.pts || 10)) : '' };
+    });
+    var fieldK = 1;
+    out.drops = G.drops.map(function (o) {
+      var sz = o.type === 'gem' ? 30 : 42;
+      var st = 'position:absolute;left:' + (o.x - sz / 2).toFixed(1) + 'px;top:' + o.y.toFixed(1) + 'px;width:' + sz + 'px;height:' + sz + 'px;';
+      if (o.type === 'rock') { st += 'border-radius:46% 54% 50% 50%;background:radial-gradient(circle at 35% 30%,#B7B2AA 0,#7D776F 55%,#4E4943 100%);border:3px solid #1C130D;box-sizing:border-box;'; }
+      if (o.type === 'ore') { st += 'border-radius:38% 62% 46% 54% / 55% 40% 60% 45%;background:radial-gradient(circle at 32% 28%,#FFB3A3 0,#E0533F 30%,#A8302A 65%,#5E1A16 100%);border:3px solid #3A0F0C;box-sizing:border-box;box-shadow:inset -4px -5px 0 rgba(0,0,0,.25);'; }
+      if (o.type === 'gem') { st += 'border-radius:6px;transform:rotate(45deg);background:linear-gradient(135deg,#FFFFFF 0,#9FE8FF 35%,#3AA6D9 70%,#1E5E86 100%);border:3px solid #0F3550;box-sizing:border-box;box-shadow:0 0 14px 4px rgba(159,232,255,.8);'; }
+      return { style: st, img: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' };
+    });
+    out.floats = G.floats.map(function (f) { return { t: f.t, style: "position:absolute;left:" + f.x + "px;top:" + f.y + "px;animation:gFloat .7s ease-out forwards;font-family:'Jua',sans-serif;font-size:20px;color:" + f.c + ';text-shadow:0 2px 0 rgba(0,0,0,.7);pointer-events:none' }; });
+    out.basket = 'position:absolute;left:' + (G.bx - 48) + 'px;top:' + (640 - 70 - 16) + 'px;width:96px;height:46px;pointer-events:none';
+    out.fieldMove = function (e) { var f = document.getElementById('gfield'); if (!f || !self.G) { return; } var r = f.getBoundingClientRect(), k = r.width / 390; self.G.bx = Math.max(48, Math.min(342, (e.clientX - r.left) / k)); if (e.preventDefault) { e.preventDefault(); } };
+    out.howTo = G.mode === 'clay' ? '솟아오르는 흙덩이를 톡!\n돌은 건드리지 마요' : '좌우로 끌어 광주리로 붉은 광석을 받아요\n회색 돌은 피하기 · 3번 맞으면 끝';
+    var cd = Math.max(0, Math.ceil((G.t0 - now) / 800));
+    out.countText = cd > 0 ? String(cd) : '시작!';
+    out.countStyle = "font-family:'Jua',sans-serif;font-size:72px;color:#FFD66B;text-shadow:0 4px 0 #7A2F1E;animation:gCount .8s ease-out infinite";
+    var R = G.R || {}, rw = [];
+    for (var k in R) { if (R[k] > 0) { rw.push({ img: D[k].img, name: D[k].name, n: R[k] }); } }
+    out.rewards = rw;
+    out.resTitle = G.life <= 0 ? '광주리가 부서졌다!' : (rw.length ? '채집 완료!' : '아쉽다…');
+    out.maxCombo = G.maxCombo;
+    out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
+    out.resHint = rw.length ? '보유 재료에 더했어요 · 성형·유약 화면에서 써요' : (G.mode === 'clay' ? '흙덩이를 더 모아야 재료가 돼요' : '광석 5개를 모으면 진사유 1개');
+    out.closeGame = function () { self.closeGame(); };
+    out.again = function () { var m0 = G.mode; self.closeGame(); setTimeout(function () { self.start(m0); }, 50); };
+    out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (T.tix > 0 ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
+    out.againText = T.tix > 0 ? '한 번 더 · 🎫1' : '채집권 없음';
+    return out;
+  }
+}
+</script>
+</body>
+</html>
