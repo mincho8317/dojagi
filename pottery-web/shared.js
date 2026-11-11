@@ -377,6 +377,22 @@
     function notify() { try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) {} }
     function patch(p) { var g = load(); for (var k in p) { g[k] = p[k]; } try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) {} notify(); }
     var L = this.qlib(), g0 = load(); window.__QL = L; // 검수·디버그용
+    // 스크립트로 만든 링크·버튼의 화면 이동: 캔버스(iframe)에서는 문서 자체를 이동시키지 않고
+    // 같은 주소를 가진 화면 마크업 링크(<a href>)를 대신 눌러 캔버스가 처리하게 한다
+    window.__potGo = function (href) {
+      var want = String(href || '').split('/').pop();
+      var cand = [].slice.call(document.querySelectorAll('a[href]')).filter(function (x) { return !x.hasAttribute('data-sb') && (x.getAttribute('href') || '').split('/').pop() === want; })[0];
+      if (cand) { cand.click(); return; }
+      var framed = false; try { framed = window.top !== window; } catch (e) { framed = true; }
+      if (!framed) { location.href = href; }
+    };
+    if (!window.__potGoBound) {
+      window.__potGoBound = true;
+      document.addEventListener('click', function (e) {
+        var x = e.target && e.target.closest ? e.target.closest('a[data-sb]') : null; if (!x) { return; }
+        e.preventDefault(); window.__potGo(x.getAttribute('href'));
+      }, true);
+    }
     // 1) 저장 데이터 이관 (스테이지 → 메인 의뢰)
     if (g0.pieces && !g0.mq) { var mg = L.migrate(g0); if (mg) { patch(mg); } }
     if (g0.pieces && !load().sq) { var msq = L.migrateSeason(load()); if (msq) { patch(msq); } } // 시즌 스테이지 → 시즌 의뢰
@@ -416,7 +432,7 @@
         patch({ dryUpSeen: true });
         var ov = document.createElement('div'); ov.className = 'up-ov';
         ov.setAttribute('style', 'position:fixed;inset:0;z-index:10001;background:rgba(26,15,8,.6);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif');
-        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·초벌」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
+        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·초벌」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-sb="1" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
         ov.addEventListener('click', function (e) { var x = e.target.getAttribute && e.target.getAttribute('data-x'); if (x === 'close' || e.target === ov) { ov.remove(); } if (x === 'go') { try { localStorage.setItem('resFocus', 'd11'); } catch (e2) {} } });
         document.body.appendChild(ov);
         try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
@@ -446,7 +462,7 @@
       '.trk-pill{all:unset;cursor:pointer;position:fixed;z-index:9990;transform-origin:100% 0;padding:7px 11px;border-radius:14px;background:rgba(255,250,240,.97);border:2.5px solid #5B3A24;font-family:Jua,sans-serif;font-size:13px;color:#5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3)}';
     document.head.appendChild(css);
     var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
-    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.textContent = '📋 제작 안내 의뢰 고르기';
+    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.textContent = '📋 제작 안내 의뢰 고르기';
     document.body.appendChild(box); document.body.appendChild(pill);
     var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
     var prev = {};
@@ -751,7 +767,7 @@
       }
       var L = apply(load());
       if (first && L[PAGE]) {
-        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { location.href = 'Main.dc.html'; } }]);
+        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
       }
     }
     document.addEventListener('click', function (e) {
