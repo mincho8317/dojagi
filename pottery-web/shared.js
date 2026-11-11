@@ -1,0 +1,899 @@
+// 도자기 프로토타입 공용 코드 · src/qlib.js, src/boots.js, src/tut.js, src/snd.js 에서 생성 (mkshared.py)
+(function () {
+  var S = window.PotteryShared = {};
+  // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
+  S.qlib = function () {
+    if (this._ql) { return this._ql; }
+    // ── 조정값 (밸런스 데이터) ─────────────────────────────
+    var TUNE = {
+      fitMin: 60,          // 메인 의뢰 기물 판정 · 모양/높이 일치 최소 %
+      itemGold: 600,       // 메인 의뢰 기물 1점당 골드 (기존 스테이지 ★1~3 보상 300G×3 중 일부)
+      itemShards: 10,      // 메인 의뢰 기물 1점당 파편
+      questFame: 15,       // 메인 의뢰 완료 시 명성 경험치
+      gradeBonus: { '수작': 0.25, '명작': 0.5, '요변': 0.5 }, // 납품 작품 등급별 골드 보너스 비율
+      // 작품 등급 = 공정별 실력 점수(0~100)의 가중 평균 · 무작위 없음
+      skillW: { form: 0.45, dry: 0.15, glaze: 0.2, fire: 0.2 },
+      skillPart: {
+        dry: { ok: 100, over: 70, early: 40 },
+        glaze: { ok: 100, thick: 70, thin: 60, drip: 30 },
+        fire: { '정합': 100, '근접': 65, '불일치': 25 }
+      },
+      gradeCut: { '명작': 90, '수작': 70 }, // 미만은 양작
+      gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
+      // 발색 % = 무작위 · 등급과 무관 · 평가액에만 반영
+      colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
+      colorThick: { ok: 5, thin: -5, thick: 0, drip: -10 },
+      colorValue: [0.75, 1.3], // 발색 0% → ×0.75 · 100% → ×1.3
+      yohen: { heat: 'high', minPct: 92, chance: 0.5, valueMul: 2 }, // 요변 = 발색 특수 결과(등급 아님)
+      // 가마 칸 온도 = 화도 기준 + 칸별 오프셋 · 중화도는 모든 유약의 적정 칸을 보장
+      kilnBase: { low: 1180, mid: 1240, high: 1300 },
+      kilnOff: [-50, -10, -60, -20, 0, -30, -70, -40, -80],
+      kilnExact: 20, kilnNear: 50
+    };
+    // 유약 기준 정보 · 적정 온도와 기준 발색
+    var GLZ = {
+      white: { n: '백자유', opt: 1230, col: '#F3F0E6' }, celadon: { n: '청자유', opt: 1200, col: '#7FA8A0' },
+      black: { n: '흑유', opt: 1170, col: '#3A3530' }, jinsa: { n: '진사유', opt: 1260, col: '#A8443A' },
+      sakura: { n: '벚꽃유', opt: 1220, col: '#E9A3B5' }, cheonmok: { n: '천목유', opt: 1170, col: '#4A2E1E' }
+    };
+    // ── 연구 스킬트리 (밸런스 데이터 · 비용과 수치는 자유롭게 조정) ──────────
+    // 행: [id, 행, 열, 이름, 선행[], 효과{}, 파편, 골드, 특수조건]
+    var FXM = {
+      snapTol: { t: '성형', l: '보정 허용 범위', b: 10, m: 100, u: '%' },
+      snapRate: { t: '성형', l: '보정 속도', b: 100, m: 100, u: '%' },
+      doneTol: { t: '성형', l: '구간 완료 오차', b: 3.5, m: 100, u: '%' },
+      fitBonus: { t: '성형', l: '성형 점수 보너스', b: 0, m: 1, u: '점' },
+      clayKeep: { t: '성형', l: '고급 흙 아끼기 확률', b: 0, m: 100, u: '%' },
+      dryRack: { t: '건조', l: '건조대 칸', b: 3, m: 1, u: '칸' },
+      dryCut: { t: '건조', l: '건조 시간', b: 30, m: -30, u: '분' },
+      fanZone: { t: '건조', l: '부채질 판정 폭', b: 22, m: 100, u: '%' },
+      fanGain: { t: '건조', l: '부채질 1회 건조량', b: 45, m: 45, u: '초' },
+      bqCut: { t: '초벌', l: '초벌 시간', b: 20, m: -20, u: '분' },
+      bqSafe: { t: '초벌', l: '반건조 초벌 파손', b: 12, m: -100, u: '%' },
+      glazeZone: { t: '유약', l: '적정 담금 폭(백자유)', b: 0.4, m: 0.002, u: '초' },
+      kilnTol: { t: '가마', l: '정합 허용 온도', b: 20, m: 1, u: '℃' },
+      kilnCut: { t: '가마', l: '재벌 시간(중화도)', b: 8, m: -8, u: '시간' },
+      breakCut: { t: '가마', l: '소성 기본 파손', b: 4, m: -100, u: '%' },
+      colorMin: { t: '발색', l: '정합 발색 하한', b: 70, m: 1, u: '%' },
+      yohen: { t: '발색', l: '요변 확률(고화도·발색 92%+)', b: 50, m: 100, u: '%' },
+      sell: { t: '판매', l: '작품 판매가', b: 100, m: 100, u: '%' },
+      questGold: { t: '의뢰', l: '메인 의뢰 골드', b: 100, m: 100, u: '%' },
+      shard: { t: '와장창', l: '파편 획득량', b: 100, m: 100, u: '%' },
+      fame: { t: '명성', l: '명성 경험치', b: 100, m: 100, u: '%' },
+      expand: { t: '공방', l: '공방 바닥 줄 수', b: 7, m: 2, u: '줄' }
+    };
+    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·초벌' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }];
+    var RROW = {
+      form: [
+        ['f00', 0, 1, '물레 감각', [], { snapTol: 0.01 }, 20, 0],
+        ['f10', 1, 0, '손끝 보정 I', ['f00'], { snapTol: 0.01 }, 30, 0], ['f11', 1, 1, '보정 속도 I', ['f00'], { snapRate: 0.15 }, 30, 0], ['f12', 1, 2, '형태 감각 I', ['f00'], { fitBonus: 2 }, 35, 0],
+        ['f20', 2, 0, '손끝 보정 II', ['f10'], { snapTol: 0.01 }, 50, 300], ['f21', 2, 1, '완료 판정 I', ['f11'], { doneTol: 0.005 }, 50, 300], ['f22', 2, 2, '형태 감각 II', ['f12'], { fitBonus: 2 }, 55, 300],
+        ['f30', 3, 0, '흙 절약 I', ['f20'], { clayKeep: 0.1 }, 70, 600], ['f31', 3, 1, '보정 속도 II', ['f20', 'f21'], { snapRate: 0.15 }, 70, 600], ['f32', 3, 2, '형태 감각 III', ['f22'], { fitBonus: 2 }, 75, 600],
+        ['f40', 4, 0, '손끝 보정 III', ['f30'], { snapTol: 0.015 }, 90, 1000], ['f41', 4, 1, '완료 판정 II', ['f31'], { doneTol: 0.005 }, 90, 1000], ['f42', 4, 2, '흙 절약 II', ['f32', 'f30'], { clayKeep: 0.1 }, 95, 1000],
+        ['f50', 5, 0, '보정 속도 III', ['f40'], { snapRate: 0.2 }, 120, 1600], ['f51', 5, 1, '형태 감각 IV', ['f41', 'f32'], { fitBonus: 3 }, 120, 1600], ['f52', 5, 2, '흙 절약 III', ['f42'], { clayKeep: 0.1 }, 130, 1600],
+        ['f60', 6, 0, '손끝 보정 IV', ['f50'], { snapTol: 0.015 }, 160, 2500], ['f61', 6, 1, '완료 판정 III', ['f51'], { doneTol: 0.01 }, 160, 2500], ['f62', 6, 2, '형태 감각 V', ['f52'], { fitBonus: 3 }, 170, 2500],
+        ['f70', 7, 0, '명장의 손 I', ['f60', 'f61'], { snapRate: 0.25, snapTol: 0.01 }, 220, 4000], ['f72', 7, 2, '명장의 손 II', ['f61', 'f62'], { fitBonus: 4, doneTol: 0.005 }, 220, 4000]
+      ],
+      dry: [
+        ['d00', 0, 1, '그늘 말리기', [], { dryCut: 0.05 }, 20, 0],
+        ['d10', 1, 0, '부채 손목 I', ['d00'], { fanZone: 0.02 }, 30, 0], ['d11', 1, 1, '건조대 증설 I', ['d00'], { dryRack: 3 }, 30, 3000, 'dryUp'], ['d12', 1, 2, '초벌 예열 I', ['d00'], { bqCut: 0.05 }, 30, 0],
+        ['d20', 2, 0, '큰 부채 I', ['d10'], { fanGain: 0.1 }, 45, 300], ['d21', 2, 1, '통풍 선반 I', ['d11'], { dryCut: 0.05 }, 50, 300], ['d22', 2, 2, '천천히 데우기 I', ['d12'], { bqSafe: 0.03 }, 50, 300],
+        ['d30', 3, 0, '부채 손목 II', ['d20'], { fanZone: 0.02 }, 65, 600], ['d31', 3, 1, '건조대 증설 II', ['d21', 'd20'], { dryRack: 3 }, 120, 12000], ['d32', 3, 2, '초벌 예열 II', ['d22'], { bqCut: 0.05 }, 65, 600],
+        ['d40', 4, 0, '큰 부채 II', ['d30'], { fanGain: 0.1 }, 85, 1000], ['d41', 4, 1, '통풍 선반 II', ['d31'], { dryCut: 0.05 }, 85, 1000], ['d42', 4, 2, '천천히 데우기 II', ['d32'], { bqSafe: 0.03 }, 85, 1000],
+        ['d50', 5, 0, '부채 손목 III', ['d40'], { fanZone: 0.03 }, 110, 1600], ['d51', 5, 1, '통풍 선반 III', ['d41', 'd40'], { dryCut: 0.05 }, 110, 1600], ['d52', 5, 2, '초벌 예열 III', ['d42'], { bqCut: 0.05 }, 110, 1600],
+        ['d60', 6, 0, '큰 부채 III', ['d50'], { fanGain: 0.15 }, 150, 2500], ['d61', 6, 1, '바람길 설계', ['d51'], { dryCut: 0.05, fanZone: 0.02 }, 150, 2500], ['d62', 6, 2, '천천히 데우기 III', ['d52'], { bqSafe: 0.03 }, 150, 2500],
+        ['d70', 7, 0, '부채 장인', ['d60', 'd61'], { fanGain: 0.15, fanZone: 0.02 }, 200, 4000], ['d72', 7, 2, '초벌 장인', ['d61', 'd62'], { bqCut: 0.1, bqSafe: 0.03 }, 200, 4000]
+      ],
+      fire: [
+        ['g00', 0, 1, '유약 감각', [], { glazeZone: 25 }, 20, 0],
+        ['g10', 1, 0, '온도 읽기 I', ['g00'], { kilnTol: 5 }, 35, 0], ['g11', 1, 1, '담금 손 I', ['g00'], { glazeZone: 25 }, 30, 0], ['g12', 1, 2, '발색 연구 I', ['g00'], { colorMin: 3 }, 35, 0],
+        ['g20', 2, 0, '가마 단열 I', ['g10'], { kilnCut: 0.05 }, 50, 400], ['g21', 2, 1, '가마 다지기 I', ['g11'], { breakCut: 0.01 }, 50, 400], ['g22', 2, 2, '발색 연구 II', ['g12'], { colorMin: 3 }, 55, 400],
+        ['g30', 3, 0, '온도 읽기 II', ['g20'], { kilnTol: 5 }, 70, 700], ['g31', 3, 1, '담금 손 II', ['g21', 'g20'], { glazeZone: 25 }, 70, 700], ['g32', 3, 2, '요변 연구 I', ['g22'], { yohen: 0.1 }, 80, 900],
+        ['g40', 4, 0, '가마 단열 II', ['g30'], { kilnCut: 0.05 }, 90, 1200], ['g41', 4, 1, '가마 다지기 II', ['g31'], { breakCut: 0.01 }, 90, 1200], ['g42', 4, 2, '발색 연구 III', ['g32'], { colorMin: 4 }, 95, 1200],
+        ['g50', 5, 0, '담금 손 III', ['g40'], { glazeZone: 25 }, 120, 1800], ['g51', 5, 1, '가마 단열 III', ['g41', 'g40'], { kilnCut: 0.1 }, 120, 1800], ['g52', 5, 2, '요변 연구 II', ['g42'], { yohen: 0.1 }, 130, 1800],
+        ['g60', 6, 0, '온도 읽기 III', ['g50'], { kilnTol: 5 }, 160, 2800], ['g61', 6, 1, '가마 다지기 III', ['g51'], { breakCut: 0.01 }, 160, 2800], ['g62', 6, 2, '발색 연구 IV', ['g52'], { colorMin: 5 }, 170, 2800],
+        ['g70', 7, 0, '불의 장인', ['g60', 'g61'], { kilnCut: 0.1, glazeZone: 25 }, 220, 4500], ['g72', 7, 2, '빛깔의 장인', ['g61', 'g62'], { colorMin: 5, yohen: 0.1 }, 220, 4500]
+      ],
+      shop: [
+        ['s00', 0, 1, '손님 응대', [], { sell: 0.03 }, 20, 0],
+        ['s10', 1, 0, '값 매기기 I', ['s00'], { sell: 0.03 }, 30, 0], ['s11', 1, 1, '이웃 인심 I', ['s00'], { questGold: 0.05 }, 30, 0], ['s12', 1, 2, '파편 줍기 I', ['s00'], { shard: 0.1 }, 30, 0],
+        ['s20', 2, 0, '입소문 I', ['s10'], { fame: 0.1 }, 45, 400], ['s21', 2, 1, '이웃 인심 II', ['s11'], { questGold: 0.05 }, 50, 400], ['s22', 2, 2, '파편 줍기 II', ['s12'], { shard: 0.1 }, 45, 400],
+        ['s30', 3, 0, '값 매기기 II', ['s20'], { sell: 0.04 }, 65, 800], ['s31', 3, 1, '공방 확장', ['s21', 's20'], { expand: 1 }, 150, 80000, 'fame3'], ['s32', 3, 2, '파편 줍기 III', ['s22'], { shard: 0.15 }, 65, 800],
+        ['s40', 4, 0, '입소문 II', ['s30'], { fame: 0.1 }, 85, 1200], ['s41', 4, 1, '이웃 인심 III', ['s31'], { questGold: 0.1 }, 90, 1500], ['s42', 4, 2, '값 매기기 III', ['s32', 's30'], { sell: 0.04 }, 90, 1500],
+        ['s50', 5, 0, '단골 장부', ['s40'], { sell: 0.05 }, 110, 2000], ['s51', 5, 1, '입소문 III', ['s41', 's40'], { fame: 0.15 }, 110, 2000], ['s52', 5, 2, '파편 줍기 IV', ['s42'], { shard: 0.15 }, 110, 2000],
+        ['s60', 6, 0, '값 매기기 IV', ['s50'], { sell: 0.05 }, 150, 3000], ['s61', 6, 1, '이웃 인심 IV', ['s51'], { questGold: 0.1 }, 150, 3000], ['s62', 6, 2, '입소문 IV', ['s52'], { fame: 0.15 }, 150, 3000],
+        ['s70', 7, 0, '공방 간판', ['s60', 's61'], { sell: 0.08, fame: 0.1 }, 220, 5000], ['s72', 7, 2, '마을의 공방', ['s61', 's62'], { questGold: 0.15, shard: 0.2 }, 220, 5000]
+      ]
+    };
+    var RNODE = {};
+    RCAT.forEach(function (c) { RROW[c.id].forEach(function (r) { RNODE[r[0]] = { id: r[0], cat: c.id, row: r[1], col: r[2], name: r[3], req: r[4], fx: r[5], shards: r[6], gold: r[7], cond: r[8] || '' }; }); });
+    var RCOND = {
+      dryUp: { t: '튜토리얼 후 도자기 6점 굽기', ok: function (g) { return !!g.dryUpReady; } },
+      fame3: { t: '명성 Lv 3', ok: function (g) { return (g.fameLv || 1) >= 3; } }
+    };
+    function fx(g) {
+      var o = {}, R = (g && g.res) || {};
+      for (var id in R) { var n = RNODE[id]; if (!R[id] || !n) { continue; } for (var k in n.fx) { o[k] = (o[k] || 0) + n.fx[k]; } }
+      return o;
+    }
+    function fxVal(key, v) { var M = FXM[key]; if (key === 'dryCut' || key === 'bqCut' || key === 'kilnCut') { return M.b * (1 - (v || 0)); } if (key === 'fanGain') { return M.b * (1 + (v || 0)); } return M.b + M.m * (v || 0); }
+    function fxFmt(key, v) { var x = fxVal(key, v), M = FXM[key]; var s = Math.abs(x - Math.round(x)) < 0.001 ? String(Math.round(x)) : (Math.abs(x * 10 - Math.round(x * 10)) < 0.001 ? x.toFixed(1) : x.toFixed(2)); return (key === 'expand' ? '7×' + s : s) + M.u; }
+    function resState(g, id) {
+      var n = RNODE[id], R = g.res || {};
+      if (!n) { return 'none'; }
+      if (R[id]) { return 'done'; }
+      if (!n.req.every(function (q) { return R[q]; })) { return 'locked'; }
+      if (n.cond && RCOND[n.cond] && !RCOND[n.cond].ok(g)) { return 'cond'; }
+      return 'ready';
+    }
+    function kMatch(temp, opt, g) { var d = Math.abs(temp - opt), ex = TUNE.kilnExact + (g ? (fx(g).kilnTol || 0) : 0); return d <= ex ? '정합' : (d <= Math.max(TUNE.kilnNear, ex + 10) ? '근접' : '불일치'); }
+    function kTemps(heat) { var b = TUNE.kilnBase[heat] || TUNE.kilnBase.mid; return TUNE.kilnOff.map(function (o) { return b + o; }); }
+    function skillOf(it, match) {
+      var P = TUNE.skillPart, W = TUNE.skillW;
+      var parts = {
+        form: typeof it.fit === 'number' ? it.fit : Math.min(100, (it.form || 3) * 20),
+        dry: P.dry[it.dry] != null ? P.dry[it.dry] : 70,
+        glaze: P.glaze[it.thick] != null ? P.glaze[it.thick] : 60,
+        fire: P.fire[match] != null ? P.fire[match] : 25
+      };
+      var sc = 0; for (var k in W) { sc += W[k] * parts[k]; }
+      sc = Math.round(sc);
+      var gr = sc >= TUNE.gradeCut['명작'] ? '명작' : (sc >= TUNE.gradeCut['수작'] ? '수작' : '양작');
+      return { score: sc, grade: gr, parts: parts };
+    }
+    function mixHex(a, b, t) { function h(x) { var n = parseInt(x.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; } var A = h(a), B = h(b); var c = A.map(function (v, i) { return Math.max(0, Math.min(255, Math.round(v + (B[i] - v) * t))); }); return '#' + ((1 << 24) + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).slice(1); }
+    function tintOf(glaze, pct, rnd) {
+      var base = (GLZ[glaze] || GLZ.white).col, lack = 1 - pct / 100;
+      var c = mixHex(base, '#B5AA98', lack * 0.6); // 탁도: 발색이 낮을수록 흐리고 탁하다
+      var br = ((rnd == null ? Math.random() : rnd) - 0.5) * 0.3 * (0.3 + lack); // 밝기 편차
+      return br >= 0 ? mixHex(c, '#FFFFFF', br) : mixHex(c, '#000000', -br);
+    }
+    function colorRoll(it, match, heat, g) {
+      var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0)), R0[1]];
+      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0));
+      pct = Math.max(5, Math.min(100, pct));
+      var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
+      if (yo) { pct = 100; }
+      return { pct: pct, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
+    }
+    function colorPctOf(p) { return typeof p.colorPct === 'number' ? p.colorPct : Math.min(100, (p.color || 1) * 20); }
+    // ── 등장인물 · 대사 (기획 예시 · 자유롭게 수정) ─────────────
+    var NPC = {
+      yoon: { name: '윤 할매', role: '골목 국밥집 주인', res: 'CHAR_WALK_D', tone: '#B9533A' },
+      cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CURATOR', tone: '#4E7D74' },
+      jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_WALK_F', tone: '#7A5A93' },
+      festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_WALK_B', tone: '#C2577A' },
+      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410' }
+    };
+    var STORY = [
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '국밥집 그릇이 모자라요', intro: ['할머님 공방이 다시 문을 열었다면서? 반가워라.', '우리 국밥집 그릇이 하나둘 깨져서 말이야. 종지랑 사발 좀 부탁해도 될까?'], done: ['그래, 이 손맛이야. 할머님 그릇이랑 꼭 닮았네.', '단골들한테 자랑 좀 해야겠다.'] },
+      { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['단골들이 그릇 바뀐 걸 알아보더라고.', '이번엔 단골상에 올릴 걸로 조금 넉넉하게 부탁해. 종지는 두 개!'], done: ['상이 환해졌어. 국물 맛까지 좋아진 것 같다니까.'] },
+      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 손님이 배로 와.', '큰 그릇이 더 있어야겠어. 이번엔 색도 좀 섞어 볼까?'], done: ['이걸로 대목은 걱정 없겠다. 고마워.'] },
+      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 새 메뉴를 만들자네.', '새 메뉴엔 새 그릇이 어울리지 않겠어?'], done: ['손주가 그릇 사진을 찍어 가더라. 요즘 애들은 참.'] },
+      { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['사실 할머님이랑 나랑 오랜 친구였어.', '할머님이 마지막으로 빚어 주신 접시를 닮은 걸 하나 갖고 싶어.'], done: ['…그래. 이 접시야. 고마워, 정말.', '이제 접시 모양은 네 손에 익었을 거야.'] },
+      { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], title: '찻자리 첫 잔', intro: ['윤 할매께 소개받았습니다. 다도를 가르치고 있지요.', '수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 학생들도 좋아할 겁니다.'] },
+      { id: 'm07', npc: 'cha', ch: 'tea', st: ['c4', 'c5', 'c6'], n: { c4: 2 }, title: '수업용 잔 세트', intro: ['수강생이 늘었습니다.', '같은 잔이 두 개 필요하고, 다른 잔도 몇 가지 보고 싶군요.'], done: ['잔이 가지런하니 찻자리가 정갈해졌습니다.'] },
+      { id: 'm08', npc: 'cha', ch: 'tea', st: ['c7', 'c8', 'c9'], title: '계절의 찻잔', intro: ['계절마다 잔을 바꾸는 게 제 작은 고집이지요.', '이번 계절에 어울리는 잔을 부탁합니다.'], done: ['계절이 잔 안에 들어온 것 같습니다.'] },
+      { id: 'm09', npc: 'cha', ch: 'tea', st: ['c10', 'c11', 'c12'], title: '손님맞이 찻자리', intro: ['먼 곳에서 귀한 손님이 오십니다.', '부끄럽지 않은 잔으로 준비하고 싶군요.'], done: ['손님께서 잔을 한참 들여다보셨습니다. 공방 이름을 물으시더군요.'] },
+      { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], unlockNote: '다완', title: '다완 한 점', intro: ['오래 찾던 그릇이 있습니다. 두 손에 감기는 찻사발, 다완이지요.', '이제 당신이라면 빚을 수 있을 것 같습니다.'], done: ['…훌륭합니다. 이 다완으로 첫 차를 우리겠습니다.'] },
+      { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], title: '꽃 한 송이를 위한 병', intro: ['차 선생님 찻자리에서 그 잔을 봤어요!', '꽃집 창가에 둘 화병을 부탁해도 될까요? 한 송이만 꽂는 가는 병이요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.'] },
+      { id: 'm12', npc: 'jeong', ch: 'vase', st: ['v4', 'v5', 'v6'], title: '전시회 소품', intro: ['작은 전시회를 열어요. 그림 옆에 병을 두고 싶어요.'], done: ['관람객들이 그림보다 병을 더 오래 봤다니까요!'] },
+      { id: 'm13', npc: 'jeong', ch: 'vase', st: ['v7', 'v8', 'v9'], title: '꽃꽂이 수업', intro: ['꽃꽂이 수업을 시작했어요. 수강생용 병이 필요해요.'], done: ['다들 자기 병이 제일 예쁘대요. 다 예뻐요!'] },
+      { id: 'm14', npc: 'jeong', ch: 'vase', st: ['v10', 'v11', 'v12'], title: '봄 화단의 병', intro: ['가게 앞에 작은 화단을 만들었어요. 거기 둘 병도요.'], done: ['지나가는 사람들이 사진을 찍어 가요.'] },
+      { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '매병', title: '그림 속 매병', intro: ['제 그림 속에 늘 그리던 병이 있어요. 어깨가 풍만한 매병이요.', '그림이 아니라 진짜로 보고 싶어요.'], done: ['그림보다 아름다워요. 이제 이 병을 그릴게요.'] },
+      { id: 'm16', npc: 'jang', ch: 'jar', st: ['j1', 'j2', 'j3'], title: '장독대가 비었구먼', intro: ['허허, 소문 듣고 왔네.', '장독대 항아리가 몇 개 깨졌어. 장 담글 철이 오는데 말이야.'], done: ['튼튼하구먼. 장맛이 기대되네.'] },
+      { id: 'm17', npc: 'jang', ch: 'jar', st: ['j4', 'j5', 'j6'], title: '꿀단지와 젓갈단지', intro: ['손녀가 꿀을 좋아해서 말이야. 작은 단지도 필요하네.'], done: ['손녀가 단지가 귀엽다고 좋아하더군.'] },
+      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '큰 독을 들이자', intro: ['올해는 장을 넉넉히 담그려 하네. 큰 독이 필요해.'], done: ['이만하면 동네 사람들 장도 나눠 줄 수 있겠어.'] },
+      { id: 'm19', npc: 'jang', ch: 'jar', st: ['j10', 'j11', 'j12'], title: '동네 장 나눔', intro: ['장을 동네에 나누기로 했네. 담아 줄 항아리가 더 있어야겠어.'], done: ['다들 고맙다고 인사하러 오더군. 자네 덕이야.'] },
+      { id: 'm20', npc: 'jang', ch: 'jar', st: ['j13', 'j14', 'j15'], unlockNote: '달항아리', title: '보름달 항아리', intro: ['자네 할머님이 늘 말씀하셨지. 언젠가 달항아리를 빚겠다고.', '그 꿈, 자네가 대신 이뤄 주겠나?'], done: ['…보름달이구먼. 할머님도 기뻐하실 거야.', '이제 이 공방은 온전히 자네 거야.'] }
+    ];
+    var CHLV = { table: 1, tea: 1, vase: 3, jar: 4 };
+    var GP = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' };
+    var GNM = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
+    var CLN = { basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
+    // ── 기존 스테이지 데이터 (Contest.genStages와 동일 규칙 · 시즌 제외) ──
+    function stages() {
+      var P = {
+        dish: { n: '종지', H: 60, p: [40, 45, 50, 55, 59, 63, 66, 69, 72, 74, 76, 78] }, sabal: { n: '사발', H: 85, p: [36, 44, 52, 59, 65, 70, 74, 78, 81, 84, 86, 88] },
+        daejeop: { n: '대접', H: 70, p: [40, 50, 60, 68, 74, 78, 82, 85, 87, 89, 90, 91] }, plate: { n: '접시', H: 40, p: [50, 60, 68, 75, 80, 84, 87, 89, 91, 92, 93, 94] },
+        jan: { n: '잔', H: 110, p: [34, 33, 32, 33, 35, 37, 39, 41, 43, 44, 45, 46] }, chatjan: { n: '찻잔', H: 125, p: [32, 34, 36, 38, 39, 40, 41, 42, 42, 43, 43, 44] },
+        tongjan: { n: '통잔', H: 95, p: [38, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 43] }, dawan: { n: '다완', H: 90, p: [34, 40, 47, 53, 58, 62, 65, 67, 68, 69, 69, 68] },
+        hwabyeong: { n: '화병', H: 150, p: [28, 36, 44, 48, 48, 44, 36, 26, 18, 16, 18, 22] }, byeong: { n: '병', H: 140, p: [30, 40, 46, 48, 46, 40, 30, 20, 15, 14, 14, 16] },
+        maebyeong: { n: '매병', H: 160, p: [30, 38, 46, 52, 55, 55, 52, 46, 38, 28, 20, 22] }, hangari: { n: '항아리', H: 140, p: [36, 50, 60, 66, 68, 68, 64, 58, 50, 44, 40, 40] },
+        jangdok: { n: '장독', H: 170, p: [36, 50, 62, 70, 74, 74, 70, 62, 52, 42, 36, 36] }, danji: { n: '단지', H: 110, p: [34, 46, 56, 62, 64, 62, 58, 52, 46, 42, 40, 40] },
+        moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32] },
+        lotuscup: { n: '연꽃잔', H: 60, p: [26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70] }
+      };
+      var GL = ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'jinsa', 'black', 'white', 'celadon', 'jinsa', 'black', 'white'];
+      var SZ = [{ k: 1, n: '' }, { k: 1.12, n: '큰 ' }, { k: 0.9, n: '작은 ' }];
+      var C = [
+        { id: 'table', pre: 't', n: 15, pool: ['dish', 'sabal', 'daejeop'], un: 'plate', cl: ['basic', 'refined', 'kaolin'] },
+        { id: 'tea', pre: 'c', n: 15, pool: ['jan', 'chatjan', 'tongjan'], un: 'dawan', cl: ['basic', 'refined', 'porcelain'] },
+        { id: 'vase', pre: 'v', n: 15, pool: ['hwabyeong', 'byeong'], un: 'maebyeong', cl: ['refined', 'kaolin', 'porcelain'] },
+        { id: 'jar', pre: 'j', n: 15, pool: ['hangari', 'jangdok', 'danji'], un: 'moonjar', cl: ['refined', 'kaolin', 'porcelain'] },
+        { id: 'season', pre: 's', n: 10, pool: ['jan', 'dish', 'sabal'], un: 'lotuscup', cl: ['refined', 'kaolin'] }
+      ];
+      var WS = { lotuscup: 'dish', dish: 'dish', plate: 'dish', sabal: 'bowl', daejeop: 'bowl', dawan: 'bowl', jan: 'cup', chatjan: 'cup', tongjan: 'cup', hwabyeong: 'jar', byeong: 'jar', maebyeong: 'jar', hangari: 'jar', jangdok: 'jar', danji: 'jar', moonjar: 'jar' };
+      var out = {};
+      C.forEach(function (c) {
+        for (var i = 0; i < c.n; i++) {
+          var last = i === c.n - 1, key = last ? c.un : c.pool[i % c.pool.length];
+          var b = P[key], sz = last ? SZ[0] : SZ[Math.floor(i / c.pool.length) % 3], gz = GL[i % GL.length];
+          out[c.pre + (i + 1)] = { id: c.pre + (i + 1), ch: c.id, name: GP[gz] + ' ' + sz.n + b.n, shapeN: sz.n + b.n, prof: b.p.map(function (v) { return Math.round(v * sz.k * 10) / 10; }), H: Math.round(b.H * sz.k), glaze: gz, clay: last ? c.cl[c.cl.length - 1] : c.cl[Math.min(c.cl.length - 1, Math.floor(i / 5))], wshape: WS[key] || 'bowl', newShape: last ? c.un : '' };
+        }
+      });
+      return out;
+    }
+    var ST = stages();
+    // ── 시즌 의뢰 (기존 시즌 스테이지 s1~s10 이관 · 인물·대사는 기획 예시) ──
+    var SEASON_UNTIL = new Date('2026-11-17T23:59:59+09:00').getTime();
+    var SSTORY = [
+      { id: 'e01', npc: 'festa', ch: 'season', st: ['s1', 's2', 's3'], title: '봄 다회 첫 상차림', intro: ['봄 다회 준비위원 하람이에요! 올해 다회 그릇을 공방에 맡기고 싶어서요.', '잔이랑 종지, 사발부터 하나씩 부탁드려요.'], done: ['와, 다회 분위기가 벌써 나요!', '축제 동안 다른 부탁도 드릴게요.'] },
+      { id: 'e02', npc: 'festa', ch: 'season', st: ['s4', 's5', 's6'], title: '손님맞이 큰 그릇', intro: ['다회 손님이 생각보다 많대요.', '조금 큰 그릇으로 한 벌 더 부탁해요.'], done: ['이 정도면 손님이 몰려와도 걱정 없겠어요.'] },
+      { id: 'e03', npc: 'festa', ch: 'season', st: ['s7', 's8', 's9'], title: '꽃잎 다과상', intro: ['다과상에 올릴 작은 그릇이 필요해요.', '빛깔이 고운 걸로요!'], done: ['꽃잎이 그릇 위에서 더 예뻐 보여요.'] },
+      { id: 'e04', npc: 'festa', ch: 'season', st: ['s10'], unlockNote: '연꽃잔', title: '봄 다회의 연꽃잔', intro: ['마지막 부탁이에요. 다회의 상징, 연꽃잔!', '낮고 활짝 핀 꽃처럼 빚어 주세요.'], done: ['다회의 주인공이 생겼네요. 정말 고마워요!', '연꽃잔 모양은 이제 공방 틀에 남을 거예요.'] }
+    ];
+    function buildLine(story, kind, lvOf) {
+      return story.map(function (q, qi) {
+        var items = q.st.map(function (sid) { var s0 = ST[sid]; return { key: sid, name: s0.name, shapeN: s0.shapeN, wshape: s0.wshape, glaze: s0.glaze, prof: s0.prof, H: s0.H, clay: s0.clay, n: (q.n && q.n[sid]) || 1, newShape: s0.newShape }; });
+        var unlock = ''; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; } });
+        var cnt = items.reduce(function (a, it) { return a + it.n; }, 0);
+        return { id: q.id, idx: qi, kind: kind, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, items: items, unlock: unlock, unlockNote: q.unlockNote || '', reward: { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
+      });
+    }
+    var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
+    var SEASON = buildLine(SSTORY, 'season', function () { return 2; });
+    function profileOf(it) {
+      if (it && it.prof && it.prof.length >= 3) { return { r: it.prof, H: it.H || 110 }; }
+      var T = { dish: [70, function (u) { return 40 + 50 * Math.sqrt(u); }], cup: [130, function (u) { return 34 + 14 * u; }], bowl: [95, function (u) { return 38 + 62 * Math.pow(u, 0.6); }], jar: [140, function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); }] };
+      var tt = T[it && it.shape] || T.cup, r = []; for (var i = 0; i < 12; i++) { r.push(tt[1](i / 11)); }
+      return { r: r, H: tt[0] };
+    }
+    function shapeScore(p, req) {
+      if (!req.prof) { return { s: 100, h: 100 }; }
+      var a = profileOf(p), n = req.prof.length, sum = 0, tot = 0;
+      for (var i = 0; i < n; i++) { var u = i / (n - 1) * (a.r.length - 1), lo = Math.floor(u), hi = Math.min(a.r.length - 1, lo + 1), v = a.r[lo] + (a.r[hi] - a.r[lo]) * (u - lo); sum += Math.abs(v - req.prof[i]); tot += req.prof[i]; }
+      return { s: Math.max(0, 100 - sum / tot * 100 * 2.2), h: Math.max(0, 100 - Math.abs(a.H - req.H) / req.H * 100 * 1.6) };
+    }
+    function glazeOk(pg, rg) { return !rg || pg === rg || (rg === 'black' && pg === 'cheonmok'); }
+    function fits(p, req) {
+      if (!p || p.broken) { return false; }
+      if (req.wshape && p.shape !== req.wshape) { return false; }
+      if (!glazeOk(p.glaze, req.glaze)) { return false; }
+      var sc = shapeScore(p, req);
+      return sc.s >= TUNE.fitMin && sc.h >= TUNE.fitMin;
+    }
+    function reqLabel(it) { return it.name || ((it.glaze ? GP[it.glaze] + ' ' : '') + (SN[it.wshape] || '그릇')); }
+    function sideQuests(g) {
+      var q = g.quests || {}, out = [];
+      if (q.min && !q.minDone) { out.push({ id: 'min', kind: 'side', tag: '사연', who: '민 씨', role: '찻집 주인', res: 'CHAR_MIN', title: '할머님 잔을 닮은 찻잔', items: [{ key: 'a', name: '청자 찻잔', wshape: 'cup', glaze: 'celadon', n: 1 }], reward: { text: '400G × 등급 · 명성 +20' }, at: q.minAt }); }
+      if (q.guest && !q.guestDone) { out.push({ id: 'guest', kind: 'side', tag: '일간', who: '이름 없는 손님', role: '동네 주민', res: 'CHAR_GUEST', title: '둥근 밥공기', items: [{ key: 'a', name: '사발 (유약 무관)', wshape: 'bowl', glaze: '', n: 1 }], reward: { text: '350G' }, at: q.guestAt }); }
+      if (q.week && !q.weekDone) { out.push({ id: 'week', kind: 'side', tag: '주간', who: '카페 사장', role: '골목 카페', res: 'CHAR_CAFE', title: '카페 잔 세트', items: [{ key: 'a', name: '백자 찻잔', wshape: 'cup', glaze: 'white', n: 3 }], reward: { text: '3,600G · 파편 20' }, at: q.weekAt }); }
+      (g.tasteOrders || []).forEach(function (o) { out.push({ id: o.id, kind: 'order', tag: '주문', who: o.name, role: '취향 손님', res: o.res, title: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇') + ' 주문', items: [{ key: 'a', name: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇') + (o.want.glaze ? '' : ' (유약 무관)'), wshape: o.want.shape, glaze: o.want.glaze || '', n: 1 }], reward: { text: '시세 ×1.4 · 명성 +5' }, at: o.at }); });
+      return out;
+    }
+    function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
+    function lineState(g, line) {
+      if (line === 'season') { var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen(), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
+    }
+    function mainState(g) {
+      var m = g.mq || {}, i = m.i || 0, def = MAIN[i] || null;
+      return { i: i, def: def, acc: !!m.acc && !!def, dl: m.dl || {}, mig: m.mig || {}, allDone: i >= MAIN.length, lvOk: def ? (g.fameLv || 1) >= def.needLv : false, thanks: !!m.thanks };
+    }
+    function active(g) {
+      var ms = mainState(g), out = [];
+      if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
+      var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
+      return out.concat(sideQuests(g));
+    }
+    var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
+    function wipItems(g) {
+      var out = [];
+      WIPK.forEach(function (k) { (g[k] || []).forEach(function (it) { out.push({ it: it, at: k }); }); });
+      ((g.bisque || {}).items || []).forEach(function (it) { out.push({ it: it, at: 'bisque' }); });
+      var kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c] && typeof kf[c] === 'object') { out.push({ it: kf[c], at: 'kiln' }); } }
+      if (g.kiln === 'firing') { (g.batchItems || []).forEach(function (it) { if (!it.broken) { out.push({ it: it, at: 'firing' }); } }); }
+      return out;
+    }
+    // 진행 중 의뢰 전체를 한 번에 배정 · 작품 하나는 한 요구 수량에만 집계된다
+    function alloc(g, list) {
+      list = list || active(g);
+      var used = {}, ps = g.pieces || {}, order = (g.order || []).slice(), wips = wipItems(g), res = {};
+      for (var k in ps) { if (order.indexOf(k) < 0) { order.push(k); } }
+      list.forEach(function (q) {
+        var rq = res[q.id] = { items: [], ready: 0, need: 0, done: true, deliverable: 0 };
+        q.items.forEach(function (it) {
+          var dl = (q.dl && q.dl[it.key]) || 0, left = Math.max(0, it.n - dl), got = [];
+          order.forEach(function (id) {
+            var p = ps[id]; if (got.length >= left || used[id] || !p || (p.where !== 'store' && p.where !== 'shelf')) { return; }
+            if (fits(p, it)) { got.push(id); used[id] = true; }
+          });
+          var tag = q.mid ? 'q:' + q.mid + ':' + it.key : 'q:' + q.id + ':' + it.key;
+          var wip = 0, wipAt = {};
+          wips.forEach(function (w) { if (w.it && (w.it.goalSid === tag || (!q.mid && !w.it.goalSid && w.it.shape === it.wshape && (!w.it.glaze || glazeOk(w.it.glaze, it.glaze))))) { wip++; wipAt[w.at] = (wipAt[w.at] || 0) + 1; } });
+          var row = { key: it.key, it: it, n: it.n, dl: dl, ready: got, readyN: got.length, wip: Math.max(0, Math.min(wip, left - got.length)), wipAt: wipAt, tag: tag, done: dl >= it.n, ok: dl + got.length >= it.n };
+          rq.items.push(row); rq.need += it.n; rq.ready += dl + got.length; rq.deliverable += got.length; if (!row.done) { rq.done = false; }
+        });
+      });
+      return res;
+    }
+    function stepCond(it, page) {
+      var c = [];
+      if (page === 'Wheel') { c.push('모양 · ' + (it.shapeN || SN[it.wshape] || '')); if (it.H) { c.push('높이 ' + it.H + 'mm 안팎'); } c.push('점선에 ' + TUNE.fitMin + '% 이상'); }
+      else if (page === 'Glaze') { c.push(it.glaze ? '유약 · ' + GNM[it.glaze] : '유약 무관'); }
+      else if (page === 'Kiln' || page === 'KilnOpen') { c.push(it.glaze ? '적정 온도 칸에 넣기' : '아무 칸이나 괜찮음'); }
+      else if (page === 'Dry') { c.push('완전 건조 후 빼기'); }
+      else if (page === 'Bisque') { c.push('초벌 후 유약대로'); }
+      else { c.push(it.glaze ? GNM[it.glaze] : '유약 무관'); }
+      return c;
+    }
+    // 기존 저장 데이터 이관: 스테이지 별 기록(★1 이상) → 메인 의뢰 납품 처리 (이미 받은 보상은 다시 주지 않음)
+    function migrate(g) {
+      if (g.mq) { return null; }
+      var stars = ((g.contest || {}).stars) || {}, i = 0, dl = {}, mig = {};
+      while (i < MAIN.length && MAIN[i].items.every(function (it) { return stars[it.key] > 0; })) { i++; }
+      var cur = MAIN[i];
+      if (cur) { cur.items.forEach(function (it) { if (stars[it.key] > 0) { dl[it.key] = it.n; mig[it.key] = true; } }); }
+      var sf = {}; for (var k in (g.shapesFound || {})) { sf[k] = g.shapesFound[k]; }
+      for (var j = 0; j < i; j++) { if (MAIN[j].unlock) { sf[MAIN[j].unlock] = true; } }
+      var patch = { mq: { i: i, acc: Object.keys(dl).length > 0, dl: dl, mig: mig, log: [] }, shapesFound: sf };
+      if (g.goal && g.goal.sid && !/^s\d/.test(g.goal.sid)) { patch.goal = null; patch.goalQ = []; }
+      return patch;
+    }
+    // 시즌 스테이지 별 기록 → 시즌 의뢰 납품 처리
+    function migrateSeason(g) {
+      if (g.sq) { return null; }
+      var stars = ((g.contest || {}).stars) || {}, i = 0, dl = {}, mig = {};
+      while (i < SEASON.length && SEASON[i].items.every(function (it) { return stars[it.key] > 0; })) { i++; }
+      var cur = SEASON[i];
+      if (cur) { cur.items.forEach(function (it) { if (stars[it.key] > 0) { dl[it.key] = it.n; mig[it.key] = true; } }); }
+      var sf = {}, ch = false; for (var k in (g.shapesFound || {})) { sf[k] = g.shapesFound[k]; }
+      for (var j = 0; j < i; j++) { if (SEASON[j].unlock && !sf[SEASON[j].unlock]) { sf[SEASON[j].unlock] = true; ch = true; } }
+      var p = { sq: { i: i, acc: Object.keys(dl).length > 0, dl: dl, mig: mig, log: [] } }; if (ch) { p.shapesFound = sf; }
+      return p;
+    }
+    function payout(def, ms, grades, g) {
+      var cnt = 0, bonus = 0, G = g; if (!G) { try { G = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { G = {}; } }
+      var F = fx(G), gm = 1 + (F.questGold || 0);
+      def.items.forEach(function (it) { if (!(ms.mig || {})[it.key]) { cnt += it.n; } });
+      var base = cnt * TUNE.itemGold;
+      (grades || []).forEach(function (gr) { bonus += Math.round(TUNE.itemGold * (TUNE.gradeBonus[gr] || 0)); });
+      return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, shards: cnt * TUNE.itemShards, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
+    }
+    this._ql = { migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    return this._ql;
+  };
+  // </qlib>
+  // <boots> 공용 부트 · scratchpad/src/boots.js 에서 주입
+  S.navBoot = function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__navBooted) { return; }
+    window.__navBooted = true;
+    var KEY = 'pottery-proto-v1', self = this;
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    var CRAFT = { Wheel: 1, Dry: 1, Bisque: 1, Glaze: 1, Kiln: 1, KilnOpen: 1 };
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function notify() { try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) {} }
+    function patch(p) { var g = load(); for (var k in p) { g[k] = p[k]; } try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) {} notify(); }
+    var L = this.qlib(), g0 = load(); window.__QL = L; // 검수·디버그용
+    // 1) 저장 데이터 이관 (스테이지 → 메인 의뢰)
+    if (g0.pieces && !g0.mq) { var mg = L.migrate(g0); if (mg) { patch(mg); } }
+    if (g0.pieces && !load().sq) { var msq = L.migrateSeason(load()); if (msq) { patch(msq); } } // 시즌 스테이지 → 시즌 의뢰
+    // 1-2) 연구 구조 이관: 옛 연구(파편 지불분) 환급 · 기존 9칸 건조대 유지
+    if (g0.pieces && g0.resV !== 2) {
+      var g1 = load(), OLD = { tech: [40, 50, 80, 110, 160], glaze: [40, 60, 120, 150, 220], shop: [30, 50, 90, 140, 200] }, refund = 0, old = g1.research || {};
+      for (var ok in old) { var mm = /^(tech|glaze|shop)(\d)$/.exec(ok); if (old[ok] && mm) { refund += (OLD[mm[1]] || [])[+mm[2]] || 0; } }
+      var res = {}; for (var rk in (g1.res || {})) { res[rk] = g1.res[rk]; }
+      var legacy = (g1.firings || 0) > 0 || Object.keys(g1.pieces || {}).length > 6;
+      if (legacy) { res.d11 = true; res.d31 = true; }
+      patch({ resV: 2, res: res, shards: (g1.shards || 0) + refund, resRefund: refund, firedTotal: g1.firedTotal || 0 });
+    }
+    // 2) 마지막 제작 공정 기억 + 하단 「제작」 버튼을 마지막 공정으로
+    if (CRAFT[PAGE]) { try { localStorage.setItem('lastCraft', PAGE === 'KilnOpen' ? 'Kiln' : PAGE); } catch (e) {} }
+    function craftHref() {
+      var lc = 'Wheel'; try { lc = localStorage.getItem('lastCraft') || 'Wheel'; } catch (e) {}
+      var g = load(); if (lc === 'Kiln' && g.kiln === 'firing') { lc = 'KilnOpen'; }
+      return lc + '.dc.html';
+    }
+    function fixNav() {
+      [].slice.call(document.querySelectorAll('nav[aria-label="주 메뉴"] a')).forEach(function (a) {
+        var h = a.getAttribute('href') || '';
+        if (/^(Wheel|Dry|Bisque|Glaze|Kiln|KilnOpen)\.dc\.html$/.test(h) && a.getAttribute('data-craft') !== '0') { var want = craftHref(); if (h !== want) { a.setAttribute('href', want); } a.setAttribute('aria-label', '제작 · 마지막 공정으로'); }
+      });
+    }
+    fixNav(); setInterval(fixNav, 800);
+    document.addEventListener('pointerdown', function (e) { var a = e.target && e.target.closest && e.target.closest('nav[aria-label="주 메뉴"] a'); if (a) { fixNav(); } }, true);
+    // 3) 첫 건조대 업그레이드 해금 알림 (튜토리얼 이후 6점 소성)
+    function upCheck() {
+      var g = load(); if (typeof g.tut !== 'number' || g.tut < 9 || !g.pieces) { return; }
+      var fired = g.firedTotal || 0;
+      if (g.firedAtTut === undefined) { patch({ firedAtTut: fired }); return; }
+      var need = (g.resTune && g.resTune.dryUnlockFired) || 6;
+      if (!g.dryUpReady && fired - g.firedAtTut >= need) { patch({ dryUpReady: true }); g = load(); }
+      if (g.dryUpReady && !g.dryUpSeen && !(g.res || {}).d11) {
+        if (PAGE === 'KilnOpen' || document.querySelector('.tut-ov') || document.querySelector('.up-ov') || document.querySelector('.jade-ov')) { return; }
+        patch({ dryUpSeen: true });
+        var ov = document.createElement('div'); ov.className = 'up-ov';
+        ov.setAttribute('style', 'position:fixed;inset:0;z-index:10001;background:rgba(26,15,8,.6);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif');
+        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·초벌」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
+        ov.addEventListener('click', function (e) { var x = e.target.getAttribute && e.target.getAttribute('data-x'); if (x === 'close' || e.target === ov) { ov.remove(); } if (x === 'go') { try { localStorage.setItem('resFocus', 'd11'); } catch (e2) {} } });
+        document.body.appendChild(ov);
+        try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
+      }
+    }
+    setTimeout(upCheck, 1500); setInterval(upCheck, 3000);
+  };
+  S.trackBoot = function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__trackBooted) { return; }
+    window.__trackBooted = true;
+    var KEY = 'pottery-proto-v1', L = this.qlib();
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    var POS = { Wheel: 196, Dry: 66, Bisque: 66, Glaze: 104, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 1, Dry: 0, Glaze: 1, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 조작 영역이 넓은 화면은 접힌 채 시작
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function gameRect() { var cands = [].slice.call(document.querySelectorAll('div')).filter(function (d) { var w = d.offsetWidth; return (w === 390) && d.offsetHeight >= 780; }); var el = cands[0]; if (!el) { return { l: 0, t: 0, k: 1, w: window.innerWidth }; } var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, k: r.width / 390, w: r.width }; }
+    var css = document.createElement('style');
+    css.textContent = '.trk{position:fixed;z-index:9990;transform-origin:100% 0;box-sizing:border-box;width:168px;border-radius:13px;background:rgba(255,250,240,.96);border:2.5px solid #5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3);font-family:"Noto Sans KR",sans-serif;color:#2B1A0F;overflow:hidden}' +
+      '.trk-h{all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;width:100%;min-height:32px;padding:4px 7px;background:#5B3A24;color:#FFE7A8;font-family:Jua,sans-serif;font-size:12.5px}' +
+      '.trk-h .t{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trk-h .c{flex:0 0 auto;font-size:11.5px;padding:1px 6px;border-radius:8px;background:#FFE7A8;color:#3E2616}.trk-h .c.ok{background:#8FD07E;color:#173F12}' +
+      '.trk-b{padding:4px 5px 5px;display:flex;flex-direction:column;gap:3px}.trk-r{display:flex;gap:5px;align-items:center;min-height:24px;padding:2px 5px;border-radius:8px;background:#F6EBD6}.trk-r.ok{background:#E3F2DC}.trk-r.done{background:#ECE9E3;color:#6B6B6B}.trk-r.cur{outline:2px solid #C8601E;outline-offset:-2px}' +
+      '.trk-r .i{flex:0 0 18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#FFF;background:#B9A68A}.trk-r.ok .i{background:#3F8A35}.trk-r.done .i{background:#8A8A8A}.trk-r.wip .i{background:#C8901E}' +
+      '.trk-r .n{flex:1 1 auto;min-width:0;font-family:Jua,sans-serif;font-size:13px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trk-r .p{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B3A24}.trk-r.ok .p{color:#2F6328}' +
+      '.trk-c{margin-top:2px;padding:4px 6px;border-radius:8px;background:#2E6B5F;color:#FFFDF5;font-size:11.5px;font-weight:700;line-height:1.35}.trk-c b{font-family:Jua,sans-serif;font-weight:400;font-size:12.5px;color:#FFE7A8}' +
+      '.trk-r.pulse{animation:trkP .9s ease-out}@keyframes trkP{0%{box-shadow:0 0 0 0 rgba(63,138,53,.9);transform:scale(1.06)}100%{box-shadow:0 0 0 10px rgba(63,138,53,0);transform:scale(1)}}' +
+      '.trk.mini{width:auto}.trk.mini .trk-h{padding:4px 9px;min-height:30px}.trk.mini .t{display:none}' +
+      '.trk-pill{all:unset;cursor:pointer;position:fixed;z-index:9990;transform-origin:100% 0;padding:7px 11px;border-radius:14px;background:rgba(255,250,240,.97);border:2.5px solid #5B3A24;font-family:Jua,sans-serif;font-size:13px;color:#5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3)}';
+    document.head.appendChild(css);
+    var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
+    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.textContent = '📋 제작 안내 의뢰 고르기';
+    document.body.appendChild(box); document.body.appendChild(pill);
+    var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
+    var prev = {};
+    box.addEventListener('click', function (e) { var h = e.target.closest && e.target.closest('.trk-h'); if (h) { open = !open; try { localStorage.setItem('trkOpen_' + PAGE, open ? '1' : '0'); } catch (e2) {} render(); } });
+    function place(el) { var R = gameRect(); el.style.top = (R.t + POS[PAGE] * R.k).toFixed(1) + 'px'; el.style.right = Math.max(0, window.innerWidth - (R.l + R.w) + 8 * R.k).toFixed(1) + 'px'; el.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
+    function render() {
+      var g = load();
+      var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
+      var list = L.active(g);
+      var tid = g.track; var q = list.filter(function (x) { return x.id === tid; })[0] || list[0];
+      if (!q) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내 의뢰 고르기' : '📋 진행 중인 의뢰 없음'; return; }
+      pill.style.display = 'none'; box.style.display = hide ? 'none' : 'block'; box.className = 'trk' + (open ? '' : ' mini'); place(box);
+      var A = L.alloc(g)[q.id], left = 0, html = '', curTag = window.__wheelTarget || '', curRow = null;
+      A.items.forEach(function (r) {
+        var isCur = PAGE === 'Wheel' && curTag === r.tag;
+        if (isCur || (!curRow && !r.ok)) { curRow = r; }
+        var cls = r.done ? 'done' : (r.ok ? 'ok' : (r.wip ? 'wip' : '')); if (!r.done) { left++; }
+        var k = q.id + ':' + r.key, was = prev[k], now = r.dl + r.readyN;
+        var pulse = was !== undefined && now > was; prev[k] = now;
+        if (pulse) { try { window.__sfx && window.__sfx('reveal'); } catch (e) {} }
+        var need = r.n - r.dl;
+        var st = r.done ? '납품✓' : (r.ok ? '완성 ' + Math.min(need, r.readyN) + '/' + need : (r.wip ? '제작 중 ' + r.wip + (r.readyN ? '·완성 ' + r.readyN : '') : (r.readyN ? '완성 ' + r.readyN + '/' + need : '0/' + need)));
+        html += '<div class="trk-r ' + cls + (isCur ? ' cur' : '') + (pulse ? ' pulse' : '') + '"><span class="i">' + (r.done || r.ok ? '✓' : (r.wip ? '…' : '')) + '</span><span class="n">' + esc(r.it.name) + (r.n > 1 ? ' ×' + r.n : '') + '</span><span class="p">' + st + '</span></div>';
+      });
+      var allOk = A.items.every(function (r) { return r.ok; });
+      var condLine = '';
+      if (curRow && !allOk) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
+      if (allOk) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품하자</div>'; }
+      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><span class="t">' + esc(q.title) + '</span><span class="c' + (allOk ? ' ok' : '') + '">' + (allOk ? (open ? '납품 가능' : '✓ 납품') : '완성 ' + A.items.filter(function (r) { return r.ok; }).length + '/' + A.items.length) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
+        (open ? '<div class="trk-b">' + html + condLine + '</div>' : '');
+    }
+    render(); setInterval(render, 1000); window.addEventListener('storage', render); window.addEventListener('resize', render);
+  };
+  // </boots>
+  S.tutBoot = function (PAGE_ARG) {
+    var PAGE = PAGE_ARG;
+    if (typeof window === 'undefined' || typeof document === 'undefined') { return; }
+    if (window.__tutBooted) { return; }
+    window.__tutBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var NAMES = { Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop'], ['Contest'], ['Research', 'Codex', 'Season', 'Town']];
+    var STEPS = [
+      { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
+      { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
+      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 초록 칸에 맞춰 부채질하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
+      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
+      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
+      { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' },
+      { goal: '명작 진열하고 망작 와장창', hint: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요 · 명작은 진열대에 올리고, 망작은 💥 와장창으로 깨 보세요', next: 'Display' },
+      { goal: '첫 메인 의뢰 받기', hint: '카운터에 윤 할매가 찾아왔어요 · 이야기를 듣고 의뢰를 맡으면 의뢰 내역서와 제작 체크리스트에 요구 기물이 표시돼요', next: 'Counter' }
+    ];
+    function raw() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function prog() { try { var v = localStorage.getItem('tutProg'); return v === null ? null : +v; } catch (e) { return null; } }
+    function load() { var g = raw(), p = prog(); if (typeof g.tut === 'number' && p !== null && p > g.tut) { g.tut = p; } return g; }
+    function save(g) { try { localStorage.setItem(KEY, JSON.stringify(g)); if (typeof g.tut === 'number') { localStorage.setItem('tutProg', String(g.tut)); } if (g.tutV === 2) { localStorage.setItem('tutMig', '2'); } } catch (e) {} }
+    function notify() { try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) { try { var ev = document.createEvent('Event'); ev.initEvent('storage', false, false); ev.key = KEY; window.dispatchEvent(ev); } catch (e2) {} } }
+    function len(a) { return (a && a.length) || 0; }
+    function cnt(o) { var n = 0; for (var k in (o || {})) { if (o[k]) { n++; } } return n; }
+    function pieceN(g, w) { var n = 0, ps = g.pieces || {}; for (var k in ps) { if (ps[k] && (!w || w.indexOf(ps[k].where) >= 0)) { n++; } } return n; }
+    function lv(g) {
+      var made = pieceN(g) > 0;
+      var kilnIn = len(g.kilnList) || cnt(g.kilnFilled) || g.kiln === 'firing' || made;
+      var glazed = len(g.glazeList) || kilnIn;
+      var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
+      var formed = len(g.formedList) || len(g.dryList) || bisq;
+      var gfx = giftIn(g), shN = pieceN(g, ['shelf']); var shown = g.tutGift ? ((shN >= 6 || gfx.shelf >= 6) && !gfx.badLive) : pieceN(g, ['shelf', 'museum']) > 0;
+      var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
+      var star = !!(g.mq && (g.mq.acc || (g.mq.i || 0) > 0));
+      return [took, formed, bisq, glazed, kilnIn, made, gave, shown, star];
+    }
+    function locked(g) {
+      var t = g.tut, L = {};
+      if (typeof t !== 'number' || t >= UNL.length) { return L; }
+      for (var i = t; i < UNL.length; i++) { UNL[i].forEach(function (p) { L[p] = true; }); }
+      return L;
+    }
+    function pageOf(href) { var m = /([A-Za-z]+)\.dc\.html/.exec(href || ''); return m ? m[1] : ''; }
+    var css = document.createElement('style');
+    var sel = Object.keys(NAMES).map(function (p) { return 'html[data-tl~="' + p + '"] a[href*="' + p + '.dc.html"]'; });
+    css.textContent = sel.join(',') + '{filter:grayscale(1) brightness(.8)!important;opacity:.45!important}' +
+      Object.keys(NAMES).concat(['Wheel']).map(function (p) { return 'html[data-tn="' + p + '"] a[href="' + p + '.dc.html"]'; }).join(',') + '{animation:tutPulse 1.2s ease-in-out infinite!important;border-radius:14px}' +
+      '@keyframes tutPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,214,107,.9),0 0 10px 2px rgba(255,214,107,.7)}50%{box-shadow:0 0 0 5px rgba(255,214,107,.5),0 0 24px 8px rgba(255,214,107,.9)}}' +
+      '@keyframes tutIn{0%{transform:translate(-50%,-14px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}@keyframes tutPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}' +
+      '.tut-mini{position:fixed;transform-origin:0 0;z-index:9997;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:2px;width:32px;padding:6px 0 5px;border-radius:0 12px 12px 0;background:rgba(43,26,15,.92);border:2px solid #FFD66B;border-left:0;box-shadow:0 3px 8px rgba(0,0,0,.35);color:#FFE7A8;font-family:Jua,sans-serif;font-size:15px;cursor:pointer;line-height:1}.tut-mini b{font-weight:400;font-size:10.5px}' + '.tut-card{position:fixed;left:50%;top:38%;z-index:9998;width:min(320px,86vw);box-sizing:border-box;padding:9px 12px;border-radius:16px;background:rgba(43,26,15,.94);border:3px solid #FFD66B;box-shadow:0 6px 16px rgba(0,0,0,.4);color:#FFF4DE;font-family:Jua,sans-serif;pointer-events:none;animation:tutIn .35s ease-out both;transition:opacity .4s}' +
+      '.tut-card b{display:block;font-weight:400;font-size:15px;color:#FFE7A8}.tut-card span{display:block;font-family:"Noto Sans KR",sans-serif;font-size:11.5px;line-height:1.45;color:#F3E3C4;margin-top:2px}' +
+      '.tut-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.66);display:flex;align-items:center;justify-content:center}' +
+      '.tut-box{width:min(320px,86vw);box-sizing:border-box;padding:22px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 0 rgba(43,26,15,.45);text-align:center;color:#2B1A0F;font-family:"Noto Sans KR",sans-serif;animation:tutPop .45s both}' +
+      '.tut-box h3{margin:6px 0 6px;font-family:Jua,sans-serif;font-weight:400;font-size:22px}.tut-box p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#5B3A24;white-space:pre-line}' +
+      '.tut-box .ic{font-size:44px;line-height:1}.tut-box .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 14px}.tut-box .chips i{font-style:normal;padding:4px 10px;border-radius:12px;background:#FFE7A8;border:2px solid #B8923F;font-family:Jua,sans-serif;font-size:14px;color:#5B3A24}' +
+      '.tut-btn{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;padding:12px 0;margin-top:8px;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;text-align:center}' +
+      '.tut-btn.go{background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5}.tut-btn.sub{background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434;font-size:15px}' +
+      '.tut-toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:9999;width:min(320px,86vw);box-sizing:border-box;padding:11px 14px;border-radius:16px;background:rgba(43,26,15,.95);border:3px solid #FFE7A8;font-family:Jua,sans-serif;font-size:14px;line-height:1.45;color:#FFF4DE;text-align:center;pointer-events:none}';
+    document.head.appendChild(css);
+    var cardEl = null, cardT = 0, toastT = 0;
+    function toast(msg) {
+      var el = document.querySelector('.tut-toast');
+      if (!el) { el = document.createElement('div'); el.className = 'tut-toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+      el.textContent = msg; el.style.display = 'block';
+      clearTimeout(toastT); toastT = setTimeout(function () { el.style.display = 'none'; }, 2200);
+    }
+    function overlay(html, btns) {
+      var ov = document.createElement('div'); ov.className = 'tut-ov';
+      var box = document.createElement('div'); box.className = 'tut-box'; box.setAttribute('role', 'dialog'); box.innerHTML = html;
+      btns.forEach(function (b) { var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'tut-btn ' + (b.cls || 'go'); bt.textContent = b.label; bt.addEventListener('click', function () { ov.remove(); if (b.run) { b.run(); } }); box.appendChild(bt); });
+      ov.appendChild(box); document.body.appendChild(ov); return ov;
+    }
+    var spotEl = null, spotT = 0, spotFind = null;
+    function spotOff() { clearInterval(spotT); spotT = 0; if (spotEl) { spotEl.remove(); spotEl = null; } }
+    function vis(el) { if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 12 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) { return null; } var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.3) { return null; } return r; }
+    function spotlight(find, msg) {
+      spotOff(); spotFind = find;
+      var el0 = find(); if (!el0 || !vis(el0)) { return false; }
+      spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
+      spotEl.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none';
+      spotEl.innerHTML = '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center"></div>';
+      spotEl.querySelector('.bub').textContent = msg;
+      document.body.appendChild(spotEl);
+      function place() {
+        var el = spotFind && spotFind(), r = vis(el); if (!r || !spotEl) { spotOff(); return; }
+        var h = spotEl.querySelector('.hole'), b = spotEl.querySelector('.bub'), pad = 6;
+        h.style.left = (r.left - pad) + 'px'; h.style.top = (r.top - pad) + 'px'; h.style.width = (r.width + pad * 2) + 'px'; h.style.height = (r.height + pad * 2) + 'px';
+        var bw = Math.min(250, window.innerWidth - 20), bl = Math.max(10, Math.min(window.innerWidth - bw - 10, r.left + r.width / 2 - bw / 2));
+        b.style.width = bw + 'px'; b.style.left = bl + 'px';
+        if (r.top > window.innerHeight * 0.45) { b.style.top = 'auto'; b.style.bottom = (window.innerHeight - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
+      }
+      place(); spotT = setInterval(place, 250);
+      setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
+      return true;
+    }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
+    function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
+    function nextOf(g) {
+      var t = g.tut; if (t !== 8 || true) { return STEPS[t].next; }
+      var gl = g.goal; if (!gl || !gl.sid) { return 'Contest'; }
+      var m = function (it) { return it && it.goalSid === gl.sid; }, kf = g.kilnFilled || {}, inK = false; for (var c in kf) { if (m(kf[c])) { inK = true; } }
+      if (g.kiln === 'firing' || inK || (g.kilnList || []).some(m)) { return 'Kiln'; }
+      if ((g.glazeList || []).some(m)) { return 'Glaze'; }
+      if ((g.bisqueList || []).some(m) || ((g.bisque || {}).items || []).some(m)) { return 'Bisque'; }
+      if ((g.dryList || []).some(m) || (g.formedList || []).some(m)) { return 'Dry'; }
+      return goalReady(g) && PAGE !== 'Wheel' ? 'Contest' : 'Wheel';
+    }
+    function guideNext(g) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      var nx = nextOf(g); if (nx === PAGE) { return; }
+      var key = 'tutSpot_' + t + '_' + PAGE + (t === 8 ? '_' + nx : ''); try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+    }
+    function guideJade(g) {
+      var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 3: ['Bisque', '바로 완료', 'bq'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
+      if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
+      var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
+      var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (L[2] === 'bq' ? ((g.bisque || {}).state === 'firing' && (g.bisque.start || 0) + 1200000 > nowJ + 3000) : g.kiln === 'firing');
+      if (!busy) {
+        if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
+        return;
+      }
+      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요 · 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요';
+      if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
+    }
+    function showCard(g, force) {
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } return false; }
+      var st = STEPS[t];
+      var mini = document.querySelector('.tut-mini');
+      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
+      mini.innerHTML = '🎯<b>' + (t + 1) + '/' + STEPS.length + '</b>';
+      placeMini();
+      var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
+      if (!force && seen === t) { return false; }
+      if (document.querySelector('.tut-ov')) { return false; }
+      try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
+      overlay('<div class="ic">🎯</div><h3>목표 ' + (t + 1) + '/' + STEPS.length + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      return true;
+    }
+    function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
+    function placeMini() { var mm = document.querySelector('.tut-mini'); if (!mm) { return; } var R = gameRect(); mm.style.left = R.l.toFixed(1) + 'px'; mm.style.top = (R.t + 290 * R.k).toFixed(1) + 'px'; mm.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
+    setInterval(placeMini, 400); window.addEventListener('resize', placeMini);
+    function apply(g) {
+      var L = locked(g), keys = Object.keys(L);
+      document.documentElement.setAttribute('data-tl', keys.join(' '));
+      var t = g.tut;
+      document.documentElement.setAttribute('data-tn', typeof t === 'number' && t < STEPS.length ? nextOf(g) : '');
+      return L;
+    }
+    function freshStart(keep) {
+      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
+      save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tutWh_/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
+    }
+    var actLast = {};
+    function qsel(q) { return function () { return [].slice.call(document.querySelectorAll(q)).filter(function (x) { return vis(x); })[0] || null; }; }
+    function act(key, cond, find, msg) {
+      if (!cond) { return false; }
+      if (spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return true; }
+      var now = Date.now(); if (actLast[key] && now - actLast[key] < 9000) { return true; }
+      if (spotlight(find, msg)) { actLast[key] = now; return true; }
+      return false;
+    }
+    function anyWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
+    function giftIn(g) { var P0 = g.pieces || {}, n = { store: 0, shelf: 0, badLive: false }; ['tg1', 'tg2', 'tg3', 'tg4', 'tg5', 'tg6'].forEach(function (k) { var p = P0[k]; if (p) { if (p.where === 'store') { n.store++; } else if (p.where === 'shelf') { n.shelf++; } } }); var b = P0.tg7; n.badLive = !!(b && (b.where === 'store' || b.where === 'shelf')); return n; }
+    function guideAct(g) {
+      var t = g.tut, now = Date.now();
+      if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      if (PAGE === 'Wheel' && t === 1 && !(g.formedList || []).length && !(g.dryList || []).length) {
+        var W = function (k) { try { return localStorage.getItem('tutWh_' + k); } catch (e) { return null; } }, Wset = function (k) { try { localStorage.setItem('tutWh_' + k, '1'); } catch (e) {} };
+        var clayDlg = qsel('[role=dialog][aria-label="흙 고르기"]')(), tgtDlg = qsel('[role=dialog][aria-label="목표 모양 고르기"]')();
+        if (clayDlg) { Wset('clayOpen'); act('whClayPick', true, qsel('button[aria-label^="기본 흙"]'), '흙마다 품질과 최소 두께가 달라요 · 지금은 기본 흙으로 충분해요 · 고르거나 닫아요'); return; }
+        if (tgtDlg) { Wset('tgtOpen'); act('whTgtPick', true, qsel('button[aria-label^="찻잔"]'), '「의뢰」 배지가 붙은 찻잔이 민 씨가 원한 모양이에요 · 골라요'); return; }
+        if (!W('clayOpen')) { act('whClay', true, qsel('button[aria-label^="흙 바꾸기"]'), '먼저 흙을 골라요 · 눌러서 흙 종류를 확인해요'); return; }
+        if (!W('tgtOpen')) { act('whTgt', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '이번엔 만들 모양을 골라요'); return; }
+        var tbW = qsel('button[aria-label^="목표 모양 바꾸기"]')();
+        if (tbW && (tbW.getAttribute('aria-label') || '').indexOf('찻잔') < 0) { act('whTgt2', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '의뢰는 찻잔이에요 · 모양을 찻잔으로 바꿔요'); return; }
+        var mtW = /일치율\s*(\d+)%/.exec(document.body.innerText || ''), pctW = mtW ? +mtW[1] : 0;
+        if (pctW >= 60) { act('whDone', true, btnWith('완성'), '잘 빚었어요! 완성을 눌러요'); }
+        else if (!W('work')) { if (act('whWork', true, qsel('[data-work]'), '흙을 좌우로 밀어 모양을, 위아래로 쓸어 두께를 맞춰요 · 점선에 가까울수록 일치율이 올라가요')) { Wset('work'); } }
+        return;
+      }
+      if (PAGE === 'Dry' && (t === 2 || t === 8)) {
+        act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');
+        if (t === 8) {
+          var drying = (g.dryList || []).some(function (x) { return x && now - x.start < 1800000; });
+          if (btnWith('점 올리기')()) { act('dryIn', true, btnWith('점 올리기'), '골랐으면 올려요'); }
+          else if (btnWith('성형 완료')()) { act('drySel', true, btnWith('성형 완료'), '올릴 그릇을 골라요'); }
+          else if (drying) { act('dryJade', true, qsel('button[aria-label^="부채질"]'), '커서가 초록 칸에 올 때 부채질하면 빨리 말라요 · 💎옥으로 바로 말릴 수도 있어요'); }
+          else if ((g.formedList || []).length) { act('dryPut', true, qsel('button[aria-label="빈 칸 · 기물 올리기"]'), '빚은 그릇을 건조대에 올려요'); }
+        }
+      }
+      if (PAGE === 'Bisque' && (t === 3 || t === 8)) {
+        var bq = g.bisque || {};
+        if (bq.state === 'firing') { if ((bq.start || 0) + 1200000 <= now) { act('bqOut', true, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); } else if (t === 8) { act('bqJade', true, btnWith('바로 완료'), '풀무질로 시간을 줄이거나 💎옥으로 바로 완료해요'); } }
+        else if (btnWith('점 넣기')()) { act('bqIn', true, btnWith('점 넣기'), '골랐으면 가마에 넣어요'); }
+        else if (btnWith('완전 건조')()) { act('bqSel', true, btnWith('완전 건조'), '구울 기물을 골라요'); }
+        else if (btnWith('초벌 굽기')()) { act('bqFire', true, btnWith('초벌 굽기'), '이제 불을 지펴 초벌을 구워요'); }
+        else { act('bqPick', (g.bisqueList || []).length > 0, qsel('button[aria-label="초벌 가마에 넣을 기물 고르기"]'), '가마를 눌러 구울 기물을 넣어요'); }
+      }
+      if (PAGE === 'Glaze' && t === 4 && (g.glazeList || []).length) {
+        var gzBtn = qsel('button[aria-label^="유약 고르기 · 지금"]')();
+        if (qsel('button[aria-label="청자유"]')()) { act('gzCel', true, qsel('button[aria-label="청자유"]'), '「📋 의뢰」 태그가 붙은 유약이 의뢰 조건이에요 · 민 씨가 원한 청자유를 골라요'); }
+        else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
+        else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 게이지가 초록 칸일 때 위로 올려 꺼내요'); }
+      }
+      if (PAGE === 'Kiln' && (t === 5 || t === 8)) {
+        var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
+        if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } else if (t === 8) { act('knJade', true, btnWith('바로 완료'), '💎옥으로 바로 완료할 수 있어요'); } }
+        else if (btnWith('적정')()) { act('knSel', true, btnWith('적정'), '넣을 그릇을 골라요'); }
+        else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')() || qsel('button[aria-label="작품 넣기"]')(); }, (function () { var w0 = (g.kilnList || [])[0] || {}, O = { white: 1230, celadon: 1200, black: 1170, jinsa: 1260, sakura: 1220 }[w0.glaze] || 1230; return '이 그릇의 적정 온도는 ' + (O - 20) + '~' + (O + 20) + '℃ · 초록으로 빛나는 「✓ 맞음」 칸에 넣어요'; })()); }
+        else if (filled) { act('knFire', true, btnWith('불 지피기'), '다 넣었으면 불을 지펴요'); }
+      }
+      if (PAGE === 'Glaze' && t === 8 && (g.glazeList || []).length) { act('gzDip8', true, qsel('[aria-label^="도자기를 아래로"]'), '의뢰 유약이 자동으로 골라져 있어요 · 끌어내려 담갔다가 초록 칸에서 꺼내요'); }
+      if (PAGE === 'Contest' && t === 8) {
+        var subB = anyWith('출품할 작품 고르기')(), mk = anyWith('작품 제작하기')();
+        if (anyWith('이 작품으로 출품하기')()) { act('ctGo', true, anyWith('이 작품으로 출품하기'), '출품해서 별을 받아요!'); }
+        else if (anyWith('조건 충족 작품을 골라')()) { act('ctRow', true, qsel('button[aria-label$="· 조건 충족"]'), '조건을 충족한 작품을 골라요'); }
+        else if (subB && (subB.textContent || '').indexOf('조건 충족') >= 0) { act('ctSubmit', true, anyWith('출품할 작품 고르기'), '조건에 맞는 작품이 있어요! 눌러서 출품해요'); }
+        else if (mk) { act(goalReady(g) ? 'ctRetry' : 'ctMake', true, anyWith('작품 제작하기'), goalReady(g) ? '완성품 모양이 목표와 조금 달라요 · 점선 모양에 맞춰 다시 빚어 봐요' : '눌러서 이 스테이지 작품을 만들러 가요 · 모양·흙·유약이 자동으로 골라져요'); }
+        else { act('ctNode' + (g.goal && g.goal.sid ? 'G' : ''), true, qsel('button[aria-label^="' + ((g.goal && g.goal.num) || 1) + ' 스테이지"]'), g.goal && g.goal.sid ? (goalReady(g) ? '완성한 작품으로 도전해요 · 스테이지를 눌러요' : '도전 중인 스테이지예요') : '스테이지 1을 눌러 목표를 확인해요'); }
+      }
+      if (PAGE === 'Counter' && t === 6) {
+        act('ctGive', !!btnWith('건네기')(), btnWith('건네기'), '청자 찻잔을 민 씨에게 건네요');
+      }
+      if (PAGE === 'Display' && t === 7 && g.tutGift) {
+        var gi = giftIn(g), shelfN = 0, P1 = g.pieces || {}; for (var k in P1) { if (P1[k] && P1[k].where === 'shelf') { shelfN++; } }
+        var dlgPick = qsel('[role=dialog][aria-label="진열대에 올릴 작품"]')(), dlgSmash = [].slice.call(document.querySelectorAll('[role=status]')).filter(function (x) { return (x.textContent || '').indexOf('와장창할 작품') >= 0 && vis(x); })[0];
+        if (dlgPick && gi.store && shelfN < 6) { act('dsPick' + shelfN, true, function () { var d = qsel('[role=dialog][aria-label="진열대에 올릴 작품"]')(); return d ? ([].slice.call(d.querySelectorAll('button')).filter(function (b) { var tx = b.textContent || ''; return tx.indexOf('평가액') >= 0 && tx.indexOf('명작') >= 0 && vis(b); })[0] || null) : null; }, '선물받은 명작을 골라 진열해요'); }
+        else if (dlgSmash && gi.badLive && btnWith('와장창 1점')()) { act('smGo', true, btnWith('와장창 1점'), '눌러서 와장창!'); }
+        else if (dlgSmash && gi.badLive) { act('smPick', true, function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf('망작') >= 0 && (b.textContent || '').indexOf('평가액') < 0 && vis(b); })[0] || null; }, '망작을 골라요'); }
+        else if (gi.store && shelfN < 6) { act('dsPut' + shelfN, true, qsel('button[aria-label="빈 칸 · 보관 중인 작품 올리기"]'), '빈 칸을 눌러 명작을 진열해요 (' + shelfN + '/6)'); }
+        else if (gi.badLive) { act('dsSmash', true, btnWith('와장창'), '망작은 💥 와장창으로 깨서 파편을 얻어요'); }
+      }
+    }
+    function tutGift(g) {
+      if (g.tut !== 7 || g.tutGift) { return false; }
+      var ps = {}; for (var k in (g.pieces || {})) { ps[k] = g.pieces[k]; }
+      var order = (g.order || []).slice();
+      var G = [
+        ['tg1', '백자 달항아리', 'moonjar', 'white', '명작', 24000], ['tg2', '청자 매병', 'maebyeong', 'celadon', '명작', 22000], ['tg3', '천목 다완', 'dawan', 'cheonmok', '명작', 18000],
+        ['tg4', '진사 화병', 'vase', 'jinsa', '명작', 16000], ['tg5', '청자 연꽃잔', 'lotuscup', 'celadon', '명작', 14000], ['tg6', '흑유 병', 'bottle', 'black', '명작', 15000],
+        ['tg7', '망작 · 일그러진 사발', 'bowl', 'white', '범작', 300]
+      ];
+      var PRF = { tg1: [[34,52,64,72,76,76,72,64,52,40,32,33], 150], tg2: [[30,32,35,39,44,50,57,62,60,48,24,22], 160], tg3: [[30,42,52,60,66,71,75,78,80,82,83,84], 80], tg4: [[32,40,46,48,46,40,32,26,24,26,32,38], 150], tg5: [[24,26,30,36,44,52,58,62,66,70,74,78], 90], tg6: [[30,40,50,56,58,54,42,28,20,18,20,26], 160], tg7: [[40,58,46,70,62,84,72,98,80,96,88,100], 90] };
+      G.forEach(function (a) { ps[a[0]] = { prof: PRF[a[0]][0], H: PRF[a[0]][1], name: a[1], grade: a[4], shape: a[2], glaze: a[3], where: 'store', fresh: true, value: a[5], form: a[4] === '명작' ? 5 : 1, color: a[4] === '명작' ? 5 : 1, clay: 'basic', gift: true }; if (order.indexOf(a[0]) < 0) { order.push(a[0]); } });
+      g.pieces = ps; g.order = order; g.tutGift = true; return true;
+    }
+    function check(first) {
+      if (document.querySelector('.sm-ov')) { return; }
+      var g = load(), t = g.tut, rw = raw();
+      if (tutGift(g)) { save(g); notify(); }
+      if (typeof t === 'number' && rw.tut !== t) { rw.tut = t; save(rw); notify(); }
+      if (typeof t === 'number' && t < STEPS.length) {
+        var done = lv(g), nt = t, opened = [];
+        while (nt < STEPS.length && done[nt]) { opened = opened.concat(UNL[nt]); nt++; }
+        if (nt !== t) {
+          g.tut = nt; save(g);
+          try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
+          var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
+          var fin = nt >= STEPS.length;
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          notify();
+        }
+      }
+      var L = apply(load());
+      if (first && L[PAGE]) {
+        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { location.href = 'Main.dc.html'; } }]);
+      }
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a) { return; }
+      var p = pageOf(a.getAttribute('href')), g = load(), L = locked(g);
+      if (p && L[p]) {
+        e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
+        var need = 0; for (var i = 0; i < UNL.length; i++) { if (UNL[i].indexOf(p) >= 0) { need = i; break; } }
+        toast('🔒 ' + (NAMES[p] || p) + ' · 「' + STEPS[need].goal + '」를 마치면 열려요');
+      }
+    }, true);
+    window.addEventListener('storage', function () { apply(load()); });
+    var g0 = load();
+    var mig = null; try { mig = localStorage.getItem('tutMig'); } catch (e) {}
+    if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
+    if (PAGE === 'Main' && g0.tut === undefined) {
+      overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
+        { label: '튜토리얼 시작', run: function () { freshStart(load()); apply(load()); notify(); setTimeout(function () { showCard(load(), true); }, 500); } },
+        { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
+      ]);
+    } else {
+      check(true);
+      var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
+      if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
+    }
+    setInterval(function () { check(false); guideJade(load()); guideAct(load()); var gN = load(); if (gN.tut === 8) { apply(gN); if (!spotEl && !document.querySelector('.tut-ov')) { guideNext(gN); } } }, 1000);
+  };
+  S.sndBoot = function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
+    window.__sndBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function vol(k) { var s = load().settings || {}, v = s[k]; return (typeof v === 'number' ? v : (k === 'bgm' ? 70 : 80)) / 100; }
+    var ac = null, mB = null, mS = null, rev = null, noiseBuf = null, bgmOn = false, amb = null, clayG = null, clayLvl = 0, motorG = null;
+    function mkNoise() { var n = ac.sampleRate * 2, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (var i = 0; i < n; i++) { d[i] = Math.random() * 2 - 1; } return b; }
+    function mkRev() { var n = Math.floor(ac.sampleRate * 2.2), b = ac.createBuffer(2, n, ac.sampleRate); for (var c = 0; c < 2; c++) { var d = b.getChannelData(c); for (var i = 0; i < n; i++) { d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3); } } var cv = ac.createConvolver(); cv.buffer = b; var g = ac.createGain(); g.gain.value = 0.32; cv.connect(g); g.connect(mB); return cv; }
+    function upd() { if (!ac) { return; } var b = vol('bgm'), s = vol('sfx'); mB.gain.setTargetAtTime(0.55 * b * b, ac.currentTime, 0.1); mS.gain.setTargetAtTime(0.8 * s * s, ac.currentTime, 0.05); }
+    function init() {
+      if (ac) { if (ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } return; }
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) { return; }
+      try { ac = new C(); } catch (e) { ac = null; return; }
+      var comp = ac.createDynamicsCompressor(); comp.connect(ac.destination);
+      mB = ac.createGain(); mS = ac.createGain(); mB.connect(comp); mS.connect(comp);
+      noiseBuf = mkNoise(); rev = mkRev(); upd();
+      startBgm(); startAmb();
+    }
+    function env(g, t, a, peak, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
+    function tone(type, f, t, a, peak, dec, out, f2) { var o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) { o.frequency.exponentialRampToValueAtTime(f2, t + a + dec); } env(g, t, a, peak, dec); o.connect(g); g.connect(out || mS); o.start(t); o.stop(t + a + dec + 0.05); return o; }
+    function noise(t, dur, type, f, q, peak, out, f2) { var s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; fl.type = type; fl.frequency.setValueAtTime(f, t); if (f2) { fl.frequency.exponentialRampToValueAtTime(f2, t + dur); } fl.Q.value = q; env(g, t, 0.005, peak, dur); s.connect(fl); fl.connect(g); g.connect(out || mS); s.start(t, Math.random() * 1.5); s.stop(t + dur + 0.05); }
+    function mf(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+    // 가야금 느낌의 뜯는 소리 (배경음)
+    function pluck(m, t, v) {
+      var f = mf(m), o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), lp = ac.createBiquadFilter();
+      o.type = 'triangle'; o2.type = 'sine';
+      o.frequency.setValueAtTime(f * 1.012, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.06);
+      o2.frequency.setValueAtTime(f * 2, t);
+      var lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 5.2; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(f * 0.008, t + 0.5); lfo.connect(lg); lg.connect(o.frequency);
+      lp.type = 'lowpass'; lp.frequency.setValueAtTime(f * 6, t); lp.frequency.exponentialRampToValueAtTime(f * 1.5, t + 1.2);
+      env(g, t, 0.006, 0.16 * v, 2.2);
+      var g2 = ac.createGain(); g2.gain.value = 0.25; o2.connect(g2); g2.connect(lp);
+      o.connect(lp); lp.connect(g); g.connect(mB); g.connect(rev);
+      [o, o2, lfo].forEach(function (x) { x.start(t); x.stop(t + 2.4); });
+    }
+    function startBgm() {
+      if (bgmOn) { return; } bgmOn = true;
+      var SC = [50, 52, 55, 57, 59, 62, 64, 67, 69, 71, 74];
+      var dr = [ac.createOscillator(), ac.createOscillator()], dg = ac.createGain(), dl = ac.createOscillator(), dlg = ac.createGain();
+      dr[0].frequency.value = mf(43); dr[1].frequency.value = mf(50); dr[0].type = dr[1].type = 'sine';
+      dg.gain.value = 0.035; dl.frequency.value = 0.07; dlg.gain.value = 0.018; dl.connect(dlg); dlg.connect(dg.gain);
+      dr.forEach(function (o) { o.connect(dg); o.start(); }); dl.start(); dg.connect(mB);
+      var idx = 5, next = ac.currentTime + 0.4, beat = 0.62, bar = 0;
+      setInterval(function () {
+        if (!ac || ac.state !== 'running') { return; }
+        while (next < ac.currentTime + 0.6) {
+          bar++;
+          if (Math.random() < 0.22) { next += beat * (Math.random() < 0.5 ? 1 : 2); continue; }
+          var step = [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)];
+          idx = Math.max(1, Math.min(SC.length - 2, idx + step));
+          if (idx > 8 && Math.random() < 0.5) { idx -= 2; }
+          pluck(SC[idx], next, 0.75 + Math.random() * 0.3);
+          if (bar % 8 === 0) { pluck(SC[Math.max(0, idx - 4)] - 12, next, 0.5); }
+          if (Math.random() < 0.12) { pluck(SC[idx + 1], next + beat * 0.25, 0.45); }
+          next += beat * [1, 1, 1, 1.5, 2, 0.5][Math.floor(Math.random() * 6)];
+        }
+      }, 200);
+    }
+    // 장면별 배경 효과 (가마 불 소리, 물레 모터)
+    function firing() { var g = load(); if (PAGE === 'Bisque') { return (g.bisque || {}).state === 'firing'; } if (PAGE === 'Kiln' || PAGE === 'KilnOpen') { return g.kiln === 'firing'; } return false; }
+    function startAmb() {
+      if (PAGE === 'Bisque' || PAGE === 'Kiln' || PAGE === 'KilnOpen') {
+        var s = ac.createBufferSource(), fl = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; s.loop = true; fl.type = 'lowpass'; fl.frequency.value = 380; g.gain.value = 0; s.connect(fl); fl.connect(g); g.connect(mS); s.start(); amb = g;
+        setInterval(function () {
+          if (!ac || ac.state !== 'running') { return; }
+          var on = firing(); amb.gain.setTargetAtTime(on ? 0.05 : 0, ac.currentTime, 0.4);
+          if (on) { var t = ac.currentTime; for (var i = 0; i < 3; i++) { if (Math.random() < 0.55) { noise(t + Math.random() * 0.35, 0.02 + Math.random() * 0.03, 'bandpass', 1500 + Math.random() * 2500, 2, 0.05 + Math.random() * 0.08); } } }
+        }, 400);
+      }
+      if (PAGE === 'Wheel') {
+        var o = ac.createOscillator(), lp = ac.createBiquadFilter(); motorG = ac.createGain(); o.type = 'sawtooth'; o.frequency.value = 52; lp.type = 'lowpass'; lp.frequency.value = 160; motorG.gain.value = 0.018; o.connect(lp); lp.connect(motorG); motorG.connect(mS); o.start();
+        var cs = ac.createBufferSource(), cf = ac.createBiquadFilter(); clayG = ac.createGain(); cs.buffer = noiseBuf; cs.loop = true; cf.type = 'bandpass'; cf.frequency.value = 520; cf.Q.value = 0.9; clayG.gain.value = 0; cs.connect(cf); cf.connect(clayG); clayG.connect(mS); cs.start();
+        setInterval(function () { if (!ac) { return; } clayLvl *= 0.6; clayG.gain.setTargetAtTime(Math.min(0.16, clayLvl), ac.currentTime, 0.05); }, 60);
+      }
+    }
+    var FX = {
+      tap: function (t) { tone('triangle', 640, t, 0.002, 0.11, 0.07, null, 420); noise(t, 0.025, 'bandpass', 2400, 3, 0.05); },
+      ok: function (t) { [67, 71, 74, 79].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.09, 0.004, 0.16, 0.9); tone('sine', mf(m) * 2.76, t + i * 0.09, 0.002, 0.03, 0.35); }); },
+      unlock: function (t) { [62, 67, 71, 74, 79, 83].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.07, 0.004, 0.14, 1.2); tone('triangle', mf(m) * 2, t + i * 0.07, 0.003, 0.03, 0.5); }); },
+      fail: function (t) { noise(t, 0.5, 'lowpass', 900, 0.7, 0.35, null, 120); tone('sine', 160, t, 0.005, 0.3, 0.45, null, 55); },
+      coin: function (t) { tone('square', 1318, t, 0.002, 0.06, 0.08); tone('square', 1760, t + 0.07, 0.002, 0.06, 0.28); tone('sine', 2637, t + 0.07, 0.002, 0.05, 0.3); },
+      jade: function (t) { [84, 88, 91, 96].forEach(function (m, i) { tone('sine', mf(m), t + i * 0.05, 0.002, 0.07, 0.5); }); noise(t, 0.4, 'highpass', 6000, 0.5, 0.05); },
+      whoosh: function (t) { noise(t, 0.32, 'bandpass', 300, 1.2, 0.22, null, 1400); },
+      hiss: function (t) { noise(t, 0.7, 'highpass', 3000, 0.5, 0.18, null, 1200); tone('sine', 220, t, 0.01, 0.1, 0.4, null, 110); },
+      smash: function (t) { noise(t, 0.09, 'lowpass', 1800, 0.7, 0.55); noise(t, 0.6, 'highpass', 2500, 0.6, 0.3, null, 5000); for (var i = 0; i < 9; i++) { var tt = t + 0.04 + Math.random() * 0.45; tone('sine', 2800 + Math.random() * 3800, tt, 0.001, 0.04 + Math.random() * 0.05, 0.08 + Math.random() * 0.12); } tone('sine', 120, t, 0.003, 0.4, 0.25, null, 50); },
+      splash: function (t) { noise(t, 0.35, 'bandpass', 900, 1.5, 0.22, null, 350); for (var i = 0; i < 4; i++) { tone('sine', 500 + Math.random() * 600, t + 0.05 + i * 0.05, 0.003, 0.05, 0.08, null, 1200); } },
+      drip: function (t) { for (var i = 0; i < 3; i++) { tone('sine', 900 + i * 180, t + i * 0.14, 0.002, 0.06, 0.09, null, 1700); } },
+      ignite: function (t) { noise(t, 0.9, 'lowpass', 200, 0.8, 0.4, null, 1200); tone('sine', 80, t, 0.05, 0.2, 0.8, null, 60); },
+      shake: function (t) { for (var i = 0; i < 4; i++) { noise(t + i * 0.12, 0.05, 'bandpass', 700, 3, 0.15); } },
+      reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
+      rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
+      meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
+      thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
+    };
+    window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };
+    window.__clay = function (a) { clayLvl += Math.min(0.08, a * 0.012); };
+    var lastTap = 0;
+    document.addEventListener('pointerdown', function (e) {
+      init();
+      var el = e.target && e.target.closest ? e.target.closest('button,a,[role=button],[onclick]') : null;
+      if (el && !el.closest('[data-work]') && Date.now() - lastTap > 60) { lastTap = Date.now(); window.__sfx('tap'); }
+    }, true);
+    document.addEventListener('keydown', function () { init(); }, true);
+    // 저장 데이터 변화로 공통 효과음 (골드 증가 · 옥 사용 · 튜토리얼 해금)
+    var prev = load();
+    setInterval(function () {
+      upd();
+      var g = load();
+      if ((g.gold || 0) > (prev.gold || 0)) { window.__sfx('coin'); }
+      if ((g.jade || 0) < (prev.jade || 0)) { window.__sfx('jade'); }
+      if (typeof g.tut === 'number' && typeof prev.tut === 'number' && g.tut > prev.tut) { window.__sfx('unlock'); }
+      prev = g;
+    }, 300);
+  };
+})();
