@@ -574,24 +574,39 @@
     var spotEl = null, spotT = 0, spotFind = null;
     function spotOff() { clearInterval(spotT); spotT = 0; if (spotEl) { spotEl.remove(); spotEl = null; } }
     function vis(el) { if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 12 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) { return null; } var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.3) { return null; } return r; }
-    function spotlight(find, msg) {
-      spotOff(); spotFind = find;
+    // 안내 스포트라이트 · 밝힌 곳만 누를 수 있고, 다른 곳을 누르면 막고 다시 알려 준다
+    var spotKey = '', spotMute = {};
+    function spotlight(find, msg, key) {
+      spotOff(); spotFind = find; spotKey = key || '';
       var el0 = find(); if (!el0 || !vis(el0)) { return false; }
       spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
       spotEl.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none';
-      spotEl.innerHTML = '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center"></div>';
-      spotEl.querySelector('.bub').textContent = msg;
+      var blk = '<div class="blk" style="position:fixed;pointer-events:auto;background:transparent;touch-action:none"></div>';
+      spotEl.innerHTML = blk + blk + blk + blk + '<div class="hole" style="position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(15,8,3,.66);transition:all .2s;pointer-events:none"><div style="position:absolute;inset:-3px;border-radius:18px;border:3px solid #FFD66B;animation:tutPulse 1.1s ease-in-out infinite"></div></div><div class="bub" style="position:fixed;max-width:250px;box-sizing:border-box;padding:9px 13px 7px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 5px 12px rgba(0,0,0,.4);font-family:Jua,sans-serif;font-size:15px;line-height:1.35;color:#2B1A0F;text-align:center;pointer-events:auto"><span class="tx"></span><button type="button" class="skip" style="all:unset;cursor:pointer;display:block;margin:6px auto 0;padding:4px 10px;min-height:28px;font-family:Noto Sans KR,sans-serif;font-size:11.5px;font-weight:700;color:#8A6440">안내 잠깐 닫기 ✕</button></div>';
+      spotEl.querySelector('.tx').textContent = msg;
       document.body.appendChild(spotEl);
+      var bubEl = spotEl.querySelector('.bub');
+      [].slice.call(spotEl.querySelectorAll('.blk')).forEach(function (b) {
+        ['pointerdown', 'click', 'touchstart'].forEach(function (ev) { b.addEventListener(ev, function (e) { e.preventDefault(); e.stopPropagation(); if (ev === 'pointerdown') { bubEl.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 260 }); toast('반짝이는 곳을 눌러 주세요 · 안내를 닫으려면 「안내 잠깐 닫기」'); } }, { passive: false }); });
+      });
+      spotEl.querySelector('.skip').addEventListener('click', function (e) { e.stopPropagation(); if (spotKey) { spotMute[spotKey] = Date.now() + 20000; } spotOff(); });
+      var holeR = null;
       function place() {
         var el = spotFind && spotFind(), r = vis(el); if (!r || !spotEl) { spotOff(); return; }
-        var h = spotEl.querySelector('.hole'), b = spotEl.querySelector('.bub'), pad = 6;
-        h.style.left = (r.left - pad) + 'px'; h.style.top = (r.top - pad) + 'px'; h.style.width = (r.width + pad * 2) + 'px'; h.style.height = (r.height + pad * 2) + 'px';
-        var bw = Math.min(250, window.innerWidth - 20), bl = Math.max(10, Math.min(window.innerWidth - bw - 10, r.left + r.width / 2 - bw / 2));
+        var h = spotEl.querySelector('.hole'), b = bubEl, pad = 6, W = window.innerWidth, H = window.innerHeight;
+        var L0 = r.left - pad, T0 = r.top - pad, R0 = r.right + pad, B0 = r.bottom + pad; holeR = { l: L0, t: T0, r: R0, b: B0 };
+        h.style.left = L0 + 'px'; h.style.top = T0 + 'px'; h.style.width = (R0 - L0) + 'px'; h.style.height = (B0 - T0) + 'px';
+        var bl4 = spotEl.querySelectorAll('.blk');
+        function setB(n, l, t, w, hh) { var s0 = bl4[n].style; s0.left = l + 'px'; s0.top = t + 'px'; s0.width = Math.max(0, w) + 'px'; s0.height = Math.max(0, hh) + 'px'; }
+        setB(0, 0, 0, W, T0); setB(1, 0, B0, W, H - B0); setB(2, 0, T0, L0, B0 - T0); setB(3, R0, T0, W - R0, B0 - T0);
+        var bw = Math.min(250, W - 20), bl = Math.max(10, Math.min(W - bw - 10, r.left + r.width / 2 - bw / 2));
         b.style.width = bw + 'px'; b.style.left = bl + 'px';
-        if (r.top > window.innerHeight * 0.45) { b.style.top = 'auto'; b.style.bottom = (window.innerHeight - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
+        if (r.top > H * 0.45) { b.style.top = 'auto'; b.style.bottom = (H - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
       }
       place(); spotT = setInterval(place, 250);
-      setTimeout(function () { document.addEventListener('pointerdown', function off() { document.removeEventListener('pointerdown', off, true); setTimeout(spotOff, 60); }, true); }, 400);
+      // 밝힌 곳을 누르면 안내를 닫고 원래 동작이 그대로 일어난다
+      function hit(e) { if (!spotEl) { document.removeEventListener('pointerdown', hit, true); return; } if (holeR && e.clientX >= holeR.l && e.clientX <= holeR.r && e.clientY >= holeR.t && e.clientY <= holeR.b) { document.removeEventListener('pointerdown', hit, true); setTimeout(spotOff, 60); } }
+      document.addEventListener('pointerdown', hit, true);
       return true;
     }
     function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
@@ -659,8 +674,9 @@
     function act(key, cond, find, msg) {
       if (!cond) { return false; }
       if (spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return true; }
-      var now = Date.now(); if (actLast[key] && now - actLast[key] < 9000) { return true; }
-      if (spotlight(find, msg)) { actLast[key] = now; return true; }
+      var now = Date.now(); if (actLast[key] && now - actLast[key] < 3000) { return true; }
+      if (spotMute[key] && spotMute[key] > now) { return true; }
+      if (spotlight(find, msg, key)) { actLast[key] = now; return true; }
       return false;
     }
     function anyWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
@@ -780,6 +796,26 @@
         toast('🔒 ' + (NAMES[p] || p) + ' · 「' + STEPS[need].goal + '」를 마치면 열려요');
       }
     }, true);
+    // 튜토리얼 조건을 벗어나는 조작은 막고 이유를 알려 준다 (다시 만들어야 하는 상황 방지)
+    function guard(e) {
+      var g = load(), t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      var tg = e.target && e.target.closest ? e.target.closest('button,[role=button],[data-work]') : null; if (!tg) { return; }
+      var tx = tg.textContent || '', al = tg.getAttribute('aria-label') || '';
+      function stop(msg) { e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); } toast(msg); }
+      if (PAGE === 'Wheel' && t === 1 && tx.indexOf('완성') >= 0 && tx.indexOf('성형 대기로') >= 0) {
+        var mt = document.querySelector('[role=meter][aria-label="목표 일치율"]'), pct = mt ? +mt.getAttribute('aria-valuenow') || 0 : 0;
+        var tb = qsel('button[aria-label^="목표 모양 바꾸기"]')(), tl = tb ? tb.getAttribute('aria-label') || '' : '';
+        if (tb && tl.indexOf('찻잔') < 0) { return stop('의뢰는 찻잔이에요 · 목표 모양을 찻잔으로 바꾼 뒤 완성해요'); }
+        if (pct < 60) { return stop('일치율 ' + pct + '% · 60% 이상이어야 의뢰 조건을 채워요 · 점선에 조금 더 맞춰 봐요'); }
+      }
+      if (PAGE === 'Dry' && t === 2 && tx.indexOf('지금 빼기') >= 0) { return stop('아직 반건조예요 · 부채질이나 💎옥으로 완전히 말린 뒤 빼요'); }
+      if (PAGE === 'Glaze' && t === 4 && (al.indexOf('도자기를 아래로') === 0 || tx.indexOf('꾹 눌러 담그기') >= 0)) {
+        var gb = qsel('button[aria-label^="유약 고르기 · 지금"]')(), gl = gb ? gb.getAttribute('aria-label') || '' : '';
+        if (gb && gl.indexOf('청자') < 0) { return stop('민 씨는 청자유를 원해요 · 먼저 유약을 청자유로 바꿔요'); }
+      }
+      if (PAGE === 'Kiln' && t === 5 && al === '작품 넣기' && qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')()) { return stop('이 칸은 온도가 맞지 않아요 · 초록으로 빛나는 「✓ 맞음」 칸에 넣어요'); }
+    }
+    ['pointerdown', 'click'].forEach(function (ev) { document.addEventListener(ev, guard, true); });
     window.addEventListener('storage', function () { apply(load()); });
     var g0 = load();
     var mig = null; try { mig = localStorage.getItem('tutMig'); } catch (e) {}
