@@ -116,12 +116,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <img src="_blob/afa5b1b61c1caeaf1edef99c030ed1ea.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:20px;top:380px;width:350px;height:130px;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(43,26,15,.4))">
 
-        <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
-          <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
-        </sc-if>
-      </sc-for>
-    </div>
-  </sc-if>
 
   <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
     <section style="position:absolute;left:12px;right:12px;bottom:16px;min-height:200px;box-sizing:border-box;padding:24px 18px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px;z-index:6">
@@ -157,7 +151,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </sc-if>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
-    <div role="status" style="position:absolute;left:30px;right:30px;top:110px;padding:12px 14px;border-radius:16px;background:rgba(47,99,40,.95);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-align:center;pointer-events:none">{{toast}}</div>
+    <p role="status" style="margin:0;height:auto;position:absolute;left:30px;right:30px;top:110px;z-index:30;padding:12px 14px;border-radius:16px;background:rgba(47,99,40,.95);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-align:center;pointer-events:none">{{toast}}</p>
   </sc-if>
 </div>
     </div>
