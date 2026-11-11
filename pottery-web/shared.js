@@ -504,7 +504,8 @@
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
     var NAMES = { Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
-    var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop'], ['Contest'], ['Research', 'Codex', 'Season', 'Town']];
+    var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town']];
+    var DONE1 = 9; // 기초 튜토리얼 완료 값 (화면 코드의 tut < 9 판정과 맞춤)
     var STEPS = [
       { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
@@ -512,9 +513,7 @@
       { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
       { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
-      { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' },
-      { goal: '명작 진열하고 망작 와장창', hint: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요 · 명작은 진열대에 올리고, 망작은 💥 와장창으로 깨 보세요', next: 'Display' },
-      { goal: '첫 메인 의뢰 받기', hint: '카운터에 윤 할매가 찾아왔어요 · 이야기를 듣고 의뢰를 맡으면 의뢰 내역서와 제작 체크리스트에 요구 기물이 표시돼요', next: 'Counter' }
+      { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' }
     ];
     function raw() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function prog() { try { var v = localStorage.getItem('tutProg'); return v === null ? null : +v; } catch (e) { return null; } }
@@ -530,10 +529,8 @@
       var glazed = len(g.glazeList) || kilnIn;
       var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
       var formed = len(g.formedList) || len(g.dryList) || bisq;
-      var gfx = giftIn(g), shN = pieceN(g, ['shelf']); var shown = g.tutGift ? ((shN >= 6 || gfx.shelf >= 6) && !gfx.badLive) : pieceN(g, ['shelf', 'museum']) > 0;
       var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
-      var star = !!(g.mq && (g.mq.acc || (g.mq.i || 0) > 0));
-      return [took, formed, bisq, glazed, kilnIn, made, gave, shown, star];
+      return [took, formed, bisq, glazed, kilnIn, made, gave];
     }
     function locked(g) {
       var t = g.tut, L = {};
@@ -576,7 +573,7 @@
     function vis(el) { if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 12 || r.height < 12 || r.bottom < 0 || r.top > window.innerHeight) { return null; } var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.3) { return null; } return r; }
     // 안내 스포트라이트 · 밝힌 곳만 누를 수 있고, 다른 곳을 누르면 막고 다시 알려 준다
     var spotKey = '', spotMute = {};
-    function spotlight(find, msg, key) {
+    function spotlight(find, msg, key, onHit) {
       spotOff(); spotFind = find; spotKey = key || '';
       var el0 = find(); if (!el0 || !vis(el0)) { return false; }
       spotEl = document.createElement('div'); spotEl.className = 'tut-spot';
@@ -605,27 +602,18 @@
       }
       place(); spotT = setInterval(place, 250);
       // 밝힌 곳을 누르면 안내를 닫고 원래 동작이 그대로 일어난다
-      function hit(e) { if (!spotEl) { document.removeEventListener('pointerdown', hit, true); return; } if (holeR && e.clientX >= holeR.l && e.clientX <= holeR.r && e.clientY >= holeR.t && e.clientY <= holeR.b) { document.removeEventListener('pointerdown', hit, true); setTimeout(spotOff, 60); } }
+      function hit(e) { if (!spotEl) { document.removeEventListener('pointerdown', hit, true); return; } if (holeR && e.clientX >= holeR.l && e.clientX <= holeR.r && e.clientY >= holeR.t && e.clientY <= holeR.b) { document.removeEventListener('pointerdown', hit, true); setTimeout(spotOff, 60); if (onHit) { try { onHit(); } catch (e2) {} } } }
       document.addEventListener('pointerdown', hit, true);
       return true;
     }
     function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
     function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
-    function nextOf(g) {
-      var t = g.tut; if (t !== 8 || true) { return STEPS[t].next; }
-      var gl = g.goal; if (!gl || !gl.sid) { return 'Contest'; }
-      var m = function (it) { return it && it.goalSid === gl.sid; }, kf = g.kilnFilled || {}, inK = false; for (var c in kf) { if (m(kf[c])) { inK = true; } }
-      if (g.kiln === 'firing' || inK || (g.kilnList || []).some(m)) { return 'Kiln'; }
-      if ((g.glazeList || []).some(m)) { return 'Glaze'; }
-      if ((g.bisqueList || []).some(m) || ((g.bisque || {}).items || []).some(m)) { return 'Bisque'; }
-      if ((g.dryList || []).some(m) || (g.formedList || []).some(m)) { return 'Dry'; }
-      return goalReady(g) && PAGE !== 'Wheel' ? 'Contest' : 'Wheel';
-    }
+    function nextOf(g) { return STEPS[g.tut].next; }
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
       var nx = nextOf(g); if (nx === PAGE) { return; }
-      var key = 'tutSpot_' + t + '_' + PAGE + (t === 8 ? '_' + nx : ''); try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
       if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
     }
     function guideJade(g) {
@@ -637,7 +625,17 @@
         if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
         return;
       }
-      var msg = L[2] === 'bq' ? '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요 · 풀무질로 시간을 줄일 수도 있어요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요';
+      if (L[2] !== 'kiln') {
+        var fk = 'tutFan_' + L[2], fs = 0; try { fs = +(localStorage.getItem(fk) || 0); } catch (e) {}
+        if (!fs) {
+          var fsel = L[2] === 'dry' ? 'button[aria-label^="부채질"]' : 'button[aria-label^="풀무질"]';
+          var fmsg = L[2] === 'dry' ? '기다리는 동안 부채질! 움직이는 커서가 초록 칸에 올 때 누르면 빨리 말라요 · 몇 번 눌러 봐요' : '풀무질로 바람을 넣어요! 게이지를 초록 칸에 맞추면 시간이 빨리 흘러요 · 빨강까지 밀면 과열돼요';
+          if (spotlight(qsel(fsel), fmsg, 'fan_' + L[2])) { try { localStorage.setItem(fk, String(Date.now())); } catch (e) {} }
+          return;
+        }
+        if (nowJ - fs < 9000) { return; }
+      }
+      var msg = L[2] === 'bq' ? '풀무질 대신 💎옥으로 바로 완료할 수도 있어요 · 튜토리얼 중엔 무료예요' : (L[2] === 'dry' ? '부채질 대신 💎옥으로 바로 말릴 수도 있어요 · 튜토리얼 중엔 무료예요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요');
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
     function showCard(g, force) {
@@ -667,16 +665,16 @@
     function freshStart(keep) {
       var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
-      save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tutWh_/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
+      save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tut(Wh_|Fan_|Jade_|2$)/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
     }
     var actLast = {};
     function qsel(q) { return function () { return [].slice.call(document.querySelectorAll(q)).filter(function (x) { return vis(x); })[0] || null; }; }
-    function act(key, cond, find, msg) {
+    function act(key, cond, find, msg, onHit) {
       if (!cond) { return false; }
       if (spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return true; }
       var now = Date.now(); if (actLast[key] && now - actLast[key] < 3000) { return true; }
       if (spotMute[key] && spotMute[key] > now) { return true; }
-      if (spotlight(find, msg, key)) { actLast[key] = now; return true; }
+      if (spotlight(find, msg, key, onHit)) { actLast[key] = now; return true; }
       return false;
     }
     function anyWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
@@ -698,19 +696,12 @@
         else if (!W('work')) { if (act('whWork', true, qsel('[data-work]'), '흙을 좌우로 밀어 모양을, 위아래로 쓸어 두께를 맞춰요 · 점선에 가까울수록 일치율이 올라가요')) { Wset('work'); } }
         return;
       }
-      if (PAGE === 'Dry' && (t === 2 || t === 8)) {
+      if (PAGE === 'Dry' && t === 2) {
         act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');
-        if (t === 8) {
-          var drying = (g.dryList || []).some(function (x) { return x && now - x.start < 1800000; });
-          if (btnWith('점 올리기')()) { act('dryIn', true, btnWith('점 올리기'), '골랐으면 올려요'); }
-          else if (btnWith('성형 완료')()) { act('drySel', true, btnWith('성형 완료'), '올릴 그릇을 골라요'); }
-          else if (drying) { act('dryJade', true, qsel('button[aria-label^="부채질"]'), '커서가 초록 칸에 올 때 부채질하면 빨리 말라요 · 💎옥으로 바로 말릴 수도 있어요'); }
-          else if ((g.formedList || []).length) { act('dryPut', true, qsel('button[aria-label="빈 칸 · 기물 올리기"]'), '빚은 그릇을 건조대에 올려요'); }
-        }
       }
-      if (PAGE === 'Bisque' && (t === 3 || t === 8)) {
+      if (PAGE === 'Bisque' && t === 3) {
         var bq = g.bisque || {};
-        if (bq.state === 'firing') { if ((bq.start || 0) + 1200000 <= now) { act('bqOut', true, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); } else if (t === 8) { act('bqJade', true, btnWith('바로 완료'), '풀무질로 시간을 줄이거나 💎옥으로 바로 완료해요'); } }
+        if (bq.state === 'firing') { if ((bq.start || 0) + 1200000 <= now) { act('bqOut', true, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); } }
         else if (btnWith('점 넣기')()) { act('bqIn', true, btnWith('점 넣기'), '골랐으면 가마에 넣어요'); }
         else if (btnWith('완전 건조')()) { act('bqSel', true, btnWith('완전 건조'), '구울 기물을 골라요'); }
         else if (btnWith('초벌 굽기')()) { act('bqFire', true, btnWith('초벌 굽기'), '이제 불을 지펴 초벌을 구워요'); }
@@ -722,62 +713,80 @@
         else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
         else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 게이지가 초록 칸일 때 위로 올려 꺼내요'); }
       }
-      if (PAGE === 'Kiln' && (t === 5 || t === 8)) {
+      if (PAGE === 'Kiln' && t === 5) {
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
-        if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } else if (t === 8) { act('knJade', true, btnWith('바로 완료'), '💎옥으로 바로 완료할 수 있어요'); } }
+        if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } }
         else if (btnWith('적정')()) { act('knSel', true, btnWith('적정'), '넣을 그릇을 골라요'); }
         else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')() || qsel('button[aria-label="작품 넣기"]')(); }, (function () { var w0 = (g.kilnList || [])[0] || {}, O = { white: 1230, celadon: 1200, black: 1170, jinsa: 1260, sakura: 1220 }[w0.glaze] || 1230; return '이 그릇의 적정 온도는 ' + (O - 20) + '~' + (O + 20) + '℃ · 초록으로 빛나는 「✓ 맞음」 칸에 넣어요'; })()); }
         else if (filled) { act('knFire', true, btnWith('불 지피기'), '다 넣었으면 불을 지펴요'); }
       }
-      if (PAGE === 'Glaze' && t === 8 && (g.glazeList || []).length) { act('gzDip8', true, qsel('[aria-label^="도자기를 아래로"]'), '의뢰 유약이 자동으로 골라져 있어요 · 끌어내려 담갔다가 초록 칸에서 꺼내요'); }
-      if (PAGE === 'Contest' && t === 8) {
-        var subB = anyWith('출품할 작품 고르기')(), mk = anyWith('작품 제작하기')();
-        if (anyWith('이 작품으로 출품하기')()) { act('ctGo', true, anyWith('이 작품으로 출품하기'), '출품해서 별을 받아요!'); }
-        else if (anyWith('조건 충족 작품을 골라')()) { act('ctRow', true, qsel('button[aria-label$="· 조건 충족"]'), '조건을 충족한 작품을 골라요'); }
-        else if (subB && (subB.textContent || '').indexOf('조건 충족') >= 0) { act('ctSubmit', true, anyWith('출품할 작품 고르기'), '조건에 맞는 작품이 있어요! 눌러서 출품해요'); }
-        else if (mk) { act(goalReady(g) ? 'ctRetry' : 'ctMake', true, anyWith('작품 제작하기'), goalReady(g) ? '완성품 모양이 목표와 조금 달라요 · 점선 모양에 맞춰 다시 빚어 봐요' : '눌러서 이 스테이지 작품을 만들러 가요 · 모양·흙·유약이 자동으로 골라져요'); }
-        else { act('ctNode' + (g.goal && g.goal.sid ? 'G' : ''), true, qsel('button[aria-label^="' + ((g.goal && g.goal.num) || 1) + ' 스테이지"]'), g.goal && g.goal.sid ? (goalReady(g) ? '완성한 작품으로 도전해요 · 스테이지를 눌러요' : '도전 중인 스테이지예요') : '스테이지 1을 눌러 목표를 확인해요'); }
-      }
-      if (PAGE === 'Counter' && t === 6) {
-        act('ctGive', !!btnWith('건네기')(), btnWith('건네기'), '청자 찻잔을 민 씨에게 건네요');
-      }
-      if (PAGE === 'Display' && t === 7 && g.tutGift) {
-        var gi = giftIn(g), shelfN = 0, P1 = g.pieces || {}; for (var k in P1) { if (P1[k] && P1[k].where === 'shelf') { shelfN++; } }
-        var dlgPick = qsel('[role=dialog][aria-label="진열대에 올릴 작품"]')(), dlgSmash = [].slice.call(document.querySelectorAll('[role=status]')).filter(function (x) { return (x.textContent || '').indexOf('와장창할 작품') >= 0 && vis(x); })[0];
-        if (dlgPick && gi.store && shelfN < 6) { act('dsPick' + shelfN, true, function () { var d = qsel('[role=dialog][aria-label="진열대에 올릴 작품"]')(); return d ? ([].slice.call(d.querySelectorAll('button')).filter(function (b) { var tx = b.textContent || ''; return tx.indexOf('평가액') >= 0 && tx.indexOf('명작') >= 0 && vis(b); })[0] || null) : null; }, '선물받은 명작을 골라 진열해요'); }
-        else if (dlgSmash && gi.badLive && btnWith('와장창 1점')()) { act('smGo', true, btnWith('와장창 1점'), '눌러서 와장창!'); }
-        else if (dlgSmash && gi.badLive) { act('smPick', true, function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf('망작') >= 0 && (b.textContent || '').indexOf('평가액') < 0 && vis(b); })[0] || null; }, '망작을 골라요'); }
-        else if (gi.store && shelfN < 6) { act('dsPut' + shelfN, true, qsel('button[aria-label="빈 칸 · 보관 중인 작품 올리기"]'), '빈 칸을 눌러 명작을 진열해요 (' + shelfN + '/6)'); }
-        else if (gi.badLive) { act('dsSmash', true, btnWith('와장창'), '망작은 💥 와장창으로 깨서 파편을 얻어요'); }
-      }
     }
-    function tutGift(g) {
-      if (g.tut !== 7 || g.tutGift) { return false; }
-      var ps = {}; for (var k in (g.pieces || {})) { ps[k] = g.pieces[k]; }
-      var order = (g.order || []).slice();
-      var G = [
-        ['tg1', '백자 달항아리', 'moonjar', 'white', '명작', 24000], ['tg2', '청자 매병', 'maebyeong', 'celadon', '명작', 22000], ['tg3', '천목 다완', 'dawan', 'cheonmok', '명작', 18000],
-        ['tg4', '진사 화병', 'vase', 'jinsa', '명작', 16000], ['tg5', '청자 연꽃잔', 'lotuscup', 'celadon', '명작', 14000], ['tg6', '흑유 병', 'bottle', 'black', '명작', 15000],
-        ['tg7', '망작 · 일그러진 사발', 'bowl', 'white', '범작', 300]
-      ];
-      var PRF = { tg1: [[34,52,64,72,76,76,72,64,52,40,32,33], 150], tg2: [[30,32,35,39,44,50,57,62,60,48,24,22], 160], tg3: [[30,42,52,60,66,71,75,78,80,82,83,84], 80], tg4: [[32,40,46,48,46,40,32,26,24,26,32,38], 150], tg5: [[24,26,30,36,44,52,58,62,66,70,74,78], 90], tg6: [[30,40,50,56,58,54,42,28,20,18,20,26], 160], tg7: [[40,58,46,70,62,84,72,98,80,96,88,100], 90] };
-      G.forEach(function (a) { ps[a[0]] = { prof: PRF[a[0]][0], H: PRF[a[0]][1], name: a[1], grade: a[4], shape: a[2], glaze: a[3], where: 'store', fresh: true, value: a[5], form: a[4] === '명작' ? 5 : 1, color: a[4] === '명작' ? 5 : 1, clay: 'basic', gift: true }; if (order.indexOf(a[0]) < 0) { order.push(a[0]); } });
-      g.pieces = ps; g.order = order; g.tutGift = true; return true;
+    // 2차 튜토리얼 · 의뢰 종류와 받기 → 제작 중 의뢰 확인 → 이벤트 → 연구 (설명 위주)
+    var CRAFT = ['Wheel', 'Dry', 'Bisque', 'Glaze', 'Kiln', 'KilnOpen'];
+    var T2 = [
+      { goal: '의뢰의 종류와 받는 방법', go: 'Counter', pages: ['Counter'], ic: '📜', body: '의뢰는 세 갈래예요.\n\n📜 메인 의뢰 · 공방 이야기를 따라 순서대로 열려요. 보상이 크고 새 모양이 해금돼요.\n🌸 시즌 의뢰 · 이벤트 기간에만 오는 한정 의뢰예요.\n☕ 손님 의뢰 · 사연·일간·주간·주문 손님이 수시로 찾아와요.\n\n의뢰는 카운터에서 손님 이야기를 듣고 「맡을게요」로 받아요. 윤 할매의 첫 메인 의뢰를 받아 보세요.' },
+      { goal: '제작 중 의뢰 확인하기', go: 'Commission', pages: ['Commission'].concat(CRAFT), ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 제작 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
+      { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' },
+      { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·초벌 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
+    ];
+    // 2차 진행 상태는 별도 키에 둔다 (화면 코드가 게임 상태를 통째로 저장해도 지워지지 않게)
+    function t2W(o) { try { localStorage.setItem('tut2', JSON.stringify(o)); } catch (e) {} }
+    function t2R() { try { return JSON.parse(localStorage.getItem('tut2') || 'null'); } catch (e) { return null; } }
+    function t2Set(k, extra) { var o = t2R() || { k: 0, seen: -1 }; o.k = k; if (extra && extra.tut2Seen !== undefined) { o.seen = extra.tut2Seen; } t2W(o); }
+    function tourOn(g) { var o = t2R(); return g.tut === DONE1 && !!o && typeof o.k === 'number' && o.k < T2.length; }
+    function tourCard(k, run) {
+      var st = T2[k];
+      overlay('<div class="ic">' + st.ic + '</div><h3>' + (k + 1) + '/' + T2.length + ' · ' + st.goal + '</h3><p style="text-align:left;word-break:keep-all">' + st.body + '</p>', [
+        { label: '확인', run: function () { t2Set(k, { tut2Seen: k }); if (run) { run(); } } },
+        { label: '안내 그만 보기', cls: 'sub', run: function () { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } } }
+      ]);
+    }
+    function tourDone() { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } overlay('<div class="ic">🏆</div><h3>튜토리얼 완료!</h3><p>이제 공방을 자유롭게 운영해 보세요.\n막히면 설정에서 튜토리얼을 다시 볼 수 있어요.</p>', [{ label: '좋아요' }]); }
+    function tourMini(k) {
+      var mini = document.querySelector('.tut-mini');
+      if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); document.body.appendChild(mini); }
+      if (mini.getAttribute('data-t2') !== String(k)) { mini.setAttribute('data-t2', String(k)); mini.innerHTML = '📘<b>' + (k + 1) + '/' + T2.length + '</b>'; mini.onclick = function (e) { e.stopPropagation(); if (!document.querySelector('.tut-ov')) { tourCard(k); } }; }
+      placeMini();
+    }
+    function mainBtn(txt) { return function () { var c = [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0; }); for (var i = 0; i < c.length; i++) { var p = c[i]; for (var d = 0; d < 7 && p; d++) { p = p.parentElement; if (p && (p.textContent || '').split('제작하러 가기').length > 2) { break; } if (p && (p.textContent || '').indexOf('메인') >= 0) { if (!vis(c[i]) || vis(c[i]).bottom > window.innerHeight - 90) { try { c[i].scrollIntoView({ block: 'center' }); } catch (e) {} } return vis(c[i]) ? c[i] : null; } } } return null; }; }
+    function tour(g) {
+      if (!tourOn(g)) { return; }
+      var o2 = t2R(), k = o2.k, st = T2[k];
+      tourMini(k);
+      if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
+      // 진행 조건
+      if (k === 0 && g.mq && g.mq.acc) { t2Set(1); return; }
+      if (st.pages.indexOf(PAGE) < 0) {
+        if (spotEl) { return; }
+        act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요');
+        return;
+      }
+      if (o2.seen !== k) { spotOff(); tourCard(k, k === 2 ? function () { t2Set(3); } : (k === 3 ? function () { setTimeout(tourDone, 200); } : null)); return; }
+      if (k === 0 && PAGE === 'Counter') {
+        if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
+        else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
+      }
+      if (k === 1 && PAGE === 'Commission') {
+        if (mainBtn('📌 제작 안내 켜기')()) { act('t2pin', true, mainBtn('📌 제작 안내 켜기'), '📌을 켜면 이 의뢰가 제작 화면 체크리스트에 떠요'); }
+        else { act('t2make', true, mainBtn('제작하러 가기'), '「제작하러 가기」로 제작 화면에 가 봐요'); }
+      }
+      if (k === 1 && CRAFT.indexOf(PAGE) >= 0) {
+        act('t2trk', true, function () { return qsel('.trk .trk-h')() || qsel('.trk-pill')(); }, '제작 중엔 이 체크리스트로 요구 기물과 완성 수를 확인해요 · 눌러서 펼치고 접어요', function () { t2Set(2); });
+      }
     }
     function check(first) {
       if (document.querySelector('.sm-ov')) { return; }
       var g = load(), t = g.tut, rw = raw();
-      if (tutGift(g)) { save(g); notify(); }
       if (typeof t === 'number' && rw.tut !== t) { rw.tut = t; save(rw); notify(); }
       if (typeof t === 'number' && t < STEPS.length) {
         var done = lv(g), nt = t, opened = [];
         while (nt < STEPS.length && done[nt]) { opened = opened.concat(UNL[nt]); nt++; }
         if (nt !== t) {
-          g.tut = nt; save(g);
+          var fin = nt >= STEPS.length;
+          g.tut = fin ? DONE1 : nt; save(g); if (fin) { t2W({ k: 0, seen: -1 }); }
           try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
-          var fin = nt >= STEPS.length;
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '이제 모든 기능을 자유롭게 쓸 수 있어요.\n좋은 작품 많이 빚어 주세요!' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 의뢰의 종류, 제작 중 의뢰 확인, 이벤트, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
           notify();
         }
       }
@@ -820,6 +829,7 @@
     var g0 = load();
     var mig = null; try { mig = localStorage.getItem('tutMig'); } catch (e) {}
     if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
+    if (g0.tut === 7 || g0.tut === 8) { g0.tut = DONE1; save(g0); if (!t2R()) { t2W({ k: 0, seen: -1 }); } }
     if (PAGE === 'Main' && g0.tut === undefined) {
       overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>처음이라면 튜토리얼로 시작해 보세요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
         { label: '튜토리얼 시작', run: function () { freshStart(load()); apply(load()); notify(); setTimeout(function () { showCard(load(), true); }, 500); } },
@@ -830,7 +840,7 @@
       var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
       if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
     }
-    setInterval(function () { check(false); guideJade(load()); guideAct(load()); var gN = load(); if (gN.tut === 8) { apply(gN); if (!spotEl && !document.querySelector('.tut-ov')) { guideNext(gN); } } }, 1000);
+    setInterval(function () { check(false); guideJade(load()); guideAct(load()); tour(load()); }, 1000);
   };
   S.sndBoot = function () {
     if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
