@@ -77,7 +77,7 @@ button{font-family:inherit;cursor:pointer}
   <div style="position:relative;display:flex;align-items:center;gap:6px;margin:-2px 0 -4px">
     <div style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 0">
       <sc-for list="{{wait}}" as="w" hint-placeholder-count="2">
-        <button type="button" aria-pressed="{{w.on}}" onClick="{{w.pick}}" style="{{w.style}}"><span>{{w.text}}</span><span style="{{w.subStyle}}">{{w.sub}}</span></button>
+        <button type="button" data-work="1" data-kwait="{{w.id}}" aria-pressed="{{w.on}}" onPointerDown="{{w.down}}" onClick="{{w.pick}}" style="{{w.style}}"><span>{{w.text}}</span><span style="{{w.subStyle}}">{{w.sub}}</span></button>
       </sc-for>
     </div>
     <button type="button" onClick="{{autoPlace}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-height:44px;padding:4px 10px;border-radius:12px;background:#2E6B5F;border:3px solid #1E4A42;box-shadow:0 3px 0 #1E4A42;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;color:#FFFDF5;text-align:center">자동<br>배치</button>
@@ -88,7 +88,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="bg-bg-kiln-inside" style="position:relative;box-sizing:border-box;padding:10px;border-radius:14px;">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px">
         <sc-for list="{{cells}}" as="cell" hint-placeholder-count="9">
-          <button type="button" onClick="{{cell.tap}}" aria-label="{{cell.aria}}" style="{{cell.style}}">
+          <button type="button" data-kcell="{{cell.idx}}" onClick="{{cell.tap}}" aria-label="{{cell.aria}}" style="{{cell.style}}">
             <span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">{{cell.temp}}℃</span>
             <span style="{{cell.fitStyle}}">{{cell.fit}}</span>
             <span aria-label="깨질 위험 {{cell.risk}}" style="{{cell.riskStyle}}">{{cell.riskIcon}}</span>
@@ -433,6 +433,37 @@ class Component extends DCLogic {
     this.setState({ pkOpen: false, sel: idx, pickW: '' });
     try { window.__sfx && window.__sfx('tap'); } catch (e) {}
   }
+  // 대기 그릇을 끌어서 가마 칸에 놓기
+  dragW(e, w) {
+    if ((e.button !== undefined && e.button !== 0) || this.state.g.kiln === 'firing') { return; }
+    var self = this, x0 = e.clientX, y0 = e.clientY, on = false, ghost = null, src = e.currentTarget, over = null;
+    function cellAt(x, y) { var st = document.elementsFromPoint ? document.elementsFromPoint(x, y) : [document.elementFromPoint(x, y)]; for (var i = 0; i < st.length; i++) { var c = st[i] && st[i].closest ? st[i].closest('[data-kcell]') : null; if (c) { return c; } } return null; }
+    function hl(c) { if (over === c) { return; } if (over) { over.style.outline = ''; } over = c; if (c) { c.style.outline = '4px solid #FFF4DE'; c.style.outlineOffset = '-2px'; } }
+    function mv(ev) {
+      if (!on && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) { return; }
+      if (!on) {
+        on = true; self.setState({ pickW: w.id, sel: -1 });
+        ghost = src.cloneNode(true); var r = src.getBoundingClientRect();
+        ghost.style.cssText += ';position:fixed;z-index:9990;pointer-events:none;margin:0;width:' + r.width + 'px;opacity:.92;transform:translate(-50%,-60%) scale(1.08);box-shadow:0 8px 16px rgba(0,0,0,.45)';
+        document.body.appendChild(ghost);
+        try { window.__sfx && window.__sfx('tap'); } catch (e2) {}
+      }
+      if (ev.cancelable) { ev.preventDefault(); }
+      ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+      hl(cellAt(ev.clientX, ev.clientY));
+    }
+    function up(ev) {
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      if (!on) { return; }
+      self.dragEnd = Date.now(); if (ghost) { ghost.remove(); } hl(null);
+      var c = ev.type === 'pointercancel' ? null : cellAt(ev.clientX, ev.clientY); if (!c) { return; }
+      var idx = +c.getAttribute('data-kcell'), g = self.state.g, fl = g.kilnFilled || {};
+      if (fl[String(idx)] && typeof fl[String(idx)] === 'object') { self.say('이미 그릇이 있는 칸이다 · 빈 칸에 놓자'); return; }
+      if (self.tutSafe && self.tutSafe() && c.getAttribute('aria-label') === '작품 넣기' && document.querySelector('[aria-label^="작품 넣기 · 맞는 자리"]')) { self.say('온도가 맞지 않는 칸이에요 · 초록 「✓ 맞음」 칸에 놓아요'); return; }
+      self.putAt(idx, w);
+    }
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
   autoPlace(cur, offsets) {
     var g = this.state.g, T = this.tables(), QL = this.qlib(), self = this;
     if (g.kiln === 'firing') { return; }
@@ -493,8 +524,9 @@ class Component extends DCLogic {
         text: (on ? '✓ ' : '') + (T.GL[w.glaze] || T.GL.white).pre + ' ' + (T.SH[w.shape] || T.SH.dish).n, on: on ? 'true' : 'false',
         sub: '맞는 온도 ' + (o - QL0.TUNE.kilnExact - (QL0.fx(g).kilnTol || 0)) + '~' + (o + QL0.TUNE.kilnExact + (QL0.fx(g).kilnTol || 0)) + '℃',
         subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:11.5px;font-weight:700;' + (on ? 'color:#5B3A24' : 'color:#7A5434'),
-        style: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-height:44px;padding:3px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;line-height:1.2;text-align:center;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px solid #8A6440'),
-        pick: function () { self.setState({ pickW: w.id, sel: -1 }); }
+        style: 'all:unset;cursor:grab;flex:0 0 auto;box-sizing:border-box;min-height:44px;padding:3px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;line-height:1.2;text-align:center;touch-action:pan-x;user-select:none;-webkit-user-select:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px solid #8A6440'),
+        id: w.id, down: function (e) { self.dragW(e, w); },
+        pick: function () { if (Date.now() - (self.dragEnd || 0) < 350) { return; } self.setState({ pickW: w.id, sel: -1 }); }
       };
     });
     // 적정 자리 수용 검사 · 유약별 대기 수 vs 남은 정합 칸
@@ -526,7 +558,9 @@ class Component extends DCLogic {
         filled: !!it, empty: !it,
         path: sh ? sh.p : '', fill: gl ? gl.raw : '#ccc', pot: it ? self.potOf(it, self.fillOf(it, 'glazed')) : self.potOf({ shape: 'cup' }, '#ccc'),
         style: cellBase + 'background:' + glowOf(off) + ';' + ring,
+        idx: idx,
         tap: function () {
+          if (Date.now() - (self.dragEnd || 0) < 350) { return; }
           if (firingNow) { self.say('소성 중에는 가마 문을 열 수 없다'); return; }
           if (it) { self.setState({ sel: idx }); return; }
           if (!waiting.length) { self.say('가마에 넣을 기물이 없다. 유약부터 바르자'); return; }

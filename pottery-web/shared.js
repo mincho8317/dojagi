@@ -667,11 +667,14 @@
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tut(Wh_|Fan_|Jade_|2$)/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
     }
-    var actLast = {};
+    var actLast = {}, ptrDown = false;
+    document.addEventListener('pointerdown', function () { ptrDown = true; }, true);
+    ['pointerup', 'pointercancel'].forEach(function (ev) { window.addEventListener(ev, function () { ptrDown = false; }, true); });
     function qsel(q) { return function () { return [].slice.call(document.querySelectorAll(q)).filter(function (x) { return vis(x); })[0] || null; }; }
     function act(key, cond, find, msg, onHit) {
       if (!cond) { return false; }
       if (spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return true; }
+      if (ptrDown) { return true; }
       var now = Date.now(); if (actLast[key] && now - actLast[key] < 3000) { return true; }
       if (spotMute[key] && spotMute[key] > now) { return true; }
       if (spotlight(find, msg, key, onHit)) { actLast[key] = now; return true; }
@@ -717,7 +720,7 @@
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
         if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } }
         else if (btnWith('적정')()) { act('knSel', true, btnWith('적정'), '넣을 그릇을 골라요'); }
-        else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')() || qsel('button[aria-label="작품 넣기"]')(); }, (function () { var w0 = (g.kilnList || [])[0] || {}, O = { white: 1230, celadon: 1200, black: 1170, jinsa: 1260, sakura: 1220 }[w0.glaze] || 1230; return '이 그릇의 적정 온도는 ' + (O - 20) + '~' + (O + 20) + '℃ · 초록으로 빛나는 「✓ 맞음」 칸에 넣어요'; })()); }
+        else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[data-kwait]')() || qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')(); }, '그릇을 꾹 잡고 끌어서 초록으로 빛나는 「✓ 맞음」 칸에 놓아요 · 맞는 온도는 그릇 이름 아래에 적혀 있어요'); }
         else if (filled) { act('knFire', true, btnWith('불 지피기'), '다 넣었으면 불을 지펴요'); }
       }
     }
@@ -727,6 +730,7 @@
       { goal: '의뢰의 종류와 받는 방법', go: 'Counter', pages: ['Counter'], ic: '📜', body: '의뢰는 세 갈래예요.\n\n📜 메인 의뢰 · 공방 이야기를 따라 순서대로 열려요. 보상이 크고 새 모양이 해금돼요.\n🌸 시즌 의뢰 · 이벤트 기간에만 오는 한정 의뢰예요.\n☕ 손님 의뢰 · 사연·일간·주간·주문 손님이 수시로 찾아와요.\n\n의뢰는 카운터에서 손님 이야기를 듣고 「맡을게요」로 받아요. 윤 할매의 첫 메인 의뢰를 받아 보세요.' },
       { goal: '제작 중 의뢰 확인하기', go: 'Commission', pages: ['Commission'].concat(CRAFT), ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 제작 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
       { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' },
+      { goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 줘요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 다음에 볼 연구에 써요.' },
       { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·초벌 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
     ];
     // 2차 진행 상태는 별도 키에 둔다 (화면 코드가 게임 상태를 통째로 저장해도 지워지지 않게)
@@ -749,6 +753,19 @@
       placeMini();
     }
     function mainBtn(txt) { return function () { var c = [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0; }); for (var i = 0; i < c.length; i++) { var p = c[i]; for (var d = 0; d < 7 && p; d++) { p = p.parentElement; if (p && (p.textContent || '').split('제작하러 가기').length > 2) { break; } if (p && (p.textContent || '').indexOf('메인') >= 0) { if (!vis(c[i]) || vis(c[i]).bottom > window.innerHeight - 90) { try { c[i].scrollIntoView({ block: 'center' }); } catch (e) {} } return vis(c[i]) ? c[i] : null; } } } return null; }; }
+    function tutGift(g) {
+      if (g.tutGift) { return false; }
+      var ps = {}; for (var k in (g.pieces || {})) { ps[k] = g.pieces[k]; }
+      var order = (g.order || []).slice();
+      var G = [
+        ['tg1', '백자 달항아리', 'moonjar', 'white', '명작', 24000], ['tg2', '청자 매병', 'maebyeong', 'celadon', '명작', 22000], ['tg3', '천목 다완', 'dawan', 'cheonmok', '명작', 18000],
+        ['tg4', '진사 화병', 'vase', 'jinsa', '명작', 16000], ['tg5', '청자 연꽃잔', 'lotuscup', 'celadon', '명작', 14000], ['tg6', '흑유 병', 'bottle', 'black', '명작', 15000],
+        ['tg7', '망작 · 일그러진 사발', 'bowl', 'white', '범작', 300]
+      ];
+      var PRF = { tg1: [[34,52,64,72,76,76,72,64,52,40,32,33], 150], tg2: [[30,32,35,39,44,50,57,62,60,48,24,22], 160], tg3: [[30,42,52,60,66,71,75,78,80,82,83,84], 80], tg4: [[32,40,46,48,46,40,32,26,24,26,32,38], 150], tg5: [[24,26,30,36,44,52,58,62,66,70,74,78], 90], tg6: [[30,40,50,56,58,54,42,28,20,18,20,26], 160], tg7: [[40,58,46,70,62,84,72,98,80,96,88,100], 90] };
+      G.forEach(function (a) { ps[a[0]] = { prof: PRF[a[0]][0], H: PRF[a[0]][1], name: a[1], grade: a[4], shape: a[2], glaze: a[3], where: 'store', fresh: true, value: a[5], form: a[4] === '명작' ? 5 : 1, color: a[4] === '명작' ? 5 : 1, clay: 'basic', gift: true }; if (order.indexOf(a[0]) < 0) { order.push(a[0]); } });
+      g.pieces = ps; g.order = order; g.tutGift = true; return true;
+    }
     function tour(g) {
       if (!tourOn(g)) { return; }
       var o2 = t2R(), k = o2.k, st = T2[k];
@@ -756,12 +773,17 @@
       if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
       // 진행 조건
       if (k === 0 && g.mq && g.mq.acc) { t2Set(1); return; }
+      if (k === 3) {
+        if (tutGift(g)) { save(g); notify(); return; }
+        var gi = giftIn(g), shelfN = pieceN(g, ['shelf']);
+        if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(4); return; }
+      }
       if (st.pages.indexOf(PAGE) < 0) {
         if (spotEl) { return; }
         act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요');
         return;
       }
-      if (o2.seen !== k) { spotOff(); tourCard(k, k === 2 ? function () { t2Set(3); } : (k === 3 ? function () { setTimeout(tourDone, 200); } : null)); return; }
+      if (o2.seen !== k) { spotOff(); tourCard(k, k === 2 ? function () { t2Set(3); } : (k === 4 ? function () { setTimeout(tourDone, 200); } : null)); return; }
       if (k === 0 && PAGE === 'Counter') {
         if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
         else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
@@ -769,6 +791,13 @@
       if (k === 1 && PAGE === 'Commission') {
         if (mainBtn('📌 제작 안내 켜기')()) { act('t2pin', true, mainBtn('📌 제작 안내 켜기'), '📌을 켜면 이 의뢰가 제작 화면 체크리스트에 떠요'); }
         else { act('t2make', true, mainBtn('제작하러 가기'), '「제작하러 가기」로 제작 화면에 가 봐요'); }
+      }
+      if (k === 3 && PAGE === 'Display') {
+        var gj = giftIn(g), shN = pieceN(g, ['shelf']), P2 = g.pieces || {};
+        var byName = function (ids) { return function () { var nm = ids.map(function (i) { return P2[i] && (P2[i].where === 'store' || P2[i].where === 'shelf') ? P2[i].name : null; }).filter(Boolean); var c = [].slice.call(document.querySelectorAll('#dstore button[aria-label], #dshelf button[aria-label]')).filter(function (b) { return nm.indexOf(b.getAttribute('aria-label')) >= 0 && vis(b); }); return c[0] || null; }; };
+        var stIds = ['tg1', 'tg2', 'tg3', 'tg4', 'tg5', 'tg6'].filter(function (i) { return P2[i] && P2[i].where === 'store'; });
+        if (stIds.length && shN < 6) { act('t2ds' + shN, true, byName(stIds), '명작을 꾹 잡고 위 진열대로 끌어서 놓아요 (' + shN + '/6)'); }
+        else if (gj.badLive) { act('t2sm', true, byName(['tg7']), '망작을 꾹 잡고 끌면 💥 와장창 칸이 나타나요 · 거기에 놓아 깨요'); }
       }
       if (k === 1 && CRAFT.indexOf(PAGE) >= 0) {
         act('t2trk', true, function () { return qsel('.trk .trk-h')() || qsel('.trk-pill')(); }, '제작 중엔 이 체크리스트로 요구 기물과 완성 수를 확인해요 · 눌러서 펼치고 접어요', function () { t2Set(2); });
