@@ -17,6 +17,7 @@ body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
 a{color:#5B3A24}a:hover{color:#3E2616}
 button{font-family:inherit;cursor:pointer}
 @keyframes wheelspin{to{stroke-dashoffset:-48}}
+@keyframes mkBob{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--mx),var(--my))}}
 .spin{animation-name:wheelspin;animation-timing-function:linear;animation-iteration-count:infinite}
 @keyframes segPop{0%{transform:scale(.4);opacity:1}100%{transform:scale(2.2);opacity:0}}
 </style>
@@ -108,6 +109,9 @@ button{font-family:inherit;cursor:pointer}
       </g>
       <path d="{{ghostPath}}" fill="none" stroke="#2B1A0F" stroke-width="4.2" stroke-dasharray="6 6" opacity="0.35" pointer-events="none"></path>
       <path d="{{ghostPath}}" fill="none" stroke="#FFF4DE" stroke-width="2.2" stroke-dasharray="6 6" opacity="0.95" pointer-events="none"></path>
+      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="0">
+        <g pointer-events="none" style="{{mk.anim}}"><circle cx="{{mk.x}}" cy="{{mk.y}}" r="11" fill="{{mk.c}}" stroke="#2B1A0F" stroke-width="2"></circle><text x="{{mk.x}}" y="{{mk.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="13" fill="#2B1A0F">{{mk.t}}</text></g>
+      </sc-for>
       <path d="{{segDonePath}}" fill="none" stroke="#1E5E16" stroke-width="7" stroke-linecap="round" opacity="0.55" pointer-events="none"></path>
       <path d="{{segDonePath}}" fill="none" stroke="#8CF27A" stroke-width="3.6" stroke-linecap="round" pointer-events="none"></path>
       <sc-for list="{{segSpark}}" as="sp" hint-placeholder-count="0">
@@ -168,19 +172,18 @@ button{font-family:inherit;cursor:pointer}
         <span style="{{s.style}}"></span>
       </sc-for>
       <span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#FFE7A8">두께</span>
-      <span style="font-size:10px;font-weight:700;color:#9FE08F;text-align:center;line-height:1.2">{{safeLine}}</span>
+
     </div>
 
     <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
     <div role="img" aria-label="목표 윤곽과 현재 형태 비교 · {{miniTxt}}" style="position:absolute;left:6px;bottom:6px;width:96px;box-sizing:border-box;padding:4px 4px 3px;border-radius:12px;background:rgba(255,250,240,.93);border:2.5px solid {{miniCol}};box-shadow:0 2px 6px rgba(0,0,0,.3);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:1px">
       <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true"><path d="{{miniCur}}" fill="#C69A78" stroke="#5B3A24" stroke-width="1.2"></path><path d="{{miniTg}}" fill="none" stroke="#1E5E16" stroke-width="1.6" stroke-dasharray="3 2.5"></path></svg>
-      <span style="font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;text-align:center;color:{{miniCol}}">{{miniTxt}}</span>
+      <span aria-hidden="true" style="display:flex;align-items:center;gap:2px;height:12px"><sc-for list="{{miniDots}}" as="md" hint-placeholder-count="12"><span style="{{md}}"></span></sc-for><span style="{{miniH}}">⇕</span></span>
     </div>
-    <div role="status" style="position:absolute;left:8px;right:178px;top:8px;box-sizing:border-box;padding:7px 10px;border-radius:12px;background:{{hintBg}};box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFF4DE;text-align:left;pointer-events:none"><span style="display:inline-block;margin-right:5px;padding:0 6px;border-radius:6px;background:rgba(255,244,222,.25);font-size:11px">가이드</span>{{hint}}</div>
-    <div aria-live="polite" style="position:absolute;left:8px;top:96px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;pointer-events:none">
-      <sc-for list="{{tips}}" as="tp" hint-placeholder-count="2">
-        <span style="{{tp.style}}">{{tp.text}}</span>
+    <div role="status" aria-label="{{hint}}" style="position:absolute;left:56px;top:8px;display:flex;gap:5px;pointer-events:none">
+      <sc-for list="{{gIcons}}" as="gi" hint-placeholder-count="3">
+        <span style="{{gi.box}}"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="{{gi.d}}" fill="none" stroke="{{gi.col}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="{{gi.lab}}">{{gi.t}}</span></span>
       </sc-for>
     </div>
     <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
@@ -794,6 +797,8 @@ class Component extends DCLogic {
       });
     }
 
+    if (shaping && tmin < lim + 1) { var ti = s.t.indexOf(tmin), ty0 = base - s.H * (ti / 11); marks.push({ x: (150 + self.rAt(ti) + 16).toFixed(1), y: (ty0 + 5).toFixed(1), t: '!', c: '#FF8A6B' }); }
+    marks = marks.slice(0, 6).map(function (m) { var d = { '▲': [0, -4], '▼': [0, 4], '◀': [-4, 0], '▶': [4, 0] }[m.t] || [0, 0]; return { x: m.x, y: m.y, ty: (+m.y + 4.5).toFixed(1), t: m.t, c: m.c, anim: '--mx:' + d[0] + 'px;--my:' + d[1] + 'px;animation:mkBob .9s ease-in-out infinite' }; });
     var grabOn = !!s.grab && !!this.drag && shaping;
     var grab = { y1: 0, h: 0, y: 0, hx: 0, ax: 0, ay: 0, arrow: '', label: '', ly: 0, op: 0.35 };
     if (grabOn) {
@@ -974,7 +979,7 @@ class Component extends DCLogic {
       tips: tips,
       marks: marks,
       potPath: prof.path,
-      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
+      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#4A9440' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
       foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1) },
       rim: { cx: (150 + wob).toFixed(1), cy: prof.R[11][1].toFixed(1), rx: topR.toFixed(1), ry: (topR * 0.17 + 2).toFixed(1), irx: Math.max(3, topR - topT * 2.2).toFixed(1), iry: Math.max(1, (topR - topT * 2.2) * 0.17).toFixed(1) },
@@ -1004,15 +1009,30 @@ class Component extends DCLogic {
         };
       })(),
       segs: segs,
-      tmin: '평균 ' + an.tAvg.toFixed(1),
+      tmin: tmin < lim + 1 ? '⚠' : (an.tAvg > tg.T[1] ? '↑' : (an.tAvg < tg.T[0] ? '↓' : '✓')),
       safeLine: '목표 ' + tg.T[0] + '~' + tg.T[1],
-      tminStyle: "font-family:'Jua',sans-serif;font-size:9.5px;text-align:center;line-height:1.1;color:" + (tmin < lim + 1 ? '#FF8A6B' : (an.tAvg >= tg.T[0] && an.tAvg <= tg.T[1] ? '#9FE08F' : '#FFF4DE')),
+      tminStyle: "font-family:'Jua',sans-serif;font-size:17px;text-align:center;line-height:1.1;color:" + (tmin < lim + 1 ? '#FF8A6B' : (an.tAvg >= tg.T[0] && an.tAvg <= tg.T[1] ? '#9FE08F' : '#FFF4DE')),
       wLabel: wLabel,
       wLabelStyle: "flex:0 0 52px;text-align:right;font-family:'Jua',sans-serif;font-size:13px;color:" + (s.w > 70 ? '#A33B22' : '#2F6328'),
       wBarStyle: 'width:' + Math.min(100, s.w) + '%;height:100%;border-radius:6px;background:' + wc + ';box-shadow:inset 0 3px 0 rgba(255,255,255,.35)',
       speeds: speeds,
       dryCount: dryCount,
       hint: hint,
+      gIcons: (function () {
+        var ax = self.drag && self.drag.axis, md = s.grab && s.grab.mode;
+        var act = !shaping ? '' : (ax === 'h' ? 'shape' : (ax === 'v' ? (md === 'w' ? 'thick' : (md === 'h' ? 'height' : 'thick')) : ''));
+        var L = shaping ? [
+          { k: 'shape', t: '모양', d: 'M3 11h16M7 7l-4 4 4 4M15 7l4 4-4 4' },
+          { k: 'thick', t: '두께', d: 'M5 3v16M14 3v16M11 6l3-3 3 3M11 16l3 3 3-3' },
+          { k: 'height', t: '높이', d: 'M6 11h10M11 2v5M8 5l3-3 3 3M11 15v5M8 17l3 3 3-3' }
+        ] : [{ k: 'press', t: s.wrapping ? '감싸는 중' : '양손 꾹', d: 'M4 6v10M18 6v10M7 11h3M15 11h-3' }];
+        return L.map(function (o) {
+          var on = o.k === act || o.k === 'press';
+          return { d: o.d, t: o.t, col: on ? '#2B1A0F' : '#FFE7A8',
+            box: 'display:flex;align-items:center;gap:3px;padding:3px 8px 3px 5px;border-radius:12px;box-shadow:0 2px 0 rgba(43,26,15,.35);' + (on ? 'background:#FFD66B;border:2px solid #FFF4DE' : 'background:rgba(43,26,15,.78);border:2px solid rgba(255,231,168,.35)'),
+            lab: "font-family:'Jua',sans-serif;font-size:12.5px;color:" + (on ? '#2B1A0F' : '#FFE7A8') };
+        });
+      })(),
       hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
       finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
       toast: s.toast,
@@ -1148,7 +1168,7 @@ class Component extends DCLogic {
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

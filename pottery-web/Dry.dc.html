@@ -65,11 +65,20 @@ button{font-family:inherit;cursor:pointer}
 
   
 
-  <div role="list" aria-label="건조 상태 단계" style="position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;padding:5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35)">
-    <span role="listitem" style="display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:10px;background:#9A4A34;border:2px solid #FFE7D6;line-height:1.15"><b style="font-family:'Jua',sans-serif;font-weight:400;font-size:15px;color:#FFFDF5">질음</b><span style="font-size:11.5px;font-weight:700;color:#FFE7D6">못 뺌</span></span>
-    <span role="listitem" style="display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:10px;background:#E0A92C;border:2px solid #FFF4C9;line-height:1.15"><b style="font-family:'Jua',sans-serif;font-weight:400;font-size:15px;color:#2B1A0F">반건조</b><span style="font-size:11.5px;font-weight:700;color:#5B3A10">위험 ↑</span></span>
-    <span role="listitem" style="display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:10px;background:#4A9440;border:2px solid #E4F5D8;line-height:1.15"><b style="font-family:'Jua',sans-serif;font-weight:400;font-size:15px;color:#FFFDF5">완전 건조</b><span style="font-size:11.5px;font-weight:700;color:#E4F5D8">안정 · 추천</span></span>
-    <span role="listitem" style="display:flex;flex-direction:column;align-items:center;padding:4px 0;border-radius:10px;background:#7A7062;border:2px solid #E6E0D6;line-height:1.15"><b style="font-family:'Jua',sans-serif;font-weight:400;font-size:15px;color:#FFFDF5">과건조</b><span style="font-size:11.5px;font-weight:700;color:#E6E0D6">굽깎이 불가</span></span>
+  <div role="group" aria-label="{{trayAria}}" style="{{trayBox}}">
+    <span style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:40px;font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;color:#FFE7A8;text-align:center">대기<b style="font-weight:400;font-size:18px;color:#FFFDF5">{{trayN}}</b></span>
+    <div data-work="1" style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 3px;touch-action:pan-x">
+      <sc-for list="{{tray}}" as="tw" hint-placeholder-count="3">
+        <button type="button" data-work="1" data-tray="{{tw.id}}" onPointerDown="{{tw.down}}" onClick="{{tw.tap}}" aria-label="{{tw.aria}}" style="{{tw.style}}">
+          <span aria-hidden="true" style="{{tw.badge}}">{{tw.badgeText}}</span>
+          <svg width="34" height="34" viewBox="{{tw.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{tw.pot.shCy}}" rx="{{tw.pot.shRx}}" ry="{{tw.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{tw.pot.d}}" fill="{{tw.pot.fill}}"></path><path d="{{tw.pot.d}}" fill="url(#potTopLight)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.rings}}"></path><path d="{{tw.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{tw.pot.grainOp}}"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.foot}}" fill-opacity="{{tw.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.drip}}" fill-opacity="{{tw.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{tw.pot.d}}" fill="url(#potShade)"></path><path d="{{tw.pot.d}}" fill="none" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{tw.pot.rimY}}" rx="{{tw.pot.rimRx}}" ry="{{tw.pot.rimRy}}" fill="{{tw.pot.inner}}" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}"></ellipse></svg>
+          <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:10.5px;line-height:1;color:#2B1A0F">{{tw.name}}</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{trayEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="align-self:center;padding:0 6px;font-size:12px;font-weight:700;color:#F3E3C4;white-space:nowrap">{{trayEmptyText}}</span>
+      </sc-if>
+    </div>
   </div>
 
   <div role="group" class="wood-wall" aria-label="건조대 선반 · {{count}}/{{cap}}" style="position:relative;box-sizing:border-box;border:6px solid #5B3A24;border-bottom-width:10px;border-radius:10px 10px 4px 4px;box-shadow:inset 0 0 18px rgba(43,26,15,.45),0 6px 0 rgba(43,26,15,.4)">
@@ -291,11 +300,32 @@ class Component extends DCLogic {
     p.g = raw;
     this.setState(p);
   }
-  focusPatch(g, id) {
-    var it = (g.formedList || []).filter(function (x) { return x.id === id; })[0];
-    if (!it || (g.dryList || []).length >= 4) { return null; }
-    var sel = {}; sel[id] = true;
-    return { pkOpen: true, pkSel: sel };
+  focusPatch(g, id) { return null; }
+  // 대기함 → 건조대 (끌어 놓기)
+  addDry(ids) {
+    var self = this, cur = this.state.g, now2 = Date.now(), CAP = Math.min(9, Math.max((cur.dryList || []).length, 3 + (this.qlib().fx(cur).dryRack || 0)));
+    var free = CAP - (cur.dryList || []).length; if (free <= 0) { this.say('건조대가 가득 찼다 · 마른 것부터 빼자'); return 0; }
+    var add = (cur.formedList || []).filter(function (x) { return ids.indexOf(x.id) >= 0; }).slice(0, free).map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } y.start = now2 - Math.round(1800000 * (self.qlib().fx(cur).dryCut || 0)); return y; });
+    if (!add.length) { return 0; }
+    var addIds = add.map(function (x) { return x.id; });
+    this.setG({ dryList: (cur.dryList || []).concat(add), formedList: (cur.formedList || []).filter(function (x) { return addIds.indexOf(x.id) < 0; }) });
+    this.setState({ dSel: add[0].id });
+    try { window.__sfx && window.__sfx('ok'); } catch (e) {}
+    this.say(add.length + '점을 건조대에 올렸다');
+    return add.length;
+  }
+  trayDown(e, id) {
+    var self = this;
+    window.PotteryShared.trayDrag.call(this, e, {
+      target: function (x, y) {
+        var sh = document.querySelector('[role=group].wood-wall'), n = (self.state.g.dryList || []).length;
+        if (!window.PotteryShared.ptIn(sh, x, y)) { return null; }
+        return document.getElementById('dslot-' + n);
+      },
+      tint: 'rgba(255,214,107,.35)',
+      drop: function () { self.addDry([id]); },
+      miss: function (x, y) { if (window.PotteryShared.ptIn(document.querySelector('[role=group].wood-wall'), x, y)) { self.say('건조대가 가득 찼다 · 마른 것부터 빼자'); } }
+    });
   }
   tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Dry'); }
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
@@ -388,8 +418,7 @@ class Component extends DCLogic {
   zone(pct) {
     if (pct < 50) { return 'wet'; }
     if (pct < 100) { return 'early'; }
-    if (pct <= 120) { return 'ok'; }
-    return 'over';
+    return 'ok'; // 최대는 완전 건조 (과건조 없음)
   }
   openPick() {
     if ((this.state.g.dryList || []).length >= 4) { this.say('건조대가 가득 찼다 · 마른 것부터 빼자'); return; }
@@ -431,8 +460,7 @@ class Component extends DCLogic {
     var STATE = {
       wet: { t: '질음', c: '#9A4A34' },
       early: { t: '반건조', c: '#8A6410' },
-      ok: { t: '완전 건조', c: '#2F6328' },
-      over: { t: '과건조 · 굽깎이 불가', c: '#5E5547' }
+      ok: { t: '완전 건조', c: '#2F6328' }
     };
     var list = g.dryList || [];
     var doneIds = [];
@@ -440,12 +468,12 @@ class Component extends DCLogic {
     for (var i = 0; i < 9; i++) {
       var it = list[i];
       if (!it) {
-        slots.push({ filled: false, empty: true, add: function () { self.openPick(); }, card: 'position:relative;box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px' });
+        slots.push({ filled: false, empty: true, add: function () { self.say((self.state.g.formedList || []).length ? '위 대기함의 그릇을 끌어다 빈 칸에 놓자' : '성형 대기 그릇이 없다 · 물레에서 빚어 오자'); }, card: 'position:relative;box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px' });
         continue;
       }
       var pct = Math.max(0, (now - it.start) / 1800000 * 100);
       var z = this.zone(pct);
-      if (z === 'ok' || z === 'over') { doneIds.push(it.id); }
+      if (z === 'ok') { doneIds.push(it.id); }
       var sh = SH[it.shape] || SH.dish;
       var cl = CL[it.clay] || CL.basic;
       var mix = Math.min(1, pct / 100);
@@ -456,10 +484,10 @@ class Component extends DCLogic {
         filled: true, empty: false,
         name: sh.n, clay: cl.n, stars: stars,
         path: sh.p, rimY: sh.y, rimX: sh.x, fill: mix >= 1 ? cl.dry : cl.wet, pot: self.potOf(it, mix >= 1 ? cl.dry : cl.wet),
-        pct: Math.round(pct),
+        pct: Math.round(Math.min(100, pct)),
         state: STATE[z].t,
         stateStyle: 'font-family:Jua,sans-serif;font-size:13px;color:' + STATE[z].c,
-        marker: 'position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:#2B1A0F;border:1px solid #FFF4DE;left:' + Math.min(100, pct / 150 * 100) + '%',
+        marker: 'position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:#2B1A0F;border:1px solid #FFF4DE;left:' + Math.min(100, pct) + '%',
         btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 초벌 대기로') : '아직 질다',
         btnStyle: btnOn + (canPull ? (z === 'early' ? 'background:#D9A93A;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;color:#2B1A0F;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;') : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
         card: 'box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:#FFF4DE;border:3px solid ' + (z === 'ok' ? '#2F6328' : '#5B3A24') + ';box-shadow:0 4px 0 rgba(43,26,15,.4)' + (z === 'ok' ? ',0 0 0 3px #A9D69E' : '') + ';display:flex;flex-direction:column;gap:8px',
@@ -467,7 +495,7 @@ class Component extends DCLogic {
           return function () {
             if (p < 50) { self.say('아직 질어서 들면 형태가 무너진다'); return; }
             self.pull([id]);
-            self.say(zz === 'early' ? '반건조로 뺐다 · 건조·소성 중 파손 위험이 오른다' : (zz === 'over' ? '과건조로 뺐다 · 굽깎이는 못 하지만 안정적이다' : '완전 건조 · 초벌 대기로 옮겼다'));
+            self.say(zz === 'early' ? '반건조로 뺐다 · 건조·소성 중 파손 위험이 오른다' : '완전 건조 · 초벌 대기로 옮겼다');
           };
         })(it.id, pct, z)
       });
@@ -485,7 +513,7 @@ class Component extends DCLogic {
       var cell = {
         id: 'dslot-' + ci, filled: true, empty: false, locked: false, on: on2 ? 'true' : 'false', pot: sl.pot, pct: sl.pct,
         state: sl.state.replace(' · 굽깎이 불가', ''), aria: sl.name + ' · ' + sl.state + ' ' + sl.pct + '%',
-        bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, sl.pct / 1.5).toFixed(1) + '%;background:' + zc,
+        bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, sl.pct).toFixed(1) + '%;background:' + zc,
         stateStyle: 'padding:2px 8px;border-radius:8px;background:' + zc + ';border:2px solid #FFF4DE;box-shadow:0 2px 0 rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:12.5px;color:' + (zc === '#E0A92C' ? '#2B1A0F' : '#FFFDF5') + ';white-space:nowrap',
         box: 'all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px 6px;margin-bottom:6px;border-radius:12px;' + (on2 ? 'background:rgba(255,231,168,.22);box-shadow:0 0 0 3px #FFD66B;' : '') + (it2.inAt && Date.now() < it2.inAt ? 'opacity:0;' : ''),
         tap: (function (id) { return function () { self.setState({ dSel: id }); }; })(it2.id)
@@ -523,7 +551,17 @@ class Component extends DCLogic {
       }
     });
     var formed = [];
+    var tray = formedL.map(function (x) {
+      var nm = (SH[x.shape] || {}).n || ({ dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }[x.shape] || '그릇');
+      return { id: x.id, name: x.goalName || nm, aria: nm + ' · 끌어서 건조대에 올리기', pot: self.potOf(x, self.fillOf(x, 'wet')), badge: 'display:none', badgeText: '',
+        style: 'all:unset;cursor:grab;position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;user-select:none;-webkit-user-select:none;touch-action:pan-x',
+        down: function (e) { self.trayDown(e, x.id); },
+        tap: function () { if (Date.now() - (window.__potDragEnd || 0) < 350) { return; } self.say('꾹 잡고 아래 건조대 빈 칸으로 끌어 놓자'); } };
+    });
     return {
+      tray: tray, trayN: formedL.length, trayEmpty: !formedL.length, trayEmptyText: '물레에서 빚으면 여기에 쌓여요',
+      trayAria: '성형 대기함 · ' + formedL.length + '점 · 끌어서 건조대에 올리기',
+      trayBox: 'position:relative;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35)',
       pk: pk,
       openPick: function () { self.openPick(); },
       formedPeek: formedL.slice(0, 3).map(function (x) { return self.potOf(x, self.fillOf(x, 'wet')); }),
@@ -532,7 +570,7 @@ class Component extends DCLogic {
       formed: formed, formedN: formedL.length, noFormed: formedL.length === 0,
       slots: slots, tiers: tiers, cap: CAP,
       selOn: !!selV, selNone: !selV, sel: selV || { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, name: '', clay: '', stars: '', state: '', pct: 0, stateStyle: '', btn: '', btnStyle: '', pull: function () {} },
-      selHint: list.length ? '선반의 기물을 눌러 상태를 확인' : '선반이 비어 있다 · 빈 칸을 눌러 기물을 올리자',
+      selHint: list.length ? '선반의 기물을 눌러 상태를 확인' : '선반이 비어 있다 · 위 대기함에서 그릇을 끌어다 놓자',
       count: list.length,
       glazeQ: (g.bisqueList || []).length,
       goBisque: function () { self.setG({ mainFocus: 'bisque' }); },
@@ -675,7 +713,7 @@ class Component extends DCLogic {
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

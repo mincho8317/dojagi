@@ -445,7 +445,7 @@
     window.__trackBooted = true;
     var KEY = 'pottery-proto-v1', L = this.qlib();
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
-    var POS = { Wheel: 196, Dry: 66, Bisque: 66, Glaze: 104, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 1, Dry: 0, Glaze: 1, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 조작 영역이 넓은 화면은 접힌 채 시작
+    var POS = { Wheel: 124, Dry: 66, Bisque: 66, Glaze: 66, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 0, Dry: 0, Glaze: 0, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 모든 제작 화면은 접힌 채 시작 (조작 UI를 가리지 않게)
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function gameRect() { var cands = [].slice.call(document.querySelectorAll('div')).filter(function (d) { var w = d.offsetWidth; return (w === 390) && d.offsetHeight >= 780; }); var el = cands[0]; if (!el) { return { l: 0, t: 0, k: 1, w: window.innerWidth }; } var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, k: r.width / 390, w: r.width }; }
@@ -464,9 +464,9 @@
     var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
     var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.textContent = '📋 제작 안내 의뢰 고르기';
     document.body.appendChild(box); document.body.appendChild(pill);
-    var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
+    var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen2_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
     var prev = {};
-    box.addEventListener('click', function (e) { var h = e.target.closest && e.target.closest('.trk-h'); if (h) { open = !open; try { localStorage.setItem('trkOpen_' + PAGE, open ? '1' : '0'); } catch (e2) {} render(); } });
+    box.addEventListener('click', function (e) { var h = e.target.closest && e.target.closest('.trk-h'); if (h) { open = !open; try { localStorage.setItem('trkOpen2_' + PAGE, open ? '1' : '0'); } catch (e2) {} render(); } });
     function place(el) { var R = gameRect(); el.style.top = (R.t + POS[PAGE] * R.k).toFixed(1) + 'px'; el.style.right = Math.max(0, window.innerWidth - (R.l + R.w) + 8 * R.k).toFixed(1) + 'px'; el.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
     function render() {
       var g = load();
@@ -598,7 +598,8 @@
         setB(0, 0, 0, W, T0); setB(1, 0, B0, W, H - B0); setB(2, 0, T0, L0, B0 - T0); setB(3, R0, T0, W - R0, B0 - T0);
         var bw = Math.min(250, W - 20), bl = Math.max(10, Math.min(W - bw - 10, r.left + r.width / 2 - bw / 2));
         b.style.width = bw + 'px'; b.style.left = bl + 'px';
-        if (r.top > H * 0.45) { b.style.top = 'auto'; b.style.bottom = (H - r.top + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; }
+        var bh = b.offsetHeight || 80, below = r.bottom + 16 + bh <= H - 6, above = r.top - 16 - bh >= 6;
+        if ((r.top > H * 0.45 && above) || (!below && above)) { b.style.top = 'auto'; b.style.bottom = (H - r.top + 16) + 'px'; } else if (below) { b.style.bottom = 'auto'; b.style.top = (r.bottom + 16) + 'px'; } else { b.style.bottom = 'auto'; b.style.top = Math.max(6, Math.min(H - bh - 6, r.bottom - bh - 14)) + 'px'; }
       }
       place(); spotT = setInterval(place, 250);
       // 밝힌 곳을 누르면 안내를 닫고 원래 동작이 그대로 일어난다
@@ -622,7 +623,7 @@
       var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
       var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (L[2] === 'bq' ? ((g.bisque || {}).state === 'firing' && (g.bisque.start || 0) + 1200000 > nowJ + 3000) : g.kiln === 'firing');
       if (!busy) {
-        if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(function () { var c = [].slice.call(document.querySelectorAll('button[aria-label="빈 칸 · 기물 올리기"]')).filter(function (x) { return vis(x); }); return c[0] || null; }, '먼저 빚은 그릇을 건조대에 올려요 · 올린 뒤 💎옥으로 바로 말릴 수 있어요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
+        if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(qsel('button[data-tray]'), '빚은 그릇을 꾹 잡고 아래 건조대 빈 칸으로 끌어 놓아요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
         return;
       }
       if (L[2] !== 'kiln') {
@@ -695,8 +696,12 @@
         var tbW = qsel('button[aria-label^="목표 모양 바꾸기"]')();
         if (tbW && (tbW.getAttribute('aria-label') || '').indexOf('찻잔') < 0) { act('whTgt2', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '의뢰는 찻잔이에요 · 모양을 찻잔으로 바꿔요'); return; }
         var mtW = /일치율\s*(\d+)%/.exec(document.body.innerText || ''), pctW = mtW ? +mtW[1] : 0;
-        if (pctW >= 60) { act('whDone', true, btnWith('완성'), '잘 빚었어요! 완성을 눌러요'); }
-        else if (!W('work')) { if (act('whWork', true, qsel('[data-work]'), '흙을 좌우로 밀어 모양을, 위아래로 쓸어 두께를 맞춰요 · 점선에 가까울수록 일치율이 올라가요')) { Wset('work'); } }
+        var gauge = qsel('[aria-label="높이별 두께"]')(), gTxt = gauge ? (gauge.textContent || '') : '', thickBad = gauge && (gTxt.indexOf('↑') >= 0 || gTxt.indexOf('↓') >= 0 || gTxt.indexOf('⚠') >= 0);
+        var wAt = +(W('workAt') || 0);
+        if (!W('work')) { if (act('whWork', true, qsel('[data-work]'), '흙을 좌우로 밀어 점선 모양에 맞춰요 · 초록 화살표 방향으로 밀면 돼요 · 가까울수록 일치율이 올라가요')) { Wset('work'); try { localStorage.setItem('tutWh_workAt', String(Date.now())); } catch (e) {} } }
+        else if (!W('thick') && thickBad && Date.now() - wAt > 7000) { if (act('whThick', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '왼쪽 눈금은 높이별 두께예요 · 흙 벽을 위로 쓸면 얇아지고 아래로 쓸면 두꺼워져요 · 눈금이 모두 초록이 되면 딱 좋아요 (빨강은 찢어짐 위험)')) { Wset('thick'); } }
+        else if (pctW >= 60 && !thickBad) { act('whDone', true, btnWith('완성'), '모양도 두께도 잘 맞았어요! 완성을 눌러요'); }
+        else if (pctW >= 60 && thickBad && W('thick') && !W('thick2')) { if (act('whThick2', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '모양은 좋아요! 두께 눈금이 초록이 되게 벽을 위아래로 쓸어 맞춰요')) { Wset('thick2'); } }
         return;
       }
       if (PAGE === 'Dry' && t === 2) {
@@ -705,10 +710,8 @@
       if (PAGE === 'Bisque' && t === 3) {
         var bq = g.bisque || {};
         if (bq.state === 'firing') { if ((bq.start || 0) + 1200000 <= now) { act('bqOut', true, btnWith('꺼내기'), '다 구워졌어요! 가마를 눌러 꺼내요'); } }
-        else if (btnWith('점 넣기')()) { act('bqIn', true, btnWith('점 넣기'), '골랐으면 가마에 넣어요'); }
-        else if (btnWith('완전 건조')()) { act('bqSel', true, btnWith('완전 건조'), '구울 기물을 골라요'); }
         else if (btnWith('초벌 굽기')()) { act('bqFire', true, btnWith('초벌 굽기'), '이제 불을 지펴 초벌을 구워요'); }
-        else { act('bqPick', (g.bisqueList || []).length > 0, qsel('button[aria-label="초벌 가마에 넣을 기물 고르기"]'), '가마를 눌러 구울 기물을 넣어요'); }
+        else { act('bqPick', (g.bisqueList || []).length > 0, function () { return [].slice.call(document.querySelectorAll('button[data-tray]')).filter(function (b) { return vis(b) && (b.getAttribute('aria-label') || '').indexOf('가마 안') < 0; })[0] || null; }, '그릇을 꾹 잡고 아래 가마로 끌어 놓아요'); }
       }
       if (PAGE === 'Glaze' && t === 4 && (g.glazeList || []).length) {
         var gzBtn = qsel('button[aria-label^="유약 고르기 · 지금"]')();
@@ -986,5 +989,46 @@
       if (typeof g.tut === 'number' && typeof prev.tut === 'number' && g.tut > prev.tut) { window.__sfx('unlock'); }
       prev = g;
     }, 300);
+  };
+  // 대기함 끌어 놓기 · 진열대와 같은 방식 (그릇 그림이 손가락을 따라오고, 놓을 곳이 빛난다)
+  // o = { target(x, y) → 놓을 요소 | null, drop(el), miss(x, y)?, start()? }
+  S.trayDrag = function (e, o) {
+    if (!e || (e.button !== undefined && e.button !== 0)) { return; }
+    var src = e.currentTarget, x0 = e.clientX, y0 = e.clientY, on = false, ghost = null, over = null, oldBs = '', oldBg = '';
+    function hl(c) {
+      if (over === c) { return; }
+      if (over) { over.style.boxShadow = oldBs; over.style.transform = ''; if (o.tint) { over.style.background = oldBg; } }
+      over = c;
+      if (c) { oldBs = c.style.boxShadow; if (o.tint) { oldBg = c.style.background; c.style.background = o.tint; } c.style.boxShadow = '0 0 0 4px #FFD66B,0 0 18px 4px rgba(255,214,107,.85)'; c.style.transform = 'scale(1.04)'; }
+    }
+    function mv(ev) {
+      if (!on && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 8) { return; }
+      if (!on) {
+        on = true;
+        var sv = src.querySelector('svg');
+        ghost = document.createElement('div');
+        ghost.style.cssText = 'position:fixed;z-index:9990;pointer-events:none;width:68px;height:68px;margin:-56px 0 0 -34px;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45));transform:scale(1.1)';
+        if (sv) { var c2 = sv.cloneNode(true); c2.setAttribute('width', '68'); c2.setAttribute('height', '68'); ghost.appendChild(c2); }
+        document.body.appendChild(ghost);
+        src.style.opacity = '.3';
+        if (o.start) { o.start(); }
+        try { window.__sfx && window.__sfx('tap'); } catch (e2) {}
+      }
+      if (ev.cancelable) { ev.preventDefault(); }
+      ghost.style.left = ev.clientX + 'px'; ghost.style.top = ev.clientY + 'px';
+      hl(o.target(ev.clientX, ev.clientY));
+    }
+    function up(ev) {
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      if (!on) { return; }
+      window.__potDragEnd = Date.now();
+      if (ghost) { ghost.remove(); } src.style.opacity = ''; var t = ev.type === 'pointercancel' ? null : o.target(ev.clientX, ev.clientY); hl(null);
+      if (t) { o.drop(t); } else if (o.miss && ev.type !== 'pointercancel') { o.miss(ev.clientX, ev.clientY); }
+    }
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  };
+  // 화면 좌표가 요소 안인지
+  S.ptIn = function (el, x, y) {
+    if (!el) { return false; } var r = el.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
   };
 })();

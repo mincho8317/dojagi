@@ -61,7 +61,24 @@ button{font-family:inherit;cursor:pointer}
     <span style="padding:4px 10px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">800℃ · 20분</span>
   </div>
 
-  <button type="button" onClick="{{kilnTap}}" aria-label="{{kilnAria}}" style="{{kilnStyle}}">
+  <sc-if value="{{trayOn}}" hint-placeholder-val="{{true}}">
+  <div role="group" aria-label="{{trayAria}}" style="{{trayBox}}">
+    <span style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:40px;font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;color:#FFE7A8;text-align:center">대기<b style="font-weight:400;font-size:18px;color:#FFFDF5">{{trayN}}</b></span>
+    <div data-work="1" style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 3px;touch-action:pan-x">
+      <sc-for list="{{tray}}" as="tw" hint-placeholder-count="3">
+        <button type="button" data-work="1" data-tray="{{tw.id}}" onPointerDown="{{tw.down}}" onClick="{{tw.tap}}" aria-label="{{tw.aria}}" style="{{tw.style}}">
+          <span aria-hidden="true" style="{{tw.badge}}">{{tw.badgeText}}</span>
+          <svg width="34" height="34" viewBox="{{tw.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{tw.pot.shCy}}" rx="{{tw.pot.shRx}}" ry="{{tw.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{tw.pot.d}}" fill="{{tw.pot.fill}}"></path><path d="{{tw.pot.d}}" fill="url(#potTopLight)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.rings}}"></path><path d="{{tw.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{tw.pot.grainOp}}"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.foot}}" fill-opacity="{{tw.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.drip}}" fill-opacity="{{tw.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{tw.pot.d}}" fill="url(#potShade)"></path><path d="{{tw.pot.d}}" fill="none" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{tw.pot.rimY}}" rx="{{tw.pot.rimRx}}" ry="{{tw.pot.rimRy}}" fill="{{tw.pot.inner}}" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}"></ellipse></svg>
+          <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:10.5px;line-height:1;color:#2B1A0F">{{tw.name}}</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{trayEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="align-self:center;padding:0 6px;font-size:12px;font-weight:700;color:#F3E3C4;white-space:nowrap">{{trayEmptyText}}</span>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+  <button type="button" id="bkiln" onClick="{{kilnTap}}" aria-label="{{kilnAria}}" style="{{kilnStyle}}">
     <span aria-hidden="true" style="position:absolute;left:14px;top:300px;width:192px;height:44px;border-radius:50%;background:radial-gradient(closest-side,rgba(43,26,15,.55),rgba(43,26,15,0));pointer-events:none"></span>
     <img src="_blob/1613e2df0e0471ee08544645f601729c.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:2px;top:20px;width:216px;height:320px;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(43,26,15,.35))">
     <span id="bdoorpt" aria-hidden="true" style="position:absolute;left:48px;top:150px;width:117px;height:113px;pointer-events:none"></span>
@@ -213,7 +230,7 @@ class Component extends DCLogic {
     if (!it || (g.bisque || {}).state === 'firing') { return null; }
     var pick = {}; for (var k in (this.state.pick || {})) { pick[k] = this.state.pick[k]; }
     pick[id] = true;
-    return { draft: pick, pkOpen: true };
+    return { pick: pick };
   }
   tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Bisque'); }
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
@@ -303,6 +320,22 @@ class Component extends DCLogic {
     clearInterval(this.tick); clearTimeout(this.tt);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
   }
+  // 대기함 → 초벌 가마 (끌어 놓기)
+  trayDown(e, id) {
+    var self = this;
+    window.PotteryShared.trayDrag.call(this, e, {
+      target: function (x, y) { var k = document.getElementById('bkiln'); return window.PotteryShared.ptIn(k, x, y) ? k : null; },
+      drop: function () { self.toKiln(id, true); }
+    });
+  }
+  toKiln(id, on) {
+    var g = this.state.g, bq = g.bisque || {}; if (bq.state === 'firing') { return; }
+    var pick = {}, cur = this.state.pick || {}, n = 0; for (var k in cur) { if (cur[k] && (g.bisqueList || []).some(function (x) { return x.id === k; })) { pick[k] = true; n++; } }
+    if (on) { if (pick[id]) { return; } if (n >= 6) { this.say('초벌 가마에는 6점까지 들어간다'); return; } pick[id] = true; } else { delete pick[id]; }
+    this.setState({ pick: pick, doorShut: Date.now() + 700 });
+    try { window.__sfx && window.__sfx(on ? 'ok' : 'tap'); } catch (e) {}
+    this.say(on ? '가마에 넣었다 · ' + (n + 1) + '/6' : '가마에서 뺐다');
+  }
   say(m) { var self = this; clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1800); }
   renderVals0() {
     var self = this, g = this.state.g, now = Date.now();
@@ -358,7 +391,7 @@ class Component extends DCLogic {
       newStyle: done ? 'position:absolute;left:142px;top:138px;z-index:3;padding:2px 9px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,180,80,.9);font-family:Jua,sans-serif;font-size:14px;color:#FFFDF5;animation:glow 1s ease-in-out infinite;pointer-events:none' : 'display:none',
       fireWin: 'position:absolute;left:88px;top:186px;width:38px;height:26px;border-radius:3px;' + (firing && !done ? 'background:#FF9A4D;box-shadow:0 0 12px 4px rgba(255,140,60,.7);animation:glow 1.2s ease-in-out infinite;' : ''),
       bubble: 'position:absolute;top:238px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:3px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (done ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (firing ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24')),
-      bubbleText: done ? '초벌 완료' : (firing ? self.fmtLeft(leftMs) : '대기 ' + list.length),
+      bubbleText: done ? '초벌 완료' : (firing ? self.fmtLeft(leftMs) : (selN ? '가마 안 ' + selN + '/6' : '비어 있음')),
       info1: firing ? (done ? '다 구웠다' : '굽는 중') : (self.tutSafe() ? '튜토리얼 중엔 터지지 않아요' : '반건조 기물은 12% 확률로 터진다'),
       info2: firing ? Math.round(pct) + '%' : '',
       bar: 'height:100%;border-radius:4px;background:#E3B23C;width:' + pct + '%',
@@ -395,14 +428,27 @@ class Component extends DCLogic {
         self.say('초벌 시작 · ' + surv.length + '점' + (brokeN ? ' · 반건조 ' + brokeN + '점이 터졌다' : ''));
       };
     }
-    var idleTap = function () { if (!list.length) { self.say('초벌할 기물이 없다 · 건조대에서 빼오자'); return; } openPk(); };
+    var idleTap = function () { if (!list.length) { self.say('초벌할 기물이 없다 · 건조대에서 빼오자'); return; } self.say('위 대기함의 그릇을 꾹 잡고 가마로 끌어 놓자'); };
+    v.trayOn = !firing;
+    v.tray = list.map(function (x) {
+      var inK = !!pick[x.id];
+      return { id: x.id, name: SN[x.shape] || '그릇', aria: (SN[x.shape] || '그릇') + (inK ? ' · 가마 안 · 눌러서 빼기' : ' · 끌어서 가마에 넣기'), pot: self.potOf(x, self.fillOf(x, 'dry')),
+        badge: inK ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 5px;border-radius:8px;background:#C8601E;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : (x.dry === 'early' ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 4px;border-radius:8px;background:#E0A92C;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#2B1A0F' : 'display:none'),
+        badgeText: inK ? '가마 안' : (x.dry === 'early' ? '반건조' : ''),
+        style: 'all:unset;cursor:' + (inK ? 'pointer' : 'grab') + ';position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' + (inK ? 'background:#F3E3C4;border:2px solid #C8601E;box-shadow:0 2px 0 #8A3D10;opacity:.75;' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;') + 'user-select:none;-webkit-user-select:none;touch-action:pan-x',
+        down: function (e) { if (inK) { return; } self.trayDown(e, x.id); },
+        tap: function () { if (Date.now() - (window.__potDragEnd || 0) < 350) { return; } if (inK) { self.toKiln(x.id, false); return; } self.say('꾹 잡고 아래 가마로 끌어 놓자'); } };
+    });
+    v.trayN = list.length; v.trayEmpty = !list.length; v.trayEmptyText = '건조대에서 뺀 그릇이 여기에 쌓여요';
+    v.trayAria = '초벌 대기함 · ' + list.length + '점 · 끌어서 가마에 넣기';
+    v.trayBox = 'position:absolute;left:12px;right:12px;top:116px;z-index:4;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35)';
     v.kilnTap = firing && !done ? v.run : (done ? v.run : idleTap);
-    v.kilnAria = firing && !done ? '초벌 가마 · 굽는 중' : (done ? '초벌 가마 열어서 꺼내기' : '초벌 가마에 넣을 기물 고르기');
-    v.kilnHint = firing && !done ? '굽는 중 · ' + self.fmtLeft(leftMs) : (done ? '눌러서 꺼내기' : (list.length ? (selN ? '눌러서 다시 고르기' : '눌러서 기물 넣기') : '비어 있다'));
+    v.kilnAria = firing && !done ? '초벌 가마 · 굽는 중' : (done ? '초벌 가마 열어서 꺼내기' : '초벌 가마 · 그릇을 끌어 놓는 곳');
+    v.kilnHint = firing && !done ? '굽는 중 · ' + self.fmtLeft(leftMs) : (done ? '눌러서 꺼내기' : (list.length ? (selN ? '가마 안 ' + selN + '/6' : '여기로 끌어 놓기') : '비어 있다'));
     v.kilnHintStyle = 'margin-top:12px;padding:5px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (done ? 'background:#4A9440;color:#FFFDF5;box-shadow:0 0 12px rgba(255,230,140,.9)' : (firing ? 'background:#3E2616;color:#FFB979' : (list.length ? 'background:#5B3A24;color:#FFE7A8' : 'background:rgba(43,26,15,.2);color:#7A5434')));
     v.kilnStyle = 'all:unset;cursor:pointer;position:absolute;left:85px;top:262px;width:220px;height:340px;box-sizing:border-box;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:70px;gap:4px;color:#5B3A24;text-align:center;' + (done || (!firing && list.length && !selN) ? 'filter:drop-shadow(0 0 10px rgba(255,214,107,.95));' : '');
     if (done) { v.action = '가마를 눌러 꺼내기'; v.actionSub = (bq.items || []).length + '점 · 초벌 완료 · 이 버튼으로도 꺼낼 수 있다'; }
-    if (!firing && !selN) { v.action = list.length ? '가마를 눌러 기물을 넣자' : '초벌 대기 없음'; v.run = idleTap; }
+    if (!firing && !selN) { v.action = list.length ? '그릇을 끌어 가마에 넣자' : '초벌 대기 없음'; v.actionSub = list.length ? '위 대기함에서 가마로 끌어 놓기 · 최대 6점' : '건조대에서 빼면 여기로 온다'; v.run = idleTap; }
     return v;
   }
 
@@ -508,7 +554,7 @@ class Component extends DCLogic {
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'shelf', step: '판매', href: 'Display.dc.html' }, { id: 'counter', step: '손님', href: 'Counter.dc.html' }
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }
