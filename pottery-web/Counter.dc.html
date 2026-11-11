@@ -116,12 +116,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <img src="_blob/afa5b1b61c1caeaf1edef99c030ed1ea.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:20px;top:380px;width:350px;height:130px;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(43,26,15,.4))">
 
-  <sc-if value="{{showChoices}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:24px;right:24px;top:{{choiceTop}}px;display:flex;flex-direction:column;gap:7px">
-      <sc-for list="{{choices}}" as="ch" hint-placeholder-count="2">
-        <sc-if value="{{ch.isLink}}" hint-placeholder-val="{{false}}">
-          <a href="{{ch.href}}" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</a>
-        </sc-if>
         <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
           <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
         </sc-if>
@@ -130,7 +124,8 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </sc-if>
 
   <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
-    <button type="button" onClick="{{advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;left:12px;right:12px;bottom:16px;min-height:200px;box-sizing:border-box;padding:24px 18px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+    <section style="position:absolute;left:12px;right:12px;bottom:16px;min-height:200px;box-sizing:border-box;padding:24px 18px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px;z-index:6">
+      <button type="button" onClick="{{advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>
       <span style="position:absolute;left:16px;top:-18px;padding:4px 14px;border-radius:10px;background:#5B3A24;border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{guest.name}}</span>
       <span style="position:absolute;right:16px;top:-14px;padding:2px 10px;border-radius:9px;background:{{guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{guest.tag}}</span>
       <span style="font-size:15px;line-height:1.7;color:#2B1A0F">{{line}}</span>
@@ -145,8 +140,20 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{card.reward}}</span>
         </span>
       </sc-if>
+      <sc-if value="{{showChoices}}" hint-placeholder-val="{{false}}">
+        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{choices}}" as="ch" hint-placeholder-count="2">
+            <sc-if value="{{ch.isLink}}" hint-placeholder-val="{{false}}">
+              <a href="{{ch.href}}" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</a>
+            </sc-if>
+            <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
+              <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
+            </sc-if>
+          </sc-for>
+        </div>
+      </sc-if>
       <span style="{{moreStyle}}">{{moreLabel}}</span>
-    </button>
+    </section>
   </sc-if>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
@@ -686,7 +693,7 @@ class Component extends DCLogic {
     var li = Math.min(s.line, lines.length - 1);
     var atEnd = li >= lines.length - 1;
     var choices = (cur && atEnd ? cur.choices : []).map(function (c) {
-      var st = 'all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:11px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:16px;text-decoration:none;' + (c.tone === 'go' ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
+      var st = 'all:unset;cursor:pointer;flex:1 1 40%;box-sizing:border-box;display:block;text-align:center;padding:10px 6px;border-radius:14px;font-family:Jua,sans-serif;font-size:15.5px;text-decoration:none;' + (c.tone === 'go' ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
       return { label: c.label, style: st, isLink: !!c.href, isBtn: !c.href, href: c.href || '', run: c.run || function () {} };
     });
     var ordered = list.slice(gi).concat(list.slice(0, gi));
@@ -727,8 +734,8 @@ class Component extends DCLogic {
       showChoices: choices.length > 0,
       choices: choices,
       choiceTop: hasCard ? 330 - (choices.length - 2) * 30 : 400 - (choices.length - 2) * 30,
-      moreLabel: atEnd ? '위 선택지를 고르자' : '▼ 눌러서 계속',
-      moreStyle: 'align-self:flex-end;font-family:Jua,sans-serif;font-size:12px;color:#8A6440;' + (atEnd ? '' : 'animation:blink 1s ease-in-out infinite;'),
+      moreLabel: atEnd ? '' : '▼ 눌러서 계속',
+      moreStyle: 'position:relative;z-index:0;pointer-events:none;align-self:flex-end;font-family:Jua,sans-serif;font-size:12px;color:#8A6440;' + (atEnd ? 'display:none;' : 'animation:blink 1s ease-in-out infinite;'),
       advance: function () { if (!atEnd) { self.setState({ line: li + 1 }); } },
       backToCounter: function () { self.setG({ mainFocus: 'counter' }); },
       toast: s.toast,

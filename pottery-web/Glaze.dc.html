@@ -88,6 +88,21 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
 
   <div aria-hidden="true" style="{{ripple}}"></div>
+  <sc-if value="{{ringOn}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position:absolute;left:272px;top:268px;width:96px;height:96px;z-index:7;pointer-events:none">
+      <svg width="96" height="96" viewBox="0 0 96 96">
+        <circle cx="48" cy="48" r="44" fill="rgba(43,26,15,.85)" stroke="#FFF4DE" stroke-width="3"></circle>
+        <g transform="rotate(-90 48 48)">
+          <sc-for list="{{ringSegs}}" as="rs" hint-placeholder-count="4">
+            <circle cx="48" cy="48" r="32" fill="none" stroke="{{rs.c}}" stroke-width="11" stroke-dasharray="{{rs.da}}" stroke-dashoffset="{{rs.off}}"></circle>
+          </sc-for>
+          <circle cx="48" cy="48" r="32" fill="none" stroke="rgba(255,253,245,.55)" stroke-width="4" stroke-dasharray="{{ringProg}}"></circle>
+        </g>
+        <circle cx="{{ringDot.x}}" cy="{{ringDot.y}}" r="7" fill="#FFFDF5" stroke="#2B1A0F" stroke-width="2.5"></circle>
+      </svg>
+      <span style="{{ringLabStyle}}">{{ringLab}}</span>
+    </div>
+  </sc-if>
   <div aria-hidden="true" style="{{subGuide}}">{{subGuideText}}</div>
   <sc-if value="{{liftOn}}" hint-placeholder-val="{{false}}">
     <div aria-hidden="true" style="position:absolute;left:0;top:0;width:390px;height:520px;pointer-events:none;z-index:6">
@@ -105,22 +120,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:14px 16px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:11px">
 
-    <div style="display:flex;flex-direction:column;gap:5px">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">담금 시간</span>
-        <span style="{{zoneStyle}}">{{zoneLabel}}</span>
-      </div>
-      <div style="position:relative;height:22px;box-sizing:border-box;border:3px solid #3E2616;border-radius:12px;background:#3E2616;display:flex;overflow:hidden" role="img" aria-label="담금 시간 게이지">
-        <span style="{{gg.s1}}background:#8EA3A8"></span>
-        <span style="{{gg.s2}}background:#5FB052;box-shadow:inset 0 3px 0 rgba(255,255,255,.3)"></span>
-        <span style="{{gg.s3}}background:#D9A93A"></span>
-        <span style="flex:1 1 auto;background:#C9705A"></span>
-        <span style="{{needle}}"></span>
-      </div>
-      <div style="display:flex;font-size:12px;font-weight:700;color:#7A5434">
-        <span style="{{gg.s1}}">얇음</span><span style="{{gg.s2}}color:#2F6328;white-space:nowrap">적정</span><span style="{{gg.s3}}">두껍</span><span style="flex:1 1 auto;text-align:right">흘러내림</span>
-      </div>
-    </div>
 
     <div style="display:flex;gap:7px">
       <button type="button" onClick="{{gsOpen}}" aria-label="유약 고르기 · 지금 {{selGz.name}}" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:6px 10px 6px 6px;border-radius:14px;background:#FFFDF5;border:3px solid #8A6440;box-shadow:0 3px 0 #8A6440">
@@ -137,10 +136,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </sc-if>
     </div>
 
-    <button type="button" data-work="1" onPointerDown="{{holdStart}}" onPointerUp="{{holdEnd}}" onPointerLeave="{{holdEnd}}" onPointerCancel="{{holdEnd}}" onKeyDown="{{keyDown}}" onKeyUp="{{keyUp}}" onContextMenu="{{noMenu}}" style="{{holdStyle}}">
-      <span style="font-family:'Jua',sans-serif;font-size:21px">{{holdLabel}}</span>
-      <span style="font-size:12px;font-weight:700;opacity:.9">{{holdSub}}</span>
-    </button>
   </div>
 
   <sc-if value="{{gsShow}}" hint-placeholder-val="{{false}}">
@@ -584,6 +579,12 @@ class Component extends DCLogic {
       tubLine: selG.raw,
       needle: shown < 0 ? 'display:none' : 'position:absolute;top:-3px;bottom:-3px;width:5px;margin-left:-2px;background:#FFFDF5;border:1px solid #2B1A0F;left:' + Math.min(100, shown / 2400 * 100) + '%',
       zoneLabel: zone ? ZL[zone][0] : '도자기를 끌어내려 담그기',
+      ringOn: shown >= 0 && (!!s.holding || !!s.lift),
+      ringSegs: (function () { var T = self.zoneT(EG), W = 2400, C = 2 * Math.PI * 32, b = [0, T[0], T[1], T[2], W], cs = ['#8EA3A8', '#5FB052', '#D9A93A', '#C9705A']; return cs.map(function (c, i) { var a0 = b[i] / W * C, a1 = b[i + 1] / W * C; return { c: c, da: (a1 - a0).toFixed(2) + ' ' + C.toFixed(2), off: (-a0).toFixed(2) }; }); })(),
+      ringProg: (function () { var C = 2 * Math.PI * 32, p = Math.max(0, Math.min(1, shown / 2400)) * C; return p.toFixed(2) + ' ' + C.toFixed(2); })(),
+      ringDot: (function () { var a = Math.max(0, Math.min(1, shown / 2400)) * Math.PI * 2 - Math.PI / 2; return { x: (48 + 32 * Math.cos(a)).toFixed(1), y: (48 + 32 * Math.sin(a)).toFixed(1) }; })(),
+      ringLab: zone ? ZL[zone][0] : '',
+      ringLabStyle: "position:absolute;left:22px;right:22px;top:0;bottom:0;display:flex;align-items:center;justify-content:center;text-align:center;word-break:keep-all;font-family:'Jua',sans-serif;font-size:13px;line-height:1.1;color:" + (zone === 'ok' ? '#9FE08F' : (zone ? '#FFE7A8' : '#FFF4DE')) + ';text-shadow:0 1px 0 #000',
       zoneStyle: "font-family:'Jua',sans-serif;font-size:13px;color:" + (zone ? ZL[zone][1] : '#7A5434'),
       condStyle: 'position:absolute;left:40px;right:40px;top:482px;display:' + (needQuest ? 'flex' : 'none') + ';align-items:center;justify-content:center;gap:7px;padding:7px 12px;border-radius:20px;border:3px solid #FFF4DE;box-shadow:0 3px 0 rgba(43,26,15,.4);font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + (condOk ? '#2F6328' : '#8A5A36'),
       condText: condOk ? '✓ 민 씨 의뢰 조건 · 찻잔 + 청자유' : '민 씨 의뢰: 찻잔에 청자유',

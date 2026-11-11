@@ -362,7 +362,24 @@
       (grades || []).forEach(function (gr) { bonus += Math.round(TUNE.itemGold * (TUNE.gradeBonus[gr] || 0)); });
       return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, shards: cnt * TUNE.itemShards, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
     }
-    this._ql = { migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    // 소성 결과 보기를 시작했다가 다른 화면으로 가면, 남은 작품을 그대로 대기함에 넣는다
+    function settleKiln(g) {
+      if (!g || g.kiln !== 'firing' || !g.kilnSeen) { return null; }
+      if (g.kilnStart && Date.now() < g.kilnStart + (g.kilnDur || 28800000)) { return null; }
+      var items = g.batchItems || []; if (!items.length) { return null; }
+      var pieces = {}, k; for (k in (g.pieces || {})) { pieces[k] = g.pieces[k]; }
+      var order = (g.order || []).slice(), log = [], shards = g.shards || 0, broken = g.broken || 0, now = Date.now();
+      var sf = {}, gf = {}; for (k in (g.shapesFound || {})) { sf[k] = g.shapesFound[k]; } for (k in (g.glazesFound || {})) { gf[k] = g.glazesFound[k]; }
+      items.forEach(function (x, i) {
+        if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
+        var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
+        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '' };
+        order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
+        log.push({ name: x.name, action: x.grade + ' · 대기함' });
+      });
+      return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
+    }
+    this._ql = { settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>
@@ -511,7 +528,7 @@
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
       { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 초록 칸에 맞춰 부채질하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
       { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
-      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 꾹 눌러 담가 보세요', next: 'Glaze' },
+      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 끌어내려 담가 보세요', next: 'Glaze' },
       { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' }
     ];
@@ -739,7 +756,7 @@
         var gzBtn = qsel('button[aria-label^="유약 고르기 · 지금"]')();
         if (qsel('button[aria-label="청자유"]')()) { act('gzCel', true, qsel('button[aria-label="청자유"]'), '「📋 의뢰」 태그가 붙은 유약이 의뢰 조건이에요 · 민 씨가 원한 청자유를 골라요'); }
         else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
-        else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 게이지가 초록 칸일 때 위로 올려 꺼내요'); }
+        else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 그릇 위 원형 게이지가 초록일 때 위로 올려 꺼내요'); }
       }
       if (PAGE === 'Kiln' && t === 5) {
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
@@ -883,6 +900,9 @@
     ['pointerdown', 'click'].forEach(function (ev) { document.addEventListener(ev, guard, true); });
     window.addEventListener('storage', function () { apply(load()); });
     var g0 = load();
+    function settle() { if (PAGE === 'KilnOpen') { return false; } try { var rk = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), sk = window.PotteryShared.qlib.call({}).settleKiln(rk); if (sk) { for (var kk in sk) { rk[kk] = sk[kk]; } localStorage.setItem('pottery-proto-v1', JSON.stringify(rk)); notify(); setTimeout(function () { toast('가마에서 꺼낸 작품을 대기함에 넣었어요'); }, 600); return true; } } catch (e) {} return false; }
+    if (settle()) { g0 = load(); }
+    setInterval(settle, 1500);
     var mig = null; try { mig = localStorage.getItem('tutMig'); } catch (e) {}
     if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (g0.tut === 7 || g0.tut === 8) { g0.tut = DONE1; save(g0); if (!t2R()) { t2W({ k: 0, seen: -1 }); } }

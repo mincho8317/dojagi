@@ -92,33 +92,33 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </sc-if>
     <sc-if value="{{shownNow}}" hint-placeholder-val="{{true}}">
     <div style="{{shownWrap}}">
-    <div style="animation:fadeIn .5s .1s both;position:absolute;left:35px;top:110px;width:320px;height:320px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle,{{it.rayFill}},rgba(0,0,0,0) 70%);pointer-events:none">
+    <div style="animation:fadeIn .5s .1s both;position:absolute;left:35px;top:56px;width:320px;height:320px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle,{{it.rayFill}},rgba(0,0,0,0) 70%);pointer-events:none">
       <img src="_blob/b39a9db17420ec563e1ac1bf6ca8c638.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:320px;height:320px;animation:raySpin 24s linear infinite;opacity:.9">
     </div>
     <sc-for list="{{it.sparks}}" as="sp" hint-placeholder-count="2">
       <img src="_blob/d110be735e3f291879ca8ecc1cbe3c90.webp" alt="" aria-hidden="true" draggable="false" style="{{sp}}">
     </sc-for>
 
-    <svg style="position:absolute;left:105px;top:362px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
-    <div style="position:absolute;left:95px;top:150px;width:200px;height:236px;animation:popIn .6s cubic-bezier(.2,1.5,.4,1) both">
+    <svg style="position:absolute;left:105px;top:300px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
+    <div style="position:absolute;left:95px;top:88px;width:200px;height:236px;animation:popIn .6s cubic-bezier(.2,1.5,.4,1) both">
     <svg style="position:absolute;left:0;top:0" width="200" height="236" viewBox="{{it.pot.vb}}" role="img" aria-label="{{it.name}}, 빚은 모양 그대로">
       <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.body}}"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
       <ellipse cx="0" cy="{{it.pot.rimY}}" rx="{{it.pot.rimRx}}" ry="{{it.pot.rimRy}}" fill="{{it.inner}}" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}"></ellipse>
     </svg>
     </div>
     <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
-      <svg style="position:absolute;left:115px;top:150px" width="160" height="230" viewBox="0 0 160 230" aria-hidden="true">
+      <svg style="position:absolute;left:115px;top:88px" width="160" height="230" viewBox="0 0 160 230" aria-hidden="true">
         <path d="M86 40 L74 80 L92 108 L70 142 L84 186" fill="none" stroke="#120B07" stroke-width="4" stroke-linejoin="round"></path>
         <path d="M74 80 L52 92" fill="none" stroke="#120B07" stroke-width="3"></path>
       </svg>
     </sc-if>
 
-    <div style="position:absolute;left:0;right:0;top:420px;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="position:absolute;left:0;right:0;top:338px;display:flex;flex-direction:column;align-items:center;gap:6px">
       <div style="animation:slamIn .45s .25s both;height:50px;padding:0 54px;display:flex;align-items:center;justify-content:center;background:{{it.ribbon}};clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:#FFFDF5">{{it.grade}}</div>
       <span style="animation:fadeUp .4s .5s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
     </div>
 
-    <div style="animation:fadeUp .45s .6s both;position:absolute;left:28px;right:28px;top:520px;box-sizing:border-box;padding:12px 16px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:8px">
+    <div style="animation:fadeUp .45s .6s both;position:absolute;left:28px;right:28px;top:430px;box-sizing:border-box;padding:12px 16px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:8px">
       <sc-if value="{{it.whole}}" hint-placeholder-val="{{true}}">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5">실력 점수 <span style="font-size:11px;color:#B9A88E">→ 등급</span></span>
@@ -153,7 +153,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </sc-if>
     </div>
 
-    <div style="animation:fadeUp .45s .8s both;position:absolute;left:20px;right:20px;bottom:40px">
+    <div style="animation:fadeUp .45s .8s both;position:absolute;left:20px;right:20px;bottom:14px">
       <button type="button" onClick="{{next}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;width:100%;text-align:center;padding:14px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">{{nextLabel}}</button>
     </div>
       <sc-for list="{{confetti}}" as="cf" hint-placeholder-count="0">
@@ -419,6 +419,7 @@ class Component extends DCLogic {
     var self = this;
     if (this.doorAt || this.state.doorDone) { return; }
     this.doorAt = Date.now(); this.setState({ doorAt: this.doorAt });
+    if (!this.state.g.kilnSeen) { this.setG({ kilnSeen: 1 }); }
     clearInterval(this.doorT);
     this.doorT = setInterval(function () { if (Date.now() - self.doorAt > 1500) { clearInterval(self.doorT); self.setState({ doorDone: true }); return; } self.setState({ doorTick: Date.now() }); }, 33);
   }
@@ -443,7 +444,7 @@ class Component extends DCLogic {
     var wait = pots.length ? (1.45 + 0.12 * (Math.min(9, pots.length) - 1)) * 1000 + 100 : 300;
     this.state.leaving = true;
     clearTimeout(this.goT); this.goT = setTimeout(function () { self.goKiln(); }, wait);
-    this.setG({ pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf });
+    this.setG({ pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 });
     this.setState({ shownIdx: -1, ph: '', leaving: true });
   }
   goKiln() { try { var a = document.getElementById('goKiln'); if (a) { a.click(); } } catch (e) {} }
@@ -505,7 +506,7 @@ class Component extends DCLogic {
       dots: dots,
       progress: baking ? '굽는 중' : (opening ? (idx + 1) + ' / ' + items.length : (results ? '결과 확인' : '완료')),
       nextLabel: idx + 1 >= items.length ? '결과 보기 ›' : '다음 작품 ›',
-      next: function () { self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: idx + 1 }); },
+      next: function () { self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: idx + 1, kilnSeen: 1 }); },
       opening: opening,
       summary: g.kiln !== 'firing' && !this.state.leaving,
       baking: baking, results: results,
@@ -581,12 +582,12 @@ class Component extends DCLogic {
         colorPct: cPct + '%' + (it.yohen ? ' 요변' : ''), tint: it.tint || look.body,
         colorBar: 'display:block;height:100%;width:' + cPct + '%;background:linear-gradient(90deg,' + (it.tint || look.body) + ',#FFE7A8)',
         colorWhy: '무작위 · ' + (it.colorWhy || '') + ' · 평가액 ×' + (QLk.TUNE.colorValue[0] + (QLk.TUNE.colorValue[1] - QLk.TUNE.colorValue[0]) * cPct / 100).toFixed(2),
-        sparks: it.broken ? [] : [[286, 150, 58, 0], [58, 300, 36, .8], [300, 300, 30, .4], [70, 160, 44, 1.1], [190, 116, 34, .2], [250, 360, 26, .6], [110, 370, 28, 1.3]].slice(0, cPct >= 95 ? 7 : (cPct >= 85 ? 5 : (cPct >= 70 ? 3 : (cPct >= 50 ? 1 : 0)))).map(function (a) { return 'position:absolute;left:' + a[0] + 'px;top:' + a[1] + 'px;width:' + a[2] + 'px;height:' + a[2] + 'px;pointer-events:none;animation:twinkle ' + (cPct >= 95 ? 1.1 : 1.6) + 's ease-in-out ' + a[3] + 's infinite'; }),
+        sparks: it.broken ? [] : [[286, 88, 58, 0], [58, 238, 36, .8], [300, 238, 30, .4], [70, 98, 44, 1.1], [190, 54, 34, .2], [250, 298, 26, .6], [110, 308, 28, 1.3]].slice(0, cPct >= 95 ? 7 : (cPct >= 85 ? 5 : (cPct >= 70 ? 3 : (cPct >= 50 ? 1 : 0)))).map(function (a) { return 'position:absolute;left:' + a[0] + 'px;top:' + a[1] + 'px;width:' + a[2] + 'px;height:' + a[2] + 'px;pointer-events:none;animation:twinkle ' + (cPct >= 95 ? 1.1 : 1.6) + 's ease-in-out ' + a[3] + 's infinite'; }),
         body: it.tint || look.body, rim: look.rim, inner: look.inner, edge: look.edge, pot: self.potOf(it, it.tint || look.body),
         ribbon: gr.ribbon, rayColor: gr.ray, rayFill: gr.fill,
         sparkle: gr.sparkle, broken: !!it.broken, whole: !it.broken
       },
-      openAll: function () { clearTimeout(self.revT); self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: items.length }); },
+      openAll: function () { clearTimeout(self.revT); self.setState({ shownIdx: -1, ph: '' }); self.setG({ openIdx: items.length, kilnSeen: 1 }); },
       toast: this.state.toast,
       toastOn: this.state.toast !== ''
     };
