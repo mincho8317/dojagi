@@ -608,7 +608,7 @@ class Component extends DCLogic {
         glaze: { ok: 100, thick: 70, thin: 60, drip: 30 },
         fire: { '정합': 100, '근접': 65, '불일치': 25 }
       },
-      gradeCut: { '명작': 88, '수작': 70 }, // 미만은 양작
+      gradeCut: { '명작': 90, '수작': 70 }, // 미만은 양작
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
       // 발색 % = 무작위 · 등급과 무관 · 평가액에만 반영
       colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
@@ -752,6 +752,7 @@ class Component extends DCLogic {
       yoon: { name: '윤 할매', role: '골목 국밥집 주인', res: 'CHAR_WALK_D', tone: '#B9533A' },
       cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CURATOR', tone: '#4E7D74' },
       jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_WALK_F', tone: '#7A5A93' },
+      festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_WALK_B', tone: '#C2577A' },
       jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410' }
     };
     var STORY = [
@@ -791,7 +792,8 @@ class Component extends DCLogic {
         hwabyeong: { n: '화병', H: 150, p: [28, 36, 44, 48, 48, 44, 36, 26, 18, 16, 18, 22] }, byeong: { n: '병', H: 140, p: [30, 40, 46, 48, 46, 40, 30, 20, 15, 14, 14, 16] },
         maebyeong: { n: '매병', H: 160, p: [30, 38, 46, 52, 55, 55, 52, 46, 38, 28, 20, 22] }, hangari: { n: '항아리', H: 140, p: [36, 50, 60, 66, 68, 68, 64, 58, 50, 44, 40, 40] },
         jangdok: { n: '장독', H: 170, p: [36, 50, 62, 70, 74, 74, 70, 62, 52, 42, 36, 36] }, danji: { n: '단지', H: 110, p: [34, 46, 56, 62, 64, 62, 58, 52, 46, 42, 40, 40] },
-        moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32] }
+        moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32] },
+        lotuscup: { n: '연꽃잔', H: 60, p: [26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70] }
       };
       var GL = ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'jinsa', 'black', 'white', 'celadon', 'jinsa', 'black', 'white'];
       var SZ = [{ k: 1, n: '' }, { k: 1.12, n: '큰 ' }, { k: 0.9, n: '작은 ' }];
@@ -799,9 +801,10 @@ class Component extends DCLogic {
         { id: 'table', pre: 't', n: 15, pool: ['dish', 'sabal', 'daejeop'], un: 'plate', cl: ['basic', 'refined', 'kaolin'] },
         { id: 'tea', pre: 'c', n: 15, pool: ['jan', 'chatjan', 'tongjan'], un: 'dawan', cl: ['basic', 'refined', 'porcelain'] },
         { id: 'vase', pre: 'v', n: 15, pool: ['hwabyeong', 'byeong'], un: 'maebyeong', cl: ['refined', 'kaolin', 'porcelain'] },
-        { id: 'jar', pre: 'j', n: 15, pool: ['hangari', 'jangdok', 'danji'], un: 'moonjar', cl: ['refined', 'kaolin', 'porcelain'] }
+        { id: 'jar', pre: 'j', n: 15, pool: ['hangari', 'jangdok', 'danji'], un: 'moonjar', cl: ['refined', 'kaolin', 'porcelain'] },
+        { id: 'season', pre: 's', n: 10, pool: ['jan', 'dish', 'sabal'], un: 'lotuscup', cl: ['refined', 'kaolin'] }
       ];
-      var WS = { dish: 'dish', plate: 'dish', sabal: 'bowl', daejeop: 'bowl', dawan: 'bowl', jan: 'cup', chatjan: 'cup', tongjan: 'cup', hwabyeong: 'jar', byeong: 'jar', maebyeong: 'jar', hangari: 'jar', jangdok: 'jar', danji: 'jar', moonjar: 'jar' };
+      var WS = { lotuscup: 'dish', dish: 'dish', plate: 'dish', sabal: 'bowl', daejeop: 'bowl', dawan: 'bowl', jan: 'cup', chatjan: 'cup', tongjan: 'cup', hwabyeong: 'jar', byeong: 'jar', maebyeong: 'jar', hangari: 'jar', jangdok: 'jar', danji: 'jar', moonjar: 'jar' };
       var out = {};
       C.forEach(function (c) {
         for (var i = 0; i < c.n; i++) {
@@ -813,12 +816,24 @@ class Component extends DCLogic {
       return out;
     }
     var ST = stages();
-    var MAIN = STORY.map(function (q, qi) {
-      var items = q.st.map(function (sid) { var s = ST[sid]; return { key: sid, name: s.name, shapeN: s.shapeN, wshape: s.wshape, glaze: s.glaze, prof: s.prof, H: s.H, clay: s.clay, n: (q.n && q.n[sid]) || 1, newShape: s.newShape }; });
-      var unlock = ''; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; } });
-      var cnt = items.reduce(function (a, it) { return a + it.n; }, 0);
-      return { id: q.id, idx: qi, kind: 'main', npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, needLv: CHLV[q.ch] || 1, title: q.title, intro: q.intro, done: q.done, items: items, unlock: unlock, unlockNote: q.unlockNote || '', reward: { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
-    });
+    // ── 시즌 의뢰 (기존 시즌 스테이지 s1~s10 이관 · 인물·대사는 기획 예시) ──
+    var SEASON_UNTIL = new Date('2026-11-17T23:59:59+09:00').getTime();
+    var SSTORY = [
+      { id: 'e01', npc: 'festa', ch: 'season', st: ['s1', 's2', 's3'], title: '봄 다회 첫 상차림', intro: ['봄 다회 준비위원 하람이에요! 올해 다회 그릇을 공방에 맡기고 싶어서요.', '잔이랑 종지, 사발부터 하나씩 부탁드려요.'], done: ['와, 다회 분위기가 벌써 나요!', '축제 동안 다른 부탁도 드릴게요.'] },
+      { id: 'e02', npc: 'festa', ch: 'season', st: ['s4', 's5', 's6'], title: '손님맞이 큰 그릇', intro: ['다회 손님이 생각보다 많대요.', '조금 큰 그릇으로 한 벌 더 부탁해요.'], done: ['이 정도면 손님이 몰려와도 걱정 없겠어요.'] },
+      { id: 'e03', npc: 'festa', ch: 'season', st: ['s7', 's8', 's9'], title: '꽃잎 다과상', intro: ['다과상에 올릴 작은 그릇이 필요해요.', '빛깔이 고운 걸로요!'], done: ['꽃잎이 그릇 위에서 더 예뻐 보여요.'] },
+      { id: 'e04', npc: 'festa', ch: 'season', st: ['s10'], unlockNote: '연꽃잔', title: '봄 다회의 연꽃잔', intro: ['마지막 부탁이에요. 다회의 상징, 연꽃잔!', '낮고 활짝 핀 꽃처럼 빚어 주세요.'], done: ['다회의 주인공이 생겼네요. 정말 고마워요!', '연꽃잔 모양은 이제 공방 틀에 남을 거예요.'] }
+    ];
+    function buildLine(story, kind, lvOf) {
+      return story.map(function (q, qi) {
+        var items = q.st.map(function (sid) { var s0 = ST[sid]; return { key: sid, name: s0.name, shapeN: s0.shapeN, wshape: s0.wshape, glaze: s0.glaze, prof: s0.prof, H: s0.H, clay: s0.clay, n: (q.n && q.n[sid]) || 1, newShape: s0.newShape }; });
+        var unlock = ''; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; } });
+        var cnt = items.reduce(function (a, it) { return a + it.n; }, 0);
+        return { id: q.id, idx: qi, kind: kind, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, items: items, unlock: unlock, unlockNote: q.unlockNote || '', reward: { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
+      });
+    }
+    var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
+    var SEASON = buildLine(SSTORY, 'season', function () { return 2; });
     function profileOf(it) {
       if (it && it.prof && it.prof.length >= 3) { return { r: it.prof, H: it.H || 110 }; }
       var T = { dish: [70, function (u) { return 40 + 50 * Math.sqrt(u); }], cup: [130, function (u) { return 34 + 14 * u; }], bowl: [95, function (u) { return 38 + 62 * Math.pow(u, 0.6); }], jar: [140, function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); }] };
@@ -848,6 +863,11 @@ class Component extends DCLogic {
       (g.tasteOrders || []).forEach(function (o) { out.push({ id: o.id, kind: 'order', tag: '주문', who: o.name, role: '취향 손님', res: o.res, title: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇') + ' 주문', items: [{ key: 'a', name: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇') + (o.want.glaze ? '' : ' (유약 무관)'), wshape: o.want.shape, glaze: o.want.glaze || '', n: 1 }], reward: { text: '시세 ×1.4 · 명성 +5' }, at: o.at }); });
       return out;
     }
+    function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
+    function lineState(g, line) {
+      if (line === 'season') { var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen(), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
+    }
     function mainState(g) {
       var m = g.mq || {}, i = m.i || 0, def = MAIN[i] || null;
       return { i: i, def: def, acc: !!m.acc && !!def, dl: m.dl || {}, mig: m.mig || {}, allDone: i >= MAIN.length, lvOk: def ? (g.fameLv || 1) >= def.needLv : false, thanks: !!m.thanks };
@@ -855,6 +875,7 @@ class Component extends DCLogic {
     function active(g) {
       var ms = mainState(g), out = [];
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
+      var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       return out.concat(sideQuests(g));
     }
     var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
@@ -879,9 +900,9 @@ class Component extends DCLogic {
             var p = ps[id]; if (got.length >= left || used[id] || !p || (p.where !== 'store' && p.where !== 'shelf')) { return; }
             if (fits(p, it)) { got.push(id); used[id] = true; }
           });
-          var tag = q.kind === 'main' ? 'q:' + q.mid + ':' + it.key : 'q:' + q.id + ':' + it.key;
+          var tag = q.mid ? 'q:' + q.mid + ':' + it.key : 'q:' + q.id + ':' + it.key;
           var wip = 0, wipAt = {};
-          wips.forEach(function (w) { if (w.it && (w.it.goalSid === tag || (q.kind !== 'main' && !w.it.goalSid && w.it.shape === it.wshape && (!w.it.glaze || glazeOk(w.it.glaze, it.glaze))))) { wip++; wipAt[w.at] = (wipAt[w.at] || 0) + 1; } });
+          wips.forEach(function (w) { if (w.it && (w.it.goalSid === tag || (!q.mid && !w.it.goalSid && w.it.shape === it.wshape && (!w.it.glaze || glazeOk(w.it.glaze, it.glaze))))) { wip++; wipAt[w.at] = (wipAt[w.at] || 0) + 1; } });
           var row = { key: it.key, it: it, n: it.n, dl: dl, ready: got, readyN: got.length, wip: Math.max(0, Math.min(wip, left - got.length)), wipAt: wipAt, tag: tag, done: dl >= it.n, ok: dl + got.length >= it.n };
           rq.items.push(row); rq.need += it.n; rq.ready += dl + got.length; rq.deliverable += got.length; if (!row.done) { rq.done = false; }
         });
@@ -911,6 +932,18 @@ class Component extends DCLogic {
       if (g.goal && g.goal.sid && !/^s\d/.test(g.goal.sid)) { patch.goal = null; patch.goalQ = []; }
       return patch;
     }
+    // 시즌 스테이지 별 기록 → 시즌 의뢰 납품 처리
+    function migrateSeason(g) {
+      if (g.sq) { return null; }
+      var stars = ((g.contest || {}).stars) || {}, i = 0, dl = {}, mig = {};
+      while (i < SEASON.length && SEASON[i].items.every(function (it) { return stars[it.key] > 0; })) { i++; }
+      var cur = SEASON[i];
+      if (cur) { cur.items.forEach(function (it) { if (stars[it.key] > 0) { dl[it.key] = it.n; mig[it.key] = true; } }); }
+      var sf = {}, ch = false; for (var k in (g.shapesFound || {})) { sf[k] = g.shapesFound[k]; }
+      for (var j = 0; j < i; j++) { if (SEASON[j].unlock && !sf[SEASON[j].unlock]) { sf[SEASON[j].unlock] = true; ch = true; } }
+      var p = { sq: { i: i, acc: Object.keys(dl).length > 0, dl: dl, mig: mig, log: [] } }; if (ch) { p.shapesFound = sf; }
+      return p;
+    }
     function payout(def, ms, grades, g) {
       var cnt = 0, bonus = 0, G = g; if (!G) { try { G = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { G = {}; } }
       var F = fx(G), gm = 1 + (F.questGold || 0);
@@ -919,7 +952,7 @@ class Component extends DCLogic {
       (grades || []).forEach(function (gr) { bonus += Math.round(TUNE.itemGold * (TUNE.gradeBonus[gr] || 0)); });
       return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, shards: cnt * TUNE.itemShards, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
     }
-    this._ql = { migrate: migrate, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   }
   // </qlib>
@@ -936,6 +969,7 @@ class Component extends DCLogic {
     var L = this.qlib(), g0 = load(); window.__QL = L; // 검수·디버그용
     // 1) 저장 데이터 이관 (스테이지 → 메인 의뢰)
     if (g0.pieces && !g0.mq) { var mg = L.migrate(g0); if (mg) { patch(mg); } }
+    if (g0.pieces && !load().sq) { var msq = L.migrateSeason(load()); if (msq) { patch(msq); } } // 시즌 스테이지 → 시즌 의뢰
     // 1-2) 연구 구조 이관: 옛 연구(파편 지불분) 환급 · 기존 9칸 건조대 유지
     if (g0.pieces && g0.resV !== 2) {
       var g1 = load(), OLD = { tech: [40, 50, 80, 110, 160], glaze: [40, 60, 120, 150, 220], shop: [30, 50, 90, 140, 200] }, refund = 0, old = g1.research || {};
@@ -988,7 +1022,7 @@ class Component extends DCLogic {
     var POS = { Wheel: 196, Dry: 66, Bisque: 66, Glaze: 104, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 1, Dry: 0, Glaze: 1, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 조작 영역이 넓은 화면은 접힌 채 시작
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-    function gameRect() { var cands = [].slice.call(document.querySelectorAll('div')).filter(function (d) { var w = d.offsetWidth; return (w === 390) && d.offsetHeight >= 800; }); var el = cands[0]; if (!el) { return { l: 0, t: 0, k: 1, w: window.innerWidth }; } var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, k: r.width / 390, w: r.width }; }
+    function gameRect() { var cands = [].slice.call(document.querySelectorAll('div')).filter(function (d) { var w = d.offsetWidth; return (w === 390) && d.offsetHeight >= 780; }); var el = cands[0]; if (!el) { return { l: 0, t: 0, k: 1, w: window.innerWidth }; } var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, k: r.width / 390, w: r.width }; }
     var css = document.createElement('style');
     css.textContent = '.trk{position:fixed;z-index:9990;transform-origin:100% 0;box-sizing:border-box;width:168px;border-radius:13px;background:rgba(255,250,240,.96);border:2.5px solid #5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3);font-family:"Noto Sans KR",sans-serif;color:#2B1A0F;overflow:hidden}' +
       '.trk-h{all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;width:100%;min-height:32px;padding:4px 7px;background:#5B3A24;color:#FFE7A8;font-family:Jua,sans-serif;font-size:12.5px}' +
