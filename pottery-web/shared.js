@@ -445,7 +445,7 @@
     window.__trackBooted = true;
     var KEY = 'pottery-proto-v1', L = this.qlib();
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
-    var POS = { Wheel: 124, Dry: 66, Bisque: 66, Glaze: 66, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 0, Dry: 0, Glaze: 0, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 모든 제작 화면은 접힌 채 시작 (조작 UI를 가리지 않게)
+    var POS = { Wheel: 124, Dry: 66, Bisque: 66, Glaze: 116, Kiln: 66, KilnOpen: 108 }, DEFOPEN = { Wheel: 0, Dry: 0, Glaze: 0, Bisque: 0, Kiln: 0, KilnOpen: 0 }; // 모든 제작 화면은 접힌 채 시작 (조작 UI를 가리지 않게)
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function gameRect() { var cands = [].slice.call(document.querySelectorAll('div')).filter(function (d) { var w = d.offsetWidth; return (w === 390) && d.offsetHeight >= 780; }); var el = cands[0]; if (!el) { return { l: 0, t: 0, k: 1, w: window.innerWidth }; } var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, k: r.width / 390, w: r.width }; }
@@ -491,7 +491,7 @@
       var condLine = '';
       if (curRow && !allOk) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
       if (allOk) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품하자</div>'; }
-      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><span class="t">' + esc(q.title) + '</span><span class="c' + (allOk ? ' ok' : '') + '">' + (allOk ? (open ? '납품 가능' : '✓ 납품') : '완성 ' + A.items.filter(function (r) { return r.ok; }).length + '/' + A.items.length) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
+      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(q.title) + '</span><span class="c' + (allOk ? ' ok' : '') + '">' + (allOk ? (open ? '납품 가능' : '✓ 납품') : '완성 ' + A.items.filter(function (r) { return r.ok; }).length + '/' + A.items.length) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
         (open ? '<div class="trk-b">' + html + condLine + '</div>' : '');
     }
     render(); setInterval(render, 1000); window.addEventListener('storage', render); window.addEventListener('resize', render);
@@ -696,13 +696,22 @@
         var tbW = qsel('button[aria-label^="목표 모양 바꾸기"]')();
         if (tbW && (tbW.getAttribute('aria-label') || '').indexOf('찻잔') < 0) { act('whTgt2', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '의뢰는 찻잔이에요 · 모양을 찻잔으로 바꿔요'); return; }
         var mtW = /일치율\s*(\d+)%/.exec(document.body.innerText || ''), pctW = mtW ? +mtW[1] : 0;
-        var gauge = qsel('[aria-label="높이별 두께"]')(), gTxt = gauge ? (gauge.textContent || '') : '', thickBad = gauge && (gTxt.indexOf('↑') >= 0 || gTxt.indexOf('↓') >= 0 || gTxt.indexOf('⚠') >= 0);
-        var wAt = +(W('workAt') || 0);
-        if (!W('work')) { if (act('whWork', true, qsel('[data-work]'), '흙을 좌우로 밀어 점선 모양에 맞춰요 · 초록 화살표 방향으로 밀면 돼요 · 가까울수록 일치율이 올라가요')) { Wset('work'); try { localStorage.setItem('tutWh_workAt', String(Date.now())); } catch (e) {} } }
-        else if (!W('thick') && thickBad && Date.now() - wAt > 7000) { if (act('whThick', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '왼쪽 눈금은 높이별 두께예요 · 흙 벽을 위로 쓸면 얇아지고 아래로 쓸면 두꺼워져요 · 눈금이 모두 초록이 되면 딱 좋아요 (빨강은 찢어짐 위험)')) { Wset('thick'); } }
-        else if (pctW >= 60 && !thickBad) { act('whDone', true, btnWith('완성'), '모양도 두께도 잘 맞았어요! 완성을 눌러요'); }
-        else if (pctW >= 60 && thickBad && W('thick') && !W('thick2')) { if (act('whThick2', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '모양은 좋아요! 두께 눈금이 초록이 되게 벽을 위아래로 쓸어 맞춰요')) { Wset('thick2'); } }
-        return;
+        // 성형 3단계 안내: 1 높이 → 2 좌우 모양 → 3 두께
+        var WT = window.__wheelTut || {}, stage = qsel('[data-work]')();
+        if (!WT.shaping) { if (!W('c1') && WT.fit !== undefined) { if (act('whC', true, function () { return stage; }, '먼저 중심 잡기 — 흙 양옆을 양손(마우스는 꾹)으로 누르고 있으면 흔들림이 가라앉아요')) { Wset('c1'); } } return; }
+        var thickBad = !WT.tOk;
+        if (!W('h1')) { if (act('whH', true, function () { return document.getElementById('wHdl'); }, '1단계 · 높이 맞추기 — 「▲ 높이 ▼」 손잡이를 위아래로 끌어 점선 꼭대기 높이에 맞춰요')) { Wset('h1'); } return; }
+        if (!W('h2')) {
+          if (!WT.hOk) { return; }
+          toast('✓ 높이 OK! 다음은 좌우 모양이에요'); Wset('h2'); return;
+        }
+        if (!W('s1')) { if (act('whS', true, function () { return stage; }, '2단계 · 좌우 맞추기 — 흙 옆을 좌우로 밀어 점선 모양에 맞춰요 · 초록 화살표 쪽으로 밀면 돼요')) { Wset('s1'); } return; }
+        if (!W('s2')) {
+          if (!(WT.sOk || pctW >= 55)) { return; }
+          toast('✓ 모양 OK! 마지막은 두께예요'); Wset('s2'); return;
+        }
+        if (!W('t1')) { if (act('whThick', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '3단계 · 두께 맞추기 — 왼쪽 눈금은 높이별 두께예요 · 흙 벽을 위로 쓸면 얇아지고 아래로 쓸면 두꺼워져요 · 눈금이 모두 초록이면 OK (빨강은 찢어짐 위험)')) { Wset('t1'); } return; }
+        if (pctW >= 60 && !thickBad) { act('whDone', true, btnWith('완성'), '높이·모양·두께 모두 좋아요! 완성을 눌러요'); }
       }
       if (PAGE === 'Dry' && t === 2) {
         act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');

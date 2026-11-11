@@ -27,13 +27,13 @@ button{font-family:inherit;cursor:pointer}
 @keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .bg-bg-wheel{background:#BFA584 url(_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp) center/cover no-repeat}
-.navdrop>div{height:788px !important}
+.navdrop>div{height:724px !important}
 </style>
 </helmet>
 <div style="{{navRoot}}">
   <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
     <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="transform:{{chipTf}};z-index:41;position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
-    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:52px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
+    <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
       <div style="{{navStrip}}">
         <sc-for list="{{navSteps}}" as="ns" hint-placeholder-count="7">
           <a href="{{ns.href}}" aria-label="{{ns.aria}}" draggable="false" style="{{ns.style}}"><img dc-src="{{ns.icon}}" alt="" aria-hidden="true" draggable="false" style="{{ns.iconStyle}}"><span>{{ns.label}}</span></a>
@@ -143,7 +143,7 @@ button{font-family:inherit;cursor:pointer}
 
       <sc-if value="{{hdl.on}}" hint-placeholder-val="{{true}}">
         <line x1="150" y1="{{hdl.ly1}}" x2="150" y2="{{hdl.ly2}}" stroke="#FFE7A8" stroke-width="2" stroke-dasharray="3 3"></line>
-        <rect x="122" y="{{hdl.y}}" width="56" height="24" rx="12" fill="{{hdl.fill}}" stroke="#2B1A0F" stroke-width="2"></rect>
+        <rect id="wHdl" x="122" y="{{hdl.y}}" width="56" height="24" rx="12" fill="{{hdl.fill}}" stroke="#2B1A0F" stroke-width="2"></rect>
         <text x="150" y="{{hdl.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="12" fill="#2B1A0F">▲ 높이 ▼</text>
       </sc-if>
       <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
@@ -177,15 +177,6 @@ button{font-family:inherit;cursor:pointer}
 
     <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
-    <div role="img" aria-label="목표 윤곽과 현재 형태 비교 · {{miniTxt}}" style="position:absolute;left:6px;bottom:6px;width:96px;box-sizing:border-box;padding:4px 4px 3px;border-radius:12px;background:rgba(255,250,240,.93);border:2.5px solid {{miniCol}};box-shadow:0 2px 6px rgba(0,0,0,.3);pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:1px">
-      <svg width="80" height="80" viewBox="0 0 80 80" aria-hidden="true"><path d="{{miniCur}}" fill="#C69A78" stroke="#5B3A24" stroke-width="1.2"></path><path d="{{miniTg}}" fill="none" stroke="#1E5E16" stroke-width="1.6" stroke-dasharray="3 2.5"></path></svg>
-      <span aria-hidden="true" style="display:flex;align-items:center;gap:2px;height:12px"><sc-for list="{{miniDots}}" as="md" hint-placeholder-count="12"><span style="{{md}}"></span></sc-for><span style="{{miniH}}">⇕</span></span>
-    </div>
-    <div role="status" aria-label="{{hint}}" style="position:absolute;left:56px;top:8px;display:flex;gap:5px;pointer-events:none">
-      <sc-for list="{{gIcons}}" as="gi" hint-placeholder-count="3">
-        <span style="{{gi.box}}"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="{{gi.d}}" fill="none" stroke="{{gi.col}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="{{gi.lab}}">{{gi.t}}</span></span>
-      </sc-for>
-    </div>
     <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
       <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{fx.flash}}"></div>
       <div role="alert" style="position:absolute;left:50%;top:44%;pointer-events:none;white-space:nowrap;padding:8px 18px;border-radius:16px;background:rgba(43,26,15,.9);border:3px solid #D0452B;font-family:'Jua',sans-serif;font-size:28px;color:#FFB08A;text-shadow:0 2px 0 #5A1A0E;{{fx.pop}}">와르르… 실패</div>
@@ -251,7 +242,7 @@ button{font-family:inherit;cursor:pointer}
   </div>
   <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
   <sc-if value="{{fxOk}}" hint-placeholder-val="{{false}}">
-    <div aria-hidden="true" style="position:absolute;left:0;top:56px;width:390px;height:788px;overflow:hidden;pointer-events:none;z-index:40">
+    <div aria-hidden="true" style="position:absolute;left:0;top:56px;width:390px;height:724px;overflow:hidden;pointer-events:none;z-index:40">
       <svg style="position:absolute;left:20px;top:232px;overflow:visible" width="350" height="384" viewBox="0 0 300 330">
         <g transform="{{fx.flyTf}}" opacity="{{fx.flyOp}}">
           <path d="{{fx.path}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>
@@ -268,28 +259,28 @@ button{font-family:inherit;cursor:pointer}
   <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
     <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
   </sc-if>
-  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
-    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:64px;box-sizing:border-box;padding:0 6px 4px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+    <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">공방</span>
     </a>
-    <a href="Research.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/631c128163d820378ae912cca30901ff.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">연구</span>
+    <a href="Research.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/631c128163d820378ae912cca30901ff.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">연구</span>
     </a>
-    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
-        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-16px">
+      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
     </a>
-    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">의뢰</span>
     </a>
-    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">상점</span>
     </a>
   </nav>
 </div>
@@ -799,6 +790,8 @@ class Component extends DCLogic {
 
     if (shaping && tmin < lim + 1) { var ti = s.t.indexOf(tmin), ty0 = base - s.H * (ti / 11); marks.push({ x: (150 + self.rAt(ti) + 16).toFixed(1), y: (ty0 + 5).toFixed(1), t: '!', c: '#FF8A6B' }); }
     marks = marks.slice(0, 6).map(function (m) { var d = { '▲': [0, -4], '▼': [0, 4], '◀': [-4, 0], '▶': [4, 0] }[m.t] || [0, 0]; return { x: m.x, y: m.y, ty: (+m.y + 4.5).toFixed(1), t: m.t, c: m.c, anim: '--mx:' + d[0] + 'px;--my:' + d[1] + 'px;animation:mkBob .9s ease-in-out infinite' }; });
+    // 튜토리얼이 단계(높이 → 좌우 → 두께)를 판단할 수 있게 현재 상태를 알려 둔다
+    try { window.__wheelTut = { shaping: shaping, fit: an.fit, hOk: !an.issues.some(function (x) { return x.kind === 'up' || x.kind === 'down'; }), sOk: !an.issues.some(function (x) { return x.kind === 'in' || x.kind === 'out'; }), tOk: !an.issues.some(function (x) { return x.kind === 'thin' || x.kind === 'thick'; }) && tmin >= lim + 1 }; } catch (e) {}
     var grabOn = !!s.grab && !!this.drag && shaping;
     var grab = { y1: 0, h: 0, y: 0, hx: 0, ax: 0, ay: 0, arrow: '', label: '', ly: 0, op: 0.35 };
     if (grabOn) {
@@ -1190,7 +1183,7 @@ class Component extends DCLogic {
     function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
     return {
       navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
-      navDropStyle: 'width:390px;height:788px',
+      navDropStyle: 'width:390px;height:724px',
       navDust: 'display:none',
       navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
       navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
@@ -1209,11 +1202,11 @@ class Component extends DCLogic {
         return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
           style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
       }),
-      navStage: 'position:absolute;left:0;top:56px;width:390px;height:788px;overflow:hidden;transform-origin:0 0;transform:translateX(' + dx + 'px);touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navStage: 'position:absolute;left:0;top:56px;width:390px;height:724px;overflow:hidden;transform-origin:0 0;transform:translateX(' + dx + 'px);touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
       navMenuOpen: s.navMenu ? 'true' : 'false',
       navMenuTap: function () { self.setState({ navMenu: !self.state.navMenu }); },
-      navMenuHide: s.navMenu ? 'z-index:60;' : 'display:none !important;',
-      navMenuBtn: 'all:unset;cursor:pointer;position:absolute;right:4px;top:6px;width:44px;height:44px;z-index:42;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:Jua,sans-serif;font-size:18px;line-height:1;' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
+      navMenuHide: 'z-index:60;',
+      navMenuBtn: 'display:none' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
       navPrevOn: !!prev, navNextOn: !!next,
       navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
       navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',
