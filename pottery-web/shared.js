@@ -60,9 +60,15 @@
       questGold: { t: '의뢰', l: '메인 의뢰 골드', b: 100, m: 100, u: '%' },
       shard: { t: '와장창', l: '파편 획득량', b: 100, m: 100, u: '%' },
       fame: { t: '명성', l: '명성 경험치', b: 100, m: 100, u: '%' },
-      expand: { t: '공방', l: '공방 바닥 줄 수', b: 7, m: 2, u: '줄' }
+      expand: { t: '공방', l: '공방 바닥 줄 수', b: 7, m: 2, u: '줄' },
+      tixMax: { t: '채집', l: '채집권 최대', b: 5, m: 1, u: '장' },
+      pick: { t: '채집', l: '바위 깨기 타격 수', b: 3, m: -1, u: '번' },
+      waterSlow: { t: '채집', l: '물 차오르는 속도', b: 100, m: -100, u: '%' },
+      rareUp: { t: '채집', l: '희귀 원료 확률', b: 0, m: 100, u: '%p' },
+      veinTime: { t: '채집', l: '광맥 잇기 시간', b: 30, m: 1, u: '초' },
+      veinBoom: { t: '채집', l: '광맥 폭발 연결 수', b: 7, m: 1, u: '개' }
     };
-    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·초벌' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }];
+    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·초벌' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
     var RROW = {
       form: [
         ['f00', 0, 1, '물레 감각', [], { snapTol: 0.01 }, 20, 0],
@@ -103,6 +109,13 @@
         ['s50', 5, 0, '단골 장부', ['s40'], { sell: 0.05 }, 110, 2000], ['s51', 5, 1, '입소문 III', ['s41', 's40'], { fame: 0.15 }, 110, 2000], ['s52', 5, 2, '파편 줍기 IV', ['s42'], { shard: 0.15 }, 110, 2000],
         ['s60', 6, 0, '값 매기기 IV', ['s50'], { sell: 0.05 }, 150, 3000], ['s61', 6, 1, '이웃 인심 IV', ['s51'], { questGold: 0.1 }, 150, 3000], ['s62', 6, 2, '입소문 IV', ['s52'], { fame: 0.15 }, 150, 3000],
         ['s70', 7, 0, '공방 간판', ['s60', 's61'], { sell: 0.08, fame: 0.1 }, 220, 5000], ['s72', 7, 2, '마을의 공방', ['s61', 's62'], { questGold: 0.15, shard: 0.2 }, 220, 5000]
+      ],
+      gather: [
+        ['c00', 0, 1, '채집 요령', [], { tixMax: 1 }, 25, 0],
+        ['c10', 1, 0, '곡괭이 손질', ['c00'], { pick: 1 }, 40, 300], ['c11', 1, 1, '물길 읽기 I', ['c00'], { waterSlow: 0.1 }, 40, 300], ['c12', 1, 2, '광맥 눈썰미 I', ['c00'], { veinTime: 3 }, 40, 300],
+        ['c20', 2, 0, '희귀 감별 I', ['c10'], { rareUp: 0.03 }, 60, 600], ['c21', 2, 1, '채집 가방', ['c11'], { tixMax: 1 }, 70, 800], ['c22', 2, 2, '광맥 눈썰미 II', ['c12'], { veinTime: 3 }, 60, 600],
+        ['c30', 3, 0, '물길 읽기 II', ['c20', 'c21'], { waterSlow: 0.1 }, 90, 1200], ['c31', 3, 1, '희귀 감별 II', ['c21'], { rareUp: 0.03 }, 90, 1200], ['c32', 3, 2, '광맥 폭발 감각', ['c22'], { veinBoom: -1 }, 100, 1500],
+        ['c40', 4, 1, '채집 장인', ['c30', 'c31', 'c32'], { tixMax: 1, waterSlow: 0.1, rareUp: 0.03 }, 160, 3000]
       ]
     };
     var RNODE = {};
@@ -149,13 +162,29 @@
       return br >= 0 ? mixHex(c, '#FFFFFF', br) : mixHex(c, '#000000', -br);
     }
     function colorRoll(it, match, heat, g) {
-      var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0)), R0[1]];
+      var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], qb = qualBonus(it), R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0) + qb), R0[1]];
       var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0));
       pct = Math.max(5, Math.min(100, pct));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }
       return { pct: pct, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
     }
+    // 채집 원료 품질 → 발색 하한 보너스 (흙 ★2 +4%, ★3 +8%, 고운 유약 원료 +6%)
+    function qualBonus(it) { return ((it && it.cq ? it.cq : 1) - 1) * 4 + (it && it.gq ? 6 : 0); }
+    // 흙 품질 재고 : mats[k] 전체 수, matsQ[k] = { 2: n, 3: n } (나머지는 ★1)
+    function addMat(g, k, n, q) {
+      var m = {}, mq = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; } for (x in (g.matsQ || {})) { mq[x] = {}; for (var y in g.matsQ[x]) { mq[x][y] = g.matsQ[x][y]; } }
+      m[k] = (m[k] || 0) + n; if (q && q > 1) { mq[k] = mq[k] || {}; mq[k][q] = (mq[k][q] || 0) + n; }
+      return { mats: m, matsQ: mq };
+    }
+    function takeClay(g, k) {
+      var m = {}, mq = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; } for (x in (g.matsQ || {})) { mq[x] = {}; for (var y in g.matsQ[x]) { mq[x][y] = g.matsQ[x][y]; } }
+      if (!(m[k] > 0)) { return { mats: m, matsQ: mq, q: 1 }; }
+      var q = 1, Q = mq[k] || {}; if ((Q[3] || 0) > 0) { q = 3; } else if ((Q[2] || 0) > 0) { q = 2; }
+      m[k] -= 1; if (q > 1) { Q[q] -= 1; mq[k] = Q; }
+      return { mats: m, matsQ: mq, q: q };
+    }
+    function topQ(g, k) { var Q = (g.matsQ || {})[k] || {}; return (Q[3] || 0) > 0 ? 3 : ((Q[2] || 0) > 0 ? 2 : 1); }
     function colorPctOf(p) { return typeof p.colorPct === 'number' ? p.colorPct : Math.min(100, (p.color || 1) * 20); }
     // ── 등장인물 · 대사 (기획 예시 · 자유롭게 수정) ─────────────
     var NPC = {
@@ -379,7 +408,7 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>

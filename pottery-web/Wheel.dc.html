@@ -502,11 +502,12 @@ class Component extends DCLogic {
   }
   consumeClay() {
     var g = this.state.g, c = this.state.clay;
-    if (c === 'basic') { return g.mats || {}; }
-    if (Math.random() < (this.qlib().fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈다'); return g.mats || {}; }
-    var m = {}; for (var k in g.mats) { m[k] = g.mats[k]; }
-    m[c] = Math.max(0, (m[c] || 0) - 1);
-    return m;
+    if (c === 'basic') { this._mq = g.matsQ || {}; this._cq = 1; return g.mats || {}; }
+    var QL = this.qlib();
+    this._mq = g.matsQ || {}; this._cq = QL.topQ(g, c);
+    if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈다'); return g.mats || {}; }
+    var t = QL.takeClay(g, c); this._mq = t.matsQ; this._cq = t.q;
+    return t.mats;
   }
   resetPointers() {
     this.ptrs = {};
@@ -528,7 +529,7 @@ class Component extends DCLogic {
     nf.fx = { kind: 'fail', k: Date.now(), path: this.profile(s.r, s.H, 0).path, H: s.H };
     this.setState(nf);
     this.clearFx(nf.fx.k, 1300);
-    this.setG({ shards: s.g.shards + 1, mats: mats });
+    this.setG({ shards: s.g.shards + 1, mats: mats, matsQ: this._mq || {} });
     this.say(msg + ' · 파편 +1 · 새 흙을 올렸다', 'fail');
   }
   wtune() {
@@ -1138,7 +1139,8 @@ class Component extends DCLogic {
         var mats = self.consumeClay();
         var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
         if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }
-        var up = { formedList: (g.formedList || []).concat([item]), mats: mats };
+        if (self._cq > 1) { item.cq = self._cq; }
+        var up = { formedList: (g.formedList || []).concat([item]), mats: mats, matsQ: self._mq || {} };
         if (qUp) { up.goalQ = Qw; if (nxG) { up.goal = nxG; } }
         self.setG(up);
         self.resetPointers();

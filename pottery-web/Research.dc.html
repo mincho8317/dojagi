@@ -31,8 +31,8 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </div>
 
-  <div role="tablist" aria-label="연구 계열" style="position:absolute;left:12px;right:12px;top:60px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px">
-    <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+  <div role="tablist" aria-label="연구 계열" style="position:absolute;left:12px;right:12px;top:60px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px">
+    <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
       <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}"><span>{{tb.label}}</span><span style="{{tb.subStyle}}">{{tb.sub}}</span></button>
     </sc-for>
   </div>
@@ -185,7 +185,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     var self = this, s = this.state, g = s.g, QL = this.qlib(), R = g.res || {}, F = QL.fx(g);
-    var SHORT = { snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '초벌 시간', bqSafe: '초벌 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '재벌 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
+    var SHORT = { tixMax: '채집권', pick: '바위 타격', waterSlow: '물 속도', rareUp: '희귀', veinTime: '광맥 시간', veinBoom: '폭발 연결', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '초벌 시간', bqSafe: '초벌 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '재벌 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
     var ICON = { form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪' };
     var cat = s.tab, rows = QL.RROW[cat].map(function (r) { return QL.RNODE[r[0]]; });
     var X = [62, 181, 300], W = 108, H = 74, P = 96, T0 = 12;
@@ -234,12 +234,12 @@ class Component extends DCLogic {
       var on = c.id === cat, all = QL.RROW[c.id].length, dn = QL.RROW[c.id].filter(function (r) { return R[r[0]]; }).length, rd = QL.RROW[c.id].filter(function (r) { return QL.resState(g, r[0]) === 'ready' && afford(QL.RNODE[r[0]]); }).length;
       return {
         label: c.n, on: on ? 'true' : 'false', sub: dn + '/' + all + (rd ? ' · 가능 ' + rd : ''),
-        subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:11.5px;font-weight:700;' + (rd ? 'color:#2F6328' : 'color:#7A5434'),
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:46px;text-align:center;padding:5px 0 4px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:14.5px;line-height:1.15;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#B9533A' : 'background:#C9B08A;color:#3E2616'),
+        subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:10px;font-weight:700;' + (rd ? 'color:#2F6328' : 'color:#7A5434'),
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:46px;text-align:center;padding:5px 0 4px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;word-break:keep-all;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#B9533A' : 'background:#C9B08A;color:#3E2616'),
         pick: function () { self.setState({ tab: c.id, sel: '' }); try { var t = document.getElementById('rtree'); if (t) { t.scrollTop = 0; } } catch (e) {} }
       };
     });
-    var treeH = T0 + 8 * P;
+    var treeH = T0 + (Math.max.apply(null, QL.RROW[cat].map(function (r) { return r[1]; })) + 1) * P;
     return {
       shards: (g.shards || 0).toLocaleString(), goldTxt: (g.gold || 0).toLocaleString(),
       tabs: tabs, nodes: nodes, edges: edges, treeH: treeH,

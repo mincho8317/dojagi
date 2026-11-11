@@ -453,6 +453,12 @@ class Component extends DCLogic {
       m.jinsa = Math.max(0, (m.jinsa || 0) - 1);
       patch.mats = m;
     }
+    // 채집한 고운 유약 원료가 있으면 1개 써서 발색 하한 +6%
+    var gk = 'gz_' + item.glaze;
+    if (((patch.mats || g.mats || {})[gk] || 0) > 0) {
+      var m2 = {}; var src = patch.mats || g.mats || {}; for (var a2 in src) { m2[a2] = src[a2]; }
+      m2[gk] -= 1; patch.mats = m2; item.gq = 1; this.gqUsed = Date.now();
+    }
     this.setG(patch);
     var gp = this.rootPt('gpot') || this.stagePt(195, 278);
     this.flyStart([this.potOf(item, this.fillOf(item, 'glazed'))], gp);
@@ -496,7 +502,7 @@ class Component extends DCLogic {
         nameStyle: 'font-family:Jua,sans-serif;font-size:12px;color:' + (on ? '#2F6328' : '#5B3A24'),
         priceStyle: 'font-size:9.5px;font-weight:700;color:' + (d.id === goalG ? '#7A5A93' : (d.price === '무료' ? '#2F6328' : '#7A5A12')),
         goal: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).text, goalStyle: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).style,
-        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초',
+        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초' + (((g.mats || {})['gz_' + d.id] || 0) > 0 ? ' · 고운 원료 ' + g.mats['gz_' + d.id] : ''),
         tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0) ? '없음' : ''))),
         tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0))) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
         rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : ((d.event && !d.owned) || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0)) ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
