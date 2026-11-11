@@ -38,6 +38,8 @@ button{font-family:inherit;cursor:pointer}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .bg-bg-kiln-open{background:#2A1E16 url(_blob/1d6fa25ab84c729719699d840a101dba.webp) center/cover no-repeat}
 .navdrop>div{height:724px !important}
+body:has(.navdrop [role=dialog]) [data-nav]{display:none !important}
+body:has(.navdrop [role=dialog]) .navarrows{display:none}
 </style>
 </helmet>
 <div data-navroot="1" style="{{navRoot}}">
@@ -527,7 +529,7 @@ class Component extends DCLogic {
           r: plate + 'right:0;transform:translateX(' + (e * 102 - sh).toFixed(1) + '%)',
           lock: 'position:absolute;left:0;right:0;top:300px;display:flex;flex-direction:column;align-items:center;gap:12px;opacity:' + (1 - Math.min(1, q * 3)).toFixed(2),
           eye: 'width:84px;height:84px;box-sizing:border-box;border-radius:50%;border:7px solid #2B1A0F;box-shadow:0 0 0 4px #8A6A52,0 0 ' + Math.round(18 + 30 * Math.min(1, t / 0.4)) + 'px rgba(255,190,90,.95);background:radial-gradient(circle,#FFF4DE,#FFB24A 45%,#C8601E)',
-          burst: 'position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;background:radial-gradient(ellipse ' + Math.round(20 + 380 * e) + 'px 70% at 50% 40%,rgba(255,244,210,' + (0.95 * (1 - fade)).toFixed(2) + '),rgba(255,170,80,' + (0.5 * (1 - fade)).toFixed(2) + ') 50%,rgba(0,0,0,0) 100%)'
+          burst: 'position:absolute;left:0;top:0;width:390px;height:724px;pointer-events:none;background:radial-gradient(ellipse ' + Math.round(20 + 380 * e) + 'px 70% at 50% 40%,rgba(255,244,210,' + (0.95 * (1 - fade)).toFixed(2) + '),rgba(255,170,80,' + (0.5 * (1 - fade)).toFixed(2) + ') 50%,rgba(0,0,0,0) 100%)'
         };
       })(),
       rs: (function () {
@@ -562,7 +564,7 @@ class Component extends DCLogic {
       sealHint: shaking ? '…!' : '탭해서 꺼내기',
       sealHintStyle: 'position:absolute;left:0;right:0;top:330px;text-align:center;font-family:Jua,sans-serif;' + (shaking ? 'font-size:34px;color:' + tease + ';animation:hintPop .3s ease-out both' : 'font-size:20px;color:#FFE7A8;animation:auraPulse 1.6s ease-in-out infinite'),
       shownWrap: 'position:absolute;left:0;top:0;width:390px;height:844px;' + (big ? 'animation:bigShake .5s .08s both' : ''),
-      flash: 'position:absolute;left:0;top:0;width:390px;height:844px;pointer-events:none;background:radial-gradient(circle at 50% 32%,#FFFFFF 0%,' + tease + ' 45%,rgba(0,0,0,0) 85%);animation:flashOut ' + (big ? '.9s' : '.55s') + ' ease-out both',
+      flash: 'position:absolute;left:0;top:0;width:390px;height:724px;pointer-events:none;background:radial-gradient(circle at 50% 32%,#FFFFFF 0%,' + tease + ' 45%,rgba(0,0,0,0) 85%);animation:flashOut ' + (big ? '.9s' : '.55s') + ' ease-out both',
       reveal: function () {
         if (st.ph === 'shake') { return; }
         var my = idx, myIt = it || {};

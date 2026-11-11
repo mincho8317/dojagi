@@ -607,7 +607,7 @@
       document.addEventListener('pointerdown', hit, true);
       return true;
     }
-    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return a.getAttribute('aria-label') === '다음 공정'; }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
+    function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return / 옆에서 보기$/.test(a.getAttribute('aria-label') || ''); }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
     function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
     function nextOf(g) { return STEPS[g.tut].next; }
@@ -615,7 +615,10 @@
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
       var nx = nextOf(g); if (nx === PAGE) { return; }
       var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
-      if (spotlight(linkTo(nx), '여기를 눌러 ' + (NAMES[nx] || (nx === 'Wheel' ? '물레' : nx)) + '(으)로 가요')) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+      // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
+      var nm = { Wheel: '물레', Dry: '건조대', Bisque: '초벌 가마', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
+      var ok = PAGE === 'Main' ? spotlight(linkTo(nx), '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
+      if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
     }
     function guideJade(g) {
       var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 3: ['Bisque', '바로 완료', 'bq'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
@@ -713,6 +716,16 @@
         if (!W('t1')) { if (act('whThick', true, function () { var g2 = qsel('[aria-label="높이별 두께"]')(); return g2 ? g2.parentElement : null; }, '3단계 · 두께 맞추기 — 왼쪽 눈금은 높이별 두께예요 · 흙 벽을 위로 쓸면 얇아지고 아래로 쓸면 두꺼워져요 · 눈금이 모두 초록이면 OK (빨강은 찢어짐 위험)')) { Wset('t1'); } return; }
         if (pctW >= 60 && !thickBad) { act('whDone', true, btnWith('완성'), '높이·모양·두께 모두 좋아요! 완성을 눌러요'); }
       }
+      if (PAGE === 'Counter' && (t === 0 || t === 6)) {
+        var tabBtn = function (lb) { return function () { return [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return (b.textContent || '').indexOf(lb) >= 0 && vis(b); })[0] || null; }; };
+        var want = t === 0 ? '의뢰 손님' : '납품 대기', tb = tabBtn(want)();
+        if (tb && tb.getAttribute('aria-selected') !== 'true') { act('ctTab' + t, true, tabBtn(want), t === 0 ? '「의뢰 손님」 탭에서 민 씨 이야기를 들어요' : '완성한 찻잔은 「납품 대기」 탭에서 건네요'); return; }
+        if (t === 6) {
+          if (btnWith('부르기')()) { act('ctCall', true, btnWith('부르기'), '민 씨를 불러 찻잔을 건네요'); }
+          else if (btnWith('건네기')()) { act('ctGive', true, btnWith('건네기'), '찻잔을 건네요'); }
+          else if (qsel('[aria-label="대화 넘기기"]')()) { act('ctTalk6', true, qsel('[aria-label="대화 넘기기"]'), '민 씨 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
+        }
+      }
       if (PAGE === 'Dry' && t === 2) {
         act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');
       }
@@ -792,12 +805,14 @@
       }
       if (st.pages.indexOf(PAGE) < 0) {
         if (spotEl) { return; }
-        act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요');
+        act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, (PAGE === 'Main' ? '「' + ({ Counter: '카운터', Display: '진열대' }[st.go] || NAMES[st.go] || st.go) + '」를 눌러 이동해요' : '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요'));
         return;
       }
       if (o2.seen !== k) { spotOff(); tourCard(k, k === 2 ? function () { t2Set(3); } : (k === 4 ? function () { setTimeout(tourDone, 200); } : null)); return; }
       if (k === 0 && PAGE === 'Counter') {
-        if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
+        var rqT = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return (b.textContent || '').indexOf('의뢰 손님') >= 0 && vis(b); })[0];
+        if (rqT && rqT.getAttribute('aria-selected') !== 'true') { act('t2tab', true, function () { return rqT; }, '「의뢰 손님」 탭에서 새 의뢰를 받아요'); }
+        else if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
         else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
       }
       if (k === 1 && PAGE === 'Commission') {

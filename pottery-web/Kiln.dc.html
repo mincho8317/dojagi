@@ -24,6 +24,8 @@ button{font-family:inherit;cursor:pointer}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .bg-bg-kiln-inside{background:#3A251A url(_blob/9c450e11f4bba913607424d567430c8a.webp) center/cover no-repeat}
 .navdrop>div{height:724px !important}
+body:has(.navdrop [role=dialog]) [data-nav]{display:none !important}
+body:has(.navdrop [role=dialog]) .navarrows{display:none}
 </style>
 </helmet>
 <div style="{{navRoot}}">
@@ -169,8 +171,8 @@ button{font-family:inherit;cursor:pointer}
 
 
   <sc-if value="{{pk.on}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
-      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:660px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
+    <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
             <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{pk.title}}</span>
@@ -505,7 +507,7 @@ class Component extends DCLogic {
         risk: (function () { var tp = QL0.kTemps(d.id), ws = g.kilnList || [], ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length; return ws.length ? '맞는 칸 ' + ok + '/' + ws.length + '점' + (d.id === 'high' ? ' · 요변' : '') : (d.id === 'high' ? (self.tutSafe() ? '요변 가능' : '파손 +8% · 요변') : ''); })(), riskStyle: (g.kilnList || []).length || d.id === 'high' ? 'font-size:11.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
         label: d.label, base: (d.base - 80) + '~' + d.base, hours: d.hours, icon: d.icon, img: d.img, on: on,
         style: btnBase + (on ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;'),
-        iconStyle: 'width:34px;height:30px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),
+        iconStyle: 'width:26px;height:22px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),
         pick: function () { if (g.kiln === 'firing') { self.say('소성 중에는 화도를 바꿀 수 없다'); return; } self.setG({ heat: d.id }); }
       };
     });
@@ -537,7 +539,7 @@ class Component extends DCLogic {
       if (waiting.length > free.length) { capWarn.push('빈 칸 ' + free.length + ' · 대기 ' + waiting.length + '점 → ' + (waiting.length - free.length) + '점은 다음 소성'); }
       for (var gk in need) { var o = (T.GL[gk] || T.GL.white).opt, n = free.filter(function (t) { return QL0.kMatch(t, o, g) === '정합'; }).length; if (n < need[gk]) { capWarn.push((T.GL[gk] || T.GL.white).n + ' 적정 칸 ' + n + ' · 대기 ' + need[gk] + '점' + (n === 0 ? ' · 화도를 바꿔 보자' : '')); } }
     })();
-    var cellBase = 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;height:84px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;';
+    var cellBase = 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;height:74px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;';
 
     function itemAt(i) { var v = filled[String(i)]; return v && typeof v === 'object' ? v : null; }
 
@@ -718,7 +720,7 @@ class Component extends DCLogic {
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',
       checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
-      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 6px 8px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
       tap: o.tap
     };
   }

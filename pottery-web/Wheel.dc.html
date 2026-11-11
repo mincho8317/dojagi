@@ -28,6 +28,8 @@ button{font-family:inherit;cursor:pointer}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
 .bg-bg-wheel{background:#BFA584 url(_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp) center/cover no-repeat}
 .navdrop>div{height:724px !important}
+body:has(.navdrop [role=dialog]) [data-nav]{display:none !important}
+body:has(.navdrop [role=dialog]) .navarrows{display:none}
 </style>
 </helmet>
 <div style="{{navRoot}}">
@@ -211,8 +213,8 @@ button{font-family:inherit;cursor:pointer}
 
 
   <sc-if value="{{sheetOn}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
-      <div role="dialog" aria-label="{{sheetTitle}}" style="width:390px;max-height:640px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
+    <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{sheetTitle}}" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{sheetTitle}}</span><span style="font-size:11.5px;color:#7A5434">{{sheetSub}}</span></div>
           <button type="button" onClick="{{closeSheet}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8">✕</button>
@@ -242,7 +244,7 @@ button{font-family:inherit;cursor:pointer}
   </div>
   <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
   <sc-if value="{{fxOk}}" hint-placeholder-val="{{false}}">
-    <div aria-hidden="true" style="position:absolute;left:0;top:56px;width:390px;height:724px;overflow:hidden;pointer-events:none;z-index:40">
+    <div class="navarrows" aria-hidden="true" style="position:absolute;left:0;top:56px;width:390px;height:724px;overflow:hidden;pointer-events:none;z-index:40">
       <svg style="position:absolute;left:20px;top:232px;overflow:visible" width="350" height="384" viewBox="0 0 300 330">
         <g transform="{{fx.flyTf}}" opacity="{{fx.flyOp}}">
           <path d="{{fx.path}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>

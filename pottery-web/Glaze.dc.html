@@ -27,6 +27,8 @@ button{font-family:inherit;cursor:pointer}
 @keyframes dropFall{0%{transform:translateY(0);opacity:.95}100%{transform:translateY(46px);opacity:0}}
 .bg-bg-glaze{background:#C5B79E url(_blob/e41f40f93735cbd82c4bab97fd696e6c.webp) center/cover no-repeat}
 .navdrop>div{height:724px !important}
+body:has(.navdrop [role=dialog]) [data-nav]{display:none !important}
+body:has(.navdrop [role=dialog]) .navarrows{display:none}
 </style>
 </helmet>
 <div data-navroot="1" style="{{navRoot}}">
@@ -142,8 +144,8 @@ button{font-family:inherit;cursor:pointer}
   </div>
 
   <sc-if value="{{gsShow}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
-      <div role="dialog" aria-label="유약 고르기" style="width:390px;max-height:640px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
+    <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="유약 고르기" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 알맞은 담금 시간이 다르다</span></div>
           <button type="button" onClick="{{gsClose}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8">✕</button>
@@ -168,8 +170,8 @@ button{font-family:inherit;cursor:pointer}
 
 
   <sc-if value="{{pk.on}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
-      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:660px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
+    <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:60;background:rgba(26,15,8,.62);display:flex;align-items:flex-end">
+      <div role="dialog" aria-label="{{pk.title}}" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;box-shadow:0 -6px 0 rgba(43,26,15,.25);display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
             <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{pk.title}}</span>
