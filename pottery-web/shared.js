@@ -631,6 +631,7 @@
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
       var nx = nextOf(g); if (nx === PAGE) { return; }
+      if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return; } // 가마를 여는 연출 중에는 끌고 가지 않는다
       var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
       // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
       var nm = { Wheel: '물레', Dry: '건조대', Bisque: '초벌 가마', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
@@ -770,9 +771,10 @@
     var CRAFT = ['Wheel', 'Dry', 'Bisque', 'Glaze', 'Kiln', 'KilnOpen'];
     var T2 = [
       { goal: '의뢰의 종류와 받는 방법', go: 'Counter', pages: ['Counter'], ic: '📜', body: '의뢰는 세 갈래예요.\n\n📜 메인 의뢰 · 공방 이야기를 따라 순서대로 열려요. 보상이 크고 새 모양이 해금돼요.\n🌸 시즌 의뢰 · 이벤트 기간에만 오는 한정 의뢰예요.\n☕ 손님 의뢰 · 사연·일간·주간·주문 손님이 수시로 찾아와요.\n\n의뢰는 카운터에서 손님 이야기를 듣고 「맡을게요」로 받아요. 윤 할매의 첫 메인 의뢰를 받아 보세요.' },
-      { goal: '제작 중 의뢰 확인하기', go: 'Commission', pages: ['Commission'].concat(CRAFT), ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 제작 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
-      { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' },
+      { goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: CRAFT, passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 제작 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
+      { goal: '메인 의뢰 3점 납품하기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
       { goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 줘요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 다음에 볼 연구에 써요.' },
+      { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' },
       { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·초벌 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
     ];
     // 2차 진행 상태는 별도 키에 둔다 (화면 코드가 게임 상태를 통째로 저장해도 지워지지 않게)
@@ -814,27 +816,26 @@
       tourMini(k);
       if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
       // 진행 조건
+      var mqDone = g.mq && ((g.mq.i || 0) >= 1 || (g.mq.log || []).length > 0);
+      if (k <= 2 && mqDone) { t2Set(3); return; }
       if (k === 0 && g.mq && g.mq.acc) { t2Set(1); return; }
       if (k === 3) {
         if (tutGift(g)) { save(g); notify(); return; }
         var gi = giftIn(g), shelfN = pieceN(g, ['shelf']);
-        if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(4); return; }
+        if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(4, { tut2Seen: 3 }); return; }
       }
+      if (st.passive && st.pages.indexOf(PAGE) < 0) { return; } // 직접 제작·납품하는 동안에는 끌고 가지 않는다
       if (st.pages.indexOf(PAGE) < 0) {
         if (spotEl) { return; }
         act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, (PAGE === 'Main' ? '「' + ({ Counter: '카운터', Display: '진열대' }[st.go] || NAMES[st.go] || st.go) + '」를 눌러 이동해요' : '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요'));
         return;
       }
-      if (o2.seen !== k) { spotOff(); tourCard(k, k === 2 ? function () { t2Set(3); } : (k === 4 ? function () { setTimeout(tourDone, 200); } : null)); return; }
+      if (o2.seen !== k && !st.passive) { spotOff(); tourCard(k, k === 4 ? function () { t2Set(5); } : (k === 5 ? function () { setTimeout(tourDone, 200); } : null)); return; }
       if (k === 0 && PAGE === 'Counter') {
         var rqT = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return (b.textContent || '').indexOf('의뢰 손님') >= 0 && vis(b); })[0];
         if (rqT && rqT.getAttribute('aria-selected') !== 'true') { act('t2tab', true, function () { return rqT; }, '「의뢰 손님」 탭에서 새 의뢰를 받아요'); }
         else if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
         else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
-      }
-      if (k === 1 && PAGE === 'Commission') {
-        if (mainBtn('📌 제작 안내 켜기')()) { act('t2pin', true, mainBtn('📌 제작 안내 켜기'), '📌을 켜면 이 의뢰가 제작 화면 체크리스트에 떠요'); }
-        else { act('t2make', true, mainBtn('제작하러 가기'), '「제작하러 가기」로 제작 화면에 가 봐요'); }
       }
       if (k === 3 && PAGE === 'Display') {
         var gj = giftIn(g), shN = pieceN(g, ['shelf']), P2 = g.pieces || {};
