@@ -24,23 +24,26 @@ button{font-family:inherit;cursor:pointer}
 @keyframes gJack{0%{transform:translate(-50%,-50%) scale(.2) rotate(-8deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,-50%) scale(1.05);opacity:0}}
 @keyframes gRays{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes rNeedle{0%{left:0%}50%{left:100%}100%{left:0%}}
+@keyframes rPuff{0%{transform:translate(-50%,-50%) scale(.3);opacity:.9}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+@keyframes rFold{0%{transform:translate(-50%,0) scale(1,1)}25%{transform:translate(-50%,0) scale(1.25,.7)}55%{transform:translate(-50%,0) scale(.88,1.12)}100%{transform:translate(-50%,0) scale(1,1)}}
 @keyframes rSquash{0%{transform:scale(1,1)}30%{transform:scale(1.18,.78)}100%{transform:scale(1,1)}}
 @keyframes rPound{0%{transform:translateY(-34px) rotate(-8deg)}40%{transform:translateY(6px) rotate(0)}100%{transform:translateY(-34px) rotate(-8deg)}}
 @keyframes gPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,214,107,.0)}50%{box-shadow:0 0 0 4px rgba(255,214,107,.85)}}
 </style>
 </helmet>
 <div style="position:relative;width:390px;height:844px;overflow:hidden;background:linear-gradient(#BFE0E8 0,#E6EFD9 30%,#B8C98E 31%,#8FA866 55%,#7A5A3C 56%,#5E4129 100%);color:#2B1A0F">
-  <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:6px">
+  <div style="position:absolute;left:12px;right:22px;top:10px;display:flex;align-items:center;gap:6px">
     <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">채집</div>
     <div aria-label="채집권 {{tix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 9px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #FFD66B;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
       <span style="font-size:15px">🎫 {{tix}}/{{tixMax}}</span>
       <span style="font-size:10px;color:#FFE7A8">{{tixNext}}</span>
     </div>
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
-      <div aria-label="축제 채집권 {{etix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
+      <button type="button" onClick="{{evAsk}}" aria-label="축제 채집권 {{etix}}개 · 눌러서 더 사기" style="all:unset;cursor:pointer;flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;padding:3px 16px 3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
         <span style="font-size:15px">🌸 {{etix}}/{{etixMax}}</span>
         <span style="font-size:10px;color:#FFD3E0">{{etixNext}}</span>
-      </div>
+        <span aria-hidden="true" style="position:absolute;right:-9px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;background:#D46A86;border:2px solid #FFF4DE;box-shadow:0 2px 0 #7A2846;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;color:#FFFDF5">+</span>
+      </button>
     </sc-if>
   </div>
 
@@ -51,7 +54,7 @@ button{font-family:inherit;cursor:pointer}
   </div>
 
   <sc-if value="{{tabGather}}" hint-placeholder-val="{{true}}">
-    <div role="note" aria-label="오늘의 채집지" style="position:absolute;left:12px;right:12px;top:100px;display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:14px;background:{{siteBg}};border:2.5px solid #2B1A0F;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+    <div role="note" aria-label="오늘의 채집지" style="position:absolute;left:12px;right:12px;top:186px;display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:14px;background:{{siteBg}};border:2.5px solid #2B1A0F;box-shadow:0 3px 0 rgba(43,26,15,.35)">
       <span style="font-size:22px">{{siteIc}}</span>
       <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
         <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">오늘의 채집지 · {{siteName}}</span>
@@ -59,7 +62,7 @@ button{font-family:inherit;cursor:pointer}
       </span>
     </div>
 
-    <div aria-label="캐 온 원료" style="position:absolute;left:12px;right:12px;top:152px;display:flex;flex-direction:column;gap:3px;padding:5px 6px;border-radius:14px;background:rgba(255,250,240,.93);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+    <div aria-label="캐 온 원료" style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:3px;padding:5px 6px;border-radius:14px;background:rgba(255,250,240,.93);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
       <span style="font-size:10.5px;font-weight:700;color:#8A6440">캐 온 원료 · 「다듬기」에서 등급이 정해져요</span>
       <div style="display:flex;gap:3px">
         <sc-for list="{{invRawC}}" as="iv" hint-placeholder-count="4">
@@ -79,7 +82,7 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </div>
 
-    <div style="position:absolute;left:12px;right:12px;top:240px;display:flex;flex-direction:column;gap:8px">
+    <div style="position:absolute;left:12px;right:12px;top:240px;display:flex;flex-direction:column;gap:7px">
       <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
         <div style="{{md.box}}">
           <div style="display:flex;align-items:center;gap:10px">
@@ -98,18 +101,18 @@ button{font-family:inherit;cursor:pointer}
     </div>
 
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
-      <div aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:9px 11px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:24px">🌸</span>
-          <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
-            <span style="font-family:'Jua',sans-serif;font-size:17px;color:#7A2846">축제 채집지 · 벚꽃 언덕</span>
-            <span style="font-size:11px;font-weight:700;color:#8A3A58">봄빛 흙·벚꽃 재가 나와요 (항상 상급) · {{evLeft}}</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button type="button" onClick="{{evDig}}" style="{{evBtn}}">흙 파기 · 🌸1</button>
-          <button type="button" onClick="{{evRock}}" style="{{evBtn}}">돌 부수기 · 🌸1</button>
-          <button type="button" onClick="{{evBuy}}" aria-label="축제 채집권 1장 사기 · 옥 {{evPrice}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:7px 8px;border-radius:12px;background:#FFF4DE;border:2.5px solid #B05876;font-family:'Jua',sans-serif;font-size:12px;color:#7A2846;text-align:center;line-height:1.15">+1장<br>옥 {{evPrice}}</button>
+      <div aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:7px 9px 9px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2846">🌸 축제 채집지 · 벚꽃 언덕 <span style="font-size:11px;color:#8A3A58">축제 재료는 항상 상급</span></span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <sc-for list="{{evModes}}" as="em" hint-placeholder-count="2">
+            <div style="box-sizing:border-box;padding:7px 8px;border-radius:14px;background:rgba(255,250,252,.95);border:2.5px solid #B05876;display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <img dc-src="{{em.img}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:contain">
+                <span style="display:flex;flex-direction:column;min-width:0;line-height:1.2"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{em.name}}</span><span style="display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#8A3A58"><img dc-src="{{em.get}}" alt="" aria-hidden="true" style="width:16px;height:16px;object-fit:contain">{{em.desc}}</span></span>
+              </div>
+              <button type="button" onClick="{{em.start}}" style="{{em.btn}}">시작 · 🌸1</button>
+            </div>
+          </sc-for>
         </div>
       </div>
     </sc-if>
@@ -136,29 +139,47 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </sc-if>
 
-  <sc-if value="{{refOn}}" hint-placeholder-val="{{false}}">
-    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 30%,#6B4A30 0,#3E2616 70%);display:flex;flex-direction:column;align-items:center">
-      <span style="margin-top:22px;font-family:'Jua',sans-serif;font-size:26px;color:#FFE7A8;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
-      <span style="margin-top:4px;font-size:13px;font-weight:700;color:#F6E7CC">{{refSub}}</span>
-      <div style="position:relative;margin-top:30px;width:200px;height:170px;display:flex;align-items:flex-end;justify-content:center">
-        <span aria-hidden="true" style="position:absolute;left:30px;right:30px;bottom:0;height:26px;border-radius:50%;background:rgba(0,0,0,.35)"></span>
-        <img dc-src="{{refImg}}" alt="" aria-hidden="true" style="{{refImgS}}">
-        <span aria-hidden="true" style="{{refTool}}">{{refToolT}}</span>
+  <sc-if value="{{askOn}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.55)">
+      <div role="dialog" aria-label="축제 채집권 사기" style="width:290px;box-sizing:border-box;padding:16px 16px 14px;border-radius:20px;background:#FFF4DE;border:4px solid #B05876;box-shadow:0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+        <span style="font-size:40px;line-height:1">🌸</span>
+        <span style="font-family:'Jua',sans-serif;font-size:20px;color:#7A2846">축제 채집권 1장</span>
+        <span style="font-size:13px;font-weight:700;color:#5B3A24">옥 {{evPrice}}개로 살까요?<br>지금 옥 {{jadeNow}}개</span>
+        <div style="display:flex;gap:8px;width:100%;margin-top:4px">
+          <button type="button" onClick="{{askNo}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:10px 0;border-radius:13px;background:#FFFDF5;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:16px;color:#5B3A24;text-align:center">취소</button>
+          <button type="button" onClick="{{askYes}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:10px 0;border-radius:13px;background:#D46A86;border:3px solid #7A2846;box-shadow:0 3px 0 #7A2846;font-family:'Jua',sans-serif;font-size:16px;color:#FFFDF5;text-align:center">옥 {{evPrice}} · 사기</button>
+        </div>
       </div>
-      <div aria-label="판정 게이지" style="position:relative;margin-top:26px;width:330px;height:44px;box-sizing:border-box;border:4px solid #2B1A0F;border-radius:14px;overflow:hidden;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%)">
+    </div>
+  </sc-if>
+
+  <sc-if value="{{refOn}}" hint-placeholder-val="{{false}}">
+    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 34%,#6B4A30 0,#3E2616 72%);display:flex;flex-direction:column;align-items:center">
+      <span style="margin-top:20px;font-family:'Jua',sans-serif;font-size:26px;color:#FFE7A8;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
+      <span style="margin-top:4px;font-size:13px;font-weight:700;color:#F6E7CC">{{refSub}}</span>
+      <div id="rstage" data-work="1" onPointerDown="{{refDown}}" style="position:relative;margin-top:14px;width:330px;height:300px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer">
+        <span aria-hidden="true" style="{{boardS}}"></span>
+        <span aria-hidden="true" style="{{bowlS}}"></span>
+        <span aria-hidden="true" style="{{powderS}}"></span>
+        <img dc-src="{{refImg}}" alt="" aria-hidden="true" draggable="false" style="{{refImgS}}">
+        <span aria-hidden="true" style="{{bowlFront}}"></span>
+        <span aria-hidden="true" style="{{pestleS}}"></span>
+        <sc-for list="{{puffs}}" as="pf" hint-placeholder-count="0">
+          <span aria-hidden="true" style="{{pf.s}}"></span>
+        </sc-for>
+        <span aria-hidden="true" style="{{hintS}}">{{hintT}}</span>
+      </div>
+      <div aria-label="판정 게이지" style="position:relative;margin-top:10px;width:320px;height:40px;box-sizing:border-box;border:4px solid #2B1A0F;border-radius:14px;overflow:hidden;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%)">
         <span aria-hidden="true" style="position:absolute;left:43%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:12px;color:#7A4A00">특급</span>
-        <span aria-hidden="true" style="position:absolute;left:31%;width:12%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:11px;color:#FFFDF5">상급</span>
-        <span aria-hidden="true" style="position:absolute;left:57%;width:12%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:11px;color:#FFFDF5">상급</span>
         <span aria-hidden="true" style="{{needle}}"></span>
       </div>
-      <div style="display:flex;gap:6px;margin-top:14px;min-height:34px">
+      <div style="display:flex;gap:7px;margin-top:12px;min-height:30px;align-items:center">
         <sc-for list="{{refRes}}" as="rr" hint-placeholder-count="5">
           <span style="{{rr.s}}">{{rr.t}}</span>
         </sc-for>
       </div>
-      <span style="margin-top:6px;font-family:'Jua',sans-serif;font-size:18px;color:{{refFlashC}};min-height:24px">{{refFlash}}</span>
-      <button type="button" onPointerDown="{{refTap}}" style="{{refTapBtn}}">{{refTapText}}</button>
-      <div style="display:flex;gap:8px;margin-top:12px">
+      <span style="margin-top:4px;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8;min-height:24px">{{refFlash}}</span>
+      <div style="display:flex;gap:8px;margin-top:8px">
         <button type="button" onClick="{{refQuick}}" style="{{refQuickBtn}}">{{refQuickText}}</button>
         <button type="button" onClick="{{refClose}}" style="all:unset;cursor:pointer;box-sizing:border-box;padding:9px 18px;border-radius:13px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">닫기</button>
       </div>
@@ -223,7 +244,7 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), toast: '', tick: 0, tab: 'gather' };
+    this.state = { g: this.loadG(), toast: '', tick: 0, tab: 'gather', ask: false };
     this.G = null; this.R = null;
   }
   loadG() {
@@ -337,18 +358,32 @@ class Component extends DCLogic {
   // ── 다듬기 : 손 토련(흙) · 절구질(유약 원료) — 바늘이 왕복하는 게이지, 가운데일수록 높은 등급 ──
   refOpen(rk) {
     var g = this.loadG(), n = Math.min(5, (g.mats || {})[rk] || 0); if (!n) { this.say('다듬을 원료가 없다 · 채집에서 캐 와요'); this.sfx('fail'); return; }
-    this.R = { rk: rk, n: n, res: [], t0: Date.now(), P: 720, flash: '', done: false, hitAt: 0 };
+    this.R = { rk: rk, n: n, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [] };
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
   refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
-  refTap(e) {
-    var R = this.R; if (!R || R.done) { return; } if (e && e.preventDefault) { e.preventDefault(); }
+  // 1번 다듬기 = 1개. 판정은 그 순간 바늘 위치 (가운데 특급 · 주변 상급 · 나머지 보통). 결과는 끝나야 보여준다
+  refHit() {
+    var R = this.R; if (!R || R.done) { return; }
     var d = Math.abs(this.refPos() - 0.5), gd = d < 0.07 ? 3 : (d < 0.2 ? 2 : 1);
-    R.res.push(gd); R.flash = ['', '보통', '상급!', '특급!!'][gd]; R.hitAt = Date.now();
-    this.sfx(gd === 3 ? 'rare' : (gd === 2 ? 'ok' : 'tap'));
-    if (R.res.length >= R.n) { this.refCommit(); } else { this.setState({ tick: Date.now() }); }
+    R.res.push(gd); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
+    for (var i = 0; i < 5; i++) { R.puffs.push({ at: Date.now(), x: 165 + (Math.random() - 0.5) * 90, y: (this.D()[R.rk].kind === 'clay' ? 220 : 200) + (Math.random() - 0.5) * 30, r: 14 + Math.random() * 16 }); }
+    this.sfx(this.D()[R.rk].kind === 'clay' ? 'thud' : 'smash');
+    if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 450); }
+    this.setState({ tick: Date.now() });
+  }
+  // 흙 : 반죽을 끌어 앞으로 밀기 (70px 넘게 밀면 1번) · 원석 : 절구 아무 데나 톡 → 공이로 쿵
+  refDown(e) {
+    var R = this.R, self = this; if (!R || R.done || R.res.length >= R.n) { return; } if (e && e.preventDefault) { e.preventDefault(); }
+    if (this.D()[R.rk].kind !== 'clay') { this.refHit(); return; }
+    var x0 = e.clientX, y0 = e.clientY, st = document.getElementById('rstage'), k = st ? st.getBoundingClientRect().width / 330 : 1, fired = false;
+    R.drag = { dx: 0, dy: 0 };
+    function mv(ev) { if (!self.R || fired) { return; } var dx = (ev.clientX - x0) / k, dy = (ev.clientY - y0) / k; self.R.drag = { dx: dx, dy: dy }; if (Math.hypot(dx, dy) >= 70) { fired = true; self.R.drag = null; self.refHit(); } else { self.setState({ tick: Date.now() }); } }
+    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (self.R) { self.R.drag = null; self.setState({ tick: Date.now() }); } }
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
   refQuick() { var R = this.R; if (!R || R.done) { this.refOpen(R ? R.rk : ''); return; } while (R.res.length < R.n) { R.res.push(1); } this.refCommit(); }
+  refTap() {}
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
     mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n);
@@ -398,11 +433,15 @@ class Component extends DCLogic {
       return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); },
         btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:7px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (raw > 0 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
-    var evBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
+    var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
     var out = {
       tix: T.tix, tixMax: T.max, tixNext: T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1', toastOn: !!s.toast, toast: s.toast,
       evOn: ev, etix: ET.tix, etixMax: ET.max, etixNext: ET.tix >= ET.max ? '가득' : this.fmt(ET.next) + ' 뒤 +1', evPrice: 50,
-      evLeft: '옥 ' + this.jadeOf(g).toLocaleString(), evBtn: evBtn, evDig: function () { self.start('dig', true); }, evRock: function () { self.start('rock', true); }, evBuy: function () { self.buyEvTix(); },
+      evAsk: function () { self.setState({ ask: true }); self.sfx('tap'); }, askOn: !!s.ask, jadeNow: this.jadeOf(g).toLocaleString(), askNo: function () { self.setState({ ask: false }); }, askYes: function () { self.setState({ ask: false }); self.buyEvTix(); },
+      evModes: [
+        { name: '흙 파기', img: '_blob/4cfc6dd980b06d7a69c3619abed1f676.png', get: D.spring.img, desc: '봄빛 흙이 나와요', start: function () { self.start('dig', true); }, btn: evBtn },
+        { name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', get: D.petal.img, desc: '벚꽃 재가 나와요', start: function () { self.start('rock', true); }, btn: evBtn }
+      ],
       tabs: tabs, tabGather: tab === 'gather', tabRefine: tab === 'refine',
       siteName: S.name, siteIc: S.ic, siteDesc: S.desc, siteBg: S.bg, modes: modes,
       invRawC: ['ry', 'rr', 'rw', 'rk'].concat(ev ? ['spring'] : []).map(inv), invRawG: ['ow', 'oc', 'ob', 'oj'].concat(ev ? ['petal'] : []).map(inv),
@@ -412,7 +451,7 @@ class Component extends DCLogic {
       ],
       playing: !!G, ended: !!G && G.phase === 'end', gameName: G ? (G.mode === 'dig' ? '흙 파기' : '돌 부수기') : '',
       resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: '',
-      refOn: !!this.R, refTitle: '', refSub: '', refImg: '', refImgS: '', refTool: 'display:none', refToolT: '', needle: '', refRes: [], refFlash: '', refFlashC: '#FFF4DE', refTap: function () {}, refTapBtn: '', refTapText: '', refQuick: function () {}, refQuickBtn: '', refQuickText: '', refClose: function () {}
+      refOn: !!this.R, refTitle: '', refSub: '', refImg: '', refImgS: '', refTool: 'display:none', refToolT: '', needle: '', refRes: [], refFlash: '', refFlashC: '#FFF4DE', refQuick: function () {}, refQuickBtn: '', refQuickText: '', refClose: function () {}
     };
     if (G && G.phase === 'end') {
       var R = G.R || [];
@@ -430,27 +469,43 @@ class Component extends DCLogic {
       out.againText = TT.tix > 0 ? '한 번 더 · ' + (G.ev ? '🌸' : '🎫') + '1' : '채집권 없음';
     }
     var Rf = this.R;
+    out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = 'display:none'; out.hintT = ''; out.puffs = []; out.refDown = function () {};
     if (Rf) {
-      var dd = D[Rf.rk], clay = dd.kind === 'clay', hit = Date.now() - Rf.hitAt < 400;
+      var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length, fin = cnt >= Rf.n;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = Rf.done ? '다듬기 완료!' : (clay ? '반죽을 꾹 누르는 순간을 맞춰요' : '공이를 내리찍는 순간을 맞춰요') + ' · ' + (Rf.res.length + 1) + '/' + Rf.n;
-      out.refImg = dd.img;
-      out.refImgS = 'width:120px;height:120px;object-fit:contain;position:relative;' + (hit ? 'animation:rSquash .35s ease-out;' : '');
-      out.refTool = clay ? 'position:absolute;left:50%;top:-6px;margin-left:-22px;font-size:44px;' + (hit ? 'animation:rSquash .35s ease-out;' : '') : 'position:absolute;right:10px;top:0;font-size:46px;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
-      out.refToolT = clay ? '🤲' : '🪵';
-      out.needle = Rf.done ? 'display:none' : 'position:absolute;top:-2px;bottom:-2px;width:8px;margin-left:-4px;border-radius:4px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 6px rgba(255,255,255,.8);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((Date.now() - Rf.t0) % (Rf.P * 2)) + 'ms';
-      if (!Rf.needleS) { Rf.needleS = out.needle; } else if (!Rf.done) { out.needle = Rf.needleS; }
-      out.refRes = []; for (var i = 0; i < Rf.n; i++) { var gd = Rf.res[i]; out.refRes.push({ t: gd ? GN[gd] : '?', s: "display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 4px;border-radius:9px;font-family:'Jua',sans-serif;font-size:14px;" + (gd === 3 ? 'background:#FFD66B;color:#7A4A00;border:2px solid #B07A1E' : (gd === 2 ? 'background:#5C9BD1;color:#FFFDF5;border:2px solid #2E5E8A' : (gd === 1 ? 'background:#A89880;color:#FFFDF5;border:2px solid #6E6250' : 'background:rgba(255,255,255,.12);color:#C9B08C;border:2px dashed #8A6440'))) }); }
-      out.refFlash = Rf.done ? (function () { var c = [0, 0, 0, 0]; Rf.res.forEach(function (x) { c[x]++; }); return '특급 ' + c[3] + ' · 상급 ' + c[2] + ' · 보통 ' + c[1]; })() : (hit ? Rf.flash : '');
-      out.refFlashC = Rf.done ? '#FFE7A8' : (Rf.flash.indexOf('특급') === 0 ? '#FFD66B' : (Rf.flash.indexOf('상급') === 0 ? '#9FD2FF' : '#E8E2D8'));
-      out.refTap = function (e) { self.refTap(e); };
-      out.refTapBtn = 'all:unset;cursor:pointer;margin-top:10px;width:240px;height:74px;box-sizing:border-box;border-radius:22px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:24px;touch-action:none;' + (Rf.done ? 'background:#6B5A48;border:4px solid #3E2616;color:#C9B08C' : 'background:#B9533A;border:4px solid #2B1A0F;box-shadow:0 6px 0 #2B1A0F;color:#FFFDF5');
-      out.refTapText = Rf.done ? '완료' : (clay ? '꾹 누르기!' : '쿵 내리찍기!');
-      var left = (mats[Rf.rk] || 0);
+      out.refSub = Rf.done ? '다듬기 완료!' : (clay ? '반죽을 손가락으로 앞으로 쭉 밀어요' : '절구를 톡 눌러 공이로 쿵 찧어요') + ' · 바늘이 가운데일 때!';
+      out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
+      if (clay) {
+        // 나무판 위 반죽 : 미는 방향으로 늘어나고, 다 밀면 접히며 탁
+        var dg = Rf.drag || { dx: 0, dy: 0 }, len = Math.min(70, Math.hypot(dg.dx, dg.dy)), ang = Math.atan2(dg.dy, dg.dx) * 180 / Math.PI, st = 1 + len / 140;
+        out.boardS = 'position:absolute;left:20px;right:20px;bottom:24px;height:120px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#C9955E 0,#9C6A3C 70%,#7A5030 100%);box-shadow:0 8px 0 #5B3A24,inset 0 -6px 0 rgba(0,0,0,.18)';
+        out.refImgS = 'position:absolute;left:50%;bottom:58px;width:150px;height:150px;object-fit:contain;transform-origin:50% 80%;' + (hit ? 'animation:rFold .42s ease-out;transform:translate(-50%,0)' : 'transform:translate(-50%,0) translate(' + (dg.dx * 0.35).toFixed(1) + 'px,' + (dg.dy * 0.35).toFixed(1) + 'px) rotate(' + ang.toFixed(0) + 'deg) scale(' + st.toFixed(2) + ',' + (1 / Math.sqrt(st)).toFixed(2) + ') rotate(' + (-ang).toFixed(0) + 'deg)') + ';filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))';
+        out.hintS = Rf.done || Rf.drag ? 'display:none' : "position:absolute;left:50%;top:6px;transform:translateX(-50%);font-family:'Jua',sans-serif;font-size:16px;color:#FFE7A8;white-space:nowrap;animation:gBlink 1.2s infinite";
+        out.hintT = '👆 반죽을 쭉 밀기';
+      } else {
+        // 절구 : 원석이 찧을수록 작아지고 가루가 쌓인다 · 공이가 내려찍힘
+        var left = 1 - cnt / Rf.n;
+        out.bowlS = 'position:absolute;left:55px;right:55px;bottom:30px;height:150px;border-radius:24px 24px 90px 90px;background:linear-gradient(#8A6440,#5B3A24);box-shadow:inset 0 14px 0 rgba(0,0,0,.35),0 8px 0 #3E2616';
+        out.powderS = 'position:absolute;left:50%;bottom:' + (120) + 'px;transform:translateX(-50%);width:' + (40 + cnt * 22) + 'px;height:' + (10 + cnt * 6) + 'px;border-radius:50% 50% 10px 10px;background:radial-gradient(ellipse at 50% 30%,#FFFDF5 0,#E8E0D2 70%)';
+        out.refImgS = 'position:absolute;left:50%;bottom:' + (128 + cnt * 4) + 'px;width:' + Math.round(80 * (0.35 + 0.65 * left)) + 'px;height:' + Math.round(80 * (0.35 + 0.65 * left)) + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s;' + (fin ? 'opacity:0;' : '');
+        out.bowlFront = 'position:absolute;left:50px;right:50px;bottom:118px;height:22px;border-radius:50%;border:6px solid #6B4A2E;border-top-color:transparent;box-sizing:border-box';
+        out.pestleS = 'position:absolute;left:50%;top:-6px;margin-left:-14px;width:28px;height:150px;border-radius:14px;background:linear-gradient(90deg,#B8865A,#E2B887 45%,#9C6A3C);box-shadow:0 0 0 3px #5B3A24;transform-origin:50% 100%;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
+        out.hintS = Rf.done ? 'display:none' : "position:absolute;left:8px;top:40px;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8;animation:gBlink 1.2s infinite";
+        out.hintT = '👆 톡! 쿵';
+      }
+      out.puffs = (Rf.puffs || []).filter(function (q) { return now - q.at < 600; }).map(function (q) { return { s: 'position:absolute;left:' + q.x.toFixed(0) + 'px;top:' + q.y.toFixed(0) + 'px;width:' + (q.r * 2).toFixed(0) + 'px;height:' + (q.r * 2).toFixed(0) + 'px;border-radius:50%;background:' + (clay ? 'rgba(200,160,110,.55)' : 'rgba(255,253,245,.75)') + ';animation:rPuff .6s ease-out forwards;pointer-events:none' }; });
+      out.needle = Rf.done ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;top:-2px;bottom:-2px;width:8px;margin-left:-4px;border-radius:4px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 6px rgba(255,255,255,.8);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
+      out.refRes = []; for (var i = 0; i < Rf.n; i++) {
+        var gd = Rf.done ? Rf.res[i] : 0, did = i < cnt;
+        out.refRes.push({ t: Rf.done ? GN[gd] : (did ? '✓' : ''), s: "display:inline-flex;align-items:center;justify-content:center;min-width:" + (Rf.done ? 46 : 26) + "px;height:" + (Rf.done ? 30 : 26) + "px;padding:0 3px;border-radius:" + (Rf.done ? 9 : 13) + "px;font-family:'Jua',sans-serif;font-size:14px;" + (Rf.done ? (gd === 3 ? 'background:#FFD66B;color:#7A4A00;border:2px solid #B07A1E' : (gd === 2 ? 'background:#5C9BD1;color:#FFFDF5;border:2px solid #2E5E8A' : 'background:#A89880;color:#FFFDF5;border:2px solid #6E6250')) : (did ? 'background:#E8B640;color:#2B1A0F;border:2px solid #2B1A0F' : 'background:rgba(255,255,255,.1);color:#C9B08C;border:2px dashed #8A6440')) });
+      }
+      out.refFlash = Rf.done ? (function () { var c = [0, 0, 0, 0]; Rf.res.forEach(function (x) { c[x]++; }); return '특급 ' + c[3] + ' · 상급 ' + c[2] + ' · 보통 ' + c[1]; })() : (hit ? (clay ? '꾹!' : '쿵!') : cnt + ' / ' + Rf.n);
+      var lf = (mats[Rf.rk] || 0);
       out.refQuick = function () { if (Rf.done) { self.refOpen(Rf.rk); } else { self.refQuick(); } };
-      out.refQuickText = Rf.done ? (left > 0 ? '이어서 다듬기 (' + left + ')' : '원료 없음') : '대충 하기 (모두 보통)';
-      out.refQuickBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:9px 14px;border-radius:13px;font-family:Jua,sans-serif;font-size:15px;' + (Rf.done && !left ? 'background:#6B5A48;border:3px solid #3E2616;color:#C9B08C' : 'background:#E8B640;border:3px solid #2B1A0F;color:#2B1A0F');
+      out.refQuickText = Rf.done ? (lf > 0 ? '이어서 다듬기 (' + lf + ')' : '원료 없음') : '대충 하기 (남은 것 모두 보통)';
+      out.refQuickBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:9px 14px;border-radius:13px;font-family:Jua,sans-serif;font-size:15px;' + (Rf.done && !lf ? 'background:#6B5A48;border:3px solid #3E2616;color:#C9B08C' : 'background:#E8B640;border:3px solid #2B1A0F;color:#2B1A0F');
       out.refClose = function () { self.R = null; self.setState({ tick: Date.now() }); };
+      if (now - Rf.hitAt < 650) { var self2 = this; clearTimeout(this.pt); this.pt = setTimeout(function () { self2.setState({ tick: Date.now() }); }, 120); }
     }
     return out;
   }
