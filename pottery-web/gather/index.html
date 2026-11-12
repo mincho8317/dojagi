@@ -195,19 +195,27 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     DEP = new Uint8Array(F.gw * F.gh); NOI = buildNoise(F.gw, F.gh);
     PW = F.gw * CELL * K; PH = F.gh * CELL * K; makePatches();
     OFF = document.createElement('canvas'); OFF.width = PW; OFF.height = PH; OCX = OFF.getContext('2d'); IMG = OCX.createImageData(PW, PH); DR = null; dirty = true;
-    var items = [], plan = [[1, 3], [2, 4], [3, 5], [4, 5], [5, 6], [6, 6], [7, 6]];
+    var items = [], plan = [[1, 7], [2, 9], [3, 10], [4, 10], [5, 11], [6, 11], [7, 11]];
     plan.forEach(function (pl) { for (var i = 0; i < pl[1]; i++) { items.push({ l: pl[0], k: itemFor(pl[0]) }); } });
     for (var t = 0; t < 6; t++) { items.push({ l: 1 + Math.floor(Math.random() * 4), k: 'time' }); }
-    // 대형 흙 : 3~6층에 4덩이. 넓게 다 드러내야 캐지고, 3개로 친다
-    for (var bg = 0; bg < 4; bg++) { var bl = 3 + bg; items.unshift({ l: bl, k: itemFor(bl), big: 1 }); }
+    // 대형 흙 : 2~7층에 6덩이. 넓게 다 드러내야 캐지고, 2개로 친다
+    for (var bg = 0; bg < 6; bg++) { var bl = 2 + bg; items.unshift({ l: bl, k: itemFor(bl), big: 1 }); }
+    // 노다지 : 같은 흙 5~6개가 한데 몰린 자리 4곳 — 터지면 콤보가 줄줄이
+    var veins = [];
+    for (var vn = 0; vn < 4; vn++) {
+      var vl = 2 + Math.floor(Math.random() * 5), vk = itemFor(vl), vx = rnd(70, F.w - 70), vy = rnd(70, F.h - 70), cnt = 5 + Math.floor(Math.random() * 2);
+      for (var vi = 0; vi < cnt; vi++) { var va = vi / cnt * 6.283 + Math.random() * 0.4, vr = vi === 0 ? 0 : rnd(26, 42); veins.push({ l: vl, k: vk, x: vx + Math.cos(va) * vr, y: vy + Math.sin(va) * vr, vein: vn + 1 }); }
+    }
+    items = veins.concat(items);
     items.forEach(function (it) {
+      if (it.vein) { return; }
       var m = it.big ? 40 : 22;
       for (var a = 0; a < 40; a++) {
         it.x = rnd(m, F.w - m); it.y = rnd(m, F.h - m);
         if (!items.some(function (o) { if (o === it || o.x === undefined) { return false; } var bb = o.big || it.big; return Math.hypot(o.x - it.x, o.y - it.y) < (o.l === it.l ? (bb ? 76 : 44) : (bb ? 40 : 24)); })) { break; }
       }
     });
-    return { mode: 'dig', t: 0, left: DUR, pre: 1.3, items: items, got: {}, fx: [], fly: [], parts: [], pops: [], digs: [], score: 0, taps: 0, shake: 0, combo: 0, lastGet: -9 };
+    return { mode: 'dig', t: 0, left: DUR, pre: 1.3, items: items, got: {}, fx: [], fly: [], parts: [], pops: [], digs: [], score: 0, taps: 0, shake: 0, combo: 0, lastGet: -9, veinShown: {} };
   }
   function depthAt(lx, ly) { var gx = Math.floor(lx / CELL), gy = Math.floor(ly / CELL); if (gx < 0 || gy < 0 || gx >= F.gw || gy >= F.gh) { return 0; } return DEP[gy * F.gw + gx]; }
   function dig(p, drag) {
@@ -247,6 +255,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
       it.rev = tot ? open / tot : 0;
       if (it.rev >= 1) {
         it.got = true; var wx = F.x + it.x, wy = F.y + it.y;
+        if (it.vein && !S.veinShown[it.vein]) { S.veinShown[it.vein] = 1; S.fx.push({ x: wx, y: wy - 70, t: '노다지!', c: '#FFD66B', at: S.t, big: true }); S.flash = S.t; S.shake = Math.max(S.shake, 6); tone(784, 0.1, 'triangle', 0.1); setTimeout(function () { tone(1175, 0.16, 'triangle', 0.1); }, 80); }
         // 콤보 : 직전 획득 후 2초 안에 또 캐면 +1 (점수 ×1.25, ×1.5 … 최대 ×3)
         S.combo = S.t - S.lastGet <= CW() ? S.combo + 1 : 1; S.lastGet = S.t;
         var mult = Math.min(3, 1 + 0.25 * (S.combo - 1));
@@ -422,7 +431,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
   // ════════ 돌 부수기 ════════
   var TIER = { 1: { hp: 1, r: 22, n: [1, 1] }, 2: { hp: 3, r: 32, n: [3, 4] }, 3: { hp: 6, r: 44, n: [6, 8] }, 4: { hp: 2, r: 30, n: [2, 3], life: 1.8 } };
   // 4 = 황금 돌 : 1.8초만 있다가 사라짐 · 두 번 치면 깨지고 진사 2개 확정
-  function newRock() { var s = { mode: 'rock', t: 0, left: DUR, pre: 1.3, rocks: [], got: {}, fx: [], fly: [], parts: [], rings: [], hits: [], goldNext: rnd(4, 6) / GF(), score: 0, next: 0.6, taps: 0, shake: 0 }; S = s; for (var i = 0; i < 4; i++) { spawnRock(i < 2 ? 1 : 2); } return s; }
+  function newRock() { var s = { mode: 'rock', t: 0, left: DUR, pre: 1.3, rocks: [], got: {}, fx: [], fly: [], parts: [], rings: [], hits: [], goldNext: rnd(4, 6) / GF(), score: 0, next: 0.6, taps: 0, shake: 0 }; S = s; for (var i = 0; i < 10; i++) { spawnRock(i < 6 ? 1 : 2); } s.swarm = rnd(5, 7); return s; }
   function spawnRock(tier) {
     var T = TIER[tier];
     for (var a = 0; a < 40; a++) {
@@ -451,7 +460,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     S.rocks.splice(S.rocks.indexOf(o), 1); S.rings.push({ x: o.x, y: o.y, r: o.r, at: S.t }); S.shake = Math.max(S.shake, o.tier * 1.8);
     noise(0.22, 0.5, 700); tone(90, 0.2, 'triangle', 0.15, 50);
     for (var j = 0; j < 12; j++) { S.parts.push({ x: o.x, y: o.y, vx: rnd(-200, 200), vy: rnd(-260, -60), col: j % 3 ? '#8A847C' : '#5A554F', at: S.t, big: true, sh: Math.floor(Math.random() * 4), rot: rnd(0, 6) }); }
-    var n = o.tier === 1 ? (Math.random() < 0.5 ? 1 : 0) : (o.tier === 2 ? 1 : (o.tier === 3 ? 2 : 0));
+    var n = o.tier === 1 ? 1 : (o.tier === 2 ? 2 : (o.tier === 3 ? 4 : 0));
     var base = pick([['white', 1], ['celadon', 1], ['black', 1]]);
     for (var k = 0; k < n; k++) { var it = CFG.event && Math.random() < 0.3 ? 'petal' : (Math.random() < 0.7 ? base : pick([['white', 1], ['celadon', 1], ['black', 1]])); S.fly.push({ k: it, dx: rnd(-o.r * 0.7, o.r * 0.7), x: o.x + rnd(-o.r / 3, o.r / 3), y: o.y + rnd(-o.r / 3, o.r / 3), at: S.t + k * 0.04 }); }
     var jb = (CFG.rareUp || 0) * 3 + (CFG.site === 'mine' ? 0.12 : 0), js = o.tier === 4 ? 2 : o.tier === 3 ? (Math.random() < 0.4 + jb ? 1 : 0) : (o.tier === 2 && Math.random() < 0.08 + jb * 0.6 ? 1 : 0);
@@ -465,9 +474,16 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     S.rocks = S.rocks.filter(function (o) { if (o.life && S.t - o.born > o.life) { S.fx.push({ x: o.x, y: o.y - 10, t: '사라졌다…', c: '#C9A27A', at: S.t }); return false; } return true; });
     S.next -= dt;
     if (S.next <= 0) {
-      var t = S.t, n = t > 18 ? 2 : 1;
-      for (var i = 0; i < n; i++) { if (S.rocks.length < 20) { spawnRock(pick([[1, Math.max(0.25, 0.6 - t * 0.01)], [2, 0.32], [3, 0.08 + t * 0.008]])); } }
-      S.next = Math.max(0.3, 1.05 - t * 0.028);
+      var t = S.t, n = t > 15 ? 3 : 2;
+      for (var i = 0; i < n; i++) { if (S.rocks.length < 30) { spawnRock(pick([[1, Math.max(0.25, 0.6 - t * 0.01)], [2, 0.32], [3, 0.08 + t * 0.008]])); } }
+      S.next = Math.max(0.22, 0.62 - t * 0.013);
+    }
+    // 돌무더기 : 몇 초마다 작은 돌이 한꺼번에 우르르
+    S.swarm -= dt;
+    if (S.swarm <= 0 && S.left > 3) {
+      var made = 0; for (var sw = 0; sw < 8; sw++) { if (S.rocks.length < 34 && spawnRock(1)) { made++; } }
+      if (made) { S.fx.push({ x: W / 2, y: 170, t: '돌무더기!', c: '#FFD66B', at: S.t, big: true }); S.shake = Math.max(S.shake, 4); noise(0.3, 0.45, 500); tone(330, 0.1, 'triangle', 0.08); }
+      S.swarm = rnd(6, 8);
     }
   }
   function drawRock() {

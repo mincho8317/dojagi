@@ -124,7 +124,7 @@ button{font-family:inherit;cursor:pointer}
 
   <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
-      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">캐 온 원료 5개를 한 번에 다듬어 등급을 정해요 · 금색 칸을 노리면 특급!</span>
+      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개 → 재료 1개 · 한 번에 최대 5번까지 다듬어요 · 금색을 노리면 특급!</span>
       <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
         <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
           <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{rs.title}} <span style="font-size:11.5px;color:#8A6440">{{rs.sub}}</span></span>
@@ -158,7 +158,7 @@ button{font-family:inherit;cursor:pointer}
   </sc-if>
 
   <sc-if value="{{refOn}}" hint-placeholder-val="{{false}}">
-    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 38%,#6B4A30 0,#3E2616 72%);overflow:hidden">
+    <div role="dialog" aria-label="{{refTitle}}" style="{{refBg}}">
       <span style="position:absolute;left:0;right:0;top:18px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:#FFE7A8;text-shadow:0 3px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
       <span style="position:absolute;left:16px;right:16px;top:62px;text-align:center;font-size:15px;font-weight:700;line-height:1.4;color:#F6E7CC;white-space:pre-line">{{refSub}}</span>
       <div id="rstage" data-work="1" onPointerDown="{{refDown}}" style="position:absolute;left:0;top:176px;width:390px;height:380px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer">
@@ -196,7 +196,7 @@ button{font-family:inherit;cursor:pointer}
                 <span style="{{rs.box}}"><span aria-hidden="true" style="{{rs.fr}}"></span><img dc-src="{{rs.img}}" alt="" aria-hidden="true" style="position:relative;width:58px;height:58px;object-fit:contain"><span style="position:relative;display:flex;align-items:center;justify-content:center;min-width:92px;height:30px;padding:0 10px;box-sizing:border-box"><span aria-hidden="true" style="{{rs.bg}}"></span><span style="{{rs.badge}}">{{rs.grade}}</span></span><span style="position:relative;font-family:'Jua',sans-serif;font-size:22px;line-height:1.1;color:#2B1A0F">×{{rs.n}}</span></span>
               </sc-for>
             </div>
-            <span style="font-size:13px;font-weight:700;color:#8A6440">{{refSumHint}}</span>
+            <span style="font-size:13px;font-weight:700;line-height:1.4;color:#8A6440;white-space:pre-line">{{refSumHint}}</span>
             <div style="display:flex;gap:8px;width:100%">
               <button type="button" onClick="{{refClose}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;background:#FFFDF5;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24;text-align:center">닫기</button>
               <button type="button" onClick="{{refAgain}}" style="{{refAgainBtn}}">{{refAgainText}}</button>
@@ -398,43 +398,57 @@ class Component extends DCLogic {
   // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
   refOpen(rk) {
     var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있다 · 지금 ' + have + '개'); this.sfx('fail'); return; }
-    this.R = { rk: rk, n: 5, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4]) }; this.refNewPath();
+    this.R = { rk: rk, n: Math.min(5, Math.floor(have / 5)), res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
   refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
   // 판정 칸 : 절구는 가운데 대칭 · 토련은 압력 0.72~0.86 특급, 0.55~0.72 와 0.86~0.96 상급
-  refGrade(v, clay) { if (clay) { return v >= 0.72 && v < 0.86 ? 3 : ((v >= 0.55 && v < 0.72) || (v >= 0.86 && v < 0.96) ? 2 : 1); } var d = Math.abs(v - 0.5); return d < 0.07 ? 3 : (d < 0.2 ? 2 : 1); }
+  refGrade(v) { var d = Math.abs(v - 0.5); return d < 0.08 ? 3 : (d < 0.25 ? 2 : 1); }
   refHit(v, gd) {
     var R = this.R; if (!R || R.done || R.res.length >= R.n) { return; }
     var clay = this.D()[R.rk].kind === 'clay';
     R.res.push(gd || this.refGrade(v, clay)); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
-    for (var i = 0; i < 3; i++) { R.puffs.push({ at: Date.now(), x: 195 + (i - 1) * (clay ? 80 : 46) + (Math.random() - 0.5) * 20, y: (clay ? 250 : 200) + (Math.random() - 0.5) * 24, r: (clay ? 46 : 40) + Math.random() * 14 }); }
+    for (var i = 0; i < 3; i++) { R.puffs.push({ at: Date.now(), x: 195 + (i - 1) * (clay ? 80 : 46) + (Math.random() - 0.5) * 20, y: (clay ? 250 : 165) + (Math.random() - 0.5) * 20, r: (clay ? 46 : 40) + Math.random() * 14 }); }
     this.sfx(clay ? 'thud' : 'smash');
     if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 550); } else if (clay) { var self3 = this; setTimeout(function () { if (self3.R === R) { self3.refNewPath(); self3.setState({ tick: Date.now() }); } }, 420); }
     this.setState({ tick: Date.now() });
   }
   shuf(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   // 토련 점선 : 5가지 모양을 한 번씩 · 무대 좌표(390×380), 10px 간격으로 고르게 다시 찍음
+  // 상하좌우·대각선 8방향 꺾은선 8가지 (무대 390×380 좌표)
+  refVerts(k) {
+    return [
+      [[70, 170], [200, 170], [300, 270]],
+      [[80, 140], [195, 255], [310, 140]],
+      [[90, 130], [290, 130], [130, 290], [300, 290]],
+      [[90, 140], [290, 140], [290, 300]],
+      [[70, 250], [130, 190], [190, 250], [250, 190], [310, 250]],
+      [[90, 140], [90, 290], [300, 290], [300, 140]],
+      [[100, 300], [260, 140], [320, 140]],
+      [[80, 300], [150, 300], [150, 230], [220, 230], [220, 160], [300, 160]]
+    ][k];
+  }
   refShape(k) {
-    var pts = [], i, t, N = 120;
-    if (k === 0) { for (i = 0; i <= N; i++) { t = i / N; pts.push([70 + 250 * t, 215 + 55 * Math.sin(t * Math.PI * 2)]); } }
-    else if (k === 1) { for (i = 0; i <= N; i++) { t = i / N; var an = Math.PI * (1.0 - t); pts.push([195 + 120 * Math.cos(an), 170 + 105 * Math.sin(an)]); } }
-    else if (k === 2) { pts = [[70, 160], [132, 270], [195, 160], [258, 270], [320, 160]]; }
-    else if (k === 3) { for (i = 0; i <= N; i++) { t = i / N; var a2 = t * Math.PI * 3, r = 25 + 95 * t; pts.push([195 + r * Math.cos(a2), 215 + r * 0.8 * Math.sin(a2)]); } }
-    else { for (i = 0; i <= N; i++) { t = i / N; pts.push([130 + 130 * t + 35 * Math.sin(t * Math.PI * 4), 120 + 190 * t]); } }
-    var out = [pts[0]], acc = 0, STEP = 10;
-    for (i = 1; i < pts.length; i++) {
-      var p0 = pts[i - 1], p1 = pts[i], dx = p1[0] - p0[0], dy = p1[1] - p0[1], d = Math.sqrt(dx * dx + dy * dy), u = 0;
-      while (acc + (d - u) >= STEP) { u += STEP - acc; acc = 0; out.push([p0[0] + dx * u / d, p0[1] + dy * u / d]); }
-      acc += d - u;
+    var v = this.refVerts(k), out = [v[0]], STEP = 26;
+    for (var i = 1; i < v.length; i++) {
+      var p0 = v[i - 1], p1 = v[i], dx = p1[0] - p0[0], dy = p1[1] - p0[1], d = Math.sqrt(dx * dx + dy * dy), n = Math.max(1, Math.round(d / STEP));
+      for (var j = 1; j <= n; j++) { out.push([p0[0] + dx * j / n, p0[1] + dy * j / n]); }
     }
     return out;
   }
-  refNewPath() { var R = this.R; R.path = this.refShape(R.order[R.res.length % 5]); R.cov = R.path.map(function () { return false; }); R.trail = []; R.devS = 0; R.devN = 0; R.drag = false; R.hand = null; }
+  segDist(p, v) {
+    var best = 1e9;
+    for (var i = 1; i < v.length; i++) {
+      var a = v[i - 1], b = v[i], dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy, t = L ? ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L : 0;
+      t = Math.max(0, Math.min(1, t)); var ex = a[0] + dx * t - p[0], ey = a[1] + dy * t - p[1], d = Math.sqrt(ex * ex + ey * ey); if (d < best) { best = d; }
+    }
+    return best;
+  }
+  refNewPath() { var R = this.R; R.verts = this.refVerts(R.order[R.res.length % 8]); R.path = this.refShape(R.order[R.res.length % 8]); R.cov = R.path.map(function () { return false; }); R.trail = []; R.devS = 0; R.devN = 0; R.drag = false; R.hand = null; }
   refXY(e) { var st = document.getElementById('rstage'); if (!st) { return null; } var rc = st.getBoundingClientRect(), k = 390 / rc.width; return [(e.clientX - rc.left) * k, (e.clientY - rc.top) * k]; }
   refTrack(p) {
-    var R = this.R, best = 1e9, TOL = 24;
-    for (var i = 0; i < R.path.length; i++) { var dx = R.path[i][0] - p[0], dy = R.path[i][1] - p[1], d = Math.sqrt(dx * dx + dy * dy); if (d < best) { best = d; } if (d < TOL) { R.cov[i] = true; } }
+    var R = this.R, best = this.segDist(p, R.verts), TOL = 28;
+    for (var i = 0; i < R.path.length; i++) { var dx = R.path[i][0] - p[0], dy = R.path[i][1] - p[1], d = Math.sqrt(dx * dx + dy * dy); if (d < TOL) { R.cov[i] = true; } }
     R.devS += Math.min(best, 60); R.devN++; R.hand = p;
     var L = R.trail[R.trail.length - 1]; if (!L || Math.abs(L[0] - p[0]) + Math.abs(L[1] - p[1]) > 5) { R.trail.push([p[0], p[1], best]); if (R.trail.length > 160) { R.trail.shift(); } }
   }
@@ -442,7 +456,7 @@ class Component extends DCLogic {
   refJudge() {
     var R = this.R, n = 0; R.cov.forEach(function (c) { if (c) { n++; } });
     var cov = n / R.cov.length, dev = R.devN ? R.devS / R.devN : 99, endOk = R.cov[R.cov.length - 1] || R.cov[R.cov.length - 2];
-    return { cov: cov, dev: dev, g: cov >= 0.9 && dev <= 11 && endOk ? 3 : (cov >= 0.7 && dev <= 22 ? 2 : 1) };
+    return { cov: cov, dev: dev, g: cov >= 0.9 && dev <= 10 && endOk ? 3 : (cov >= 0.7 && dev <= 20 ? 2 : 1) };
   }
   refDown(e) {
     var R = this.R, self = this; if (!R || R.done || R.res.length >= R.n || Date.now() - R.hitAt < 380) { return; } if (e && e.preventDefault) { e.preventDefault(); }
@@ -466,7 +480,7 @@ class Component extends DCLogic {
   }
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
-    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n);
+    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n * 5);
     R.res.forEach(function (gd) { var k = D.out + gd; mats[k] = (mats[k] || 0) + 1; });
     this.setG({ mats: mats }); R.done = true; R.doneAt = Date.now(); this.sfx('reveal'); this.setState({ tick: Date.now() });
     var self = this; setTimeout(function () { self.setState({ tick: Date.now() }); }, 1300);
@@ -511,7 +525,7 @@ class Component extends DCLogic {
     var GN = ['', '보통', '상급', '특급'];
     var refRow = function (rk) {
       var d = D[rk], raw = mats[rk] || 0, have = [1, 2, 3].map(function (gd) { return GN[gd] + ' ' + (mats[d.out + gd] || 0); }).join(' · ');
-      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기' : raw + '/5',
+      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기 ×' + Math.min(5, Math.floor(raw / 5)) : raw + '/5',
         btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (raw >= 5 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
     var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
@@ -555,8 +569,9 @@ class Component extends DCLogic {
     if (Rf) {
       var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = clay ? '초록 점에서 시작해 점선을 따라\n반죽을 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때\n절구를 톡 눌러 쿵 찧어요';
+      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n원료 5개 → ' + dd.name + ' 1개 · ' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째';
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
+      out.refBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;overflow:hidden;background:linear-gradient(rgba(30,18,10,.88) 0,rgba(30,18,10,.6) 165px,rgba(30,18,10,.12) 270px,rgba(30,18,10,.05) 100%),#3E2616 url(' + (clay ? '_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp' : '_blob/e41f40f93735cbd82c4bab97fd696e6c.webp') + ') center top/cover no-repeat';
       out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
       if (clay) {
         out.boardS = 'position:absolute;left:25px;top:204px;width:340px;height:174px;background:url(' + AS.wedge_board + ') center/contain no-repeat';
@@ -578,24 +593,24 @@ class Component extends DCLogic {
             return { t: '', s: base + (c ? DOTD : DOT) + ');width:' + (c ? 17 : 14) + 'px;height:' + (c ? 17 : 14) + 'px;margin:-' + (c ? 8.5 : 7) + 'px 0 0 -' + (c ? 8.5 : 7) + 'px' };
           });
         }
-        out.hintS = drg || cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:" + (now - (Rf.miss || 0) < 1200 ? '#FF9A7A' : '#FFE7A8') + ";animation:gBlink 1.2s infinite";
+        out.hintS = drg || cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:" + (now - (Rf.miss || 0) < 1200 ? '#FF9A7A' : '#FFE7A8') + ";text-shadow:0 2px 0 #2B1A0F,0 0 6px #2B1A0F;animation:gBlink 1.2s infinite";
         out.hintT = now - (Rf.miss || 0) < 1200 ? '초록 점에서 시작해서 끝까지!' : '👆 초록 점부터 점선 따라 밀기';
         if (now - (Rf.miss || 0) < 1300) { var self4 = this; clearTimeout(this.mt); this.mt = setTimeout(function () { self4.setState({ tick: Date.now() }); }, 1300); }
       } else {
         var left = 1 - cnt / Rf.n;
         var GF = { w: 'none', c: 'sepia(1) hue-rotate(55deg) saturate(1.6) brightness(.92)', b: 'brightness(.42) saturate(.4)', j: 'sepia(1) hue-rotate(-35deg) saturate(3.2) brightness(.82)' }[dd.out.charAt(1)] || 'none';
-        out.bowlS = 'position:absolute;left:65px;top:143px;width:260px;height:207px;background:url(' + AS.mortar_back + ') center/contain no-repeat';
-        var pile = cnt >= 5 ? 3 : (cnt >= 3 ? 2 : 1), pw = [0, 92, 122, 150][pile], ph = Math.round(pw * [0, 68 / 174, 105 / 219, 156 / 285][pile]);
-        out.powderS = cnt ? 'position:absolute;left:' + (195 - pw / 2) + 'px;top:' + (240 - ph) + 'px;width:' + pw + 'px;height:' + ph + 'px;background:url(' + AS['powder_pile_' + pile] + ') center/contain no-repeat;filter:' + GF : 'display:none';
-        var osz = Math.round(96 * (0.3 + 0.7 * left));
-        out.refImgS = 'position:absolute;left:50%;top:' + (212 - cnt * 6 - osz / 2) + 'px;width:' + osz + 'px;height:' + osz + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s,top .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
-        out.bowlFront = 'position:absolute;left:65px;top:201px;width:260px;height:104px;background:url(' + AS.mortar_front + ') center/contain no-repeat;pointer-events:none';
-        out.pestleS = 'position:absolute;left:50%;top:40px;margin-left:-30px;width:60px;height:153px;background:url(' + AS.pestle + ') center/contain no-repeat;transform-origin:50% 100%;z-index:3;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
-        out.hintS = cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;animation:gBlink 1.2s infinite";
+        out.bowlS = 'position:absolute;left:80px;top:107px;width:230px;height:253px;background:url(_blob/f43b8012c032bdb4c4524c3eeaa7099d.png) center/contain no-repeat;filter:drop-shadow(0 8px 4px rgba(0,0,0,.35))';
+        var pile = cnt >= 5 ? 3 : (cnt >= 3 ? 2 : 1), pw = [0, 80, 104, 128][pile], ph = Math.round(pw * [0, 68 / 174, 105 / 219, 156 / 285][pile]);
+        out.powderS = cnt ? 'position:absolute;left:' + (195 - pw / 2) + 'px;top:' + (193 - ph) + 'px;width:' + pw + 'px;height:' + ph + 'px;background:url(' + AS['powder_pile_' + pile] + ') center/contain no-repeat;filter:' + GF : 'display:none';
+        var osz = Math.round(84 * (0.3 + 0.7 * left));
+        out.refImgS = 'position:absolute;left:50%;top:' + (168 - cnt * 4 - osz / 2) + 'px;width:' + osz + 'px;height:' + osz + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s,top .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
+        out.bowlFront = 'position:absolute;left:80px;top:158px;width:230px;height:92px;background:url(' + AS.mortar_front + ') center/contain no-repeat;pointer-events:none';
+        out.pestleS = 'position:absolute;left:50%;top:18px;margin-left:-26px;width:52px;height:133px;background:url(' + AS.pestle + ') center/contain no-repeat;transform-origin:50% 100%;z-index:3;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
+        out.hintS = cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;text-shadow:0 2px 0 #2B1A0F,0 0 6px #2B1A0F;animation:gBlink 1.2s infinite";
         out.hintT = '👆 절구를 톡!';
         out.gaugeAria = '판정 게이지';
         out.gaugeBox = 'position:absolute;left:25px;top:106px;width:340px;height:54px;background:url(' + AS.gauge_frame + ') center/100% 100% no-repeat';
-        out.gaugeZones = 'position:absolute;left:4.6%;right:4.6%;top:27%;bottom:30%;border-radius:4px;background:url(' + AS.gauge_gold + ') 50% 50%/14% 112% no-repeat,url(' + AS.gauge_blue + ') 34.48% 50%/13.6% 100% no-repeat,url(' + AS.gauge_blue + ') 65.52% 50%/13.6% 100% no-repeat,#6E665C';
+        out.gaugeZones = 'position:absolute;left:4.6%;right:4.6%;top:27%;bottom:30%;background:url(' + AS.gauge_gold + ') 50% 50%/16% 118% no-repeat,url(' + AS.gauge_blue + ') 50% 50%/50% 100% no-repeat';
         out.gaugeTop = 'display:none';
         out.needle = cnt >= Rf.n ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;left:0;top:50%;width:12px;height:52px;margin:-26px 0 0 -6px;background:url(' + AS.gauge_needle + ') center/100% 100% no-repeat;filter:drop-shadow(0 0 5px rgba(255,255,255,.85));animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
         out.needleWrap = 1;
@@ -608,9 +623,9 @@ class Component extends DCLogic {
         var c = { 1: 0, 2: 0, 3: 0 }; Rf.res.forEach(function (x) { c[x]++; });
         var GC = { 1: ['#A89880', '#6E6250'], 2: ['#5C9BD1', '#2E5E8A'], 3: ['#FFD66B', '#B07A1E'] }, GT = { 1: '보통', 2: '상급', 3: '특급' };
         var flying = now - Rf.doneAt < 1200, oimg = this.outImg(Rf.rk);
-        out.boxS = 'position:absolute;left:24px;top:6px;width:72px;height:72px;object-fit:contain;z-index:5;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));animation:rBox 1.2s ease-out both';
+        out.boxS = 'position:absolute;left:22px;top:128px;width:72px;height:72px;object-fit:contain;z-index:5;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));animation:rBox 1.2s ease-out both';
         if (flying) {
-          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: oimg, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (60 - sx) + 'px;--fy:-280px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
+          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: oimg, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (58 - sx) + 'px;--fy:-126px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
         }
         out.refDone = !flying;
         out.refSum = [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) {
@@ -619,9 +634,9 @@ class Component extends DCLogic {
             badge: "position:relative;font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:" + (gd === 3 ? '#5A3A00' : (gd === 2 ? '#1E3F5E' : '#3E3428')) };
         });
         var lf = mats[Rf.rk] || 0;
-        out.refSumHint = '보관함에 넣었어요 · 남은 ' + dd.name + ' 원료 ' + lf + '개';
+        out.refSumHint = '원료 ' + (Rf.n * 5) + '개를 다듬어 보관함에 넣었어요\n남은 ' + dd.name + ' 원료 ' + lf + '개';
         out.refAgain = function () { self.refOpen(Rf.rk); };
-        out.refAgainText = lf >= 5 ? '한 번 더 (5개)' : '원료 부족 (' + lf + '/5)';
+        out.refAgainText = lf >= 5 ? '한 번 더' : '원료 부족 (' + lf + '/5)';
         out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
         out.gaugeBox = 'display:none'; out.needle = 'display:none';
       }
