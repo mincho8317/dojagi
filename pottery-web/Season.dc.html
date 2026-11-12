@@ -157,7 +157,7 @@ class Component extends DCLogic {
       { id: 'plum', name: '매화 문양', kind: '한정 문양', res: 'PTN_PLUM', img: '_blob/b570ded58d448dba37db6e748cf57424.webp', price: 20, col: '#FCEBD8', apply: function (p) { var pt = {}; for (var x in (g.patterns || {})) { pt[x] = g.patterns[x]; } pt.plum = true; p.patterns = pt; } },
       { id: 'teabed', name: '다회 평상', kind: '한정 가구', res: 'DECO_TEABED', img: '_blob/7480af1a2e3666be0fe08ab90f2616f2.webp', price: 40, col: '#E8D5B7', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.teabed = true; p.deco = d; } },
       { id: 'lantern', name: '꽃 등롱', kind: '한정 가구', res: 'DECO_FLOWER_LAMP', img: '_blob/0ddf322aaf48ab6e1f34af33fbd75920.webp', price: 15, col: '#FFE7A8', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.flowerlamp = true; p.deco = d; } },
-      { id: 'clay', name: '봄빛 흙 ×3', kind: '한정 재료', res: 'MAT_SPRING_CLAY', img: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp', price: 25, col: '#F2D7C9', apply: function (p) { var m = {}; for (var x in (g.mats || {})) { m[x] = g.mats[x]; } m.spring = (m.spring || 0) + 3; p.mats = m; } },
+      { id: 'clay', name: '봄빛 흙 ×3', kind: '한정 재료', res: 'MAT_SPRING_CLAY', img: '_blob/1bde360d20267d7a6c3eba1652dd1f18.png', price: 25, col: '#F2D7C9', apply: function (p) { var m = {}; for (var x in (g.mats || {})) { m[x] = g.mats[x]; } m.spring = (m.spring || 0) + 3; p.mats = m; } },
       { id: 'invite', name: '다회 초대장', kind: '특별 손님', res: 'ITEM_INVITE', img: '_blob/efb9f0de474660761633b5ce70321809.webp', price: 35, col: '#EDE3F3', apply: function (p) { p.inviteGuest = true; } }
     ];
     var items = I.map(function (it) {

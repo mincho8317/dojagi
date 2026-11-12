@@ -485,7 +485,7 @@ class Component extends DCLogic {
     }, 0);
   }
   // 흙 그림 (색별 1장 · 등급은 이름·배지로 구분)
-  clayImg(id) { var c = this.qlib().clayOf(id).c; return { w: '_blob/82e06489f7a62f3f7221570968820156.png', y: '_blob/7c44f01a803a1f7e466056d9de356ebe.png', r: '_blob/93b77b353c6926f32e782173e630d814.png', k: '_blob/6fd2139bd1992fe452b249c8dcb6ad56.png', s: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp' }[c]; }
+  clayImg(id) { var c = this.qlib().clayOf(id).c; return { w: '_blob/9e3e4c8390c3773d101ac4a9a46316b2.png', y: '_blob/4ebb5d790158e0d3c0bd483e0096b4d1.png', r: '_blob/199bcb09cdc205a4b6a682f55c91aa6b.png', k: '_blob/c50d8bf89ca523229240a41e7b90ce8f.png', s: '_blob/1bde360d20267d7a6c3eba1652dd1f18.png' }[c]; }
   hasClay(g, id) { if (!id) { return false; } if (this.qlib().isTut(g)) { return id === 'cy2'; } return ((g.mats || {})[id] || 0) > 0; }
   // 쓸 흙 고르기 : 원하는 흙이 있으면 그것, 없으면 가장 많이 가진 흙. 하나도 없으면 ''
   pickClay(g, want) {

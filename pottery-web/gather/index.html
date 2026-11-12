@@ -118,12 +118,13 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 
   // ── 그래픽 소스 (img/*.png · 3배 원본) — 못 불러오면 기존 도형으로 그린다 ──
   var LNAME = ['layer0_grass', 'layer1_topsoil', 'layer2_brown', 'layer3_redclay', 'layer4_ochre', 'layer5_greyclay', 'layer6_white', 'layer7_bedrock'];
-  var IM = {}, TEX = [], PAT = null;
-  LNAME.concat(['bg_gravel', 'raw_w', 'raw_y', 'raw_r', 'raw_k', 'raw_s', 'petal', 'item_time', 'mat_white', 'mat_celadon', 'mat_black', 'mat_jinsa', 'tool_shovel', 'tool_hammer',
+  var IM = {}, TEX = [], PAT = null, TEXS = null;
+  LNAME.concat(['bg_sakura_ground', 'bg_gravel', 'raw_w', 'raw_y', 'raw_r', 'raw_k', 'raw_s', 'petal', 'item_time', 'mat_white', 'mat_celadon', 'mat_black', 'mat_jinsa', 'tool_shovel', 'tool_hammer',
     'panel_hud', 'bar_time_frame', 'bar_time_fill', 'bar_time_fill_low', 'fx_dirt_chunk', 'fx_dust', 'rock_s', 'rock_m_0', 'rock_m_1', 'rock_m_2', 'rock_l_0', 'rock_l_1', 'rock_l_2', 'rock_l_3', 'fx_rock_shard', 'fx_spark']).forEach(function (n) {
     var im = new Image();
     im.onload = function () {
       IM[n] = im; var li = LNAME.indexOf(n);
+      if (n === 'bg_sakura_ground') { try { var c2 = document.createElement('canvas'); c2.width = c2.height = 512; var g2 = c2.getContext('2d'); g2.drawImage(im, 0, 0, 512, 512); var keep = LRGB[0]; TEXS = tone2(0, g2.getImageData(0, 0, 512, 512).data); LRGB[0] = keep; DR = null; dirty = true; } catch (e) {} }
       if (li >= 0) { try { var c = document.createElement('canvas'); c.width = c.height = 512; var g = c.getContext('2d'); g.drawImage(im, 0, 0, 512, 512); TEX[li] = tone2(li, g.getImageData(0, 0, 512, 512).data); DR = null; dirty = true; } catch (e) {} }
     };
     im.src = 'img/' + n + '.png';
@@ -281,7 +282,7 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     return (a[y0 * w + x0] * (1 - tx) + a[y0 * w + x0 + 1] * tx) * (1 - ty) + (a[(y0 + 1) * w + x0] * (1 - tx) + a[(y0 + 1) * w + x0 + 1] * tx) * ty;
   }
   function texAt(l, px, py) {
-    var T = TEX[l], O = POF[l], gx = px / PG - 0.5, gy = py / PG - 0.5, i0 = Math.floor(gx), j0 = Math.floor(gy), tx = sstep(gx - i0), ty = sstep(gy - j0);
+    var T = (l === 0 && CFG.event && TEXS) ? TEXS : TEX[l], O = POF[l], gx = px / PG - 0.5, gy = py / PG - 0.5, i0 = Math.floor(gx), j0 = Math.floor(gy), tx = sstep(gx - i0), ty = sstep(gy - j0);
     var r = 0, g = 0, b = 0;
     for (var c = 0; c < 4; c++) {
       var ci = c & 1, cj = c >> 1, w = (ci ? tx : 1 - tx) * (cj ? ty : 1 - ty); if (w <= 0) { continue; }

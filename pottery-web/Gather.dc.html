@@ -23,7 +23,9 @@ button{font-family:inherit;cursor:pointer}
 @keyframes gWave{0%{background-position:0 0}100%{background-position:64px 0}}
 @keyframes gJack{0%{transform:translate(-50%,-50%) scale(.2) rotate(-8deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,-50%) scale(1.05);opacity:0}}
 @keyframes gRays{to{transform:translate(-50%,-50%) rotate(360deg)}}
-@keyframes rNeedle{0%{left:0%}50%{left:100%}100%{left:0%}}
+@keyframes rBox{0%{transform:scale(.4);opacity:0}25%{transform:scale(1.1);opacity:1}60%{transform:scale(1)}75%{transform:scale(1.18,.88)}100%{transform:scale(1)}}
+@keyframes rNeedle{0%{left:4.6%}50%{left:95.4%}100%{left:4.6%}}
+@keyframes rFold2{0%{transform:scale(1,1)}25%{transform:scale(1.18,.78)}55%{transform:scale(.92,1.08)}100%{transform:scale(1,1)}}
 @keyframes rFly{0%{transform:translate(0,0) scale(1);opacity:1}70%{opacity:1}100%{transform:translate(var(--fx),var(--fy)) scale(.35);opacity:0}}
 @keyframes rPop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
 @keyframes rPuff{0%{transform:translate(-50%,-50%) scale(.3);opacity:.9}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
@@ -162,6 +164,7 @@ button{font-family:inherit;cursor:pointer}
       <div id="rstage" data-work="1" onPointerDown="{{refDown}}" style="position:absolute;left:0;top:176px;width:390px;height:380px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer">
         <span aria-hidden="true" style="{{boardS}}"></span>
         <span aria-hidden="true" style="{{bowlS}}"></span>
+        <img dc-src="{{doughImg}}" alt="" aria-hidden="true" draggable="false" style="{{doughS}}">
         <span aria-hidden="true" style="{{powderS}}"></span>
         <img dc-src="{{refImg}}" alt="" aria-hidden="true" draggable="false" style="{{refImgS}}">
         <sc-for list="{{trail}}" as="tr" hint-placeholder-count="0">
@@ -170,7 +173,7 @@ button{font-family:inherit;cursor:pointer}
         <sc-for list="{{pathDots}}" as="pd" hint-placeholder-count="0">
           <span aria-hidden="true" style="{{pd.s}}">{{pd.t}}</span>
         </sc-for>
-        <span aria-hidden="true" style="{{handsS}}">🤚</span>
+        <span aria-hidden="true" style="{{handsS}}"></span>
         <span aria-hidden="true" style="{{bowlFront}}"></span>
         <span aria-hidden="true" style="{{pestleS}}"></span>
         <sc-for list="{{puffs}}" as="pf" hint-placeholder-count="0">
@@ -183,14 +186,14 @@ button{font-family:inherit;cursor:pointer}
         <span aria-hidden="true" style="{{gaugeTop}}">특급</span>
         <span aria-hidden="true" style="{{needle}}"></span>
       </div>
-      <span style="position:absolute;left:0;right:0;top:572px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:{{refFlashC}};text-shadow:0 3px 0 rgba(0,0,0,.45)">{{refFlash}}</span>
+      <span style="position:absolute;left:0;right:0;top:568px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:{{refFlashC}};text-shadow:0 3px 0 rgba(0,0,0,.45)">{{refFlash}}</span>
       <sc-if value="{{refDone}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.55)">
           <div role="dialog" aria-label="다듬기 결과" style="width:330px;box-sizing:border-box;padding:18px 16px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
             <span style="font-family:'Jua',sans-serif;font-size:26px;color:#B9533A">다듬기 완료!</span>
             <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
               <sc-for list="{{refSum}}" as="rs" hint-placeholder-count="2">
-                <span style="{{rs.box}}"><img dc-src="{{rs.img}}" alt="" aria-hidden="true" style="width:52px;height:52px;object-fit:contain"><span style="{{rs.badge}}">{{rs.grade}}</span><span style="font-family:'Jua',sans-serif;font-size:22px;color:#2B1A0F">×{{rs.n}}</span></span>
+                <span style="{{rs.box}}"><span aria-hidden="true" style="{{rs.fr}}"></span><img dc-src="{{rs.img}}" alt="" aria-hidden="true" style="position:relative;width:58px;height:58px;object-fit:contain"><span style="position:relative;display:flex;align-items:center;justify-content:center;min-width:92px;height:30px;padding:0 10px;box-sizing:border-box"><span aria-hidden="true" style="{{rs.bg}}"></span><span style="{{rs.badge}}">{{rs.grade}}</span></span><span style="position:relative;font-family:'Jua',sans-serif;font-size:22px;line-height:1.1;color:#2B1A0F">×{{rs.n}}</span></span>
               </sc-for>
             </div>
             <span style="font-size:13px;font-weight:700;color:#8A6440">{{refSumHint}}</span>
@@ -201,6 +204,7 @@ button{font-family:inherit;cursor:pointer}
           </div>
         </div>
       </sc-if>
+      <img dc-src="{{boxImg}}" alt="" aria-hidden="true" style="{{boxS}}">
       <sc-for list="{{flyIn}}" as="fi" hint-placeholder-count="0">
         <img dc-src="{{fi.img}}" alt="" aria-hidden="true" style="{{fi.s}}">
       </sc-for>
@@ -286,6 +290,9 @@ class Component extends DCLogic {
   qlib() { return window.PotteryShared.qlib.call(this); }
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
+  A() { return {"clay_black": "_blob/c50d8bf89ca523229240a41e7b90ce8f.png", "clay_red": "_blob/199bcb09cdc205a4b6a682f55c91aa6b.png", "clay_spring": "_blob/1bde360d20267d7a6c3eba1652dd1f18.png", "clay_white": "_blob/9e3e4c8390c3773d101ac4a9a46316b2.png", "clay_yellow": "_blob/4ebb5d790158e0d3c0bd483e0096b4d1.png", "petal_ash": "_blob/037a561e4b644b8319a48bc1d24fe745.png", "path_dot": "_blob/d6a70d958c9a4b7db0017aa2b45eb3a2.png", "path_dot_done": "_blob/ee1acd0446f01beb838e7a31fc34dbc1.png", "path_end": "_blob/e3ca38e90df8314ad2682570e774a1c8.png", "path_start": "_blob/dfcb3d4b1fdf50b654b9238c9f3fc83b.png", "wedge_board": "_blob/39096796a10af69886604398ffdf2dfc.png", "wedge_dough": "_blob/4c32a9f6f36bd7a2ba93f3edb6935613.png", "wedge_dough_pushed": "_blob/87ebed621689571b89ca649f9ceaaac8.png", "wedge_hand": "_blob/e3f6f7fd9d131335e5e0f04939ffe506.png", "fx_clay_puff": "_blob/2e9498d76d11a98684b8a9fcde6200c7.png", "fx_powder_burst": "_blob/2d6170c7c82d6b2ca7e372fd16fcd30d.png", "mortar_back": "_blob/55218b400577c68d037a6a6284cc431e.png", "mortar_front": "_blob/5418a416f12b0ddb670d2a23c81104da.png", "pestle": "_blob/6fcc8226675d5454ced41aa2a2fe0d79.png", "powder_pile_1": "_blob/6b8c67e376271c960047cbcc0669c4c1.png", "powder_pile_2": "_blob/17925c90877987aa4d8e3276551b7153.png", "powder_pile_3": "_blob/5df4d27e2b94a24614f311dde19a4dc2.png", "gauge_blue": "_blob/473480ed7f119cfed699dd91b3c98c60.png", "gauge_frame": "_blob/0b5ce32862ec6481d8ad7c87b46f2d8f.png", "gauge_gold": "_blob/c4bc874bd68d06e022861aa8ea31750a.png", "gauge_needle": "_blob/400b59b069d65b004bf01b448b082928.png", "grade_badge": "_blob/d30095df8fef04662db3075f5f2b7b6d.png", "grade_frame": "_blob/3a39cc15471383054035b29589a530aa.png", "storage_box": "_blob/ff4e7edd44e6d240a4b66133b5353945.png"}; }
+  // 다듬은 흙 아이콘 (원료 키 → 결과 그림)
+  outImg(rk) { var a = this.A(), m = { ry: a.clay_yellow, rr: a.clay_red, rw: a.clay_white, rk: a.clay_black }; return m[rk] || this.D()[rk].img; }
   // ── 원료 정의 ── 미니게임 키 → 본게임 원료(등급 없음) → 다듬으면 등급이 붙은 재료
   D() {
     var IC = { w: '_blob/82e06489f7a62f3f7221570968820156.png', y: '_blob/7c44f01a803a1f7e466056d9de356ebe.png', r: '_blob/93b77b353c6926f32e782173e630d814.png', k: '_blob/6fd2139bd1992fe452b249c8dcb6ad56.png' };
@@ -295,7 +302,7 @@ class Component extends DCLogic {
       rw: { name: '백토', img: IC.w, from: 'rw', kind: 'clay', out: 'cw' }, rk: { name: '흑토', img: IC.k, from: 'rk', kind: 'clay', out: 'ck' },
       ow: { name: '장석', img: IG.w, from: 'white', kind: 'glaze', out: 'gw' }, oc: { name: '철분', img: IG.c, from: 'celadon', kind: 'glaze', out: 'gc' },
       ob: { name: '철광', img: IG.b, from: 'black', kind: 'glaze', out: 'gb' }, oj: { name: '진사', img: IG.j, from: 'jinsa', kind: 'glaze', out: 'gj' },
-      spring: { name: '봄빛 흙', img: '_blob/f68253eb26c6d738e93f9af04123fb60.png', from: 'rs', ev: 1 }, petal: { name: '벚꽃 재', img: '_blob/e70a293f6f51a9f14795f6f3077a7a19.png', from: 'petal', ev: 1 }
+      spring: { name: '봄빛 흙', img: '_blob/1bde360d20267d7a6c3eba1652dd1f18.png', from: 'rs', ev: 1 }, petal: { name: '벚꽃 재', img: '_blob/037a561e4b644b8319a48bc1d24fe745.png', from: 'petal', ev: 1 }
     };
   }
   // 오늘의 채집지 · 날마다 바뀐다 (한국 시간 기준)
@@ -401,7 +408,7 @@ class Component extends DCLogic {
     var R = this.R; if (!R || R.done || R.res.length >= R.n) { return; }
     var clay = this.D()[R.rk].kind === 'clay';
     R.res.push(gd || this.refGrade(v, clay)); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
-    for (var i = 0; i < 6; i++) { R.puffs.push({ at: Date.now(), x: 195 + (Math.random() - 0.5) * 120, y: (clay ? 270 : 230) + (Math.random() - 0.5) * 40, r: 16 + Math.random() * 18 }); }
+    for (var i = 0; i < 3; i++) { R.puffs.push({ at: Date.now(), x: 195 + (i - 1) * (clay ? 80 : 46) + (Math.random() - 0.5) * 20, y: (clay ? 250 : 200) + (Math.random() - 0.5) * 24, r: (clay ? 46 : 40) + Math.random() * 14 }); }
     this.sfx(clay ? 'thud' : 'smash');
     if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 550); } else if (clay) { var self3 = this; setTimeout(function () { if (self3.R === R) { self3.refNewPath(); self3.setState({ tick: Date.now() }); } }, 420); }
     this.setState({ tick: Date.now() });
@@ -543,7 +550,7 @@ class Component extends DCLogic {
       out.againText = TT.tix > 0 ? '한 번 더 · ' + (G.ev ? '🌸' : '🎫') + '1' : '채집권 없음';
     }
     var Rf = this.R;
-    out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = out.handsS = out.refX = 'display:none'; out.hintT = ''; out.puffs = []; out.flyIn = []; out.trail = []; out.pathDots = []; out.refSum = []; out.refDone = false; out.refDown = function () {};
+    var AS = this.A(); out.boxImg = AS.storage_box; out.doughImg = AS.wedge_dough; out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = out.handsS = out.refX = out.boxS = out.doughS = 'display:none'; out.hintT = ''; out.puffs = []; out.flyIn = []; out.trail = []; out.pathDots = []; out.refSum = []; out.refDone = false; out.refDown = function () {};
     out.gaugeBox = out.gaugeZones = out.gaugeTop = 'display:none'; out.gaugeAria = '';
     if (Rf) {
       var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length;
@@ -552,19 +559,23 @@ class Component extends DCLogic {
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
       out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
       if (clay) {
-        out.boardS = 'position:absolute;left:24px;right:24px;bottom:36px;height:150px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#C9955E 0,#9C6A3C 70%,#7A5030 100%);box-shadow:0 10px 0 #5B3A24,inset 0 -8px 0 rgba(0,0,0,.18)';
+        out.boardS = 'position:absolute;left:25px;top:204px;width:340px;height:174px;background:url(' + AS.wedge_board + ') center/contain no-repeat';
         // 점선 따라 밀기 : 덮은 칸은 금색, 손이 손가락을 따라감
         var nCov = 0; (Rf.cov || []).forEach(function (c) { if (c) { nCov++; } }); var prog = Rf.cov ? nCov / Rf.cov.length : 0, drg = Rf.drag;
-        out.refImgS = 'position:absolute;left:50%;bottom:70px;width:240px;height:240px;object-fit:contain;transform-origin:50% 92%;' + (hit ? 'animation:rFold .45s ease-out;transform:translate(-50%,0)' : 'transform:translate(-50%,0) scale(' + (1 + prog * 0.12).toFixed(2) + ',' + (1 - prog * 0.12).toFixed(2) + ')') + ';filter:drop-shadow(0 8px 0 rgba(0,0,0,.25))';
-        out.handsS = drg && Rf.hand ? 'position:absolute;left:' + Rf.hand[0].toFixed(0) + 'px;top:' + Rf.hand[1].toFixed(0) + 'px;transform:translate(-30%,-75%);font-size:58px;line-height:1;pointer-events:none;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))' : 'display:none';
-        var showP = !hit && cnt < Rf.n && Rf.path, last = Rf.path ? Rf.path.length - 1 : 0;
+        var TF = { y: 'saturate(1.15)', r: 'sepia(.45) saturate(2.4) hue-rotate(-22deg) brightness(.82)', w: 'brightness(1.2) saturate(.25)', k: 'brightness(.48) saturate(.35)' }[dd.out.charAt(1)] || 'none';
+        var pushed = hit || prog > 0.55, dw = 250, dh = pushed ? 167 : 227;
+        out.refImg = ''; out.refImgS = 'display:none';
+        out.doughImg = pushed ? AS.wedge_dough_pushed : AS.wedge_dough;
+        out.doughS = 'position:absolute;left:' + (195 - dw / 2) + 'px;top:' + (300 - dh) + 'px;width:' + dw + 'px;height:' + dh + 'px;object-fit:contain;transform-origin:50% 100%;pointer-events:none;' + (hit ? 'animation:rFold2 .45s ease-out;' : '') + 'filter:' + TF + ' drop-shadow(0 8px 0 rgba(0,0,0,.25))';
+        out.handsS = drg && Rf.hand ? 'position:absolute;left:' + (Rf.hand[0] - 14).toFixed(0) + 'px;top:' + (Rf.hand[1] - 10).toFixed(0) + 'px;width:72px;height:81px;background:url(' + AS.wedge_hand + ') center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))' : 'display:none';
+        var showP = !hit && cnt < Rf.n && Rf.path, last = Rf.path ? Rf.path.length - 1 : 0, DOT = AS.path_dot, DOTD = AS.path_dot_done;
         if (showP) {
           out.trail = (Rf.trail || []).map(function (t) { return { s: 'position:absolute;left:' + t[0].toFixed(0) + 'px;top:' + t[1].toFixed(0) + 'px;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;pointer-events:none;background:' + (t[2] <= 11 ? 'rgba(255,214,107,.55)' : (t[2] <= 22 ? 'rgba(140,190,230,.5)' : 'rgba(200,80,60,.5)')) }; });
           out.pathDots = Rf.path.map(function (q, i) {
-            var c = Rf.cov[i], base = 'position:absolute;left:' + q[0].toFixed(0) + 'px;top:' + q[1].toFixed(0) + 'px;border-radius:50%;pointer-events:none;';
-            if (i === 0) { return { t: '', s: base + 'width:34px;height:34px;margin:-17px 0 0 -17px;background:#6FBF5A;border:4px solid #FFFDF5;box-shadow:0 0 0 3px #2B1A0F;' + (drg ? '' : 'animation:gBlink 1s infinite') }; }
-            if (i === last) { return { t: '', s: base + 'width:30px;height:30px;margin:-15px 0 0 -15px;background:' + (c ? '#FFD66B' : '#E0533F') + ';border:4px solid #FFFDF5;box-shadow:0 0 0 3px #2B1A0F' }; }
-            return { t: '', s: base + 'width:9px;height:9px;margin:-4.5px 0 0 -4.5px;background:' + (c ? '#FFD66B' : '#FFFDF5') + ';box-shadow:0 0 0 2px ' + (c ? '#B07A1E' : 'rgba(43,26,15,.7)') };
+            var c = Rf.cov[i], base = 'position:absolute;left:' + q[0].toFixed(0) + 'px;top:' + q[1].toFixed(0) + 'px;pointer-events:none;background:center/contain no-repeat url(';
+            if (i === 0) { return { t: '', s: base + AS.path_start + ');width:48px;height:48px;margin:-24px 0 0 -24px;z-index:2;' + (drg ? 'opacity:.55' : 'animation:gBlink 1s infinite') }; }
+            if (i === last) { return { t: '', s: base + AS.path_end + ');width:44px;height:44px;margin:-22px 0 0 -22px;z-index:2;' + (c ? 'filter:drop-shadow(0 0 8px #FFD66B) brightness(1.15)' : '') }; }
+            return { t: '', s: base + (c ? DOTD : DOT) + ');width:' + (c ? 17 : 14) + 'px;height:' + (c ? 17 : 14) + 'px;margin:-' + (c ? 8.5 : 7) + 'px 0 0 -' + (c ? 8.5 : 7) + 'px' };
           });
         }
         out.hintS = drg || cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:" + (now - (Rf.miss || 0) < 1200 ? '#FF9A7A' : '#FFE7A8') + ";animation:gBlink 1.2s infinite";
@@ -572,34 +583,40 @@ class Component extends DCLogic {
         if (now - (Rf.miss || 0) < 1300) { var self4 = this; clearTimeout(this.mt); this.mt = setTimeout(function () { self4.setState({ tick: Date.now() }); }, 1300); }
       } else {
         var left = 1 - cnt / Rf.n;
-        out.bowlS = 'position:absolute;left:70px;right:70px;bottom:34px;height:190px;border-radius:28px 28px 110px 110px;background:linear-gradient(#8A6440,#5B3A24);box-shadow:inset 0 16px 0 rgba(0,0,0,.35),0 10px 0 #3E2616';
-        out.powderS = 'position:absolute;left:50%;bottom:170px;transform:translateX(-50%);width:' + (50 + cnt * 28) + 'px;height:' + (12 + cnt * 8) + 'px;border-radius:50% 50% 12px 12px;background:radial-gradient(ellipse at 50% 30%,#FFFDF5 0,#E8E0D2 70%)';
-        out.refImgS = 'position:absolute;left:50%;bottom:' + (178 + cnt * 5) + 'px;width:' + Math.round(110 * (0.3 + 0.7 * left)) + 'px;height:' + Math.round(110 * (0.3 + 0.7 * left)) + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
-        out.bowlFront = 'position:absolute;left:64px;right:64px;bottom:164px;height:28px;border-radius:50%;border:7px solid #6B4A2E;border-top-color:transparent;box-sizing:border-box';
-        out.pestleS = 'position:absolute;left:50%;top:66px;margin-left:-18px;width:36px;height:160px;border-radius:18px;background:linear-gradient(90deg,#B8865A,#E2B887 45%,#9C6A3C);box-shadow:0 0 0 3px #5B3A24;transform-origin:50% 100%;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-40px) rotate(-8deg);');
+        var GF = { w: 'none', c: 'sepia(1) hue-rotate(55deg) saturate(1.6) brightness(.92)', b: 'brightness(.42) saturate(.4)', j: 'sepia(1) hue-rotate(-35deg) saturate(3.2) brightness(.82)' }[dd.out.charAt(1)] || 'none';
+        out.bowlS = 'position:absolute;left:65px;top:143px;width:260px;height:207px;background:url(' + AS.mortar_back + ') center/contain no-repeat';
+        var pile = cnt >= 5 ? 3 : (cnt >= 3 ? 2 : 1), pw = [0, 92, 122, 150][pile], ph = Math.round(pw * [0, 68 / 174, 105 / 219, 156 / 285][pile]);
+        out.powderS = cnt ? 'position:absolute;left:' + (195 - pw / 2) + 'px;top:' + (240 - ph) + 'px;width:' + pw + 'px;height:' + ph + 'px;background:url(' + AS['powder_pile_' + pile] + ') center/contain no-repeat;filter:' + GF : 'display:none';
+        var osz = Math.round(96 * (0.3 + 0.7 * left));
+        out.refImgS = 'position:absolute;left:50%;top:' + (212 - cnt * 6 - osz / 2) + 'px;width:' + osz + 'px;height:' + osz + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s,top .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
+        out.bowlFront = 'position:absolute;left:65px;top:201px;width:260px;height:104px;background:url(' + AS.mortar_front + ') center/contain no-repeat;pointer-events:none';
+        out.pestleS = 'position:absolute;left:50%;top:40px;margin-left:-30px;width:60px;height:153px;background:url(' + AS.pestle + ') center/contain no-repeat;transform-origin:50% 100%;z-index:3;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
         out.hintS = cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;animation:gBlink 1.2s infinite";
         out.hintT = '👆 절구를 톡!';
         out.gaugeAria = '판정 게이지';
-        out.gaugeBox = 'position:absolute;left:30px;right:30px;top:110px;height:52px;box-sizing:border-box;border:5px solid #2B1A0F;border-radius:16px;overflow:hidden;background:#3E2616';
-        out.gaugeZones = 'position:absolute;inset:0;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%);opacity:.9';
-        out.gaugeTop = "position:absolute;left:43%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A4A00";
-        out.needle = cnt >= Rf.n ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;top:-3px;bottom:-3px;width:10px;margin-left:-5px;border-radius:5px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 8px rgba(255,255,255,.9);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
+        out.gaugeBox = 'position:absolute;left:25px;top:106px;width:340px;height:54px;background:url(' + AS.gauge_frame + ') center/100% 100% no-repeat';
+        out.gaugeZones = 'position:absolute;left:4.6%;right:4.6%;top:27%;bottom:30%;border-radius:4px;background:url(' + AS.gauge_gold + ') 50% 50%/14% 112% no-repeat,url(' + AS.gauge_blue + ') 34.48% 50%/13.6% 100% no-repeat,url(' + AS.gauge_blue + ') 65.52% 50%/13.6% 100% no-repeat,#6E665C';
+        out.gaugeTop = 'display:none';
+        out.needle = cnt >= Rf.n ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;left:0;top:50%;width:12px;height:52px;margin:-26px 0 0 -6px;background:url(' + AS.gauge_needle + ') center/100% 100% no-repeat;filter:drop-shadow(0 0 5px rgba(255,255,255,.85));animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
+        out.needleWrap = 1;
       }
-      out.puffs = (Rf.puffs || []).filter(function (q) { return now - q.at < 600; }).map(function (q) { return { s: 'position:absolute;left:' + q.x.toFixed(0) + 'px;top:' + q.y.toFixed(0) + 'px;width:' + (q.r * 2).toFixed(0) + 'px;height:' + (q.r * 2).toFixed(0) + 'px;border-radius:50%;background:' + (clay ? 'rgba(200,160,110,.55)' : 'rgba(255,253,245,.75)') + ';animation:rPuff .6s ease-out forwards;pointer-events:none' }; });
+      out.puffs = (Rf.puffs || []).filter(function (q) { return now - q.at < 600; }).map(function (q) { return { s: 'position:absolute;left:' + q.x.toFixed(0) + 'px;top:' + q.y.toFixed(0) + 'px;width:' + (q.r * 2).toFixed(0) + 'px;height:' + (q.r * 2).toFixed(0) + 'px;background:url(' + (clay ? AS.fx_clay_puff : AS.fx_powder_burst) + ') center/contain no-repeat;animation:rPuff .6s ease-out forwards;pointer-events:none;z-index:4' }; });
       out.refFlash = hit && !Rf.done ? (clay ? '슥— 탁!' : '쿵!') : '';
       out.refFlashC = '#FFE7A8';
       // 끝 : 같은 등급끼리 묶어서 보여주고, 다듬은 재료가 보관함으로 날아간다
       if (Rf.done) {
         var c = { 1: 0, 2: 0, 3: 0 }; Rf.res.forEach(function (x) { c[x]++; });
         var GC = { 1: ['#A89880', '#6E6250'], 2: ['#5C9BD1', '#2E5E8A'], 3: ['#FFD66B', '#B07A1E'] }, GT = { 1: '보통', 2: '상급', 3: '특급' };
-        var flying = now - Rf.doneAt < 1200;
+        var flying = now - Rf.doneAt < 1200, oimg = this.outImg(Rf.rk);
+        out.boxS = 'position:absolute;left:24px;top:6px;width:72px;height:72px;object-fit:contain;z-index:5;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));animation:rBox 1.2s ease-out both';
         if (flying) {
-          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: dd.img, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (60 - sx) + 'px;--fy:-280px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
+          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: oimg, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (60 - sx) + 'px;--fy:-280px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
         }
         out.refDone = !flying;
         out.refSum = [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) {
-          return { img: dd.img, grade: GT[gd] + ' ' + dd.name, n: c[gd], box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:86px;padding:8px 6px;border-radius:16px;background:#FFFDF5;border:3px solid ' + GC[gd][1] + ';animation:rPop .35s both',
-            badge: "padding:1px 8px;border-radius:8px;font-family:'Jua',sans-serif;font-size:13px;background:" + GC[gd][0] + ';color:' + (gd === 3 ? '#5A3A00' : '#FFFDF5') };
+          var GFL = { 1: 'none', 2: 'sepia(1) hue-rotate(175deg) saturate(2.2) brightness(.95)', 3: 'sepia(1) saturate(3) hue-rotate(-8deg) brightness(1.08)' }[gd];
+          return { img: oimg, grade: GT[gd] + ' ' + dd.name, n: c[gd], fr: 'position:absolute;inset:0;background:url(' + AS.grade_frame + ') center/100% 100% no-repeat;filter:' + GFL, bg: 'position:absolute;inset:0;background:url(' + AS.grade_badge + ') center/100% 100% no-repeat;filter:' + GFL, box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:126px;padding:14px 6px 12px;box-sizing:border-box;animation:rPop .35s both',
+            badge: "position:relative;font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:" + (gd === 3 ? '#5A3A00' : (gd === 2 ? '#1E3F5E' : '#3E3428')) };
         });
         var lf = mats[Rf.rk] || 0;
         out.refSumHint = '보관함에 넣었어요 · 남은 ' + dd.name + ' 원료 ' + lf + '개';
