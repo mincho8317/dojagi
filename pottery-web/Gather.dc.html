@@ -409,7 +409,7 @@ class Component extends DCLogic {
     var R = this.R; if (!R || R.done || R.res.length >= R.n) { return; }
     var clay = this.D()[R.rk].kind === 'clay';
     R.res.push(gd || this.refGrade(v, clay)); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
-    for (var i = 0; i < 3; i++) { R.puffs.push({ at: Date.now(), x: 195 + (i - 1) * (clay ? 80 : 46) + (Math.random() - 0.5) * 20, y: (clay ? 250 : 246) + (Math.random() - 0.5) * 20, r: (clay ? 46 : 40) + Math.random() * 14 }); }
+    for (var i = 0; i < 3; i++) { R.puffs.push({ at: Date.now(), x: 195 + (i - 1) * (clay ? 80 : 46) + (Math.random() - 0.5) * 20, y: (clay ? 250 : 216) + (Math.random() - 0.5) * 20, r: (clay ? 46 : 40) + Math.random() * 14 }); }
     this.sfx(clay ? 'thud' : 'smash');
     if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 550); } else if (clay) { var self3 = this; setTimeout(function () { if (self3.R === R) { self3.refNewPath(); self3.setState({ tick: Date.now() }); } }, 420); }
     this.setState({ tick: Date.now() });
@@ -599,13 +599,13 @@ class Component extends DCLogic {
         var left = 1 - cnt / Rf.n;
         var GF = { w: 'none', c: 'sepia(1) hue-rotate(55deg) saturate(1.6) brightness(.92)', b: 'brightness(.42) saturate(.4)', j: 'sepia(1) hue-rotate(-35deg) saturate(3.2) brightness(.82)' }[dd.out.charAt(1)] || 'none';
         out.boardS = 'position:absolute;left:90px;top:484px;width:210px;height:34px;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,rgba(20,10,4,.55) 0,rgba(20,10,4,.25) 55%,rgba(20,10,4,0) 72%)';
-        out.bowlS = 'position:absolute;left:100px;top:155px;width:190px;height:351px;background:url(_blob/82acf33f6156b1e9c762db16eb68dc53.png) center/100% 100% no-repeat;filter:drop-shadow(0 4px 3px rgba(0,0,0,.3))';
-        var pile = cnt >= 5 ? 3 : (cnt >= 3 ? 2 : 1), pw = [0, 76, 100, 124][pile], ph = Math.round(pw * [0, 68 / 174, 105 / 219, 156 / 285][pile]);
-        out.powderS = cnt ? 'position:absolute;left:' + (195 - pw / 2) + 'px;top:' + (282 - ph) + 'px;width:' + pw + 'px;height:' + ph + 'px;background:url(' + AS['powder_pile_' + pile] + ') center/contain no-repeat;filter:' + GF : 'display:none';
-        var osz = Math.round(84 * (0.3 + 0.7 * left));
-        out.refImgS = 'position:absolute;left:50%;top:' + (252 - cnt * 4 - osz / 2) + 'px;width:' + osz + 'px;height:' + osz + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s,top .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
-        out.bowlFront = 'position:absolute;left:100px;top:155px;width:190px;height:351px;background:url(_blob/f43b1577220a62e20fd8f48bf012fa2b.png) center/100% 100% no-repeat;pointer-events:none';
-        out.pestleS = 'position:absolute;left:50%;top:122px;margin-left:-26px;width:52px;height:133px;background:url(' + AS.pestle + ') center/contain no-repeat;transform-origin:50% 100%;z-index:3;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
+        out.bowlS = 'position:absolute;left:100px;top:155px;width:190px;height:349px;background:url(_blob/55b06b24333950134ac184745be9f1d9.png) center/100% 100% no-repeat;filter:drop-shadow(0 4px 3px rgba(0,0,0,.3))';
+        var pile = cnt >= 5 ? 3 : (cnt >= 3 ? 2 : 1), pw = [0, 66, 88, 110][pile], ph = Math.round(pw * [0, 68 / 174, 105 / 219, 156 / 285][pile]);
+        out.powderS = cnt ? 'position:absolute;left:' + (195 - pw / 2) + 'px;top:' + (247 - ph) + 'px;width:' + pw + 'px;height:' + ph + 'px;background:url(' + AS['powder_pile_' + pile] + ') center/contain no-repeat;filter:' + GF : 'display:none';
+        var osz = Math.round(76 * (0.3 + 0.7 * left));
+        out.refImgS = 'position:absolute;left:50%;top:' + (222 - cnt * 4 - osz / 2) + 'px;width:' + osz + 'px;height:' + osz + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s,top .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
+        out.bowlFront = 'position:absolute;left:100px;top:155px;width:190px;height:349px;background:url(_blob/9e6c159a57058a75f9e30df10e7d9786.png) center/100% 100% no-repeat;pointer-events:none';
+        out.pestleS = 'position:absolute;left:50%;top:86px;margin-left:-26px;width:52px;height:133px;background:url(' + AS.pestle + ') center/contain no-repeat;transform-origin:50% 100%;z-index:3;filter:drop-shadow(0 6px 0 rgba(0,0,0,.3));' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
         out.hintS = cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-172px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;text-shadow:0 2px 0 #2B1A0F,0 0 6px #2B1A0F;animation:gBlink 1.2s infinite";
         out.hintT = '👆 절구를 톡!';
         out.gaugeAria = '판정 게이지';
