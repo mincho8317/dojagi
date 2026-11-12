@@ -233,7 +233,7 @@ button{font-family:inherit;cursor:pointer}
   </sc-if>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
-    <p role="status" style="margin:0;position:absolute;left:50%;top:120px;transform:translateX(-50%);z-index:30;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.92);font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;white-space:nowrap">{{toast}}</p>
+    <p role="status" style="margin:0;position:absolute;left:50%;top:120px;transform:translateX(-50%);z-index:30;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.92);font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;max-width:340px;box-sizing:border-box;text-align:center;word-break:keep-all;overflow-wrap:anywhere">{{toast}}</p>
   </sc-if>
 
   <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
@@ -331,6 +331,10 @@ class Component extends DCLogic {
     return base + 'gather/index.html?embed=1';
   }
   start(mode, ev) {
+    try { this.start0(mode, ev); } catch (e) { this.G = null; this.say('채집 시작 오류: ' + (e && e.message || e)); try { console.error(e); } catch (e2) {} }
+  }
+  start0(mode, ev) {
+    this.sfx('tap');
     var g = this.loadG(), T = this.tixState(g, ev);
     if (T.tix <= 0) { this.say((ev ? '축제 채집권' : '채집권') + '이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
     var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
@@ -351,7 +355,11 @@ class Component extends DCLogic {
     f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#2B1A0F';
     f.src = this.gameUrl();
     host.appendChild(f); this.frame = f;
+    // 5초 안에 미니게임이 응답하지 않으면 알려주고 채집권을 돌려준다
+    var self = this, G0 = this.G; clearTimeout(this.wt);
+    this.wt = setTimeout(function () { if (self.G === G0 && !G0.sent) { self.refundTix(G0); self.G = null; self.frame = null; self.setState({ tick: Date.now() }); self.say('미니게임을 불러오지 못했어요 · ' + String(f.src).slice(0, 60)); } }, 5000);
   }
+  refundTix(G0) { var g = this.loadG(), ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; } if (G0.ev) { ga.etix = (ga.etix || 0) + 1; } else { ga.tix = (ga.tix || 0) + 1; } this.setG({ gather: ga }); }
   onMsg(e) {
     var d = e && e.data, G = this.G; if (!d || !G || !this.frame || e.source !== this.frame.contentWindow) { return; }
     if (d.type === 'gather-ready' && G.phase === 'play' && !G.sent) { G.sent = true; this.frame.contentWindow.postMessage({ type: 'gather-start', mode: G.mode, cfg: G.cfg }, '*'); }
