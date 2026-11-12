@@ -70,6 +70,24 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="{{liquid}}"></div>
   </div>
 
+  <sc-if value="{{trayOn}}" hint-placeholder-val="{{true}}">
+  <div role="group" aria-label="{{trayAria}}" style="{{trayBox}}">
+    <span style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:40px;font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;color:#FFE7A8;text-align:center">대기<b style="font-weight:400;font-size:18px;color:#FFFDF5">{{trayN}}</b></span>
+    <div data-work="1" style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 3px;touch-action:pan-x">
+      <sc-for list="{{tray}}" as="tw" hint-placeholder-count="3">
+        <button type="button" data-work="1" aria-pressed="{{tw.on}}" onClick="{{tw.tap}}" aria-label="{{tw.aria}}" style="{{tw.style}}">
+          <span aria-hidden="true" style="{{tw.badge}}">{{tw.badgeText}}</span>
+          <svg width="34" height="34" viewBox="{{tw.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{tw.pot.shCy}}" rx="{{tw.pot.shRx}}" ry="{{tw.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{tw.pot.d}}" fill="{{tw.pot.fill}}"></path><path d="{{tw.pot.d}}" fill="url(#potTopLight)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.rings}}"></path><path d="{{tw.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{tw.pot.grainOp}}"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.foot}}" fill-opacity="{{tw.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.drip}}" fill-opacity="{{tw.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{tw.pot.d}}" fill="url(#potShade)"></path><path d="{{tw.pot.d}}" fill="none" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{tw.pot.rimY}}" rx="{{tw.pot.rimRx}}" ry="{{tw.pot.rimRy}}" fill="{{tw.pot.inner}}" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}"></ellipse></svg>
+          <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:10.5px;line-height:1;color:#2B1A0F">{{tw.name}}</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{trayEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="align-self:center;padding:0 6px;font-size:12px;font-weight:700;color:#F3E3C4;white-space:nowrap">{{trayEmptyText}}</span>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
   <div id="gpot" style="{{potWrap}}">
     <div data-work="1" role="button" tabindex="0" aria-label="도자기를 아래로 끌어 유약에 담그고, 위로 올려 꺼내기 · 탭하면 기물 바꾸기" onPointerDown="{{potDown}}" onContextMenu="{{noMenu}}" style="position:absolute;left:-30px;right:-30px;top:-10px;bottom:-10px;z-index:2;border-radius:16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none"></div>
     <span style="{{potHintStyle}}">{{potHint}}</span>
@@ -131,7 +149,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         </span>
         <span style="flex:0 0 auto;padding:3px 9px;border-radius:9px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">바꾸기 ▾</span>
       </button>
-      <button type="button" onClick="{{gradeCycle}}" aria-label="유약 원료 등급 바꾸기 · 지금 {{gradeLbl}}" style="{{gradeBtn}}"><span style="font-size:10.5px;font-weight:700;color:#7A5434">원료 등급</span><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{gradeLbl}}</span><span style="font-size:10px;font-weight:700;color:#2F6328">{{gradeSub}}</span></button>
       <sc-if value="{{plumOn}}" hint-placeholder-val="{{false}}">
         <button type="button" onClick="{{plumTap}}" aria-pressed="{{plumPressed}}" style="{{plumStyle}}"><img src="_blob/b570ded58d448dba37db6e748cf57424.webp" alt="" aria-hidden="true" style="width:28px;height:28px;object-fit:contain"><span>매화 문양</span></button>
       </sc-if>
@@ -498,24 +515,47 @@ class Component extends DCLogic {
     var EG = this.gz(), curI = this.current(), goalG = curI && curI.goalGlaze ? curI.goalGlaze : '';
     var selG = defs[1];
     var cur0 = this.current();
-    var glazes = defs.map(function (d) {
-      var on = d.id === EG; var zt = self.zoneT(d.id);
-      if (on) { selG = d; }
-      var known = d.fired !== '';
+    // 유약 고르기 카드 : 흙처럼 종류 × 등급(가진 것만)으로 펼친다
+    var GN3 = ['', '보통', '상급', '특급'], CB = [0, 0, 4, 8], QLg = this.qlib(), curGd = EG === 'sakura' ? 2 : self.matInfo(g, EG).gd;
+    var opts = [];
+    defs.forEach(function (d) {
+      if (d.id === 'sakura') { opts.push({ d: d, gd: 2, n: (g.mats || {}).petal || 0, none: !((g.mats || {}).petal > 0) }); return; }
+      var I = self.matInfo(g, d.id), own = I.gs.filter(function (x) { return x.n > 0; });
+      if (!own.length) { opts.push({ d: d, gd: 0, n: 0, none: true }); return; }
+      own.slice().reverse().forEach(function (x) { opts.push({ d: d, gd: x.gd, n: x.n, none: false }); });
+    });
+    var glazes = opts.map(function (o) {
+      var d = o.d, on = d.id === EG && (o.gd === curGd || o.none), zt = self.zoneT(d.id), known = d.fired !== '';
+      if (d.id === EG) { selG = d; }
+      var gname = d.id === 'sakura' ? d.name : (o.none ? d.name : GN3[o.gd] + ' ' + d.name);
+      var matTxt = d.id === 'sakura' ? '벚꽃 재 ' + o.n + '개' : (o.none ? '원료 없음' : (o.n === Infinity ? '원료 무한' : QLg.GMATN[d.id] + ' ' + o.n + '개'));
+      var price = d.id === goalG ? '📋 의뢰' : matTxt + (o.none ? '' : ' · 발색 +' + (d.id === 'sakura' ? 4 : CB[o.gd]) + '%');
+      var gl = self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); }));
       return {
-        on: on, name: d.name, res: d.res, img: d.img, price: d.id === goalG ? '📋 의뢰' : d.price,
+        on: on, name: gname, res: d.res, img: d.img, price: price,
         chipText: known ? '' : '?',
         chip: 'position:absolute;right:-4px;bottom:-4px;width:14px;height:14px;border-radius:50%;border:2px solid #5B3A24;font-family:Jua,sans-serif;font-size:9px;display:flex;align-items:center;justify-content:center;background:' + (known ? d.fired : '#FFF4DE'),
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 5px;border-radius:13px;' + (on ? 'background:#FFF9EC;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E;' : 'background:#F3E3C4;border:3px solid #8A6440;'),
-        nameStyle: 'font-family:Jua,sans-serif;font-size:12px;color:' + (on ? '#2F6328' : '#5B3A24'),
-        priceStyle: 'font-size:9.5px;font-weight:700;color:' + (d.id === goalG ? '#7A5A93' : (self.noMat(g, d.id) ? '#A0452B' : (d.event ? '#7A5A12' : '#2F6328'))),
-        goal: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).text, goalStyle: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).style,
+        goal: gl.text, goalStyle: gl.style,
         id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초',
-        tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (self.noMat(g, d.id) ? '없음' : ''))),
-        tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || self.noMat(g, d.id)) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
-        rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : ((d.event && !d.owned) || self.noMat(g, d.id) ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
-        pick: function () { if (!s.holding) { var ci = self.current(); self.setState({ glaze: d.id, glazeManual: ci ? ci.id : '', gsOpen: false }); } }
+        tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (o.none ? '없음' : ''))),
+        tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || o.none) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
+        rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : (o.none ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
+        pick: function () {
+          if (s.holding) { return; }
+          var ci = self.current(), mg = {}; for (var k in (s.mg || {})) { mg[k] = s.mg[k]; } if (o.gd) { mg[d.id] = o.gd; }
+          self.setState({ glaze: d.id, glazeManual: ci ? ci.id : '', gsOpen: false, mg: mg });
+        }
       };
+    });
+    // 유약 바를 기물 대기함 : 건조·초벌과 같은 모양 · 눌러서 고르기
+    var SNm = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, curT = this.current(), gl0 = g.glazeList || [];
+    var trayV = gl0.map(function (x) {
+      var on = !!(curT && curT.id === x.id);
+      return { id: x.id, name: SNm[x.shape] || '그릇', aria: (SNm[x.shape] || '그릇') + (on ? ' · 지금 유약 바르는 중' : ' · 눌러서 고르기'), on: on ? 'true' : 'false', pot: self.potOf(x, self.fillOf(x, 'bisque')),
+        badge: on ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 5px;border-radius:8px;background:#2F6328;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : (x.goalGlaze ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 4px;border-radius:8px;background:#7A5A93;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none'),
+        badgeText: on ? '선택' : (x.goalGlaze ? '의뢰' : ''),
+        style: 'all:unset;cursor:pointer;position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' + (on ? 'background:#FFF9EC;border:2px solid #2F6328;box-shadow:0 0 0 2px #A9D69E;' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;') + 'user-select:none;-webkit-user-select:none;touch-action:pan-x',
+        tap: function () { if (!s.holding) { self.selIn(x.id); } } };
     });
 
     var list = g.glazeList || [];
@@ -556,6 +596,8 @@ class Component extends DCLogic {
       noQueue: list.length === 0,
       queue: queue,
       glazes: glazes,
+      tray: trayV, trayOn: true, trayN: gl0.length, trayEmpty: !gl0.length, trayEmptyText: '초벌 가마에서 꺼낸 그릇이 여기에 쌓여요', trayAria: '유약 대기함 · ' + gl0.length + '점 · 눌러서 고르기',
+      trayBox: 'position:absolute;left:12px;right:12px;top:106px;z-index:4;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35)',
       selGz: (function () { var z0 = glazes.filter(function (z) { return z.on; })[0] || glazes[1]; return z0; })(),
       gsOpen: function () { if (!s.holding) { self.setState({ gsOpen: true }); } },
       gradeLbl: (function () { var I = self.matInfo(g, EG); return EG === 'sakura' ? '상급' : ['', '보통', '상급', '특급'][I.gd] + ' ' + (I.n === Infinity ? '∞' : I.n); })(),
@@ -582,7 +624,7 @@ class Component extends DCLogic {
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
       curMeta: cur ? CLAY[cur.clay] + ' · ' + (DRY[cur.dry] || DRY.ok).t + ' · 초벌 완료' : '',
       openPick: function () { if (!s.holding) { self.setState({ pkOpen: true }); } },
-      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 끌어내려 담그기 · 탭: 바꾸기') : '눌러서 기물 고르기',
+      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 끌어내려 담그기') : '위 대기함에서 기물 고르기',
       potDown: function (e) { if (!cur) { self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + (s.holdMs / 1000).toFixed(1) + '초' : '여기까지 담그기 ↓',

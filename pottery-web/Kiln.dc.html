@@ -76,10 +76,15 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
 
   <sc-if value="{{hasWait}}" hint-placeholder-val="{{true}}">
-  <div style="position:relative;display:flex;align-items:center;gap:6px;margin:-2px 0 -4px">
-    <div style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 0">
-      <sc-for list="{{wait}}" as="w" hint-placeholder-count="2">
-        <button type="button" data-work="1" data-kwait="{{w.id}}" aria-pressed="{{w.on}}" onPointerDown="{{w.down}}" onClick="{{w.pick}}" style="{{w.style}}"><span>{{w.text}}</span><span style="{{w.subStyle}}">{{w.sub}}</span></button>
+  <div role="group" aria-label="소성 대기함 · {{waitN}}점 · 끌어서 가마 칸에 놓기" style="position:relative;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35);margin:-2px 0 -4px">
+    <span style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:40px;font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;color:#FFE7A8;text-align:center">대기<b style="font-weight:400;font-size:18px;color:#FFFDF5">{{waitN}}</b></span>
+    <div data-work="1" style="flex:1 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:2px 2px 3px;touch-action:pan-x">
+      <sc-for list="{{wait}}" as="tw" hint-placeholder-count="3">
+        <button type="button" data-work="1" data-kwait="{{tw.id}}" aria-pressed="{{tw.on}}" onPointerDown="{{tw.down}}" onClick="{{tw.tap}}" aria-label="{{tw.aria}}" style="{{tw.style}}">
+          <span aria-hidden="true" style="{{tw.badge}}">{{tw.badgeText}}</span>
+          <svg width="34" height="34" viewBox="{{tw.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{tw.pot.shCy}}" rx="{{tw.pot.shRx}}" ry="{{tw.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{tw.pot.d}}" fill="{{tw.pot.fill}}"></path><path d="{{tw.pot.d}}" fill="url(#potTopLight)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.rings}}"></path><path d="{{tw.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{tw.pot.grainOp}}"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.foot}}" fill-opacity="{{tw.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{tw.pot.d}}" fill="{{tw.pot.drip}}" fill-opacity="{{tw.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{tw.pot.d}}" fill="url(#potShade)"></path><path d="{{tw.pot.d}}" fill="none" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{tw.pot.rimY}}" rx="{{tw.pot.rimRx}}" ry="{{tw.pot.rimRy}}" fill="{{tw.pot.inner}}" stroke="{{tw.pot.edge}}" stroke-width="{{tw.pot.sw}}"></ellipse></svg>
+          <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:10.5px;line-height:1;color:#2B1A0F">{{tw.name}}</span>
+        </button>
       </sc-for>
     </div>
     <button type="button" onClick="{{autoPlace}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-height:44px;padding:4px 10px;border-radius:12px;background:#2E6B5F;border:3px solid #1E4A42;box-shadow:0 3px 0 #1E4A42;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;color:#FFFDF5;text-align:center">자동<br>배치</button>
@@ -520,15 +525,16 @@ class Component extends DCLogic {
     var sel = this.state.sel;
     var pw = this.state.pickW || (waiting[0] ? waiting[0].id : '');
     var pwItem = waiting.filter(function (w) { return w.id === pw; })[0] || null, pwOpt = pwItem ? (T.GL[pwItem.glaze] || T.GL.white).opt : 0;
+    var SNk = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
     var wait = waiting.map(function (w) {
-      var on = w.id === pw, o = (T.GL[w.glaze] || T.GL.white).opt;
+      var on = w.id === pw, gl = T.GL[w.glaze] || T.GL.white, nm = gl.pre + ' ' + (SNk[w.shape] || '그릇');
       return {
-        text: (on ? '✓ ' : '') + (T.GL[w.glaze] || T.GL.white).pre + ' ' + (T.SH[w.shape] || T.SH.dish).n, on: on ? 'true' : 'false',
-        sub: '맞는 온도 ' + (o - QL0.TUNE.kilnExact - (QL0.fx(g).kilnTol || 0)) + '~' + (o + QL0.TUNE.kilnExact + (QL0.fx(g).kilnTol || 0)) + '℃',
-        subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:11.5px;font-weight:700;' + (on ? 'color:#5B3A24' : 'color:#7A5434'),
-        style: 'all:unset;cursor:grab;flex:0 0 auto;box-sizing:border-box;min-height:44px;padding:3px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;line-height:1.2;text-align:center;touch-action:pan-x;user-select:none;-webkit-user-select:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px solid #8A6440'),
-        id: w.id, down: function (e) { self.dragW(e, w); },
-        pick: function () { if (Date.now() - (self.dragEnd || 0) < 350) { return; } self.setState({ pickW: w.id, sel: -1 }); }
+        id: w.id, name: nm, on: on ? 'true' : 'false', aria: nm + (on ? ' · 고른 기물' : '') + ' · 끌어서 가마 칸에 놓기', pot: self.potOf(w, self.fillOf(w, 'glazed')),
+        badge: on ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 5px;border-radius:8px;background:#C8601E;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none',
+        badgeText: on ? '선택' : '',
+        style: 'all:unset;cursor:grab;position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' + (on ? 'background:#FFF4D0;border:2px solid #C8601E;box-shadow:0 0 0 2px #FFD66B;' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;') + 'user-select:none;-webkit-user-select:none;touch-action:pan-x',
+        down: function (e) { self.dragW(e, w); },
+        tap: function () { if (Date.now() - (self.dragEnd || 0) < 350) { return; } self.setState({ pickW: w.id, sel: -1 }); }
       };
     });
     // 적정 자리 수용 검사 · 유약별 대기 수 vs 남은 정합 칸
@@ -609,7 +615,7 @@ class Component extends DCLogic {
 
     return {
       heats: heats,
-      wait: wait, noWait: waiting.length === 0, hasWait: waiting.length > 0 && !firingNow,
+      wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: waiting.length > 0 && !firingNow,
       capText: capWarn.join(' · '), capStyle: capWarn.length ? 'position:relative;margin:-4px 0 -4px;padding:3px 9px;border-radius:9px;background:#FCE9D6;border:2px solid #C8601E;font-size:11.5px;font-weight:700;color:#8A3D10' : 'display:none',
       autoPlace: function () { self.autoPlace(cur, offsets); },
       pk: self.pickBox({
