@@ -23,71 +23,147 @@ button{font-family:inherit;cursor:pointer}
 @keyframes gWave{0%{background-position:0 0}100%{background-position:64px 0}}
 @keyframes gJack{0%{transform:translate(-50%,-50%) scale(.2) rotate(-8deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,-50%) scale(1.05);opacity:0}}
 @keyframes gRays{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes rNeedle{0%{left:0%}50%{left:100%}100%{left:0%}}
+@keyframes rSquash{0%{transform:scale(1,1)}30%{transform:scale(1.18,.78)}100%{transform:scale(1,1)}}
+@keyframes rPound{0%{transform:translateY(-34px) rotate(-8deg)}40%{transform:translateY(6px) rotate(0)}100%{transform:translateY(-34px) rotate(-8deg)}}
 @keyframes gPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,214,107,.0)}50%{box-shadow:0 0 0 4px rgba(255,214,107,.85)}}
 </style>
 </helmet>
 <div style="position:relative;width:390px;height:844px;overflow:hidden;background:linear-gradient(#BFE0E8 0,#E6EFD9 30%,#B8C98E 31%,#8FA866 55%,#7A5A3C 56%,#5E4129 100%);color:#2B1A0F">
-  <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:8px">
+  <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:6px">
     <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">채집</div>
-    <div aria-label="채집권 {{tix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #FFD66B;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
-      <span style="font-size:16px">🎫 {{tix}}/{{tixMax}}</span>
+    <div aria-label="채집권 {{tix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 9px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #FFD66B;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
+      <span style="font-size:15px">🎫 {{tix}}/{{tixMax}}</span>
       <span style="font-size:10px;color:#FFE7A8">{{tixNext}}</span>
     </div>
-  </div>
-
-  <div role="note" aria-label="오늘의 채집지" style="position:absolute;left:12px;right:12px;top:60px;display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:14px;background:{{siteBg}};border:2.5px solid #2B1A0F;box-shadow:0 3px 0 rgba(43,26,15,.35)">
-    <span style="font-size:24px">{{siteIc}}</span>
-    <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
-      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5">오늘의 채집지 · {{siteName}}</span>
-      <span style="font-size:11.5px;font-weight:700;color:#FFF4DE">{{siteDesc}}</span>
-    </span>
-  </div>
-
-  <div aria-label="보유 원료" style="position:absolute;left:12px;right:12px;top:114px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:14px;background:rgba(255,250,240,.93);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
-    <div style="display:flex;gap:4px">
-      <sc-for list="{{invClay}}" as="iv" hint-placeholder-count="4">
-        <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:3px;font-family:'Jua',sans-serif">
-          <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:28px;height:28px;object-fit:contain">
-          <span style="display:flex;flex-direction:column;line-height:1.05;min-width:0"><span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span></span>
-        </span>
-      </sc-for>
-    </div>
-    <div style="display:flex;gap:4px;border-top:1.5px dashed #D9C29B;padding-top:4px">
-      <sc-for list="{{invGlz}}" as="iv" hint-placeholder-count="4">
-        <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:3px;font-family:'Jua',sans-serif">
-          <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:24px;height:24px;object-fit:contain">
-          <span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span>
-        </span>
-      </sc-for>
-    </div>
-  </div>
-
-  <div style="position:absolute;left:12px;right:12px;top:218px;display:flex;flex-direction:column;gap:10px">
-    <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
-      <div style="{{md.box}}">
-        <div style="display:flex;align-items:center;gap:10px">
-          <img dc-src="{{md.img}}" alt="" aria-hidden="true" style="flex:0 0 58px;width:58px;height:58px;object-fit:contain">
-          <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
-            <span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{md.name}}</span><span style="{{md.siteTag}}">{{md.siteTagText}}</span></span>
-            <span style="font-size:12px;font-weight:700;line-height:1.4;color:#5B3A24">{{md.desc}}</span>
-          </span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="flex:1 1 auto;font-size:11.5px;font-weight:700;line-height:1.35;color:#8A6440">{{md.rule}}<br>최고 기록 {{md.best}}</span>
-          <button type="button" onClick="{{md.start}}" style="{{md.btn}}">{{md.btnText}}</button>
-        </div>
+    <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
+      <div aria-label="축제 채집권 {{etix}}개" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
+        <span style="font-size:15px">🌸 {{etix}}/{{etixMax}}</span>
+        <span style="font-size:10px;color:#FFD3E0">{{etixNext}}</span>
       </div>
+    </sc-if>
+  </div>
+
+  <div role="tablist" aria-label="채집 메뉴" style="position:absolute;left:12px;right:12px;top:58px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+    <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
+      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
     </sc-for>
   </div>
 
-  <div aria-label="채집 도감" style="position:absolute;left:12px;right:12px;top:574px;box-sizing:border-box;padding:7px 8px;border-radius:14px;background:rgba(43,26,15,.82);border:2px solid #C9A27A">
-    <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8"><span>📖 채집 도감</span><span>{{foundN}}/{{foundAll}}</span></div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px">
-      <sc-for list="{{codex}}" as="cx" hint-placeholder-count="11">
-        <span aria-label="{{cx.aria}}" style="{{cx.box}}">{{cx.t}}</span>
+  <sc-if value="{{tabGather}}" hint-placeholder-val="{{true}}">
+    <div role="note" aria-label="오늘의 채집지" style="position:absolute;left:12px;right:12px;top:100px;display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:14px;background:{{siteBg}};border:2.5px solid #2B1A0F;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+      <span style="font-size:22px">{{siteIc}}</span>
+      <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
+        <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">오늘의 채집지 · {{siteName}}</span>
+        <span style="font-size:11px;font-weight:700;color:#FFF4DE">{{siteDesc}}</span>
+      </span>
+    </div>
+
+    <div aria-label="캐 온 원료" style="position:absolute;left:12px;right:12px;top:152px;display:flex;flex-direction:column;gap:3px;padding:5px 6px;border-radius:14px;background:rgba(255,250,240,.93);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+      <span style="font-size:10.5px;font-weight:700;color:#8A6440">캐 온 원료 · 「다듬기」에서 등급이 정해져요</span>
+      <div style="display:flex;gap:3px">
+        <sc-for list="{{invRawC}}" as="iv" hint-placeholder-count="4">
+          <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:2px;font-family:'Jua',sans-serif">
+            <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:24px;height:24px;object-fit:contain">
+            <span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span>
+          </span>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:3px;border-top:1.5px dashed #D9C29B;padding-top:3px">
+        <sc-for list="{{invRawG}}" as="iv" hint-placeholder-count="4">
+          <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:2px;font-family:'Jua',sans-serif">
+            <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:22px;height:22px;object-fit:contain">
+            <span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span>
+          </span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="position:absolute;left:12px;right:12px;top:240px;display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
+        <div style="{{md.box}}">
+          <div style="display:flex;align-items:center;gap:10px">
+            <img dc-src="{{md.img}}" alt="" aria-hidden="true" style="flex:0 0 52px;width:52px;height:52px;object-fit:contain">
+            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:19px;color:#2B1A0F">{{md.name}}</span><span style="{{md.siteTag}}">{{md.siteTagText}}</span></span>
+              <span style="font-size:11.5px;font-weight:700;line-height:1.35;color:#5B3A24">{{md.desc}}</span>
+            </span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="flex:1 1 auto;font-size:11px;font-weight:700;line-height:1.35;color:#8A6440">{{md.rule}} · 최고 {{md.best}}</span>
+            <button type="button" onClick="{{md.start}}" style="{{md.btn}}">{{md.btnText}}</button>
+          </div>
+        </div>
       </sc-for>
     </div>
-  </div>
+
+    <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
+      <div aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:9px 11px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:24px">🌸</span>
+          <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
+            <span style="font-family:'Jua',sans-serif;font-size:17px;color:#7A2846">축제 채집지 · 벚꽃 언덕</span>
+            <span style="font-size:11px;font-weight:700;color:#8A3A58">봄빛 흙·벚꽃 재가 나와요 (항상 상급) · {{evLeft}}</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button type="button" onClick="{{evDig}}" style="{{evBtn}}">흙 파기 · 🌸1</button>
+          <button type="button" onClick="{{evRock}}" style="{{evBtn}}">돌 부수기 · 🌸1</button>
+          <button type="button" onClick="{{evBuy}}" aria-label="축제 채집권 1장 사기 · 옥 {{evPrice}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:7px 8px;border-radius:12px;background:#FFF4DE;border:2.5px solid #B05876;font-family:'Jua',sans-serif;font-size:12px;color:#7A2846;text-align:center;line-height:1.15">+1장<br>옥 {{evPrice}}</button>
+        </div>
+      </div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">캐 온 원료를 다듬어 등급을 정해요 · 한 번에 5개 · 바늘이 가운데 올 때 누르면 특급!</span>
+      <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
+        <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
+          <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{rs.title}} <span style="font-size:11.5px;color:#8A6440">{{rs.sub}}</span></span>
+          <sc-for list="{{rs.rows}}" as="rw" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-top:1.5px dashed #E5D3B3">
+              <img dc-src="{{rw.img}}" alt="" aria-hidden="true" style="flex:0 0 34px;width:34px;height:34px;object-fit:contain">
+              <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;line-height:1.2">
+                <span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{rw.name}} <span style="color:#B9533A">원료 {{rw.raw}}</span></span>
+                <span style="font-size:10.5px;font-weight:700;color:#7A5434">{{rw.have}}</span>
+              </span>
+              <button type="button" onClick="{{rw.go}}" aria-label="{{rw.name}} 다듬기" style="{{rw.btn}}">다듬기</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{refOn}}" hint-placeholder-val="{{false}}">
+    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 30%,#6B4A30 0,#3E2616 70%);display:flex;flex-direction:column;align-items:center">
+      <span style="margin-top:22px;font-family:'Jua',sans-serif;font-size:26px;color:#FFE7A8;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
+      <span style="margin-top:4px;font-size:13px;font-weight:700;color:#F6E7CC">{{refSub}}</span>
+      <div style="position:relative;margin-top:30px;width:200px;height:170px;display:flex;align-items:flex-end;justify-content:center">
+        <span aria-hidden="true" style="position:absolute;left:30px;right:30px;bottom:0;height:26px;border-radius:50%;background:rgba(0,0,0,.35)"></span>
+        <img dc-src="{{refImg}}" alt="" aria-hidden="true" style="{{refImgS}}">
+        <span aria-hidden="true" style="{{refTool}}">{{refToolT}}</span>
+      </div>
+      <div aria-label="판정 게이지" style="position:relative;margin-top:26px;width:330px;height:44px;box-sizing:border-box;border:4px solid #2B1A0F;border-radius:14px;overflow:hidden;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%)">
+        <span aria-hidden="true" style="position:absolute;left:43%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:12px;color:#7A4A00">특급</span>
+        <span aria-hidden="true" style="position:absolute;left:31%;width:12%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:11px;color:#FFFDF5">상급</span>
+        <span aria-hidden="true" style="position:absolute;left:57%;width:12%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:11px;color:#FFFDF5">상급</span>
+        <span aria-hidden="true" style="{{needle}}"></span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:14px;min-height:34px">
+        <sc-for list="{{refRes}}" as="rr" hint-placeholder-count="5">
+          <span style="{{rr.s}}">{{rr.t}}</span>
+        </sc-for>
+      </div>
+      <span style="margin-top:6px;font-family:'Jua',sans-serif;font-size:18px;color:{{refFlashC}};min-height:24px">{{refFlash}}</span>
+      <button type="button" onPointerDown="{{refTap}}" style="{{refTapBtn}}">{{refTapText}}</button>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button type="button" onClick="{{refQuick}}" style="{{refQuickBtn}}">{{refQuickText}}</button>
+        <button type="button" onClick="{{refClose}}" style="all:unset;cursor:pointer;box-sizing:border-box;padding:9px 18px;border-radius:13px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">닫기</button>
+      </div>
+    </div>
+  </sc-if>
 
   <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
     <div role="dialog" aria-label="{{gameName}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:20;overflow:hidden;background:#2B1A0F">
@@ -147,8 +223,8 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), toast: '', tick: 0 };
-    this.G = null;
+    this.state = { g: this.loadG(), toast: '', tick: 0, tab: 'gather' };
+    this.G = null; this.R = null;
   }
   loadG() {
     var d = { gold: 0, mats: {}, gather: { tix: 5, at: Date.now(), best: {}, found: {} } };
@@ -167,17 +243,16 @@ class Component extends DCLogic {
   qlib() { return window.PotteryShared.qlib.call(this); }
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
-  // ── 재료 정의 ── (미니게임 조각 키 → 본게임 재료)
+  // ── 원료 정의 ── 미니게임 키 → 본게임 원료(등급 없음) → 다듬으면 등급이 붙은 재료
   D() {
+    var IC = { w: '_blob/82e06489f7a62f3f7221570968820156.png', y: '_blob/7c44f01a803a1f7e466056d9de356ebe.png', r: '_blob/93b77b353c6926f32e782173e630d814.png', k: '_blob/6fd2139bd1992fe452b249c8dcb6ad56.png' };
+    var IG = { w: '_blob/08b6a79d3b9ff9d57c0ddc34391cee7a.png', c: '_blob/5b746d476ebf15d61c6cab2d76a6c4bf.png', b: '_blob/1ed3263af13291f7bd979b9e5439ca2b.png', j: '_blob/6323d4e5875bf72d91119cf124d924a4.png' };
     return {
-      refined: { name: '정제 점토', sh: '정제', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp', from: 'c1' },
-      kaolin: { name: '고령토', sh: '고령토', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp', from: 'c2' },
-      porcelain: { name: '자기토', sh: '자기토', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp', from: 'c3' },
-      premium: { name: '특선 소지', sh: '특선', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', from: 'c4' },
-      gz_white: { name: '장석', sh: '장석', img: '_blob/08b6a79d3b9ff9d57c0ddc34391cee7a.png', from: 'white', glz: '백자유' },
-      gz_celadon: { name: '청자 철분', sh: '철분', img: '_blob/5b746d476ebf15d61c6cab2d76a6c4bf.png', from: 'celadon', glz: '청자유' },
-      gz_black: { name: '흑유 철광', sh: '철광', img: '_blob/1ed3263af13291f7bd979b9e5439ca2b.png', from: 'black', glz: '흑유' },
-      jinsa: { name: '진사', sh: '진사', img: '_blob/6323d4e5875bf72d91119cf124d924a4.png', from: 'jinsa', glz: '진사유' }
+      ry: { name: '황토', img: IC.y, from: 'ry', kind: 'clay', out: 'cy' }, rr: { name: '적토', img: IC.r, from: 'rr', kind: 'clay', out: 'cr' },
+      rw: { name: '백토', img: IC.w, from: 'rw', kind: 'clay', out: 'cw' }, rk: { name: '흑토', img: IC.k, from: 'rk', kind: 'clay', out: 'ck' },
+      ow: { name: '장석', img: IG.w, from: 'white', kind: 'glaze', out: 'gw' }, oc: { name: '철분', img: IG.c, from: 'celadon', kind: 'glaze', out: 'gc' },
+      ob: { name: '철광', img: IG.b, from: 'black', kind: 'glaze', out: 'gb' }, oj: { name: '진사', img: IG.j, from: 'jinsa', kind: 'glaze', out: 'gj' },
+      spring: { name: '봄빛 흙', img: '_blob/f68253eb26c6d738e93f9af04123fb60.png', from: 'rs', ev: 1 }, petal: { name: '벚꽃 재', img: '_blob/e70a293f6f51a9f14795f6f3077a7a19.png', from: 'petal', ev: 1 }
     };
   }
   // 오늘의 채집지 · 날마다 바뀐다 (한국 시간 기준)
@@ -185,32 +260,41 @@ class Component extends DCLogic {
     var day = Math.floor((Date.now() + 9 * 3600000) / 86400000), L = ['river', 'mountain', 'mine'];
     var id = L[day % 3];
     return {
-      river: { id: 'river', name: '강가', ic: '🏞️', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 흙 파기에서 고령토가 잘 나와요', mode: 'dig' },
-      mountain: { id: 'mountain', name: '산', ic: '⛰️', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '단단한 지층 · 흙 파기에서 자기토·특선이 더 나와요', mode: 'dig' },
+      river: { id: 'river', name: '강가', ic: '🏞️', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 흙 파기에서 백토가 잘 나와요', mode: 'dig' },
+      mountain: { id: 'mountain', name: '산', ic: '⛰️', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '붉은 지층 · 흙 파기에서 황토·적토가 더 나와요', mode: 'dig' },
       mine: { id: 'mine', name: '광산', ic: '⛏️', bg: 'linear-gradient(90deg,#5B4A6E,#8A3F3A)', desc: '광맥이 풍부 · 돌 부수기에서 황금 돌·진사가 더 나와요', mode: 'rock' }
     }[id];
   }
-  tixState(g) {
-    var MAX = 5 + (this.qlib().fx(g).tixMax || 0), REG = 1200000, ga = g.gather || {}, now = Date.now();
-    var tix = ga.tix == null ? MAX : ga.tix, at = ga.at || now;
+  evOpen() { try { return !!(this.qlib().seasonOpen && this.qlib().seasonOpen()); } catch (e) { return false; } }
+  // 채집권 : 일반(🎫, 최대 5+연구) · 축제(🌸, 최대 3) — 둘 다 20분마다 1장
+  tixState(g, ev) {
+    var MAX = ev ? 3 : 5 + (this.qlib().fx(g).tixMax || 0), REG = 1200000, ga = g.gather || {}, now = Date.now();
+    var tix = ev ? ga.etix : ga.tix, at = (ev ? ga.etAt : ga.at) || now; if (tix == null) { tix = MAX; }
     if (tix >= MAX) { return { tix: Math.max(tix, 0), at: now, next: 0, max: MAX }; }
     var gain = Math.floor((now - at) / REG); tix = Math.min(MAX, tix + gain); at = at + gain * REG;
     return { tix: tix, at: tix >= MAX ? now : at, next: tix >= MAX ? 0 : at + REG - now, max: MAX };
   }
-  // 미니게임은 gather/index.html 을 iframe 으로 띄운다 (shared.js 와 같은 폴더)
+  jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
+  buyEvTix() {
+    var g = this.loadG(), price = 50, j = this.jadeOf(g);
+    if (j < price) { this.say('옥이 부족하다'); this.sfx('fail'); return; }
+    var T = this.tixState(g, true), ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
+    ga.etix = T.tix + 1; ga.etAt = T.at;
+    this.setG({ gather: ga, jade: j - price, jadeV: 2 }); this.say('축제 채집권 +1 · 옥 -' + price); this.sfx('coin');
+  }
   gameUrl() {
     var sc = document.querySelector('script[src*="shared.js"]'), base = '';
     if (sc && sc.src) { base = sc.src.replace(/shared\.js.*$/, ''); } else { base = location.href.replace(/[^\/]*$/, ''); }
     return base + 'gather/index.html?embed=1';
   }
-  start(mode) {
-    var g = this.loadG(), T = this.tixState(g);
-    if (T.tix <= 0) { this.say('채집권이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
+  start(mode, ev) {
+    var g = this.loadG(), T = this.tixState(g, ev);
+    if (T.tix <= 0) { this.say((ev ? '축제 채집권' : '채집권') + '이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
     var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
-    ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at;
+    if (ev) { ga.etix = T.tix - 1; ga.etAt = T.tix >= T.max ? Date.now() : T.at; } else { ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at; }
     this.setG({ gather: ga });
     var F = this.qlib().fx(g), S = this.site();
-    this.G = { mode: mode, phase: 'play', cfg: { gTime: F.gTime || 0, comboUp: F.comboUp || 0, goldUp: F.goldUp || 0, rareUp: F.rareUp || 0, digWide: F.digWide || 0, site: S.id } };
+    this.G = { mode: mode, ev: !!ev, phase: 'play', cfg: { gTime: F.gTime || 0, comboUp: F.comboUp || 0, goldUp: F.goldUp || 0, rareUp: F.rareUp || 0, digWide: F.digWide || 0, site: ev ? 'event' : S.id, event: !!ev } };
     this.setState({ tick: Date.now() });
     var self = this; setTimeout(function () { self.mountFrame(); }, 0);
     this.sfx('whoosh');
@@ -230,26 +314,47 @@ class Component extends DCLogic {
     if (d.type === 'gather-ready' && G.phase === 'play' && !G.sent) { G.sent = true; this.frame.contentWindow.postMessage({ type: 'gather-start', mode: G.mode, cfg: G.cfg }, '*'); }
     if (d.type === 'gather-done' && G.phase === 'play') { this.finish(d); }
   }
-  // 조각 5개 = 재료 1개
+  // 캔 것 1개 = 원료 1개 (등급 없음 · 버려지는 것 없음). 봄빛 흙·벚꽃 재는 바로 쓰는 재료
   finish(res) {
-    var G = this.G, D = this.D(), got = res.got || {}, R = [], self = this;
-    var keys = G.mode === 'dig' ? ['refined', 'kaolin', 'porcelain', 'premium'] : ['gz_white', 'gz_celadon', 'gz_black', 'jinsa'];
-    keys.forEach(function (k) { var p = got[D[k].from] || 0, n = Math.floor(p / 5); if (p) { R.push({ k: k, n: n, p: p }); } });
+    var G = this.G, D = this.D(), got = res.got || {}, R = [];
+    var keys = G.mode === 'dig' ? ['ry', 'rr', 'rw', 'rk', 'spring'] : ['ow', 'oc', 'ob', 'oj', 'petal'];
+    keys.forEach(function (k) { var n = got[D[k].from] || 0; if (n) { R.push({ k: k, n: n }); } });
     var g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
-    R.forEach(function (x) { if (x.n) { mats[x.k] = (mats[x.k] || 0) + x.n; } });
+    R.forEach(function (x) { mats[x.k] = (mats[x.k] || 0) + x.n; });
     var ga = {}; for (var a in (g.gather || {})) { ga[a] = g.gather[a]; }
     var best = {}; for (var b in (ga.best || {})) { best[b] = ga.best[b]; }
     var found = {}; for (var f in (ga.found || {})) { found[f] = ga.found[f]; }
     var bk = G.mode === 'dig' ? 'dig2' : 'rock';
     G.score = res.score || 0; G.newBest = G.score > (best[bk] || 0); if (G.newBest) { best[bk] = G.score; }
-    G.newKeys = {}; R.forEach(function (x) { if (x.n && !found[x.k]) { G.newKeys[x.k] = 1; found[x.k] = Date.now(); } });
+    G.newKeys = {}; R.forEach(function (x) { if (!found[x.k]) { G.newKeys[x.k] = 1; found[x.k] = Date.now(); } });
     ga.best = best; ga.found = found;
     this.setG({ mats: mats, gather: ga });
     G.R = R; G.phase = 'end';
-    this.sfx(R.some(function (x) { return x.n; }) ? 'reveal' : 'fail');
+    this.sfx(R.length ? 'reveal' : 'fail');
     this.setState({ tick: Date.now() });
   }
   closeGame() { if (this.frame) { try { this.frame.remove(); } catch (e) {} } this.frame = null; this.G = null; this.setState({ tick: Date.now() }); }
+  // ── 다듬기 : 손 토련(흙) · 절구질(유약 원료) — 바늘이 왕복하는 게이지, 가운데일수록 높은 등급 ──
+  refOpen(rk) {
+    var g = this.loadG(), n = Math.min(5, (g.mats || {})[rk] || 0); if (!n) { this.say('다듬을 원료가 없다 · 채집에서 캐 와요'); this.sfx('fail'); return; }
+    this.R = { rk: rk, n: n, res: [], t0: Date.now(), P: 720, flash: '', done: false, hitAt: 0 };
+    this.setState({ tick: Date.now() }); this.sfx('tap');
+  }
+  refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
+  refTap(e) {
+    var R = this.R; if (!R || R.done) { return; } if (e && e.preventDefault) { e.preventDefault(); }
+    var d = Math.abs(this.refPos() - 0.5), gd = d < 0.07 ? 3 : (d < 0.2 ? 2 : 1);
+    R.res.push(gd); R.flash = ['', '보통', '상급!', '특급!!'][gd]; R.hitAt = Date.now();
+    this.sfx(gd === 3 ? 'rare' : (gd === 2 ? 'ok' : 'tap'));
+    if (R.res.length >= R.n) { this.refCommit(); } else { this.setState({ tick: Date.now() }); }
+  }
+  refQuick() { var R = this.R; if (!R || R.done) { this.refOpen(R ? R.rk : ''); return; } while (R.res.length < R.n) { R.res.push(1); } this.refCommit(); }
+  refCommit() {
+    var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
+    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n);
+    R.res.forEach(function (gd) { var k = D.out + gd; mats[k] = (mats[k] || 0) + 1; });
+    this.setG({ mats: mats }); R.done = true; this.sfx('reveal'); this.setState({ tick: Date.now() });
+  }
   fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), mm = Math.floor(s / 60), ss = s % 60; return mm + ':' + (ss < 10 ? '0' : '') + ss; }
   say(msg) { var self = this; this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200); }
   componentDidMount() {
@@ -260,56 +365,92 @@ class Component extends DCLogic {
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     this.onMessage = function (e) { self.onMsg(e); };
     try { window.addEventListener('storage', this.onStore); window.addEventListener('message', this.onMessage); } catch (e) {}
-    this.clock = setInterval(function () { if (!self.G) { self.setState({ tick: Date.now() }); } }, 1000);
+    this.clock = setInterval(function () { if (!self.G && !self.R) { self.setState({ tick: Date.now() }); } }, 1000);
   }
   componentWillUnmount() {
     clearInterval(this.clock); clearTimeout(this.tt);
     try { window.removeEventListener('storage', this.onStore); window.removeEventListener('message', this.onMessage); } catch (e) {}
   }
   renderVals() {
-    var self = this, s = this.state, g = s.g, D = this.D(), T = this.tixState(g), G = this.G, S = this.site();
-    var mats = g.mats || {}, ga = g.gather || {}, best = ga.best || {}, found = ga.found || {};
-    var inv = function (k) { return { name: D[k].sh, img: D[k].img, n: mats[k] || 0, aria: D[k].name + ' ' + (mats[k] || 0) + '개' }; };
-    var invClay = ['refined', 'kaolin', 'porcelain', 'premium'].map(inv);
-    var invGlz = ['gz_white', 'gz_celadon', 'gz_black', 'jinsa'].map(inv);
+    var self = this, s = this.state, g = s.g, D = this.D(), QL = this.qlib(), T = this.tixState(g), ET = this.tixState(g, true), G = this.G, S = this.site(), ev = this.evOpen();
+    var mats = g.mats || {}, ga = g.gather || {}, best = ga.best || {};
+    var inv = function (k) { return { name: D[k].name, img: D[k].img, n: mats[k] || 0, aria: D[k].name + ' 원료 ' + (mats[k] || 0) + '개' }; };
     var can = T.tix > 0;
-    var btn = function (c) { return 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:10px 16px;border-radius:14px;font-family:Jua,sans-serif;font-size:17px;text-align:center;' + (can ? 'background:' + c + ';border:3px solid #2B1A0F;box-shadow:0 4px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55'); };
-    var box = 'box-sizing:border-box;padding:12px 13px;border-radius:20px;background:rgba(255,250,240,.96);border:3.5px solid #5B3A24;box-shadow:0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:8px';
+    var btn = function (c, ok) { return 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:9px 14px;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (ok ? 'background:' + c + ';border:3px solid #2B1A0F;box-shadow:0 4px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55'); };
+    var box = 'box-sizing:border-box;padding:9px 12px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:6px';
     var modes = [
-      { id: 'dig', name: '흙 파기', img: '_blob/4cfc6dd980b06d7a69c3619abed1f676.png', desc: '공터를 톡 누르면 흙이 한 겹씩 벗겨져요. 깊을수록 좋은 흙! 흙이 다 드러나야 캐져요.', rule: '조각 5개 = 흙 1개 · 2초 안에 연달아 캐면 콤보', best: (best.dig2 || 0) + '점', c: '#B9533A' },
-      { id: 'rock', name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', desc: '손가락으로 돌을 쓸고 지나가면 부서지며 유약 원료가 나와요. 반짝이는 황금 돌은 진사 2개 확정!', rule: '조각 5개 = 원료 1개 · 유약 1회에 원료 1개', best: (best.rock || 0) + '점', c: '#2E6B5F' }
+      { id: 'dig', name: '흙 파기', img: '_blob/4cfc6dd980b06d7a69c3619abed1f676.png', desc: '공터를 톡 누르면 흙이 한 겹씩 벗겨져요. 깊을수록 백토·흑토! 다 드러나야 캐져요.', rule: '2초 안에 연달아 캐면 콤보', best: (best.dig2 || 0) + '점', c: '#B9533A' },
+      { id: 'rock', name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', desc: '손가락으로 돌을 쓸고 지나가면 부서지며 유약 원석이 나와요. 반짝이는 황금 돌은 진사 2개!', rule: '큰 돌일수록 많이', best: (best.rock || 0) + '점', c: '#2E6B5F' }
     ].map(function (m) {
       var hot = S.mode === m.id;
-      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c), btnText: '시작 · 🎫1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
+      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c, can), btnText: '시작 · 🎫1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
         siteTag: hot ? 'padding:1px 7px;border-radius:8px;background:#E8B640;font-family:Jua,sans-serif;font-size:11px;color:#2B1A0F' : 'display:none', siteTagText: S.ic + ' 오늘 보너스' };
     });
-    var CX = ['refined', 'kaolin', 'porcelain', 'premium', 'gz_white', 'gz_celadon', 'gz_black', 'jinsa'];
-    var codex = CX.map(function (k) {
-      var f = !!found[k], d = D[k];
-      var bx = 'position:relative;width:34px;height:34px;border-radius:8px;box-sizing:border-box;border:2px solid ' + (f ? '#E8B640' : 'rgba(255,231,168,.25)') + ';background:' + (f ? '#FFF4DE' : 'rgba(255,255,255,.08)') + ' url(' + d.img + ') center/26px no-repeat;' + (f ? '' : 'filter:brightness(0) opacity(.4);');
-      return { box: bx, t: '', aria: (f ? d.name : '미발견') };
+    var tab = s.tab === 'refine' ? 'refine' : 'gather';
+    var tabs = [{ id: 'gather', label: '⛏️ 채집' }, { id: 'refine', label: '✋ 다듬기' }].map(function (t) {
+      var on = t.id === tab;
+      return { label: t.label, on: on ? 'true' : 'false', pick: function () { self.setState({ tab: t.id }); self.sfx('tap'); },
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:16px;' + (on ? 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #3E2616;color:#5B3A24' : 'background:#C9B08C;border:3px solid #8A6440;color:#5B3A24;opacity:.85') };
     });
+    var GN = ['', '보통', '상급', '특급'];
+    var refRow = function (rk) {
+      var d = D[rk], raw = mats[rk] || 0, have = [1, 2, 3].map(function (gd) { return GN[gd] + ' ' + (mats[d.out + gd] || 0); }).join(' · ');
+      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); },
+        btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:7px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (raw > 0 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
+    };
+    var evBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
     var out = {
       tix: T.tix, tixMax: T.max, tixNext: T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1', toastOn: !!s.toast, toast: s.toast,
-      siteName: S.name, siteIc: S.ic, siteDesc: S.desc, siteBg: S.bg, invClay: invClay, invGlz: invGlz, modes: modes, codex: codex,
-      foundN: CX.filter(function (k) { return found[k]; }).length, foundAll: CX.length,
+      evOn: ev, etix: ET.tix, etixMax: ET.max, etixNext: ET.tix >= ET.max ? '가득' : this.fmt(ET.next) + ' 뒤 +1', evPrice: 50,
+      evLeft: '옥 ' + this.jadeOf(g).toLocaleString(), evBtn: evBtn, evDig: function () { self.start('dig', true); }, evRock: function () { self.start('rock', true); }, evBuy: function () { self.buyEvTix(); },
+      tabs: tabs, tabGather: tab === 'gather', tabRefine: tab === 'refine',
+      siteName: S.name, siteIc: S.ic, siteDesc: S.desc, siteBg: S.bg, modes: modes,
+      invRawC: ['ry', 'rr', 'rw', 'rk'].concat(ev ? ['spring'] : []).map(inv), invRawG: ['ow', 'oc', 'ob', 'oj'].concat(ev ? ['petal'] : []).map(inv),
+      refSecs: [
+        { title: '손 토련', sub: '흙 원료 → 보통·상급·특급 흙', rows: ['ry', 'rr', 'rw', 'rk'].map(refRow) },
+        { title: '절구질', sub: '유약 원석 → 보통·상급·특급 원료', rows: ['ow', 'oc', 'ob', 'oj'].map(refRow) }
+      ],
       playing: !!G, ended: !!G && G.phase === 'end', gameName: G ? (G.mode === 'dig' ? '흙 파기' : '돌 부수기') : '',
-      resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: ''
+      resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: '',
+      refOn: !!this.R, refTitle: '', refSub: '', refImg: '', refImgS: '', refTool: 'display:none', refToolT: '', needle: '', refRes: [], refFlash: '', refFlashC: '#FFF4DE', refTap: function () {}, refTapBtn: '', refTapText: '', refQuick: function () {}, refQuickBtn: '', refQuickText: '', refClose: function () {}
     };
     if (G && G.phase === 'end') {
       var R = G.R || [];
       out.rewards = R.map(function (x) {
-        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat;' + (x.n ? '' : 'opacity:.45'), name: D[x.k].name, n: x.n, nS: 'font-size:16px;color:' + (x.n ? '#2F6328' : '#A89880'), q: '조각 ' + x.p + (x.p % 5 ? ' · ' + (x.p % 5) + '개 남음' : ''),
+        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat', name: D[x.k].name + (D[x.k].ev ? '' : ' 원료'), n: x.n, nS: 'font-size:16px;color:#2F6328', q: D[x.k].ev ? '상급 · 바로 사용' : '다듬기 전',
           newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#4A9440;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
       });
-      var tot = R.reduce(function (a, x) { return a + x.n; }, 0);
-      out.resTitle = tot ? (G.mode === 'dig' ? '흙을 캤다!' : '원료를 모았다!') : '아쉽다…';
+      var TT = this.tixState(g, G.ev);
+      out.resTitle = R.length ? (G.mode === 'dig' ? '흙을 캤다!' : '원석을 모았다!') : '아쉽다…';
       out.resSub = '점수 ' + G.score; out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
-      out.resHint = tot ? (G.mode === 'dig' ? '조각 5개가 흙 1개가 돼요 · 남은 조각은 사라져요' : '원료는 유약 1회에 1개씩 써요') : '같은 종류 조각 5개를 모아야 재료 1개가 돼요';
+      out.resHint = R.length ? '「다듬기」 탭에서 다듬으면 보통·상급·특급이 정해져요' : '다음엔 조금 더 깊이 파 봐요';
       out.closeGame = function () { self.closeGame(); };
-      out.again = function () { var m0 = G.mode; self.closeGame(); setTimeout(function () { self.start(m0); }, 50); };
-      out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (T.tix > 0 ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
-      out.againText = T.tix > 0 ? '한 번 더 · 🎫1' : '채집권 없음';
+      out.again = function () { var m0 = G.mode, e0 = G.ev; self.closeGame(); setTimeout(function () { self.start(m0, e0); }, 50); };
+      out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (TT.tix > 0 ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
+      out.againText = TT.tix > 0 ? '한 번 더 · ' + (G.ev ? '🌸' : '🎫') + '1' : '채집권 없음';
+    }
+    var Rf = this.R;
+    if (Rf) {
+      var dd = D[Rf.rk], clay = dd.kind === 'clay', hit = Date.now() - Rf.hitAt < 400;
+      out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
+      out.refSub = Rf.done ? '다듬기 완료!' : (clay ? '반죽을 꾹 누르는 순간을 맞춰요' : '공이를 내리찍는 순간을 맞춰요') + ' · ' + (Rf.res.length + 1) + '/' + Rf.n;
+      out.refImg = dd.img;
+      out.refImgS = 'width:120px;height:120px;object-fit:contain;position:relative;' + (hit ? 'animation:rSquash .35s ease-out;' : '');
+      out.refTool = clay ? 'position:absolute;left:50%;top:-6px;margin-left:-22px;font-size:44px;' + (hit ? 'animation:rSquash .35s ease-out;' : '') : 'position:absolute;right:10px;top:0;font-size:46px;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
+      out.refToolT = clay ? '🤲' : '🪵';
+      out.needle = Rf.done ? 'display:none' : 'position:absolute;top:-2px;bottom:-2px;width:8px;margin-left:-4px;border-radius:4px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 6px rgba(255,255,255,.8);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((Date.now() - Rf.t0) % (Rf.P * 2)) + 'ms';
+      if (!Rf.needleS) { Rf.needleS = out.needle; } else if (!Rf.done) { out.needle = Rf.needleS; }
+      out.refRes = []; for (var i = 0; i < Rf.n; i++) { var gd = Rf.res[i]; out.refRes.push({ t: gd ? GN[gd] : '?', s: "display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:30px;padding:0 4px;border-radius:9px;font-family:'Jua',sans-serif;font-size:14px;" + (gd === 3 ? 'background:#FFD66B;color:#7A4A00;border:2px solid #B07A1E' : (gd === 2 ? 'background:#5C9BD1;color:#FFFDF5;border:2px solid #2E5E8A' : (gd === 1 ? 'background:#A89880;color:#FFFDF5;border:2px solid #6E6250' : 'background:rgba(255,255,255,.12);color:#C9B08C;border:2px dashed #8A6440'))) }); }
+      out.refFlash = Rf.done ? (function () { var c = [0, 0, 0, 0]; Rf.res.forEach(function (x) { c[x]++; }); return '특급 ' + c[3] + ' · 상급 ' + c[2] + ' · 보통 ' + c[1]; })() : (hit ? Rf.flash : '');
+      out.refFlashC = Rf.done ? '#FFE7A8' : (Rf.flash.indexOf('특급') === 0 ? '#FFD66B' : (Rf.flash.indexOf('상급') === 0 ? '#9FD2FF' : '#E8E2D8'));
+      out.refTap = function (e) { self.refTap(e); };
+      out.refTapBtn = 'all:unset;cursor:pointer;margin-top:10px;width:240px;height:74px;box-sizing:border-box;border-radius:22px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:24px;touch-action:none;' + (Rf.done ? 'background:#6B5A48;border:4px solid #3E2616;color:#C9B08C' : 'background:#B9533A;border:4px solid #2B1A0F;box-shadow:0 6px 0 #2B1A0F;color:#FFFDF5');
+      out.refTapText = Rf.done ? '완료' : (clay ? '꾹 누르기!' : '쿵 내리찍기!');
+      var left = (mats[Rf.rk] || 0);
+      out.refQuick = function () { if (Rf.done) { self.refOpen(Rf.rk); } else { self.refQuick(); } };
+      out.refQuickText = Rf.done ? (left > 0 ? '이어서 다듬기 (' + left + ')' : '원료 없음') : '대충 하기 (모두 보통)';
+      out.refQuickBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:9px 14px;border-radius:13px;font-family:Jua,sans-serif;font-size:15px;' + (Rf.done && !left ? 'background:#6B5A48;border:3px solid #3E2616;color:#C9B08C' : 'background:#E8B640;border:3px solid #2B1A0F;color:#2B1A0F');
+      out.refClose = function () { self.R = null; self.setState({ tick: Date.now() }); };
     }
     return out;
   }

@@ -294,7 +294,7 @@ class Component extends DCLogic {
     super(props);
     var f = this.fresh();
     f.g = this.loadG();
-    f.clay = 'basic';
+    f.clay = this.pickClay(f.g);
     var q0 = (f.g && f.g.quests) || {};
     f.target = q0.min && !q0.minDone ? 'cup' : 'dish';
     var qk = this.questTargets(f.g);
@@ -310,7 +310,7 @@ class Component extends DCLogic {
       var wp = JSON.parse(localStorage.getItem('wheelWip') || 'null');
       if (wp && wp.r && wp.r.length === 12 && Date.now() - (wp.at || 0) < 7 * 86400000) {
         f.r = wp.r; f.t = wp.t || f.t; f.H = wp.H || f.H; f.segDone = wp.segDone || []; f.hDone = !!wp.hDone;
-        if (wp.clay) { f.clay = wp.clay; } if (wp.speed) { f.speed = wp.speed; }
+        if (wp.clay && this.hasClay(f.g, wp.clay)) { f.clay = wp.clay; } if (wp.speed) { f.speed = wp.speed; }
         if (wp.target && (!f.g.wheelPick || f.g.wheelPick === wp.target)) { f.target = wp.target; }
         this.touched = wp.touched || []; this.touchedH = wp.touchedH || 0; f.resumed = true;
         var qf0 = this.questFor(f.target, qk); if (qf0 && !qk[f.target]) { f.target = qf0; }
@@ -400,7 +400,7 @@ class Component extends DCLogic {
     try { this.sndBoot(); } catch (e) {}
     var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} try { selfB.trackBoot(); } catch (e) {} }, 0);
     var self = this;
-    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.applyGoal(); } };
+    this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { var g1 = self.loadG(), st = { g: g1 }; if (!self.state.clay || !self.hasClay(g1, self.state.clay)) { var pc = self.pickClay(g1, self.state.clay); if (pc !== self.state.clay && self.state.stage === 'shape') { st.clay = pc; } } self.setState(st); self.applyGoal(); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     this.applyGoal();
     this.last = Date.now();
@@ -472,35 +472,43 @@ class Component extends DCLogic {
   applyGoal() {
     var g = this.loadG(), gl = g.goal;
     if (!gl || !g.goalJump) { return; }
-    var own = gl.clay === 'basic' || ((g.mats || {})[gl.clay] || 0) > 0;
+    var own = this.hasClay(g, gl.clay);
     this.resetPointers && this.resetPointers();
-    var nf = this.fresh(); nf.g = g; nf.target = 'goal'; nf.clay = own ? gl.clay : 'basic';
+    var nf = this.fresh(); nf.g = g; nf.target = 'goal'; nf.clay = own ? gl.clay : this.pickClay(g);
     this.setState(nf);
     var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
-    var CN = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
+    var CN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var self = this;
     setTimeout(function () {
       self.setG({ goalJump: false });
-      self.say(gl.num + '스테이지 목표 · ' + (own ? CN[gl.clay] + ' 흙' : CN[gl.clay] + ' 흙이 없어 기본 흙') + ' · ' + GN[gl.glaze] + ' 예약', own ? 'ok' : 'fail');
+      var QLn = self.qlib(); self.say(gl.num + '스테이지 목표 · ' + (own ? QLn.clayOf(gl.clay).name : QLn.clayOf(gl.clay).name + '이 없어 다른 흙') + ' · ' + GN[gl.glaze] + ' 예약', own ? 'ok' : 'fail');
     }, 0);
   }
+  // 흙 그림 (색별 1장 · 등급은 이름·배지로 구분)
+  clayImg(id) { var c = this.qlib().clayOf(id).c; return { w: '_blob/82e06489f7a62f3f7221570968820156.png', y: '_blob/7c44f01a803a1f7e466056d9de356ebe.png', r: '_blob/93b77b353c6926f32e782173e630d814.png', k: '_blob/6fd2139bd1992fe452b249c8dcb6ad56.png', s: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp' }[c]; }
+  hasClay(g, id) { if (!id) { return false; } if (this.qlib().isTut(g)) { return id === 'cy2'; } return ((g.mats || {})[id] || 0) > 0; }
+  // 쓸 흙 고르기 : 원하는 흙이 있으면 그것, 없으면 가장 많이 가진 흙. 하나도 없으면 ''
+  pickClay(g, want) {
+    if (this.qlib().isTut(g)) { return 'cy2'; }
+    if (want && this.hasClay(g, want)) { return want; }
+    var M = g.mats || {}, best = '', n = 0;
+    this.qlib().CLAYKEYS.concat(['spring']).forEach(function (k) { if ((M[k] || 0) > n) { n = M[k]; best = k; } });
+    return best;
+  }
   claysDef() {
-    return [
-      { id: 'basic', img: '_blob/976713d77fcd910c2063a318370be110.webp', n: '기본', res: 'CLAY', c: '#A9765A', limit: 2.5 },
-      { id: 'refined', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp', n: '정제', res: 'CLAY', c: '#B8957C', limit: 2.5 },
-      { id: 'kaolin', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp', n: '고령토', res: 'CLAY', c: '#CABBA9', limit: 2.5 },
-      { id: 'porcelain', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp', n: '자기토', res: 'CLAY', c: '#D6CFC2', limit: 2.5 },
-      { id: 'premium', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', n: '특선', res: 'CLAY', c: '#DED8CD', limit: 2.0 },
-      { id: 'spring', img: '_blob/dcdb71e502660d3f3806e3ace6a3eeba.webp', n: '봄빛 흙', res: 'CLAY', c: '#E2B4A6', limit: 2.2, event: true }
-    ];
+    var QL = this.qlib(), g = this.state && this.state.g ? this.state.g : this.loadG(), self = this, M = g.mats || {};
+    var ids = QL.isTut(g) ? ['cy2'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; });
+    var out = ids.map(function (k) { var c = QL.clayOf(k); return { id: k, img: self.clayImg(k), n: c.name, res: 'CLAY', c: c.col, limit: c.thin, event: k === 'spring', grade: c.grade, note: c.note }; });
+    if (!out.length) { out.push({ id: '', img: self.clayImg('cy1'), n: '흙 없음', res: 'CLAY', c: '#A89880', limit: 3, none: true }); }
+    return out;
   }
   mul() { return this.state.speed === 'slow' ? 0.6 : (this.state.speed === 'fast' ? 1.6 : 1.0); }
-  limit() { return this.qlib().clayOf(this.state.clay || 'basic').thin; }
+  limit() { return this.qlib().clayOf(this.state.clay || 'cy1').thin; }
   // 흙 등급별 조작 : 손맛(모양 변하는 정도) · 벽 깎임 · 보정 범위
-  clayFeel() { return this.qlib().clayOf(this.state.clay || 'basic'); }
+  clayFeel() { return this.qlib().clayOf(this.state.clay || 'cy1'); }
   consumeClay() {
     var g = this.state.g, c = this.state.clay;
-    if (c === 'basic') { this._mq = g.matsQ || {}; this._cq = 1; return g.mats || {}; }
+    if (!c || this.qlib().isTut(g)) { this._mq = {}; this._cq = 1; return g.mats || {}; } // 튜토리얼 흙은 줄지 않는다
     var QL = this.qlib();
     this._mq = g.matsQ || {}; this._cq = QL.topQ(g, c);
     if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈다'); return g.mats || {}; }
@@ -522,7 +530,7 @@ class Component extends DCLogic {
     this.resetPointers();
     var mats = this.consumeClay();
     var nf = this.fresh();
-    if (s.clay !== 'basic' && (mats[s.clay] || 0) <= 0) { nf.clay = 'basic'; }
+    nf.clay = this.pickClay({ mats: mats, tut: s.g.tut }, s.clay);
     nf.dropDelay = 0.8;
     nf.fx = { kind: 'fail', k: Date.now(), path: this.profile(s.r, s.H, 0).path, H: s.H };
     this.setState(nf);
@@ -533,7 +541,7 @@ class Component extends DCLogic {
   wtune() {
     var rf = this.qlib().fx((this.state && this.state.g) || {});
     // 성형 보정 조정값 · 허용 범위(목표 대비 비율), 보정 속도(초당 비율), 완료 판정, 손댄 구간 유지 시간
-    var sn = this.qlib().clayOf((this.state && this.state.clay) || 'basic').snap;
+    var sn = this.qlib().clayOf((this.state && this.state.clay) || 'cy1').snap;
     return { snapTol: (0.10 + (rf.snapTol || 0)) * sn, snapRate: 2.4 * (1 + (rf.snapRate || 0)), doneTol: 0.035 + (rf.doneTol || 0), hTol: (0.08 + (rf.snapTol || 0)) * sn, hRate: 2.0 * (1 + (rf.snapRate || 0)), touchMs: 1400 };
   }
   snapStep(dt) {
@@ -886,7 +894,7 @@ class Component extends DCLogic {
       }
     }
     var claysOut = clays.map(function (c) {
-      var own = c.id === 'basic' ? -1 : ((g.mats || {})[c.id] || 0);
+      var own = c.none ? 0 : (self.qlib().isTut(g) ? -1 : ((g.mats || {})[c.id] || 0));
       var on = c.id === s.clay;
       var avail = own !== 0;
       return {
@@ -895,7 +903,7 @@ class Component extends DCLogic {
         dot: 'flex:0 0 auto;width:26px;height:20px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 3px rgba(255,231,168,.9))' : ''), img: c.img,
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;padding:4px 4px;border-radius:11px;' + (on ? 'background:#5B3A24;border:2px solid #3E2616;color:#FFE7A8;' : (avail ? 'background:#FFF4DE;border:2px solid #8A6440;color:#5B3A24;' : 'background:#D9CDB6;border:2px dashed #A8987C;color:#7A6A55;')),
         pick: function () {
-          if (!avail) { self.say(c.event ? '봄빛 흙이 없다 · 봄 축제 상점에서 꽃잎으로 산다' : c.n + ' 흙이 없다 · 상점 재료 탭에서 산다', 'fail'); return; }
+          if (!avail) { self.say('흙이 없다 · 채집에서 캐서 다듬거나 상점에서 산다', 'fail'); return; }
           if (s.clay === c.id) { return; }
           self.resetPointers();
           var nf = self.fresh(); nf.clay = c.id;
@@ -947,7 +955,7 @@ class Component extends DCLogic {
         var QLc = self.qlib();
         var rec = g.goal && clays[i].id === g.goal.clay;
         return {
-          name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: QLc.clayOf(clays[i].id).grade + '급 · 보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm' + (QLc.clayOf(clays[i].id).note ? ' · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0] : ''), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
+          name: clays[i].n, meta: clays[i].none ? '채집에서 캐서 다듬거나 상점에서 사요' : (QLc.clayOf(clays[i].id).gradeN + ' · 보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
           goal: '', goalStyle: 'display:none',
           tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),
@@ -1037,6 +1045,7 @@ class Component extends DCLogic {
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
       noMenu: function (e) { if (e && e.preventDefault) { e.preventDefault(); } },
       pDown: function (e) {
+        if (!self.state.clay) { self.say('흙이 없다 · 채집에서 캐서 다듬거나 상점에서 산다', 'fail'); return; }
         var el = e.currentTarget;
         try { el.setPointerCapture(e.pointerId); } catch (err) {}
         var p = self.toView(el, e.clientX, e.clientY);
@@ -1146,10 +1155,10 @@ class Component extends DCLogic {
         self.setG(up);
         self.resetPointers();
         var nf = self.fresh();
-        if (s.clay !== 'basic' && (mats[s.clay] || 0) <= 0) { nf.clay = 'basic'; }
+        nf.clay = self.pickClay({ mats: mats, tut: g.tut }, s.clay);
         nf.dropDelay = 1.5;
         if (qtg) { var g2 = self.loadG(), QT2 = self.questTargets(g2), cur2 = QT2[s.target]; nf.target = s.target; if (!cur2 || cur2.full) { var nk = Object.keys(QT2).filter(function (k) { return !QT2[k].full; })[0]; if (nk) { nf.target = nk; } } if (g2.wheelPick) { self.setG({ wheelPick: '' }); } }
-        if (nxG) { nf.target = 'goal'; var ownN = nxG.clay === 'basic' || ((mats || {})[nxG.clay] || 0) > 0; nf.clay = ownN ? nxG.clay : 'basic'; }
+        if (nxG) { nf.target = 'goal'; nf.clay = self.pickClay({ mats: mats, tut: g.tut }, nxG.clay); }
         try { window.__sfx && window.__sfx('ok'); } catch (e) {} 
         nf.fx = { kind: 'ok', k: Date.now(), path: self.profile(s.r, s.H, 0).path, H: s.H, stars: stars };
         self.setState(nf);
