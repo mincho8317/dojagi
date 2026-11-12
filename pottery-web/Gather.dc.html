@@ -125,7 +125,7 @@ button{font-family:inherit;cursor:pointer}
 
   <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
-      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개 → 재료 1개 · 한 번에 최대 5번까지 다듬어요 · 금색을 노리면 특급!</span>
+      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개로 한 판 · 5번 해서 성적에 따라 재료 1개 (평균이 높으면 특급!)</span>
       <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
         <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
           <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{rs.title}} <span style="font-size:11.5px;color:#8A6440">{{rs.sub}}</span></span>
@@ -399,7 +399,7 @@ class Component extends DCLogic {
   // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
   refOpen(rk) {
     var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있다 · 지금 ' + have + '개'); this.sfx('fail'); return; }
-    this.R = { rk: rk, n: Math.min(5, Math.floor(have / 5)), res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
+    this.R = { rk: rk, n: 5, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
   refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
@@ -476,8 +476,10 @@ class Component extends DCLogic {
   }
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
-    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n * 5);
-    R.res.forEach(function (gd) { var k = D.out + gd; mats[k] = (mats[k] || 0) + 1; });
+    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - 5);
+    // 5번 성적의 평균으로 재료 1개의 등급을 정한다 : 평균 2.6↑ 특급 · 1.8↑ 상급 · 그 아래 보통
+    var sum = 0; R.res.forEach(function (gd) { sum += gd; }); var avg = sum / R.res.length; R.fg = avg >= 2.6 ? 3 : (avg >= 1.8 ? 2 : 1);
+    mats[D.out + R.fg] = (mats[D.out + R.fg] || 0) + 1;
     this.setG({ mats: mats }); R.done = true; R.doneAt = Date.now(); this.sfx('reveal'); this.setState({ tick: Date.now() });
     var self = this; setTimeout(function () { self.setState({ tick: Date.now() }); }, 1300);
   }
@@ -521,7 +523,7 @@ class Component extends DCLogic {
     var GN = ['', '보통', '상급', '특급'];
     var refRow = function (rk) {
       var d = D[rk], raw = mats[rk] || 0, have = [1, 2, 3].map(function (gd) { return GN[gd] + ' ' + (mats[d.out + gd] || 0); }).join(' · ');
-      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기 ×' + Math.min(5, Math.floor(raw / 5)) : raw + '/5',
+      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기' : raw + '/5',
         btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (raw >= 5 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
     var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
@@ -565,7 +567,7 @@ class Component extends DCLogic {
     if (Rf) {
       var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n원료 5개 → ' + dd.name + ' 1개 · ' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째';
+      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째 · 5번 성적으로 ' + dd.name + ' 1개의 등급이 정해져요';
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
       out.refBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;overflow:hidden;background:linear-gradient(rgba(30,18,10,.88) 0,rgba(30,18,10,.6) 165px,rgba(30,18,10,.12) 270px,rgba(30,18,10,.05) 100%),#3E2616 url(' + (clay ? '_blob/e41f40f93735cbd82c4bab97fd696e6c.webp' : '_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp') + ') center top/cover no-repeat';
       out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
@@ -622,16 +624,16 @@ class Component extends DCLogic {
         var flying = now - Rf.doneAt < 1200, oimg = this.outImg(Rf.rk);
         out.boxS = 'position:absolute;left:22px;top:128px;width:72px;height:72px;object-fit:contain;z-index:5;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));animation:rBox 1.2s ease-out both';
         if (flying) {
-          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: oimg, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (58 - sx) + 'px;--fy:-126px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
+          var k0 = 0; [Rf.fg].forEach(function (gd) { for (var j = 0; j < 1; j++) { var sx = 195; out.flyIn.push({ img: oimg, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (58 - sx) + 'px;--fy:-126px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
         }
         out.refDone = !flying;
-        out.refSum = [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) {
+        out.refSum = [Rf.fg].map(function (gd) {
           var GFL = { 1: 'none', 2: 'sepia(1) hue-rotate(175deg) saturate(2.2) brightness(.95)', 3: 'sepia(1) saturate(3) hue-rotate(-8deg) brightness(1.08)' }[gd];
-          return { img: oimg, grade: GT[gd] + ' ' + dd.name, n: c[gd], fr: 'position:absolute;inset:0;background:url(' + AS.grade_frame + ') center/100% 100% no-repeat;filter:' + GFL, bg: 'position:absolute;inset:0;background:url(' + AS.grade_badge + ') center/100% 100% no-repeat;filter:' + GFL, box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:126px;padding:14px 6px 12px;box-sizing:border-box;animation:rPop .35s both',
+          return { img: oimg, grade: GT[gd] + ' ' + dd.name, n: 1, fr: 'position:absolute;inset:0;background:url(' + AS.grade_frame + ') center/100% 100% no-repeat;filter:' + GFL, bg: 'position:absolute;inset:0;background:url(' + AS.grade_badge + ') center/100% 100% no-repeat;filter:' + GFL, box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:126px;padding:14px 6px 12px;box-sizing:border-box;animation:rPop .35s both',
             badge: "position:relative;font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:" + (gd === 3 ? '#5A3A00' : (gd === 2 ? '#1E3F5E' : '#3E3428')) };
         });
         var lf = mats[Rf.rk] || 0;
-        out.refSumHint = '원료 ' + (Rf.n * 5) + '개를 다듬어 보관함에 넣었어요\n남은 ' + dd.name + ' 원료 ' + lf + '개';
+        out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 5개 → ' + GT[Rf.fg] + ' ' + dd.name + ' 1개 · 남은 원료 ' + lf + '개';
         out.refAgain = function () { self.refOpen(Rf.rk); };
         out.refAgainText = lf >= 5 ? '한 번 더' : '원료 부족 (' + lf + '/5)';
         out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
