@@ -576,7 +576,7 @@
     function place(el) { var R = gameRect(); el.style.top = (R.t + POS[PAGE] * R.k).toFixed(1) + 'px'; el.style.right = Math.max(0, window.innerWidth - (R.l + R.w) + 8 * R.k).toFixed(1) + 'px'; el.style.transform = 'scale(' + R.k.toFixed(3) + ')'; }
     function render() {
       var g = load();
-      var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
+      var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[data-notrk]') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
       var list = L.active(g);
       var tids = L.tracked(g, list), qs = list.filter(function (x) { return tids.indexOf(x.id) >= 0; });
       if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내' : '📋 의뢰 없음'; pill.setAttribute('aria-label', list.length ? '제작 안내할 의뢰 고르기' : '진행 중인 의뢰 없음'); return; }

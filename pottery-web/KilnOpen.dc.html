@@ -67,7 +67,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <div aria-hidden="true" style="{{navFadeR}}"></div>
     </div>
   </div>
-  <button type="button" onClick="{{navMenuTap}}" aria-label="메뉴 열기" aria-expanded="{{navMenuOpen}}" style="{{navMenuBtn}}">☰<span style="font-size:10px;line-height:1">메뉴</span></button>
+  <button type="button" onClick="{{navMenuTap}}" aria-hidden="true" tabindex="-1" aria-label="메뉴 열기" aria-expanded="{{navMenuOpen}}" style="{{navMenuBtn}}">☰<span style="font-size:10px;line-height:1">메뉴</span></button>
   <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
     <div class="navdrop" style="{{navDropStyle}}">
 <div class="bg-bg-kiln-open" style="position:relative;width:390px;height:844px;overflow:hidden;color:#FFF4DE">
@@ -179,18 +179,18 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </sc-if>
 
   <sc-if value="{{results}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:14px;right:14px;top:56px;bottom:30px;box-sizing:border-box;padding:30px 12px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;gap:10px;animation:fadeUp .4s both">
+    <div data-notrk="1" style="position:absolute;left:14px;right:14px;top:56px;bottom:30px;box-sizing:border-box;padding:30px 12px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE;color:#2B1A0F;display:flex;flex-direction:column;gap:10px;animation:fadeUp .4s both">
       <div style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);height:42px;padding:0 40px;white-space:nowrap;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5">이번 가마 결과</div>
       <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap">
         <sc-for list="{{rs.chips}}" as="c" hint-placeholder-count="3">
           <span style="{{c.style}}">{{c.text}}</span>
         </sc-for>
       </div>
-      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:start;gap:8px;padding:2px">
+      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-content:{{rs.align}};gap:8px;padding:2px">
         <sc-for list="{{rs.cards}}" as="r" hint-placeholder-count="3">
           <div id="{{r.id}}" style="{{r.style}}">
             <span style="{{r.ribbon}}">{{r.grade}}</span>
-            <svg width="70" height="70" viewBox="{{r.pot.vb}}" aria-hidden="true" style="{{r.potStyle}}"><ellipse cx="0" cy="{{r.pot.shCy}}" rx="{{r.pot.shRx}}" ry="{{r.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{r.pot.d}}" fill="{{r.pot.fill}}"></path><path d="{{r.pot.d}}" fill="url(#potTopLight)"></path><path d="{{r.pot.d}}" fill="{{r.pot.rings}}"></path><path d="{{r.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{r.pot.grainOp}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.foot}}" fill-opacity="{{r.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{r.pot.d}}" fill="{{r.pot.drip}}" fill-opacity="{{r.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{r.pot.d}}" fill="url(#potShade)"></path><path d="{{r.pot.d}}" fill="none" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{r.pot.rimY}}" rx="{{r.pot.rimRx}}" ry="{{r.pot.rimRy}}" fill="rgba(43,26,15,.3)" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}"></ellipse></svg>
+            <svg width="{{r.sz}}" height="{{r.sz}}" viewBox="{{r.pot.vb}}" aria-hidden="true" style="{{r.potStyle}}"><ellipse cx="0" cy="{{r.pot.shCy}}" rx="{{r.pot.shRx}}" ry="{{r.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{r.pot.d}}" fill="{{r.pot.fill}}"></path><path d="{{r.pot.d}}" fill="url(#potTopLight)"></path><path d="{{r.pot.d}}" fill="{{r.pot.rings}}"></path><path d="{{r.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{r.pot.grainOp}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.foot}}" fill-opacity="{{r.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{r.pot.d}}" fill="{{r.pot.drip}}" fill-opacity="{{r.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{r.pot.d}}" fill="url(#potShade)"></path><path d="{{r.pot.d}}" fill="none" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{r.pot.rimY}}" rx="{{r.pot.rimRx}}" ry="{{r.pot.rimRy}}" fill="rgba(43,26,15,.3)" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}"></ellipse></svg>
             <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:13px;color:#2B1A0F">{{r.name}}</span>
             <span style="font-size:11px;font-weight:700;color:{{r.subColor}}">{{r.sub}}</span>
           </div>
@@ -555,7 +555,7 @@ class Component extends DCLogic {
           cnt[x.grade] = (cnt[x.grade] || 0) + 1;
           var hi = x.grade === '명작' || x.grade === '요변';
           return {
-            id: 'kres-' + i, name: x.name, grade: x.grade, edge: lk.edge,
+            id: 'kres-' + i, sz: items.length <= 3 ? 100 : (items.length <= 6 ? 84 : 70), name: x.name, grade: x.grade, edge: lk.edge,
             pot: self.potOf(x, x.broken ? '#5A4A38' : lk.body),
             potStyle: x.broken ? 'opacity:.7;filter:grayscale(.6)' : 'filter:drop-shadow(0 0 6px ' + gg.ray + ')',
             sub: x.broken ? '파편 +3' : (x.value || 0).toLocaleString() + 'G', subColor: x.broken ? '#4E7D74' : '#8A6410',
@@ -563,8 +563,9 @@ class Component extends DCLogic {
             style: 'position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 10px;border-radius:14px;background:' + (hi ? 'linear-gradient(#FFF6D8,#FFE7A8)' : '#FFFDF5') + ';border:3px solid ' + (hi ? gg.ribbon : '#C9A27A') + ';box-shadow:0 3px 0 ' + (hi ? gg.ribbon : '#C9A27A') + ';animation:popIn .45s cubic-bezier(.2,1.5,.4,1) ' + (0.15 + i * 0.09).toFixed(2) + 's both'
           };
         });
+        var RK = ['요변', '명작', '수작', '양작', '파손']; cards = cards.map(function (c, i) { return [c, i]; }).sort(function (a, b) { return (RK.indexOf(a[0].grade) - RK.indexOf(b[0].grade)) || (a[1] - b[1]); }).map(function (p) { return p[0]; });
         var chips = ['요변', '명작', '수작', '양작', '파손'].filter(function (k) { return cnt[k]; }).map(function (k) { return { text: k + ' ' + cnt[k], style: 'padding:2px 10px;border-radius:9px;font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + GR[k].ribbon }; });
-        return { cards: cards, chips: chips, total: tot.toLocaleString(), confirm: function () { self.confirmAll(); } };
+        return { cards: cards, chips: chips, align: items.length <= 6 ? 'center' : 'start', total: tot.toLocaleString(), confirm: function () { self.confirmAll(); } };
       })(),
       summaryTitle: log.length ? '이번 가마 정리' : '빈 가마',
       hasLog: log.length > 0,
@@ -786,7 +787,7 @@ class Component extends DCLogic {
       navMenuOpen: s.navMenu ? 'true' : 'false',
       navMenuTap: function () { self.setState({ navMenu: !self.state.navMenu }); },
       navMenuHide: 'z-index:60;',
-      navMenuBtn: 'display:none' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
+      navMenuBtn: 'display:none;' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
       navPrevOn: !!prev, navNextOn: !!next,
       navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
       navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',

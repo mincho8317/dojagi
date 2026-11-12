@@ -46,7 +46,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <div aria-hidden="true" style="{{navFadeR}}"></div>
     </div>
   </div>
-  <button type="button" onClick="{{navMenuTap}}" aria-label="메뉴 열기" aria-expanded="{{navMenuOpen}}" style="{{navMenuBtn}}">☰<span style="font-size:10px;line-height:1">메뉴</span></button>
+  <button type="button" onClick="{{navMenuTap}}" aria-hidden="true" tabindex="-1" aria-label="메뉴 열기" aria-expanded="{{navMenuOpen}}" style="{{navMenuBtn}}">☰<span style="font-size:10px;line-height:1">메뉴</span></button>
   <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
     <div class="navdrop" style="{{navDropStyle}}">
 <div style="position:relative;width:390px;height:844px;overflow:hidden;background:#E3C9A3;color:#2B1A0F">
@@ -790,7 +790,7 @@ class Component extends DCLogic {
       navMenuOpen: s.navMenu ? 'true' : 'false',
       navMenuTap: function () { self.setState({ navMenu: !self.state.navMenu }); },
       navMenuHide: 'z-index:60;',
-      navMenuBtn: 'display:none' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
+      navMenuBtn: 'display:none;' + (s.navMenu ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE' : 'background:#5B3A24;color:#FFE7A8;border:2px solid #FFD66B'),
       navPrevOn: !!prev, navNextOn: !!next,
       navPrevHref: prev ? prev.href : 'Main.dc.html', navNextHref: next ? next.href : 'Main.dc.html',
       navPrevName: prev ? prev.step : '', navNextName: next ? next.step : '',

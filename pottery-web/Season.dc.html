@@ -37,7 +37,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 
   <div style="position:absolute;left:12px;right:12px;top:192px;bottom:100px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px">
     <div style="box-sizing:border-box;padding:10px 12px;border-radius:16px;background:#FFF8F5;border:3px solid #A94767;display:flex;flex-direction:column;gap:7px">
-      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">축제 미션 · 꽃잎 모으기</span><a href="Counter.dc.html" onClick="{{goSeasonStage}}" style="font-family:'Jua',sans-serif;font-size:12px;color:#A94767">시즌 의뢰 →</a></div>
+      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">축제 미션 · 꽃잎 모으기</span><a href="Counter.dc.html" onClick="{{goSeasonStage}}" style="display:inline-flex;align-items:center;min-height:36px;padding:0 6px;margin-right:-6px;font-family:'Jua',sans-serif;font-size:13px;color:#8E3556;text-decoration:none">시즌 의뢰 →</a></div>
       <sc-for list="{{missions}}" as="ms" hint-placeholder-count="3">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
@@ -142,7 +142,7 @@ class Component extends DCLogic {
         name: m.name, prog: Math.min(m.cur, m.max) + '/' + m.max,
         bar: 'height:100%;border-radius:4px;background:#D46A86;width:' + Math.min(100, m.cur / m.max * 100) + '%',
         btnLabel: got ? '받음' : '+' + m.reward,
-        btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#A08890;border:2px solid #D8C3C8' : (done ? 'background:#D46A86;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#C9A0AB;border:2px solid #E6C3CC')),
+        btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;min-height:40px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#7E6670;border:2px solid #D8C3C8' : (done ? 'background:#D46A86;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#9A6170;border:2px solid #E6C3CC')),
         claim: function () {
           if (got) { return; }
           if (!done) { self.say('아직 조건을 채우지 못했어요 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
@@ -166,7 +166,7 @@ class Component extends DCLogic {
         name: it.name, kind: it.kind, res: it.res, img: it.img, aria: it.name + ' · 꽃잎 ' + it.price + (got ? ' · 구매 완료' : ''),
         price: got ? '구매 완료' : '꽃잎 ' + it.price,
         card: 'all:unset;cursor:pointer;position:relative;aspect-ratio:1 / 1.25;box-sizing:border-box;padding:8px 4px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;' + (got ? 'background:#EFE6E8;border:3px solid #D8C3C8;opacity:.75' : 'background:#FFF8F5;border:3px solid #D46A86;box-shadow:0 3px 0 #A94767'),
-        kindStyle: 'position:absolute;left:5px;top:5px;padding:0 5px;border-radius:6px;background:#7A2F44;font-size:9px;font-weight:700;color:#FFE7EE',
+        kindStyle: 'position:absolute;left:5px;top:5px;padding:0 5px;border-radius:6px;background:#7A2F44;font-size:10.5px;font-weight:700;color:#FFE7EE',
         icon: 'margin-top:8px;width:54px;height:54px;box-sizing:border-box;border:2px solid rgba(91,58,36,.25);border-radius:12px;background:' + it.col + ';display:flex;align-items:center;justify-content:center;text-align:center;color:#7A2F44',
         priceStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (got ? 'background:#D8C3C8;color:#FFF' : (afford ? 'background:#D46A86;color:#FFF' : 'background:#F1D5DC;color:#A94767')),
         buy: function () {
