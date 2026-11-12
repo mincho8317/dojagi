@@ -48,14 +48,14 @@ button{font-family:inherit;cursor:pointer}
       <sc-for list="{{invClay}}" as="iv" hint-placeholder-count="4">
         <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:3px;font-family:'Jua',sans-serif">
           <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:28px;height:28px;object-fit:contain">
-          <span style="display:flex;flex-direction:column;line-height:1.05;min-width:0"><span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span><span style="font-size:9.5px;color:#B07A1E;white-space:nowrap">{{iv.q}}</span></span>
+          <span style="display:flex;flex-direction:column;line-height:1.05;min-width:0"><span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span></span>
         </span>
       </sc-for>
     </div>
     <div style="display:flex;gap:4px;border-top:1.5px dashed #D9C29B;padding-top:4px">
       <sc-for list="{{invGlz}}" as="iv" hint-placeholder-count="4">
         <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:3px;font-family:'Jua',sans-serif">
-          <span aria-hidden="true" style="{{iv.dot}}"></span>
+          <img dc-src="{{iv.img}}" alt="" aria-hidden="true" style="width:24px;height:24px;object-fit:contain">
           <span style="font-size:10.5px;color:#5B3A24;white-space:nowrap">{{iv.name}} <b style="font-weight:400;font-size:14px;color:#2B1A0F">{{iv.n}}</b></span>
         </span>
       </sc-for>
@@ -66,7 +66,7 @@ button{font-family:inherit;cursor:pointer}
     <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
       <div style="{{md.box}}">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="{{md.iconBox}}">{{md.ic}}</span>
+          <img dc-src="{{md.img}}" alt="" aria-hidden="true" style="flex:0 0 58px;width:58px;height:58px;object-fit:contain">
           <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
             <span style="display:flex;align-items:center;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{md.name}}</span><span style="{{md.siteTag}}">{{md.siteTagText}}</span></span>
             <span style="font-size:12px;font-weight:700;line-height:1.4;color:#5B3A24">{{md.desc}}</span>
@@ -90,81 +90,16 @@ button{font-family:inherit;cursor:pointer}
   </div>
 
   <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
-    <div role="dialog" aria-label="{{gameName}}" style="{{fieldBg}}">
-      <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:8px;z-index:6">
-        <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:18px;color:#FFF4DE;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{gameName}}</span>
-        <div aria-label="{{barAria}}" style="flex:1 1 auto;height:16px;box-sizing:border-box;border:2.5px solid #2B1A0F;border-radius:9px;background:#3E2616;overflow:hidden"><div style="{{bar}}"></div></div>
-        <span style="{{barNumStyle}}">{{barNum}}</span>
-      </div>
-      <div style="position:absolute;left:12px;right:12px;top:40px;display:flex;align-items:center;gap:6px;z-index:6;flex-wrap:wrap">
-        <sc-for list="{{chips}}" as="cp" hint-placeholder-count="3">
-          <span style="{{cp.s}}">{{cp.t}}</span>
-        </sc-for>
-      </div>
-
-      <sc-if value="{{isDig}}" hint-placeholder-val="{{true}}">
-        <div id="dfield" style="position:absolute;left:13px;top:96px;width:364px;height:572px;overflow:hidden;border-radius:12px;border:3px solid #2B1A0F;box-sizing:content-box;background:#5E4129">
-          <sc-for list="{{cells}}" as="c" hint-placeholder-count="20">
-            <button type="button" data-work="1" onPointerDown="{{c.tap}}" aria-label="{{c.aria}}" style="{{c.s}}"><span aria-hidden="true" style="{{c.ic}}">{{c.t}}</span></button>
-          </sc-for>
-          <div aria-hidden="true" style="{{player}}">
-            <svg width="40" height="44" viewBox="0 0 40 44"><ellipse cx="20" cy="41" rx="12" ry="3" fill="rgba(0,0,0,.35)"></ellipse><rect x="11" y="18" width="18" height="20" rx="7" fill="#4E7D74" stroke="#2B1A0F" stroke-width="2"></rect><circle cx="20" cy="13" r="8" fill="#F2D2B0" stroke="#2B1A0F" stroke-width="2"></circle><path d="M10 10q10-10 20 0z" fill="#E8B640" stroke="#2B1A0F" stroke-width="2"></path><path d="M30 20l7-8M33 9l6 6" stroke="#5B3A24" stroke-width="3" stroke-linecap="round"></path></svg>
-          </div>
-          <div aria-hidden="true" style="{{water}}"></div>
-          <sc-for list="{{floats}}" as="fl" hint-placeholder-count="0">
-            <span aria-hidden="true" style="{{fl.s}}">{{fl.t}}</span>
-          </sc-for>
-        </div>
-        <button type="button" data-work="1" onPointerDown="{{climbDown}}" onPointerUp="{{climbUp}}" onPointerLeave="{{climbUp}}" onPointerCancel="{{climbUp}}" style="{{climbBtn}}">
-          <span aria-hidden="true" style="{{climbFill}}"></span>
-          <span style="position:relative">{{climbText}}</span>
-        </button>
-      </sc-if>
-
-      <sc-if value="{{isVein}}" hint-placeholder-val="{{false}}">
-        <div id="vfield" data-work="1" onPointerDown="{{vDown}}" style="position:absolute;left:21px;top:110px;width:348px;height:406px;touch-action:none;border-radius:14px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 3px rgba(255,231,168,.25)">
-          <sc-for list="{{ores}}" as="o" hint-placeholder-count="42">
-            <span aria-hidden="true" style="{{o.s}}"></span>
-          </sc-for>
-          <svg aria-hidden="true" width="348" height="406" style="position:absolute;left:0;top:0;pointer-events:none"><polyline points="{{pathPts}}" fill="none" stroke="#FFF4DE" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".9"></polyline></svg>
-          <sc-for list="{{floats}}" as="fl" hint-placeholder-count="0">
-            <span aria-hidden="true" style="{{fl.s}}">{{fl.t}}</span>
-          </sc-for>
-        </div>
-        <div style="position:absolute;left:12px;right:12px;top:528px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center">
-          <sc-for list="{{tally}}" as="tl" hint-placeholder-count="4">
-            <span style="{{tl.s}}"><span aria-hidden="true" style="{{tl.dot}}"></span>{{tl.t}}</span>
-          </sc-for>
-        </div>
-        <span style="position:absolute;left:16px;right:16px;top:600px;text-align:center;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8;text-shadow:0 1px 0 #000">{{veinHint}}</span>
-      </sc-if>
-
-      <sc-if value="{{jackOn}}" hint-placeholder-val="{{false}}">
-        <div aria-live="assertive" style="position:absolute;inset:0;z-index:9;pointer-events:none;background:rgba(26,15,8,.45)">
-          <span aria-hidden="true" style="position:absolute;left:50%;top:44%;width:520px;height:520px;background:repeating-conic-gradient(rgba(255,214,107,.35) 0 10deg,transparent 10deg 20deg);border-radius:50%;animation:gRays 3s linear infinite"></span>
-          <div style="position:absolute;left:50%;top:44%;display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 22px;border-radius:20px;background:#FFF4DE;border:4px solid #B9533A;box-shadow:0 6px 0 rgba(0,0,0,.4);animation:gJack 1.1s ease-out forwards;white-space:nowrap">
-            <span style="font-size:40px;line-height:1">{{jackIc}}</span>
-            <span style="font-family:'Jua',sans-serif;font-size:24px;color:#B9533A">{{jackT}}</span>
-            <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{jackSub}}</span>
-          </div>
-        </div>
-      </sc-if>
-
-      <sc-if value="{{counting}}" hint-placeholder-val="{{false}}">
-        <div aria-live="assertive" style="position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(26,15,8,.55);pointer-events:none">
-          <span style="font-family:'Jua',sans-serif;font-size:16px;line-height:1.5;color:#FFF4DE;text-shadow:0 2px 0 rgba(0,0,0,.6);text-align:center;white-space:pre-line">{{howTo}}</span>
-          <span style="{{countStyle}}">{{countText}}</span>
-        </div>
-      </sc-if>
-
+    <div role="dialog" aria-label="{{gameName}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:20;overflow:hidden;background:#2B1A0F">
+      <div id="gframe" style="position:absolute;inset:0"></div>
       <sc-if value="{{ended}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.6)">
-          <div role="dialog" aria-label="채집 결과" style="width:320px;box-sizing:border-box;padding:18px 16px 14px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div role="dialog" aria-label="채집 결과" style="width:330px;box-sizing:border-box;padding:18px 16px 14px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
             <span style="font-family:'Jua',sans-serif;font-size:24px;color:#B9533A">{{resTitle}}</span>
             <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{resSub}}{{newBest}}</span>
             <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:4px 0">
-              <sc-for list="{{rewards}}" as="rw" hint-placeholder-count="3">
-                <span style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:64px;padding:6px 4px;border-radius:12px;background:#FFFDF5;border:2px solid #C9A27A;font-family:'Jua',sans-serif"><span style="{{rw.newS}}">NEW</span><span aria-hidden="true" style="{{rw.icS}}">{{rw.ic}}</span><span style="font-size:11.5px;color:#5B3A24">{{rw.name}}</span><span style="font-size:16px;color:#2F6328">+{{rw.n}}</span><span style="font-size:10px;color:#B07A1E">{{rw.q}}</span></span>
+              <sc-for list="{{rewards}}" as="rw" hint-placeholder-count="4">
+                <span style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:66px;padding:6px 4px;border-radius:12px;background:#FFFDF5;border:2px solid #C9A27A;font-family:'Jua',sans-serif"><span style="{{rw.newS}}">NEW</span><span aria-hidden="true" style="{{rw.icS}}"></span><span style="font-size:11.5px;color:#5B3A24">{{rw.name}}</span><span style="{{rw.nS}}">+{{rw.n}}</span><span style="font-size:10px;color:#B07A1E">{{rw.q}}</span></span>
               </sc-for>
             </div>
             <span style="font-size:12px;font-weight:700;color:#8A6440;white-space:pre-line">{{resHint}}</span>
@@ -216,7 +151,7 @@ class Component extends DCLogic {
     this.G = null;
   }
   loadG() {
-    var d = { gold: 0, mats: {}, matsQ: {}, gather: { tix: 5, at: Date.now(), best: {}, found: {} } };
+    var d = { gold: 0, mats: {}, gather: { tix: 5, at: Date.now(), best: {}, found: {} } };
     try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
     return d;
   }
@@ -232,21 +167,17 @@ class Component extends DCLogic {
   qlib() { return window.PotteryShared.qlib.call(this); }
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
-  F() { try { return this.qlib().fx(this.loadG()); } catch (e) { return {}; } }
-  // ── 재료 정의 ──
+  // ── 재료 정의 ── (미니게임 조각 키 → 본게임 재료)
   D() {
     return {
-      refined: { name: '정제 점토', sh: '정제', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp' },
-      kaolin: { name: '고령토', sh: '고령토', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp' },
-      porcelain: { name: '자기토', sh: '자기토', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp' },
-      premium: { name: '특선 소지', sh: '특선', img: '_blob/79f22235a775734d2bfb0397256165e3.webp' },
-      gz_white: { name: '고운 장석', sh: '장석', col: '#F4F1EA', dk: '#B9B2A4', glz: '백자유' },
-      gz_celadon: { name: '청자 철분', sh: '철분', col: '#8FC0A6', dk: '#3F7A5F', glz: '청자유' },
-      gz_black: { name: '흑유 철광', sh: '철광', col: '#4A403C', dk: '#1C1614', glz: '흑유' },
-      jinsa: { name: '진사', sh: '진사유', col: '#D2503E', dk: '#7A1E16', glz: '진사유' },
-      petal: { name: '벚꽃 재', sh: '꽃잎', col: '#F2B6C6', dk: '#B05876', glz: '꽃잎' },
-      relic: { name: '옛 도자기 조각', sh: '조각', ic: '🏺' },
-      ruby: { name: '진사 결정', sh: '결정', ic: '💎' }
+      refined: { name: '정제 점토', sh: '정제', img: '_blob/1e4f725f95d17eb94906709e0a47a9b5.webp', from: 'c1' },
+      kaolin: { name: '고령토', sh: '고령토', img: '_blob/c9da99f472ceecfded0ba9a0a549270d.webp', from: 'c2' },
+      porcelain: { name: '자기토', sh: '자기토', img: '_blob/c0deb6a91697eacf64b9a494efa9dabd.webp', from: 'c3' },
+      premium: { name: '특선 소지', sh: '특선', img: '_blob/79f22235a775734d2bfb0397256165e3.webp', from: 'c4' },
+      gz_white: { name: '장석', sh: '장석', img: '_blob/08b6a79d3b9ff9d57c0ddc34391cee7a.png', from: 'white', glz: '백자유' },
+      gz_celadon: { name: '청자 철분', sh: '철분', img: '_blob/5b746d476ebf15d61c6cab2d76a6c4bf.png', from: 'celadon', glz: '청자유' },
+      gz_black: { name: '흑유 철광', sh: '철광', img: '_blob/1ed3263af13291f7bd979b9e5439ca2b.png', from: 'black', glz: '흑유' },
+      jinsa: { name: '진사', sh: '진사', img: '_blob/6323d4e5875bf72d91119cf124d924a4.png', from: 'jinsa', glz: '진사유' }
     };
   }
   // 오늘의 채집지 · 날마다 바뀐다 (한국 시간 기준)
@@ -254,9 +185,9 @@ class Component extends DCLogic {
     var day = Math.floor((Date.now() + 9 * 3600000) / 86400000), L = ['river', 'mountain', 'mine'];
     var id = L[day % 3];
     return {
-      river: { id: 'river', name: '강가', ic: '🏞️', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 고령토가 잘 나오고 물이 천천히 차올라요', mode: 'dig' },
-      mountain: { id: 'mountain', name: '산', ic: '⛰️', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '단단한 지층 · 바위가 많지만 자기토·특선이 더 나와요', mode: 'dig' },
-      mine: { id: 'mine', name: '광산', ic: '⛏️', bg: 'linear-gradient(90deg,#5B4A6E,#8A3F3A)', desc: '광맥이 풍부 · 광맥 잇기 시간 +5초, 진사가 더 나와요', mode: 'vein' }
+      river: { id: 'river', name: '강가', ic: '🏞️', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 흙 파기에서 고령토가 잘 나와요', mode: 'dig' },
+      mountain: { id: 'mountain', name: '산', ic: '⛰️', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '단단한 지층 · 흙 파기에서 자기토·특선이 더 나와요', mode: 'dig' },
+      mine: { id: 'mine', name: '광산', ic: '⛏️', bg: 'linear-gradient(90deg,#5B4A6E,#8A3F3A)', desc: '광맥이 풍부 · 돌 부수기에서 황금 돌·진사가 더 나와요', mode: 'rock' }
     }[id];
   }
   tixState(g) {
@@ -266,206 +197,59 @@ class Component extends DCLogic {
     var gain = Math.floor((now - at) / REG); tix = Math.min(MAX, tix + gain); at = at + gain * REG;
     return { tix: tix, at: tix >= MAX ? now : at, next: tix >= MAX ? 0 : at + REG - now, max: MAX };
   }
+  // 미니게임은 gather/index.html 을 iframe 으로 띄운다 (shared.js 와 같은 폴더)
+  gameUrl() {
+    var sc = document.querySelector('script[src*="shared.js"]'), base = '';
+    if (sc && sc.src) { base = sc.src.replace(/shared\.js.*$/, ''); } else { base = location.href.replace(/[^\/]*$/, ''); }
+    return base + 'gather/index.html?embed=1';
+  }
   start(mode) {
     var g = this.loadG(), T = this.tixState(g);
     if (T.tix <= 0) { this.say('채집권이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
     var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
     ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at;
     this.setG({ gather: ga });
-    var F = this.qlib().fx(g), S = this.site(), now = Date.now();
-    var G = { mode: mode, phase: 'count', t0: now + 2600, floats: [], uid: 0, shake: 0, jack: null, freezeUntil: 0, frozen: 0, F: F, site: S.id, firsts: {} };
-    if (mode === 'dig') {
-      G.cols = 7; G.rows = {}; G.pc = 3; G.pr = 0; G.W = -8; G.v = 0.9 * (1 + (-(F.waterSlow || 0))) * (S.id === 'river' ? 0.88 : 1); G.bag = []; G.maxDepth = 0; G.climbAt = 0; G.shards = 0; G.relics = 0; G.lastStep = now;
-      G.pickHits = Math.max(1, 3 - (F.pick || 0));
-    } else {
-      G.cols = 6; G.rowsN = 7; G.dur = (30 + (F.veinTime || 0) + (S.id === 'mine' ? 5 : 0)) * 1000; G.boomN = 7 + (F.veinBoom || 0); G.grid = []; G.path = []; G.tally = {}; G.score = 0; G.maxChain = 0; G.nextHard = 0; G.rubies = 0;
-      for (var i = 0; i < G.cols * G.rowsN; i++) { G.grid.push({ c: this.oreColor(G), h: false, id: ++G.uid }); }
-    }
-    this.G = G;
-    this.setState({ tick: now });
-    var self = this; clearInterval(this.loop); this.loop = setInterval(function () { self.step(); }, 50);
+    var F = this.qlib().fx(g), S = this.site();
+    this.G = { mode: mode, phase: 'play', cfg: { gTime: F.gTime || 0, comboUp: F.comboUp || 0, goldUp: F.goldUp || 0, rareUp: F.rareUp || 0, digWide: F.digWide || 0, site: S.id } };
+    this.setState({ tick: Date.now() });
+    var self = this; setTimeout(function () { self.mountFrame(); }, 0);
     this.sfx('whoosh');
   }
-  // ── 지층 파기 ──
-  genRow(r) {
-    var G = this.G, S = G.site, F = G.F, row = [];
-    for (var c = 0; c < G.cols; c++) {
-      if (r === 0) { row.push({ t: 'air', hp: 0 }); continue; }
-      var x = Math.random(), rare = (F.rareUp || 0);
-      var pRock = Math.min(0.3, 0.06 + r * 0.004) * (S === 'mountain' ? 1.3 : 1), pSpring = r > 4 ? 0.04 : 0, pRelic = r >= 15 ? 0.01 + rare / 2 : 0, pClay = 0.15;
-      var t = 'dirt', q = r >= 44 ? 3 : (r >= 20 ? 2 : 1);
-      if (x < pRelic) { t = 'relic'; }
-      else if (x < pRelic + pSpring) { t = 'spring'; }
-      else if (x < pRelic + pSpring + pRock) { t = 'rock'; }
-      else if (x < pRelic + pSpring + pRock + pClay) {
-        var y = Math.random(), kao = S === 'river' ? 1.4 : 1, up = S === 'mountain' ? 1.35 : 1;
-        if (r < 10) { t = y < 0.8 / (0.8 + 0.2 * kao) ? 'refined' : 'kaolin'; }
-        else if (r < 22) { t = y < 0.45 / (0.45 + 0.55 * kao) ? 'refined' : 'kaolin'; }
-        else if (r < 38) { t = y < 0.5 * kao / (0.5 * kao + 0.5 * up) ? 'kaolin' : 'porcelain'; }
-        else { t = y < 0.65 / (0.65 + (0.35 + rare * 3) * up) ? 'porcelain' : 'premium'; }
-      }
-      row.push({ t: t, hp: t === 'rock' ? G.pickHits : 1, q: q });
-    }
-    if (r > 0 && row.every(function (k) { return k.t === 'rock'; })) { row[Math.floor(Math.random() * G.cols)] = { t: 'dirt', hp: 1, q: 1 }; }
-    return row;
+  mountFrame() {
+    var host = document.getElementById('gframe'); if (!host || !this.G) { return; }
+    host.innerHTML = '';
+    var f = document.createElement('iframe');
+    f.title = this.G.mode === 'dig' ? '흙 파기' : '돌 부수기';
+    f.setAttribute('allow', 'autoplay');
+    f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#2B1A0F';
+    f.src = this.gameUrl();
+    host.appendChild(f); this.frame = f;
   }
-  cell(c, r) { var G = this.G; if (r < 0 || c < 0 || c >= G.cols) { return null; } if (!G.rows[r]) { G.rows[r] = this.genRow(r); } return G.rows[r][c]; }
-  open(k) { return k && (k.t === 'air' || k.hp <= 0); }
-  dig(c, r) {
-    var G = this.G, now = Date.now(); if (!G || G.phase !== 'play' || now < G.freezeUntil) { return; }
-    var dc = Math.abs(c - G.pc), dr = r - G.pr;
-    if (dc + Math.abs(dr) !== 1) { return; }
-    var k = this.cell(c, r); if (!k) { return; }
-    if (this.open(k)) { if (dr <= 0 || true) { G.pc = c; G.pr = r; this.fall(); } this.setState({ tick: now }); return; }
-    if (dr < 0) { this.float(c, r, '위로는 못 파요', '#FFE7A8'); return; }
-    k.hp -= 1; k.hitAt = now;
-    if (k.hp > 0) { this.sfx('thud'); G.shake = now; this.float(c, r, k.hp + '번 더', '#E8E2D8'); this.setState({ tick: now }); return; }
-    this.sfx('tap');
-    var D = this.D(), ga = this.loadG().gather || {}, found = ga.found || {};
-    if (k.t === 'spring') { G.W = Math.max(G.W, G.W + 2.6); G.shake = now; this.float(c, r, '물길이 터졌다!', '#9FE8FF'); this.sfx('splash'); }
-    else if (k.t === 'relic') {
-      G.shards += 8; var got = Math.random() < 0.4 + (G.F.rareUp || 0);
-      if (got) { G.relics += 1; }
-      this.jack('🏺', '옛 가마터 발견!', got ? '옛 도자기 조각 +1 · 파편 +8' : '파편 +8', !found.relic && got ? 'relic' : '');
-    } else if (D[k.t]) {
-      G.bag.push({ t: k.t, q: k.q }); this.float(c, r, D[k.t].sh + ' ' + '★'.repeat(k.q), k.q >= 3 ? '#FFD66B' : '#FFF4DE');
-      if (k.t === 'premium') { this.jack('✨', '특선 흙 발견!', '★'.repeat(k.q) + ' 특선 소지', !found.premium && !G.firsts.premium ? 'premium' : ''); }
-      else if (!found[k.t] && !G.firsts[k.t]) { G.firsts[k.t] = 1; this.float(c, r - 0.6, 'NEW 도감', '#9FE08F'); }
-    }
-    G.pc = c; G.pr = r; this.fall();
-    this.setState({ tick: now });
+  onMsg(e) {
+    var d = e && e.data, G = this.G; if (!d || !G || !this.frame || e.source !== this.frame.contentWindow) { return; }
+    if (d.type === 'gather-ready' && G.phase === 'play' && !G.sent) { G.sent = true; this.frame.contentWindow.postMessage({ type: 'gather-start', mode: G.mode, cfg: G.cfg }, '*'); }
+    if (d.type === 'gather-done' && G.phase === 'play') { this.finish(d); }
   }
-  fall() { var G = this.G, n = 0; while (n < 40) { var b = this.cell(G.pc, G.pr + 1); if (b && this.open(b)) { G.pr += 1; n++; } else { break; } } G.maxDepth = Math.max(G.maxDepth, G.pr); }
-  jack(ic, t, sub, firstKey) {
-    var G = this.G; if (firstKey) { G.firsts[firstKey] = 1; sub = sub + ' · 📖 도감 등록!'; }
-    G.jack = { ic: ic, t: t, sub: sub, at: Date.now() }; G.freezeUntil = Date.now() + 1100; G.frozen += 1100; this.sfx('rare');
-  }
-  float(c, r, t, col) { var G = this.G; G.floats.push({ id: ++G.uid, c: c, r: r, t: t, col: col, at: Date.now() }); }
-  climbDown(e) { var G = this.G; if (!G || G.phase !== 'play') { return; } if (e && e.preventDefault) { e.preventDefault(); } if (G.pr === 0) { this.finish(true); return; } G.climbAt = Date.now(); this.sfx('tap'); }
-  climbUp() { var G = this.G; if (G) { G.climbAt = 0; } }
-  // ── 광맥 잇기 ──
-  oreColor(G) {
-    var w = [['gz_white', 1], ['gz_celadon', 1], ['gz_black', 1], ['jinsa', 0.5 + (G.site === 'mine' ? 0.25 : 0) + (G.F.rareUp || 0) * 3]];
-    if (this.qlib().seasonOpen && this.qlib().seasonOpen()) { w.push(['petal', 0.22]); }
-    var tot = w.reduce(function (a, b) { return a + b[1]; }, 0), x = Math.random() * tot;
-    for (var i = 0; i < w.length; i++) { x -= w[i][1]; if (x <= 0) { return w[i][0]; } }
-    return w[0][0];
-  }
-  vIdx(e) {
-    var f = document.getElementById('vfield'); if (!f) { return -1; }
-    var r = f.getBoundingClientRect(), k = r.width / 348, x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k, G = this.G;
-    var c = Math.floor(x / 58), rr = Math.floor(y / 58); if (c < 0 || c >= G.cols || rr < 0 || rr >= G.rowsN) { return -1; }
-    var cx = c * 58 + 29, cy = rr * 58 + 29; if (Math.hypot(x - cx, y - cy) > 25) { return -2; } // 칸 가장자리는 무시 (대각선 연결을 쉽게)
-    return rr * G.cols + c;
-  }
-  vDown(e) {
-    var G = this.G, self = this; if (!G || G.phase !== 'play' || Date.now() < G.freezeUntil) { return; }
-    if (e && e.preventDefault) { e.preventDefault(); }
-    var i = this.vIdx(e); if (i < 0 || G.grid[i].h) { return; }
-    G.path = [i]; this.sfx('tap'); this.setState({ tick: Date.now() });
-    function mv(ev) {
-      var G2 = self.G; if (!G2 || !G2.path.length) { return; }
-      var j = self.vIdx(ev); if (j < 0) { return; }
-      var P = G2.path, last = P[P.length - 1]; if (j === last) { return; }
-      if (P.length >= 2 && j === P[P.length - 2]) { P.pop(); self.setState({ tick: Date.now() }); return; }
-      if (P.indexOf(j) >= 0 || G2.grid[j].h || G2.grid[j].c !== G2.grid[P[0]].c) { return; }
-      var a = { c: last % G2.cols, r: Math.floor(last / G2.cols) }, b = { c: j % G2.cols, r: Math.floor(j / G2.cols) };
-      if (Math.max(Math.abs(a.c - b.c), Math.abs(a.r - b.r)) !== 1) { return; }
-      P.push(j); self.sfx('tick'); self.setState({ tick: Date.now() });
-    }
-    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.vRelease(); }
-    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
-  }
-  vRelease() {
-    var G = this.G; if (!G) { return; } var P = G.path; G.path = [];
-    if (G.phase !== 'play' || P.length < 3) { this.setState({ tick: Date.now() }); return; }
-    var col = G.grid[P[0]].c, take = {}, n = P.length;
-    P.forEach(function (i) { take[i] = 1; });
-    var boom = n >= G.boomN;
-    if (boom) {
-      [P[P.length - 1]].forEach(function (i) { var c = i % G.cols, r = Math.floor(i / G.cols); for (var dr = -1; dr <= 1; dr++) { for (var dc = -1; dc <= 1; dc++) { var cc = c + dc, rr = r + dr; if (cc >= 0 && cc < G.cols && rr >= 0 && rr < G.rowsN) { take[rr * G.cols + cc] = 1; } } } });
-    }
-    var self = this, got = 0;
-    Object.keys(take).forEach(function (i) { var o = G.grid[i]; if (!o.h) { G.tally[o.c] = (G.tally[o.c] || 0) + 1; got++; } });
-    var pts = n * n * 5 + (got - n) * 10; G.score += pts; G.maxChain = Math.max(G.maxChain, n);
-    var li = P[P.length - 1]; this.float(li % G.cols, Math.floor(li / G.cols), (boom ? '💥 광맥 폭발! ' : '') + '+' + pts, boom ? '#FFD66B' : '#FFF4DE');
-    if (n >= 12) {
-      G.rubies += 1; var found = (this.loadG().gather || {}).found || {};
-      this.jack('💎', '광맥 대박!', n + '개 연결 · 진사 결정 +1 (진사유 +1)', !found.ruby && !G.firsts.ruby ? 'ruby' : '');
-    } else { this.sfx(boom ? 'reveal' : 'ok'); }
-    var D = this.D(); if (D[col] && !((this.loadG().gather || {}).found || {})[col] && !G.firsts[col]) { G.firsts[col] = 1; }
-    // 중력 : 빈 칸은 위에서 채운다
-    for (var c = 0; c < G.cols; c++) {
-      var keep = []; for (var r = G.rowsN - 1; r >= 0; r--) { var i2 = r * G.cols + c; if (!take[i2] || G.grid[i2].h) { keep.push(G.grid[i2]); } }
-      for (var r2 = G.rowsN - 1, t = 0; r2 >= 0; r2--, t++) { G.grid[r2 * G.cols + c] = keep[t] || { c: self.oreColor(G), h: false, id: ++G.uid, drop: Date.now() }; }
-    }
-    this.setState({ tick: Date.now() });
-  }
-  step() {
-    var G = this.G; if (!G) { return; }
-    var now = Date.now();
-    if (G.phase === 'count') { if (now >= G.t0) { G.phase = 'play'; G.lastStep = now; this.sfx('ignite'); } this.setState({ tick: now }); return; }
-    if (G.phase !== 'play') { return; }
-    var dt = (now - (G.lastStep || now)) / 1000; G.lastStep = now;
-    if (now < G.freezeUntil) { this.setState({ tick: now }); return; }
-    G.floats = G.floats.filter(function (f) { return now - f.at < 800; });
-    if (G.mode === 'dig') {
-      var el = (now - G.t0 - G.frozen) / 1000;
-      G.W += (G.v + el * 0.07) * dt;
-      if (G.climbAt && now - G.climbAt >= 1000) { this.finish(true); return; }
-      if (G.W >= G.pr - 0.15) { this.finish(false); return; }
-    } else {
-      var left = G.dur - (now - G.t0 - G.frozen);
-      if (left <= 0) { if (G.path.length) { this.vRelease(); } this.finish(true); return; }
-      if (left < 10000 && now >= G.nextHard) {
-        var cand = []; G.grid.forEach(function (o, i) { if (!o.h && G.path.indexOf(i) < 0) { cand.push(i); } });
-        if (cand.length) { G.grid[cand[Math.floor(Math.random() * cand.length)]].h = true; }
-        G.nextHard = now + 1100;
-      }
-    }
-    this.setState({ tick: now });
-  }
-  rewardsOf(G) {
-    var R = [];
-    if (G.mode === 'dig') {
-      var B = G.safe ? G.bag : G.bag.filter(function (x, i) { return i % 2 === 0; }), agg = {};
-      B.forEach(function (x) { var k = x.t; agg[k] = agg[k] || { n: 0, q: {} }; agg[k].n++; agg[k].q[x.q] = (agg[k].q[x.q] || 0) + 1; });
-      ['refined', 'kaolin', 'porcelain', 'premium'].forEach(function (k) { if (agg[k]) { R.push({ k: k, n: agg[k].n, q: agg[k].q }); } });
-      if (G.relics) { R.push({ k: 'relic', n: G.relics }); }
-    } else {
-      var T = G.tally;
-      ['gz_white', 'gz_celadon', 'gz_black'].forEach(function (k) { var n = Math.floor((T[k] || 0) / 12); if (n) { R.push({ k: k, n: n }); } });
-      var j = Math.floor((T.jinsa || 0) / 10) + G.rubies; if (j) { R.push({ k: 'jinsa', n: j }); }
-      var p = Math.floor((T.petal || 0) / 4); if (p) { R.push({ k: 'petal', n: p }); }
-      if (G.rubies) { R.push({ k: 'ruby', n: G.rubies }); }
-    }
-    return R;
-  }
-  finish(safe) {
-    var G = this.G; clearInterval(this.loop); G.phase = 'end'; G.safe = safe; G.path = [];
-    var R = this.rewardsOf(G), g = this.loadG(), QL = this.qlib();
-    var base = { mats: g.mats || {}, matsQ: g.matsQ || {} };
-    R.forEach(function (x) {
-      if (x.k === 'relic' || x.k === 'ruby' || x.k === 'petal') { return; }
-      if (x.q) { for (var q in x.q) { base = QL.addMat({ mats: base.mats, matsQ: base.matsQ }, x.k, x.q[q], +q); } }
-      else { base = QL.addMat({ mats: base.mats, matsQ: base.matsQ }, x.k, x.n, 1); }
-    });
+  // 조각 5개 = 재료 1개
+  finish(res) {
+    var G = this.G, D = this.D(), got = res.got || {}, R = [], self = this;
+    var keys = G.mode === 'dig' ? ['refined', 'kaolin', 'porcelain', 'premium'] : ['gz_white', 'gz_celadon', 'gz_black', 'jinsa'];
+    keys.forEach(function (k) { var p = got[D[k].from] || 0, n = Math.floor(p / 5); if (p) { R.push({ k: k, n: n, p: p }); } });
+    var g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
+    R.forEach(function (x) { if (x.n) { mats[x.k] = (mats[x.k] || 0) + x.n; } });
     var ga = {}; for (var a in (g.gather || {})) { ga[a] = g.gather[a]; }
     var best = {}; for (var b in (ga.best || {})) { best[b] = ga.best[b]; }
     var found = {}; for (var f in (ga.found || {})) { found[f] = ga.found[f]; }
-    var sc = G.mode === 'dig' ? G.maxDepth : G.score;
-    G.newBest = sc > (best[G.mode] || 0); if (G.newBest) { best[G.mode] = sc; }
-    G.newKeys = {}; R.forEach(function (x) { if (!found[x.k]) { G.newKeys[x.k] = 1; found[x.k] = Date.now(); } });
-    ga.best = best; ga.found = found; ga.relics = (ga.relics || 0) + (G.relics || 0);
-    var patch = { mats: base.mats, matsQ: base.matsQ, gather: ga };
-    if (G.shards) { patch.shards = (g.shards || 0) + G.shards; }
-    R.forEach(function (x) { if (x.k === 'petal') { patch.petals = (g.petals || 0) + x.n; } });
-    if (R.some(function (x) { return x.k === 'jinsa'; })) { var gf = {}; for (var z in (g.glazesFound || {})) { gf[z] = g.glazesFound[z]; } patch.glazesFound = gf; }
-    this.setG(patch);
-    G.R = R; this.sfx(R.length ? 'reveal' : 'fail');
+    var bk = G.mode === 'dig' ? 'dig2' : 'rock';
+    G.score = res.score || 0; G.newBest = G.score > (best[bk] || 0); if (G.newBest) { best[bk] = G.score; }
+    G.newKeys = {}; R.forEach(function (x) { if (x.n && !found[x.k]) { G.newKeys[x.k] = 1; found[x.k] = Date.now(); } });
+    ga.best = best; ga.found = found;
+    this.setG({ mats: mats, gather: ga });
+    G.R = R; G.phase = 'end';
+    this.sfx(R.some(function (x) { return x.n; }) ? 'reveal' : 'fail');
     this.setState({ tick: Date.now() });
   }
-  closeGame() { clearInterval(this.loop); this.G = null; this.setState({ tick: Date.now() }); }
+  closeGame() { if (this.frame) { try { this.frame.remove(); } catch (e) {} } this.frame = null; this.G = null; this.setState({ tick: Date.now() }); }
   fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), mm = Math.floor(s / 60), ss = s % 60; return mm + ':' + (ss < 10 ? '0' : '') + ss; }
   say(msg) { var self = this; this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200); }
   componentDidMount() {
@@ -474,150 +258,54 @@ class Component extends DCLogic {
     var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} }, 0);
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
-    try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    this.onMessage = function (e) { self.onMsg(e); };
+    try { window.addEventListener('storage', this.onStore); window.addEventListener('message', this.onMessage); } catch (e) {}
     this.clock = setInterval(function () { if (!self.G) { self.setState({ tick: Date.now() }); } }, 1000);
   }
   componentWillUnmount() {
-    clearInterval(this.loop); clearInterval(this.clock); clearTimeout(this.tt);
-    try { window.removeEventListener('storage', this.onStore); } catch (e) {}
-  }
-  oreStyle(k, extra) {
-    var d = this.D()[k] || { col: '#999', dk: '#555' };
-    return 'border-radius:38% 62% 46% 54% / 55% 40% 60% 45%;background:radial-gradient(circle at 32% 28%,#FFFFFF 0,' + d.col + ' 34%,' + d.dk + ' 100%);border:2.5px solid rgba(0,0,0,.55);box-sizing:border-box;' + (extra || '');
+    clearInterval(this.clock); clearTimeout(this.tt);
+    try { window.removeEventListener('storage', this.onStore); window.removeEventListener('message', this.onMessage); } catch (e) {}
   }
   renderVals() {
-    var self = this, s = this.state, g = s.g, D = this.D(), T = this.tixState(g), G = this.G, now = Date.now(), S = this.site();
-    var mats = g.mats || {}, MQ = g.matsQ || {}, ga = g.gather || {}, best = ga.best || {}, found = ga.found || {};
-    var invClay = ['refined', 'kaolin', 'porcelain', 'premium'].map(function (k) {
-      var Q = MQ[k] || {}, q = ((Q[3] || 0) ? '★3 ' + Q[3] + ' ' : '') + ((Q[2] || 0) ? '★2 ' + Q[2] : '');
-      return { name: D[k].sh, img: D[k].img, n: mats[k] || 0, q: q || ' ', aria: D[k].name + ' ' + (mats[k] || 0) + '개' };
-    });
-    var invGlz = ['gz_white', 'gz_celadon', 'gz_black', 'jinsa'].map(function (k) { return { name: D[k].sh, n: mats[k] || 0, aria: D[k].name + ' ' + (mats[k] || 0) + '개', dot: 'flex:0 0 18px;height:18px;' + self.oreStyle(k) }; });
+    var self = this, s = this.state, g = s.g, D = this.D(), T = this.tixState(g), G = this.G, S = this.site();
+    var mats = g.mats || {}, ga = g.gather || {}, best = ga.best || {}, found = ga.found || {};
+    var inv = function (k) { return { name: D[k].sh, img: D[k].img, n: mats[k] || 0, aria: D[k].name + ' ' + (mats[k] || 0) + '개' }; };
+    var invClay = ['refined', 'kaolin', 'porcelain', 'premium'].map(inv);
+    var invGlz = ['gz_white', 'gz_celadon', 'gz_black', 'jinsa'].map(inv);
     var can = T.tix > 0;
     var btn = function (c) { return 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:10px 16px;border-radius:14px;font-family:Jua,sans-serif;font-size:17px;text-align:center;' + (can ? 'background:' + c + ';border:3px solid #2B1A0F;box-shadow:0 4px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55'); };
     var box = 'box-sizing:border-box;padding:12px 13px;border-radius:20px;background:rgba(255,250,240,.96);border:3.5px solid #5B3A24;box-shadow:0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:8px';
     var modes = [
-      { id: 'dig', name: '지층 파기', ic: '⛏️', desc: '땅을 파 내려갈수록 좋은 흙(★)이 나와요. 위에서 물이 쫓아오니 잠기기 전에 꾹 눌러 올라오세요!', rule: '잠기면 캔 흙 절반을 잃어요 · 깊을수록 ★ 품질 ↑ (발색 +4~8%)', best: (best.dig || 0) * 0.5 + 'm', c: '#B9533A', bg: '#C9A27A' },
-      { id: 'vein', name: '광맥 잇기', ic: '💎', desc: '같은 색 광석을 이어 그어 캐요. 길게 이을수록 크게, ' + (7 + ((this.qlib().fx(g).veinBoom) || 0)) + '개 이상이면 광맥 폭발!', rule: '색 = 유약 원료 · 고운 원료는 담글 때 발색 +6%', best: (best.vein || 0) + '점', c: '#2E6B5F', bg: '#9DB8AE' }
+      { id: 'dig', name: '흙 파기', img: '_blob/4cfc6dd980b06d7a69c3619abed1f676.png', desc: '공터를 톡 누르면 흙이 한 겹씩 벗겨져요. 깊을수록 좋은 흙! 흙이 다 드러나야 캐져요.', rule: '조각 5개 = 흙 1개 · 2초 안에 연달아 캐면 콤보', best: (best.dig2 || 0) + '점', c: '#B9533A' },
+      { id: 'rock', name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', desc: '손가락으로 돌을 쓸고 지나가면 부서지며 유약 원료가 나와요. 반짝이는 황금 돌은 진사 2개 확정!', rule: '조각 5개 = 원료 1개 · 유약 1회에 원료 1개', best: (best.rock || 0) + '점', c: '#2E6B5F' }
     ].map(function (m) {
       var hot = S.mode === m.id;
-      return { name: m.name, ic: m.ic, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c), btnText: '시작 · 🎫1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
-        iconBox: 'flex:0 0 58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;border:2.5px solid #5B3A24;background:' + m.bg,
+      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c), btnText: '시작 · 🎫1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
         siteTag: hot ? 'padding:1px 7px;border-radius:8px;background:#E8B640;font-family:Jua,sans-serif;font-size:11px;color:#2B1A0F' : 'display:none', siteTagText: S.ic + ' 오늘 보너스' };
     });
-    var CX = ['refined', 'kaolin', 'porcelain', 'premium', 'gz_white', 'gz_celadon', 'gz_black', 'jinsa', 'petal', 'ruby', 'relic'];
+    var CX = ['refined', 'kaolin', 'porcelain', 'premium', 'gz_white', 'gz_celadon', 'gz_black', 'jinsa'];
     var codex = CX.map(function (k) {
       var f = !!found[k], d = D[k];
-      var ic = d.img ? '' : (d.ic || '');
-      var bx = 'position:relative;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-sizing:border-box;border:2px solid ' + (f ? '#E8B640' : 'rgba(255,231,168,.25)') + ';';
-      if (d.img) { bx += 'background:' + (f ? '#FFF4DE' : 'rgba(255,255,255,.08)') + ' url(' + d.img + ') center/22px no-repeat;' + (f ? '' : 'filter:brightness(0) opacity(.4);'); }
-      else if (d.col) { bx += f ? 'background:#3E2616;' : 'background:rgba(255,255,255,.06);'; ic = ''; bx += ''; }
-      else { bx += f ? 'background:#3E2616;' : 'background:rgba(255,255,255,.06);filter:grayscale(1) opacity(.35);'; }
-      if (d.col) { bx = bx + 'box-shadow:inset 0 0 0 5px ' + (f ? '#3E2616' : 'rgba(0,0,0,.2)') + ';background:' + (f ? 'radial-gradient(circle at 35% 30%,#fff 0,' + d.col + ' 40%,' + d.dk + ' 100%)' : 'rgba(255,255,255,.08)') + ';'; }
-      return { box: bx, t: ic, aria: (f ? d.name : '미발견') };
+      var bx = 'position:relative;width:34px;height:34px;border-radius:8px;box-sizing:border-box;border:2px solid ' + (f ? '#E8B640' : 'rgba(255,231,168,.25)') + ';background:' + (f ? '#FFF4DE' : 'rgba(255,255,255,.08)') + ' url(' + d.img + ') center/26px no-repeat;' + (f ? '' : 'filter:brightness(0) opacity(.4);');
+      return { box: bx, t: '', aria: (f ? d.name : '미발견') };
     });
     var out = {
       tix: T.tix, tixMax: T.max, tixNext: T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1', toastOn: !!s.toast, toast: s.toast,
       siteName: S.name, siteIc: S.ic, siteDesc: S.desc, siteBg: S.bg, invClay: invClay, invGlz: invGlz, modes: modes, codex: codex,
       foundN: CX.filter(function (k) { return found[k]; }).length, foundAll: CX.length,
-      playing: !!G, isDig: !!G && G.mode === 'dig', isVein: !!G && G.mode === 'vein', counting: !!G && G.phase === 'count', ended: !!G && G.phase === 'end',
-      jackOn: !!G && !!G.jack && now - G.jack.at < 1100
+      playing: !!G, ended: !!G && G.phase === 'end', gameName: G ? (G.mode === 'dig' ? '흙 파기' : '돌 부수기') : '',
+      resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: ''
     };
-    var EMPTY = { gameName: '', fieldBg: '', bar: '', barAria: '', barNum: '', barNumStyle: '', chips: [], cells: [], player: 'display:none', water: 'display:none', floats: [], climbDown: function () {}, climbUp: function () {}, climbBtn: 'display:none', climbFill: '', climbText: '', ores: [], pathPts: '', vDown: function () {}, tally: [], veinHint: '', jackIc: '', jackT: '', jackSub: '', howTo: '', countText: '', countStyle: '', resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: '' };
-    if (!G) { return Object.assign(out, EMPTY); }
-    Object.assign(out, EMPTY);
-    var shaking = now - (G.shake || 0) < 300;
-    out.fieldBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:20;overflow:hidden;' + (G.mode === 'dig' ? 'background:linear-gradient(#9FC7D6 0,#CFE3C9 10%,#6B4A2E 11%,#3E2616 100%);' : 'background:radial-gradient(ellipse at 50% 0,#5B4A3A 0,#2E2219 60%,#1C130D 100%);') + (shaking ? 'animation:gShake .3s;' : '');
-    if (G.jack) { out.jackIc = G.jack.ic; out.jackT = G.jack.t; out.jackSub = G.jack.sub; }
-    var chip = function (t, bg, col, extra) { return { t: t, s: "padding:3px 9px;border-radius:10px;font-family:'Jua',sans-serif;font-size:14px;background:" + bg + ';color:' + col + ';' + (extra || '') }; };
-    if (G.mode === 'dig') {
-      out.gameName = '지층 파기';
-      var gap = G.pr - G.W, danger = gap < 3;
-      var depthQ = G.pr >= 44 ? 3 : (G.pr >= 20 ? 2 : 1);
-      out.bar = 'height:100%;width:' + Math.max(0, Math.min(100, gap / 8 * 100)).toFixed(1) + '%;background:' + (danger ? '#3AA6D9' : '#5FB052') + ';' + (danger ? 'animation:gBlink .4s infinite;' : '');
-      out.barAria = '물과의 거리 ' + Math.max(0, gap).toFixed(1) + '칸';
-      out.barNum = '💧' + Math.max(0, gap).toFixed(1); out.barNumStyle = "flex:0 0 auto;font-family:'Jua',sans-serif;font-size:17px;color:" + (danger ? '#9FE8FF' : '#FFF4DE') + ';text-shadow:0 2px 0 rgba(0,0,0,.6)';
-      var bagN = {}; G.bag.forEach(function (x) { bagN[x.t] = (bagN[x.t] || 0) + 1; });
-      out.chips = [chip('깊이 ' + (G.pr * 0.5).toFixed(1) + 'm', 'rgba(43,26,15,.85)', '#FFE7A8'), chip('여기 ' + '★'.repeat(depthQ), 'rgba(43,26,15,.85)', '#FFD66B'), chip('🎒 ' + G.bag.length, 'rgba(255,231,168,.92)', '#5B3A24')];
-      if (danger) { out.chips.push(chip('물이 온다!', '#3AA6D9', '#FFFDF5', 'animation:gBlink .5s infinite')); }
-      var top = Math.max(0, G.pr - 3), CS = 52, cells = [];
-      for (var r = top; r < top + 11; r++) {
-        for (var c = 0; c < G.cols; c++) {
-          var k = this.cell(c, r), x = c * CS, y = (r - top) * CS, adj = Math.abs(c - G.pc) + Math.abs(r - G.pr) === 1 && r >= G.pr, op = this.open(k);
-          var st = 'all:unset;position:absolute;left:' + x + 'px;top:' + y + 'px;width:' + CS + 'px;height:' + CS + 'px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;touch-action:none;-webkit-tap-highlight-color:transparent;cursor:' + (adj ? 'pointer' : 'default') + ';';
-          var ic = 'width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:22px;pointer-events:none;', tx = '', aria = '';
-          var deep = Math.min(1, r / 40);
-          if (op) { st += 'background:' + (r === 0 ? 'linear-gradient(#9FC7D6,#BFE0C8)' : 'rgba(30,18,10,' + (0.55 + deep * 0.2) + ')') + ';'; ic += 'display:none;'; aria = '빈 칸'; }
-          else {
-            var soil = 'rgb(' + Math.round(138 - deep * 50) + ',' + Math.round(100 - deep * 40) + ',' + Math.round(64 - deep * 25) + ')';
-            st += 'background:' + soil + ';border:1.5px solid rgba(0,0,0,.28);';
-            if (k.t === 'rock') { st += 'background:radial-gradient(circle at 35% 30%,#C9C4BC 0,#8A847C 55%,#5A554F 100%);border:2px solid #2B2622;border-radius:10px;'; tx = k.hp < (G.pickHits) ? '💥' : ''; ic += 'font-size:18px;opacity:.85;'; aria = '바위 · ' + k.hp + '번'; }
-            else if (k.t === 'spring') { st += 'background-image:linear-gradient(135deg,transparent 40%,#6FC3E8 42%,#6FC3E8 48%,transparent 50%),linear-gradient(45deg,transparent 55%,#6FC3E8 57%,#6FC3E8 62%,transparent 64%);'; tx = '💧'; ic += 'font-size:16px;opacity:.75;'; aria = '물길 · 건드리면 물이 쏟아진다'; }
-            else if (k.t === 'relic') { tx = '🏺'; ic += 'filter:sepia(.6);'; st += 'box-shadow:inset 0 0 12px 2px rgba(255,214,107,.6);'; aria = '옛 가마터'; }
-            else if (D[k.t]) { ic += 'background:url(' + D[k.t].img + ') center/contain no-repeat;' + (k.q >= 3 ? 'filter:drop-shadow(0 0 5px #FFD66B);' : ''); aria = D[k.t].name; }
-            else { ic += 'display:none;'; aria = '흙'; }
-            if (adj) { st += 'box-shadow:inset 0 0 0 3px rgba(255,231,168,.85);'; }
-            if (k.hitAt && now - k.hitAt < 160) { st += 'filter:brightness(1.4);'; }
-          }
-          (function (cc, rr) { cells.push({ s: st, ic: ic, t: tx, aria: aria, tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.dig(cc, rr); } }); })(c, r);
-        }
-      }
-      out.cells = cells;
-      out.player = 'position:absolute;left:' + (G.pc * CS + 6) + 'px;top:' + ((G.pr - top) * CS + 4) + 'px;width:40px;height:44px;pointer-events:none;transition:left .08s,top .12s;z-index:3';
-      var wy = (G.W - top + 1) * CS;
-      out.water = wy > 0 ? 'position:absolute;left:0;top:0;width:364px;height:' + Math.min(572, wy).toFixed(1) + 'px;z-index:4;pointer-events:none;background:linear-gradient(rgba(58,166,217,.55),rgba(30,110,170,.78));border-bottom:4px solid #BFE8FF;box-shadow:0 4px 12px rgba(159,232,255,.6)' : 'display:none';
-      out.floats = G.floats.map(function (f) { return { t: f.t, s: "position:absolute;left:" + (f.c * CS + 26) + "px;top:" + ((f.r - top) * CS + 6) + "px;z-index:5;animation:gFloat .8s ease-out forwards;font-family:'Jua',sans-serif;font-size:15px;white-space:nowrap;color:" + f.col + ';text-shadow:0 2px 0 rgba(0,0,0,.8);pointer-events:none' }; });
-      var cp = G.climbAt ? Math.min(1, (now - G.climbAt) / 1000) : 0;
-      out.climbDown = function (e) { self.climbDown(e); }; out.climbUp = function () { self.climbUp(); };
-      out.climbBtn = 'all:unset;cursor:pointer;position:absolute;left:40px;right:40px;top:680px;height:52px;box-sizing:border-box;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#FFF4DE;border:3px solid #2B1A0F;box-shadow:0 4px 0 #2B1A0F;font-family:Jua,sans-serif;font-size:18px;color:#2B1A0F;touch-action:none;user-select:none;-webkit-user-select:none';
-      out.climbFill = 'position:absolute;left:0;top:0;bottom:0;width:' + (cp * 100).toFixed(0) + '%;background:#5FB052';
-      out.climbText = G.pr === 0 ? '🪢 그만 캐고 돌아가기' : (cp > 0 ? '올라가는 중… 손을 떼지 마요' : '🪢 꾹 눌러 올라가기 (1초)');
-      out.howTo = '빛나는 칸을 톡톡 눌러 파 내려가요\n깊을수록 ★ 좋은 흙 · 💧물길은 피하기\n물이 닿기 전에 「꾹 눌러 올라가기」!';
-    } else {
-      out.gameName = '광맥 잇기';
-      var left = G.phase === 'play' ? Math.max(0, G.dur - (now - G.t0 - G.frozen)) : (G.phase === 'count' ? G.dur : 0), lr = left / G.dur;
-      out.bar = 'height:100%;width:' + (lr * 100).toFixed(1) + '%;background:' + (left < 10000 ? '#D0452B' : '#5FB052') + ';' + (left < 10000 ? 'animation:gBlink .5s infinite;' : '');
-      out.barAria = '남은 시간 ' + Math.ceil(left / 1000) + '초'; out.barNum = Math.ceil(left / 1000); out.barNumStyle = "flex:0 0 30px;text-align:right;font-family:'Jua',sans-serif;font-size:22px;color:" + (left < 10000 ? '#FF8A6B' : '#FFF4DE') + ';text-shadow:0 2px 0 rgba(0,0,0,.6)';
-      out.chips = [chip('점수 ' + G.score, 'rgba(43,26,15,.85)', '#FFE7A8'), chip('최대 연결 ' + G.maxChain, 'rgba(43,26,15,.85)', '#FFD66B')];
-      if (G.path.length >= 3) { out.chips.push(chip(G.path.length + '개 연결' + (G.path.length >= G.boomN ? ' 💥' : ''), G.path.length >= G.boomN ? '#FFD66B' : 'rgba(255,231,168,.92)', '#7A2F1E')); }
-      if (left < 10000 && G.phase === 'play') { out.chips.push(chip('광석이 굳는다!', '#8A847C', '#FFFDF5', 'animation:gBlink .5s infinite')); }
-      var inP = {}; G.path.forEach(function (i) { inP[i] = 1; });
-      out.ores = G.grid.map(function (o, i) {
-        var c = i % G.cols, r = Math.floor(i / G.cols), on = !!inP[i];
-        var base = 'position:absolute;left:' + (c * 58 + 5) + 'px;top:' + (r * 58 + 5) + 'px;width:48px;height:48px;transition:top .15s;';
-        if (o.h) { return { s: base + 'border-radius:12px;background:repeating-linear-gradient(45deg,#7D776F 0 6px,#6A645D 6px 12px);border:2.5px solid #2B2622;box-sizing:border-box;opacity:.9' }; }
-        return { s: base + self.oreStyle(o.c, on ? 'transform:scale(1.14);box-shadow:0 0 0 3px #FFF4DE,0 0 14px 4px rgba(255,244,222,.8);' : 'box-shadow:inset -4px -5px 0 rgba(0,0,0,.22);') };
-      });
-      out.pathPts = G.path.map(function (i) { return ((i % G.cols) * 58 + 29) + ',' + (Math.floor(i / G.cols) * 58 + 29); }).join(' ');
-      out.vDown = function (e) { self.vDown(e); };
-      out.floats = G.floats.map(function (f) { return { t: f.t, s: "position:absolute;left:" + (f.c * 58 + 29) + "px;top:" + (f.r * 58) + "px;z-index:5;animation:gFloat .8s ease-out forwards;font-family:'Jua',sans-serif;font-size:17px;white-space:nowrap;color:" + f.col + ';text-shadow:0 2px 0 rgba(0,0,0,.8);pointer-events:none' }; });
-      var TL = [['gz_white', 12], ['gz_celadon', 12], ['gz_black', 12], ['jinsa', 10]];
-      if (this.qlib().seasonOpen && this.qlib().seasonOpen()) { TL.push(['petal', 4]); }
-      out.tally = TL.map(function (p) { var n = G.tally[p[0]] || 0; return { t: D[p[0]].glz + ' ' + Math.floor(n / p[1]) + ' (' + (n % p[1]) + '/' + p[1] + ')', dot: 'display:inline-block;width:14px;height:14px;margin-right:3px;vertical-align:-2px;' + self.oreStyle(p[0]), s: "padding:3px 7px;border-radius:10px;background:rgba(255,244,222,.92);font-family:'Jua',sans-serif;font-size:11.5px;color:#2B1A0F;white-space:nowrap" }; });
-      out.veinHint = '같은 색 3개 이상 이어 긋기 · 대각선도 OK · 12개 이상이면 진사 결정(진사유 +1)!';
-      out.howTo = '같은 색 광석을 손가락으로 이어 그어요\n' + G.boomN + '개 이상이면 💥광맥 폭발 · 12개 이상이면 💎대박\n마지막 10초엔 광석이 하나씩 굳어요';
-    }
-    var cd = Math.max(0, Math.ceil((G.t0 - now) / 870));
-    out.countText = cd > 0 ? String(cd) : '시작!';
-    out.countStyle = "font-family:'Jua',sans-serif;font-size:72px;color:#FFD66B;text-shadow:0 4px 0 #7A2F1E;animation:gCount .87s ease-out infinite";
-    if (G.phase === 'end') {
+    if (G && G.phase === 'end') {
       var R = G.R || [];
       out.rewards = R.map(function (x) {
-        var d = D[x.k], q = x.q ? Object.keys(x.q).sort().reverse().map(function (qq) { return '★' + qq + '×' + x.q[qq]; }).join(' ') : '';
-        var icS = d.img ? 'width:34px;height:34px;background:url(' + d.img + ') center/contain no-repeat' : (d.col ? 'width:26px;height:26px;margin:4px 0;' + self.oreStyle(x.k) : 'font-size:26px;line-height:34px');
-        return { ic: d.img || d.col ? '' : d.ic, icS: icS, name: d.name, n: x.n, q: q, newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#4A9440;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
+        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat;' + (x.n ? '' : 'opacity:.45'), name: D[x.k].name, n: x.n, nS: 'font-size:16px;color:' + (x.n ? '#2F6328' : '#A89880'), q: '조각 ' + x.p + (x.p % 5 ? ' · ' + (x.p % 5) + '개 남음' : ''),
+          newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#4A9440;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
       });
-      if (G.mode === 'dig') {
-        out.resTitle = G.safe ? '무사히 올라왔다!' : '물에 잠겼다!';
-        out.resSub = '최대 깊이 ' + (G.maxDepth * 0.5).toFixed(1) + 'm' + (G.shards ? ' · 파편 +' + G.shards : '');
-        out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
-        out.resHint = !G.safe ? '캔 흙의 절반을 물에 흘려보냈어요\n다음엔 물이 3칸 남으면 올라가 봐요' : (R.length ? '★2·★3 흙으로 빚으면 발색 하한이 +4%/+8% 올라가요' : '흙을 하나도 못 캤어요 · 조금 더 깊이 내려가 봐요');
-      } else {
-        out.resTitle = R.length ? '채굴 완료!' : '아쉽다…';
-        out.resSub = '점수 ' + G.score + ' · 최대 연결 ' + G.maxChain;
-        out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
-        out.resHint = R.length ? '고운 원료는 같은 유약으로 담글 때 자동으로 써요 (발색 +6%)' : '같은 색 광석 12개(진사 10개)를 모으면 원료 1개';
-      }
+      var tot = R.reduce(function (a, x) { return a + x.n; }, 0);
+      out.resTitle = tot ? (G.mode === 'dig' ? '흙을 캤다!' : '원료를 모았다!') : '아쉽다…';
+      out.resSub = '점수 ' + G.score; out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
+      out.resHint = tot ? (G.mode === 'dig' ? '조각 5개가 흙 1개가 돼요 · 남은 조각은 사라져요' : '원료는 유약 1회에 1개씩 써요') : '같은 종류 조각 5개를 모아야 재료 1개가 돼요';
       out.closeGame = function () { self.closeGame(); };
       out.again = function () { var m0 = G.mode; self.closeGame(); setTimeout(function () { self.start(m0); }, 50); };
       out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (T.tix > 0 ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');

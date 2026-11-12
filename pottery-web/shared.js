@@ -62,11 +62,11 @@
       fame: { t: '명성', l: '명성 경험치', b: 100, m: 100, u: '%' },
       expand: { t: '공방', l: '공방 바닥 줄 수', b: 7, m: 2, u: '줄' },
       tixMax: { t: '채집', l: '채집권 최대', b: 5, m: 1, u: '장' },
-      pick: { t: '채집', l: '바위 깨기 타격 수', b: 3, m: -1, u: '번' },
-      waterSlow: { t: '채집', l: '물 차오르는 속도', b: 100, m: -100, u: '%' },
-      rareUp: { t: '채집', l: '희귀 원료 확률', b: 0, m: 100, u: '%p' },
-      veinTime: { t: '채집', l: '광맥 잇기 시간', b: 30, m: 1, u: '초' },
-      veinBoom: { t: '채집', l: '광맥 폭발 연결 수', b: 7, m: 1, u: '개' }
+      gTime: { t: '채집', l: '채집 제한 시간', b: 30, m: 1, u: '초' },
+      comboUp: { t: '채집', l: '흙 파기 콤보 시간', b: 2, m: 1, u: '초' },
+      goldUp: { t: '채집', l: '황금 돌 등장 빈도', b: 100, m: 100, u: '%' },
+      rareUp: { t: '채집', l: '희귀 흙·진사 확률', b: 0, m: 100, u: '%p' },
+      digWide: { t: '채집', l: '삽 한 번 파는 범위', b: 100, m: 100, u: '%' }
     };
     var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·초벌' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
     var RROW = {
@@ -112,10 +112,10 @@
       ],
       gather: [
         ['c00', 0, 1, '채집 요령', [], { tixMax: 1 }, 25, 0],
-        ['c10', 1, 0, '곡괭이 손질', ['c00'], { pick: 1 }, 40, 300], ['c11', 1, 1, '물길 읽기 I', ['c00'], { waterSlow: 0.1 }, 40, 300], ['c12', 1, 2, '광맥 눈썰미 I', ['c00'], { veinTime: 3 }, 40, 300],
-        ['c20', 2, 0, '희귀 감별 I', ['c10'], { rareUp: 0.03 }, 60, 600], ['c21', 2, 1, '채집 가방', ['c11'], { tixMax: 1 }, 70, 800], ['c22', 2, 2, '광맥 눈썰미 II', ['c12'], { veinTime: 3 }, 60, 600],
-        ['c30', 3, 0, '물길 읽기 II', ['c20', 'c21'], { waterSlow: 0.1 }, 90, 1200], ['c31', 3, 1, '희귀 감별 II', ['c21'], { rareUp: 0.03 }, 90, 1200], ['c32', 3, 2, '광맥 폭발 감각', ['c22'], { veinBoom: -1 }, 100, 1500],
-        ['c40', 4, 1, '채집 장인', ['c30', 'c31', 'c32'], { tixMax: 1, waterSlow: 0.1, rareUp: 0.03 }, 160, 3000]
+        ['c10', 1, 0, '넉넉한 시간 I', ['c00'], { gTime: 3 }, 40, 300], ['c11', 1, 1, '콤보 감각 I', ['c00'], { comboUp: 0.5 }, 40, 300], ['c12', 1, 2, '황금 눈썰미 I', ['c00'], { goldUp: 0.25 }, 40, 300],
+        ['c20', 2, 0, '희귀 감별 I', ['c10'], { rareUp: 0.03 }, 60, 600], ['c21', 2, 1, '채집 가방', ['c11'], { tixMax: 1 }, 70, 800], ['c22', 2, 2, '황금 눈썰미 II', ['c12'], { goldUp: 0.25 }, 60, 600],
+        ['c30', 3, 0, '넓은 삽', ['c20', 'c21'], { digWide: 0.12 }, 90, 1200], ['c31', 3, 1, '희귀 감별 II', ['c21'], { rareUp: 0.03 }, 90, 1200], ['c32', 3, 2, '넉넉한 시간 II', ['c22'], { gTime: 3 }, 100, 1500],
+        ['c40', 4, 1, '채집 장인', ['c30', 'c31', 'c32'], { tixMax: 1, comboUp: 0.5, rareUp: 0.03 }, 160, 3000]
       ]
     };
     var RNODE = {};
@@ -169,22 +169,22 @@
       if (yo) { pct = 100; }
       return { pct: pct, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
     }
-    // 채집 원료 품질 → 발색 하한 보너스 (흙 ★2 +4%, ★3 +8%, 고운 유약 원료 +6%)
-    function qualBonus(it) { return ((it && it.cq ? it.cq : 1) - 1) * 4 + (it && it.gq ? 6 : 0); }
-    // 흙 품질 재고 : mats[k] 전체 수, matsQ[k] = { 2: n, 3: n } (나머지는 ★1)
-    function addMat(g, k, n, q) {
-      var m = {}, mq = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; } for (x in (g.matsQ || {})) { mq[x] = {}; for (var y in g.matsQ[x]) { mq[x][y] = g.matsQ[x][y]; } }
-      m[k] = (m[k] || 0) + n; if (q && q > 1) { mq[k] = mq[k] || {}; mq[k][q] = (mq[k][q] || 0) + n; }
-      return { mats: m, matsQ: mq };
+    // 채집 원료 품질(★)·고운 원료 시스템은 없앴다 (채집 개편 2). 예전 호출부가 깨지지 않게 이름만 남긴다
+    function qualBonus(it) { return 0; }
+    function addMat(g, k, n) {
+      var m = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; }
+      m[k] = (m[k] || 0) + n;
+      return { mats: m, matsQ: {} };
     }
     function takeClay(g, k) {
-      var m = {}, mq = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; } for (x in (g.matsQ || {})) { mq[x] = {}; for (var y in g.matsQ[x]) { mq[x][y] = g.matsQ[x][y]; } }
-      if (!(m[k] > 0)) { return { mats: m, matsQ: mq, q: 1 }; }
-      var q = 1, Q = mq[k] || {}; if ((Q[3] || 0) > 0) { q = 3; } else if ((Q[2] || 0) > 0) { q = 2; }
-      m[k] -= 1; if (q > 1) { Q[q] -= 1; mq[k] = Q; }
-      return { mats: m, matsQ: mq, q: q };
+      var m = {}, x; for (x in (g.mats || {})) { m[x] = g.mats[x]; }
+      if (m[k] > 0) { m[k] -= 1; }
+      return { mats: m, matsQ: {}, q: 1 };
     }
-    function topQ(g, k) { var Q = (g.matsQ || {})[k] || {}; return (Q[3] || 0) > 0 ? 3 : ((Q[2] || 0) > 0 ? 2 : 1); }
+    function topQ() { return 1; }
+    // 유약 1회에 드는 원료 (벚꽃유는 축제 한정이라 원료 없음)
+    var GMAT = { white: 'gz_white', celadon: 'gz_celadon', black: 'gz_black', jinsa: 'jinsa' };
+    var GMATN = { white: '장석', celadon: '청자 철분', black: '흑유 철광', jinsa: '진사' };
     function colorPctOf(p) { return typeof p.colorPct === 'number' ? p.colorPct : Math.min(100, (p.color || 1) * 20); }
     // ── 등장인물 · 대사 (기획 예시 · 자유롭게 수정) ─────────────
     var NPC = {
@@ -408,7 +408,7 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>
@@ -442,6 +442,12 @@
     // 1) 저장 데이터 이관 (스테이지 → 메인 의뢰)
     if (g0.pieces && !g0.mq) { var mg = L.migrate(g0); if (mg) { patch(mg); } }
     if (g0.pieces && !load().sq) { var msq = L.migrateSeason(load()); if (msq) { patch(msq); } } // 시즌 스테이지 → 시즌 의뢰
+    // 1-1) 채집 개편 2 : 흙 품질(★)·고운 원료 없앰 → 유약마다 원료 1개 소모. 장석·철분·철광 최소 5개씩 지급 (한 번만)
+    if (!load().gv2) {
+      var gg = load(), mm2 = {}; for (var mk in (gg.mats || {})) { mm2[mk] = gg.mats[mk]; }
+      ['gz_white', 'gz_celadon', 'gz_black'].forEach(function (k) { mm2[k] = Math.max(mm2[k] || 0, 5); });
+      patch({ gv2: 1, mats: mm2, matsQ: {} });
+    }
     // 1-2) 연구 구조 이관: 옛 연구(파편 지불분) 환급 · 기존 9칸 건조대 유지
     if (g0.pieces && g0.resV !== 2) {
       var g1 = load(), OLD = { tech: [40, 50, 80, 110, 160], glaze: [40, 60, 120, 150, 220], shop: [30, 50, 90, 140, 200] }, refund = 0, old = g1.research || {};
@@ -714,7 +720,7 @@
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: { gz_white: 5, gz_celadon: 5, gz_black: 5 }, gv2: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tut(Wh_|Fan_|Jade_|2$)/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
     }

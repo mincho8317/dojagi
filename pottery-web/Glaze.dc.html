@@ -415,11 +415,13 @@ class Component extends DCLogic {
     this.setState({ lift: { zone: zone, ms: ms, k: Date.now() } });
     this.lt = setTimeout(function () { self.setState({ lift: null }); }, 1100);
   }
+  noMat(g, id) { var k = this.qlib().GMAT[id]; return !!k && !(((g.mats || {})[k] || 0) > 0); }
   start(viaDrag) {
     if (this.state.holding) { return; }
     var cur = this.current();
     if (!cur) { this.say('유약 바를 기물이 없다', 'fail'); return; }
-    if (this.gz() === 'jinsa' && !(((this.state.g.mats || {}).jinsa || 0) > 0)) { this.say('진사유가 없다 · 상점 재료 탭에서 450G', 'fail'); return; }
+    var QG = this.qlib(), mk0 = QG.GMAT[this.gz()];
+    if (mk0 && !(((this.state.g.mats || {})[mk0] || 0) > 0)) { this.say(QG.GMATN[this.gz()] + '이(가) 없다 · 채집 「돌 부수기」나 상점에서', 'fail'); return; }
     if (this.gz() === 'sakura' && !((this.state.g.glazesFound || {}).sakura)) { this.say('벚꽃유가 없다 · 봄 축제 상점에서 꽃잎으로 산다', 'fail'); return; }
     var self = this;
     this.t0 = Date.now();
@@ -448,16 +450,12 @@ class Component extends DCLogic {
     item.mm = Math.round(ms / 10) / 100;
     var rest = (g.glazeList || []).filter(function (x) { return x.id !== cur.id; });
     var patch = { glazeList: rest, kilnList: (g.kilnList || []).concat([item]) };
-    if (item.glaze === 'jinsa') {
-      var m = {}; for (var a in g.mats) { m[a] = g.mats[a]; }
-      m.jinsa = Math.max(0, (m.jinsa || 0) - 1);
+    // 유약 1회 = 원료 1개 (백자유 장석 · 청자유 철분 · 흑유 철광 · 진사유 진사)
+    var mk = this.qlib().GMAT[item.glaze];
+    if (mk) {
+      var m = {}; for (var a in (g.mats || {})) { m[a] = g.mats[a]; }
+      m[mk] = Math.max(0, (m[mk] || 0) - 1);
       patch.mats = m;
-    }
-    // 채집한 고운 유약 원료가 있으면 1개 써서 발색 하한 +6%
-    var gk = 'gz_' + item.glaze;
-    if (((patch.mats || g.mats || {})[gk] || 0) > 0) {
-      var m2 = {}; var src = patch.mats || g.mats || {}; for (var a2 in src) { m2[a2] = src[a2]; }
-      m2[gk] -= 1; patch.mats = m2; item.gq = 1; this.gqUsed = Date.now();
     }
     this.setG(patch);
     var gp = this.rootPt('gpot') || this.stagePt(195, 278);
@@ -481,11 +479,11 @@ class Component extends DCLogic {
     var CLAY = { basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var DRY = { early: { t: '반건조', c: '#8A6410' }, ok: { t: '완전 건조', c: '#2F6328' }, over: { t: '과건조', c: '#5E5547' } };
     var defs = [
-      { id: 'white', name: '백자유', res: 'GLZ\nWHITE', img: '_blob/29256b39b342c74e19efca8372e50e32.webp', fired: '#F7F4EC', raw: '#E3DED2', price: '무료' },
-      { id: 'celadon', name: '청자유', res: 'GLZ\nCELADON', img: '_blob/05ca3d7ce00534b3ca8049c64a6ef2cd.webp', fired: '#7FA8A0', raw: '#AFC3BD', price: '무료' },
-      { id: 'black', name: '흑유', res: 'GLZ\nBLACK', img: '_blob/0fa83ecba69361215d6c8bb651ec67e0.webp', fired: '#2E2A25', raw: '#9C968B', price: '무료' },
+      { id: 'white', name: '백자유', res: 'GLZ\nWHITE', img: '_blob/29256b39b342c74e19efca8372e50e32.webp', fired: '#F7F4EC', raw: '#E3DED2', price: '원료 ' + ((g.mats || {}).gz_white || 0) },
+      { id: 'celadon', name: '청자유', res: 'GLZ\nCELADON', img: '_blob/05ca3d7ce00534b3ca8049c64a6ef2cd.webp', fired: '#7FA8A0', raw: '#AFC3BD', price: '원료 ' + ((g.mats || {}).gz_celadon || 0) },
+      { id: 'black', name: '흑유', res: 'GLZ\nBLACK', img: '_blob/0fa83ecba69361215d6c8bb651ec67e0.webp', fired: '#2E2A25', raw: '#9C968B', price: '원료 ' + ((g.mats || {}).gz_black || 0) },
       { id: 'sakura', name: '벚꽃유', res: 'GLZ\nSAKURA', img: '_blob/9dfa7034fc62a520ec428f5b3bdebc0b.webp', fired: (g.glazesFound || {}).sakura ? '#E9A3B5' : '', raw: '#F2CCD5', price: (g.glazesFound || {}).sakura ? '봄 축제 한정' : '축제 상점', event: true, owned: !!(g.glazesFound || {}).sakura },
-      { id: 'jinsa', name: '진사유', res: 'GLZ\nJINSA', img: (g.glazesFound || {}).jinsa ? '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' : '_blob/0caec5ae43f75125c715521e9b5528e2.webp', fired: (g.glazesFound || {}).jinsa ? '#A8443A' : '', raw: '#C9B1A8', price: '보유 ' + ((g.mats || {}).jinsa || 0) }
+      { id: 'jinsa', name: '진사유', res: 'GLZ\nJINSA', img: (g.glazesFound || {}).jinsa ? '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' : '_blob/0caec5ae43f75125c715521e9b5528e2.webp', fired: (g.glazesFound || {}).jinsa ? '#A8443A' : '', raw: '#C9B1A8', price: '원료 ' + ((g.mats || {}).jinsa || 0) }
     ];
     var EG = this.gz(), curI = this.current(), goalG = curI && curI.goalGlaze ? curI.goalGlaze : '';
     var selG = defs[1];
@@ -500,12 +498,12 @@ class Component extends DCLogic {
         chip: 'position:absolute;right:-4px;bottom:-4px;width:14px;height:14px;border-radius:50%;border:2px solid #5B3A24;font-family:Jua,sans-serif;font-size:9px;display:flex;align-items:center;justify-content:center;background:' + (known ? d.fired : '#FFF4DE'),
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 5px;border-radius:13px;' + (on ? 'background:#FFF9EC;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E;' : 'background:#F3E3C4;border:3px solid #8A6440;'),
         nameStyle: 'font-family:Jua,sans-serif;font-size:12px;color:' + (on ? '#2F6328' : '#5B3A24'),
-        priceStyle: 'font-size:9.5px;font-weight:700;color:' + (d.id === goalG ? '#7A5A93' : (d.price === '무료' ? '#2F6328' : '#7A5A12')),
+        priceStyle: 'font-size:9.5px;font-weight:700;color:' + (d.id === goalG ? '#7A5A93' : (self.noMat(g, d.id) ? '#A0452B' : (d.event ? '#7A5A12' : '#2F6328'))),
         goal: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).text, goalStyle: self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); })).style,
-        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초' + (((g.mats || {})['gz_' + d.id] || 0) > 0 ? ' · 고운 원료 ' + g.mats['gz_' + d.id] : ''),
-        tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0) ? '없음' : ''))),
-        tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0))) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
-        rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : ((d.event && !d.owned) || (d.id === 'jinsa' && !((g.mats || {}).jinsa > 0)) ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
+        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초',
+        tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (self.noMat(g, d.id) ? '없음' : ''))),
+        tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || self.noMat(g, d.id)) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
+        rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : ((d.event && !d.owned) || self.noMat(g, d.id) ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
         pick: function () { if (!s.holding) { var ci = self.current(); self.setState({ glaze: d.id, glazeManual: ci ? ci.id : '', gsOpen: false }); } }
       };
     });

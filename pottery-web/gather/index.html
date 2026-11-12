@@ -1,0 +1,693 @@
+<meta charset="utf-8">
+<title>공방 채집터</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+/* 한 화면 탑뷰 채집터 · 캔버스 게임 + HTML 오버레이 (단일 톤) */
+:root{
+  --ink:#1C1410; --mud:#5B3A24; --paper:#FFF4DE; --clay:#B9533A; --gold:#FFD66B; --leaf:#6F8F4E; --stone:#7D776F;
+  --f-disp:'Jua','Apple SD Gothic Neo',sans-serif; --f-body:'Noto Sans KR','Apple SD Gothic Neo',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--ink);color:var(--paper);font-family:var(--f-body);overflow:hidden}
+#wrap{position:relative;height:100%;max-width:460px;margin:0 auto;background:#3E2C1E;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));background:rgba(28,20,16,.72);z-index:5}
+.ov[hidden]{display:none}
+.card{width:100%;max-width:370px;max-height:100%;overflow:auto;box-sizing:border-box;padding:4px 2px 2px;color:#2B1A0F;border:30px solid transparent;border-image:url(img/panel_card.png) 95 fill / 30px stretch;filter:drop-shadow(0 8px 0 rgba(0,0,0,.35));display:flex;flex-direction:column;gap:12px}
+.card h1 img{display:block;width:min(240px,80%);height:auto;margin:-6px auto 0}
+.card h1,.card h2{margin:0;font-family:var(--f-disp);font-weight:400;color:var(--clay);text-align:center;text-wrap:balance}
+.card h1{font-size:32px}.card h2{font-size:26px}
+.lead{margin:0;text-align:center;font-size:13.5px;line-height:1.55;color:#5B3A24}
+.mode{all:unset;cursor:pointer;box-sizing:border-box;display:grid;grid-template-columns:60px 1fr;gap:3px 12px;align-items:center;padding:2px 2px 4px;border:20px solid transparent;border-width:16px 18px 22px;border-image:url(img/btn_mode.png) 70 90 90 90 fill / 16px 18px 22px stretch}
+.mode:active{border-image-source:url(img/btn_mode_pressed.png);transform:translateY(2px)}
+.mode:focus-visible,.btn:focus-visible{outline:3px solid var(--clay);outline-offset:2px}
+.mode .pic{grid-row:span 3;width:60px;height:60px;display:flex;align-items:center;justify-content:center}.mode .pic img{width:60px;height:60px}
+.mode b{font-family:var(--f-disp);font-weight:400;font-size:21px;color:#2B1A0F}
+.mode span{font-size:12.5px;line-height:1.45;color:#5B3A24}
+.mode small{font-family:var(--f-disp);font-size:12.5px;color:#8A6440;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px}
+.mode small::before{content:'';width:18px;height:18px;background:url(img/icon_best.png) center/contain no-repeat}
+.btn{all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:2px 0 4px;font-family:var(--f-disp);font-size:19px;color:#FFFDF5;text-shadow:0 2px 0 rgba(60,20,10,.45);border:solid transparent;border-width:14px 22px 20px;border-image:url(img/btn_primary.png) 90 110 120 110 fill / 14px 22px 20px stretch}
+.btn.sub{border-image-source:url(img/btn_sub.png);color:#5B3A24;text-shadow:none;font-size:17px}
+.btn:active{border-image-source:url(img/btn_primary_pressed.png);transform:translateY(2px)}.btn.sub:active{border-image-source:url(img/btn_sub_pressed.png)}
+.row{display:flex;gap:8px}.row .btn{flex:1}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px}
+.res span{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:#FFFDF5;border:2px solid #C9A27A;font-family:var(--f-disp);font-size:12.5px;color:#5B3A24;font-variant-numeric:tabular-nums;text-align:center}
+.res i{font-style:normal;font-size:22px;line-height:1}
+.res b{font-weight:400;font-size:20px;color:#2F6328}
+.note{margin:0;font-size:12px;line-height:1.5;color:#8A6440;text-align:center}
+@media (prefers-reduced-motion: reduce){.btn:active,.mode:active{transform:none}}
+</style>
+
+<div id="wrap">
+  <canvas id="cv" aria-label="채집 게임 화면"></canvas>
+
+  <div class="ov" id="start">
+    <div class="card" role="dialog" aria-labelledby="t1">
+      <h1 id="t1"><img src="img/logo_title.png" alt="공방 채집터" width="813" height="291"></h1>
+      <p class="lead">30초 동안 최대한 많이 캐 오세요.<br>조각 <b>5개</b>가 모이면 재료 <b>1개</b>가 돼요.</p>
+      <button type="button" class="mode" data-m="dig">
+        <span class="pic"><img src="img/icon_mode_dig.png" alt="" width="60" height="60"></span>
+        <b>흙 파기</b>
+        <span>공터를 누르면 맨 위 흙이 한 겹씩 벗겨져요. 깊을수록 좋은 흙(★)이 묻혀 있고, 다 드러나야 캐져요. 2초 안에 연달아 캐면 콤보! 큰 덩어리는 3개로 쳐요.</span>
+        <small id="bestDig"></small>
+      </button>
+      <button type="button" class="mode" data-m="rock">
+        <span class="pic"><img src="img/icon_mode_rock.png" alt="" width="60" height="60"></span>
+        <b>돌 부수기</b>
+        <span>손가락으로 돌을 쓸고 지나가면 부서지며 유약 원료가 나와요. 큰 돌일수록 많이 나와요. 반짝이는 황금 돌은 금방 사라지니 얼른 두 번 쓸어요 — 진사 확정!</span>
+        <small id="bestRock"></small>
+      </button>
+    </div>
+  </div>
+
+  <div class="ov" id="end" hidden>
+    <div class="card" role="dialog" aria-labelledby="t2">
+      <h2 id="t2">채집 끝!</h2>
+      <p class="lead" id="endSub"></p>
+      <div class="res" id="endRes"></div>
+      <p class="note" id="endNote"></p>
+      <div class="row"><button type="button" class="btn sub" id="toTitle">처음으로</button><button type="button" class="btn" id="again">한 번 더</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var wrap = document.getElementById('wrap'), cv = document.getElementById('cv'), cx = cv.getContext('2d');
+  var W = 390, H = 720, SC = 1, OX = 0, OY = 0, DPR = 1;
+  function fit() {
+    var r = wrap.getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(r.width * DPR); cv.height = Math.round(r.height * DPR);
+    H = Math.max(640, Math.min(860, Math.round(W * r.height / r.width)));
+    SC = Math.min(r.width / W, r.height / H); OX = (r.width - W * SC) / 2; OY = (r.height - H * SC) / 2;
+  }
+  function toW(e) { var r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left - OX) / SC, y: (e.clientY - r.top - OY) / SC }; }
+
+  // ── 소리 ──
+  var AC = null;
+  function audio() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') { AC.resume(); } }
+  function tone(f, d, type, vol, slide) {
+    if (!AC) { return; } var t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (slide) { o.frequency.exponentialRampToValueAtTime(slide, t + d); }
+    g.gain.setValueAtTime(vol || 0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + 0.02);
+  }
+  function noise(d, vol, hp) {
+    if (!AC) { return; } var n = Math.floor(AC.sampleRate * d), b = AC.createBuffer(1, n, AC.sampleRate), a = b.getChannelData(0);
+    for (var i = 0; i < n; i++) { a[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2); }
+    var s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain(); f.type = 'bandpass'; f.frequency.value = hp || 900; g.gain.value = vol || 0.3;
+    s.buffer = b; s.connect(f); f.connect(g); g.connect(AC.destination); s.start();
+  }
+
+  // ── 아이템 정의 ──
+  var IT = {
+    c1: { n: '정제 점토', s: '정제', pts: 10, col: '#D7B58C', dk: '#8A6440', img: 'item_clay1' },
+    c2: { n: '고령토', s: '고령토', pts: 25, col: '#F2EEE6', dk: '#A9A094', img: 'item_clay2' },
+    c3: { n: '자기토', s: '자기토', pts: 50, col: '#DCE6F0', dk: '#8796A8', img: 'item_clay_p' },
+    c4: { n: '특선 소지', s: '특선', pts: 90, col: '#FFF1C8', dk: '#D9A93A', img: 'item_clay3' },
+    time: { n: '모래시계', s: '+3초', pts: 0, img: 'item_time' },
+    white: { n: '장석', s: '백자유', pts: 5, col: '#F4F1EA', dk: '#B9B2A4', img: 'mat_white', gem: 1 },
+    celadon: { n: '청자 철분', s: '청자유', pts: 5, col: '#8FC0A6', dk: '#3F7A5F', img: 'mat_celadon', gem: 1 },
+    black: { n: '흑유 철광', s: '흑유', pts: 5, col: '#4A403C', dk: '#1C1614', img: 'mat_black', gem: 1 },
+    jinsa: { n: '진사', s: '진사유', pts: 40, col: '#D2503E', dk: '#7A1E16', img: 'mat_jinsa', gem: 1 }
+  };
+
+  // ── 그래픽 소스 (img/*.png · 3배 원본) — 못 불러오면 기존 도형으로 그린다 ──
+  var LNAME = ['layer0_grass', 'layer1_topsoil', 'layer2_brown', 'layer3_redclay', 'layer4_ochre', 'layer5_greyclay', 'layer6_white', 'layer7_bedrock'];
+  var IM = {}, TEX = [], PAT = null;
+  LNAME.concat(['bg_gravel', 'item_clay1', 'item_clay2', 'item_clay3', 'item_clay_p', 'item_time', 'mat_white', 'mat_celadon', 'mat_black', 'mat_jinsa', 'tool_shovel', 'tool_hammer',
+    'panel_hud', 'bar_time_frame', 'bar_time_fill', 'bar_time_fill_low', 'fx_dirt_chunk', 'fx_dust', 'rock_s', 'rock_m_0', 'rock_m_1', 'rock_m_2', 'rock_l_0', 'rock_l_1', 'rock_l_2', 'rock_l_3', 'fx_rock_shard', 'fx_spark']).forEach(function (n) {
+    var im = new Image();
+    im.onload = function () {
+      IM[n] = im; var li = LNAME.indexOf(n);
+      if (li >= 0) { try { var c = document.createElement('canvas'); c.width = c.height = 512; var g = c.getContext('2d'); g.drawImage(im, 0, 0, 512, 512); TEX[li] = tone2(li, g.getImageData(0, 0, 512, 512).data); DR = null; dirty = true; } catch (e) {} }
+    };
+    im.src = 'img/' + n + '.png';
+  });
+  // 층 밝기 맞추기 : 위층일수록 밝고 아래층일수록 어둡게 (색조는 유지, 평균 밝기만 목표값으로)
+  var LUMA = [0, 175, 150, 128, 108, 88, 68, 43];
+  function tone2(li, src) {
+    if (!LUMA[li]) { return src; }
+    var n = src.length / 4, r = 0, g = 0, b = 0, i;
+    for (i = 0; i < src.length; i += 4) { r += src[i]; g += src[i + 1]; b += src[i + 2]; }
+    r /= n; g /= n; b /= n; var f = LUMA[li] / (0.299 * r + 0.587 * g + 0.114 * b), out = new Uint8ClampedArray(src.length);
+    for (i = 0; i < src.length; i += 4) { out[i] = src[i] * f; out[i + 1] = src[i + 1] * f; out[i + 2] = src[i + 2] * f; out[i + 3] = 255; }
+    LRGB[li] = [Math.min(255, Math.round(r * f)), Math.min(255, Math.round(g * f)), Math.min(255, Math.round(b * f))];
+    return out;
+  }
+  // 아이템 아이콘 : r = 예전 도형 반지름 기준
+  function icon(k, x, y, r) {
+    var d = IT[k], im = d.img && IM[d.img];
+    if (im) { var s = r * 2.7; cx.drawImage(im, x - s / 2, y - s / 2, s, s); return; }
+    if (k === 'time') { glass(x, y, r); } else if (d.gem) { gem(x, y, r, d); } else { blob(x, y, r, d); }
+  }
+
+  var GRAV = null, S = null, running = false, last = 0, DUR = 30;
+  // 본게임에서 넘겨주는 설정 : 연구 효과 + 오늘의 채집지 (river 고령토↑ · mountain 자기토·특선↑ · mine 황금 돌·진사↑)
+  var CFG = { gTime: 0, comboUp: 0, goldUp: 0, rareUp: 0, digWide: 0, site: '' };
+  var EMBED = /[?&]embed=1/.test(location.search);
+  function CW() { return 2 + (CFG.comboUp || 0); }
+  function GF() { return (1 + (CFG.goldUp || 0)) * (CFG.site === 'mine' ? 1.5 : 1); }
+  var BEST = { dig: 0, rock: 0 }; try { BEST = JSON.parse(localStorage.getItem('chj-best') || 'null') || BEST; } catch (e) {}
+  function bestTxt() { document.getElementById('bestDig').textContent = '최고 ' + (BEST.dig || 0) + '점'; document.getElementById('bestRock').textContent = '최고 ' + (BEST.rock || 0) + '점'; }
+  bestTxt();
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(list) { var t = list.reduce(function (a, b) { return a + b[1]; }, 0), x = Math.random() * t; for (var i = 0; i < list.length; i++) { x -= list[i][1]; if (x <= 0) { return list[i][0]; } } return list[0][0]; }
+
+  // ════════ 흙 파기 (하나의 큰 공터 · 누른 자리 둘레가 한 층씩 파인다) ════════
+  var LAYERS = 7, CELL = 2, F = { x: 15, y: 122, w: 360, h: 560, gw: 120, gh: 186 };
+  // 층 색 : 잔디 → 표토 → 갈색흙 → 붉은 점토 → 황토 → 회색 점토 → 백토 → 바닥 암반
+  var LRGB = [[118, 152, 78], [220, 166, 112], [200, 138, 88], [190, 106, 70], [140, 106, 64], [96, 92, 84], [74, 70, 62], [56, 42, 34]];
+  var DEP = null, NOI = null, OFF = null, OCX = null, IMG = null, dirty = true, DR = null, K = 2, PW = 0, PH = 0;
+  function layoutField() {
+    F.x = 15; F.y = 122; F.w = W - 30; F.h = Math.floor((H - 22 - F.y) / CELL) * CELL;
+    F.gw = Math.floor(F.w / CELL); F.gh = Math.floor(F.h / CELL);
+  }
+  function layoutGrid() { layoutField(); }
+  function buildNoise(gw, gh) {
+    var a = new Float32Array(gw * gh), b = new Float32Array(gw * gh), i, x, y;
+    for (i = 0; i < a.length; i++) { a[i] = Math.random(); }
+    for (var pass = 0; pass < 2; pass++) {
+      for (y = 0; y < gh; y++) { for (x = 0; x < gw; x++) { var s = 0, n = 0; for (var dy = -1; dy <= 1; dy++) { for (var dx = -1; dx <= 1; dx++) { var xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < gw && yy < gh) { s += a[yy * gw + xx]; n++; } } } b[y * gw + x] = s / n; } }
+      var t = a; a = b; b = t;
+    }
+    // 잔디 얼룩용 고주파 점 섞기
+    for (i = 0; i < a.length; i++) { a[i] = a[i] * 0.75 + Math.random() * 0.25; }
+    return a;
+  }
+  function itemFor(l) {
+    var W0 = [[['c1', 1]], [['c1', 0.8], ['c2', 0.2]], [['c1', 0.3], ['c2', 0.7]], [['c2', 0.6], ['c3', 0.4]], [['c2', 0.3], ['c3', 0.7]], [['c3', 0.7], ['c4', 0.3]], [['c3', 0.45], ['c4', 0.55]]][l - 1];
+    var kao = CFG.site === 'river' ? 1.6 : 1, up = CFG.site === 'mountain' ? 1.4 : 1, rare = 1 + (CFG.rareUp || 0) * 8;
+    return pick(W0.map(function (w) { return [w[0], w[1] * (w[0] === 'c2' ? kao : 1) * (w[0] === 'c3' || w[0] === 'c4' ? up : 1) * (w[0] === 'c4' ? rare : 1)]; }));
+  }
+  function newDig() {
+    layoutField();
+    DEP = new Uint8Array(F.gw * F.gh); NOI = buildNoise(F.gw, F.gh);
+    PW = F.gw * CELL * K; PH = F.gh * CELL * K; makePatches();
+    OFF = document.createElement('canvas'); OFF.width = PW; OFF.height = PH; OCX = OFF.getContext('2d'); IMG = OCX.createImageData(PW, PH); DR = null; dirty = true;
+    var items = [], plan = [[1, 12], [2, 18], [3, 21], [4, 24], [5, 24], [6, 24], [7, 24]];
+    plan.forEach(function (pl) { for (var i = 0; i < pl[1]; i++) { items.push({ l: pl[0], k: itemFor(pl[0]) }); } });
+    for (var t = 0; t < 6; t++) { items.push({ l: 1 + Math.floor(Math.random() * 4), k: 'time' }); }
+    // 대형 흙 : 3~6층에 4덩이. 넓게 다 드러내야 캐지고, 3개로 친다
+    for (var bg = 0; bg < 4; bg++) { var bl = 3 + bg; items.unshift({ l: bl, k: ['c2', 'c3', 'c3', 'c4'][bg], big: 1 }); }
+    items.forEach(function (it) {
+      var m = it.big ? 40 : 22;
+      for (var a = 0; a < 40; a++) {
+        it.x = rnd(m, F.w - m); it.y = rnd(m, F.h - m);
+        if (!items.some(function (o) { if (o === it || o.x === undefined) { return false; } var bb = o.big || it.big; return Math.hypot(o.x - it.x, o.y - it.y) < (o.l === it.l ? (bb ? 76 : 44) : (bb ? 40 : 24)); })) { break; }
+      }
+    });
+    return { mode: 'dig', t: 0, left: DUR, pre: 1.3, items: items, got: {}, fx: [], fly: [], parts: [], pops: [], digs: [], score: 0, taps: 0, shake: 0, combo: 0, lastGet: -9 };
+  }
+  function depthAt(lx, ly) { var gx = Math.floor(lx / CELL), gy = Math.floor(ly / CELL); if (gx < 0 || gy < 0 || gx >= F.gw || gy >= F.gh) { return 0; } return DEP[gy * F.gw + gx]; }
+  function dig(p, drag) {
+    var lx = p.x - F.x, ly = p.y - F.y; if (lx < -10 || ly < -10 || lx > F.w + 10 || ly > F.h + 10) { return; }
+    S.taps++;
+    var cxg = lx / CELL, cyg = ly / CELL, R = 38 * (1 + (CFG.digWide || 0)) / CELL, ph = Math.random() * 7, any = false, cells = [], top = 99;
+    for (var gy = Math.floor(cyg - R - 2); gy <= Math.ceil(cyg + R + 2); gy++) {
+      for (var gx = Math.floor(cxg - R - 2); gx <= Math.ceil(cxg + R + 2); gx++) {
+        if (gx < 0 || gy < 0 || gx >= F.gw || gy >= F.gh) { continue; }
+        var dx = gx - cxg, dy = gy - cyg, ang = Math.atan2(dy, dx), rr0 = R * (0.88 + 0.08 * Math.sin(ang * 3 + ph) + 0.04 * Math.sin(ang * 7 + ph * 2));
+        if (dx * dx + dy * dy > rr0 * rr0) { continue; }
+        var ci = gy * F.gw + gx; cells.push(ci); if (DEP[ci] < top) { top = DEP[ci]; }
+      }
+    }
+    // 범위 안에서 맨 위에 남은 층만 한 겹 벗긴다
+    // 단, 그 층이 범위의 30% 미만이면 그 층은 물론 바로 아래 층까지 범위 전체를 한 번에 판다 (lvl+1 깊이로 평평하게)
+    var cnt = {}; cells.forEach(function (ci) { cnt[DEP[ci]] = (cnt[DEP[ci]] || 0) + 1; });
+    // 가장자리 얇은 띠가 연달아 남아 있으면 (누적 30% 미만) 그다음 층까지 계속 포함
+    var lvl = top, acc = cnt[top] || 0;
+    while (acc < cells.length * 0.3 && lvl < LAYERS - 1) { lvl++; acc += cnt[lvl] || 0; }
+    if (top < LAYERS) { cells.forEach(function (ci) { if (DEP[ci] <= lvl && DEP[ci] < LAYERS) { DEP[ci] = lvl + 1; any = true; } }); }
+    var bx0 = Math.floor(cxg - R - 4), by0 = Math.floor(cyg - R - 4), bx1 = Math.ceil(cxg + R + 4), by1 = Math.ceil(cyg + R + 4);
+    if (!dirty) { DR = [bx0, by0, bx1, by1]; } else if (DR) { DR = [Math.min(DR[0], bx0), Math.min(DR[1], by0), Math.max(DR[2], bx1), Math.max(DR[3], by1)]; }
+    dirty = true;
+    var dc = depthAt(lx, ly), col = LRGB[Math.max(0, dc - 1)];
+    if (!drag) { S.digs.push({ x: p.x, y: p.y, at: S.t, d: dc }); }
+    if (!any) { if (!drag || S.t - (S.rockMsg || -9) > 0.8) { S.rockMsg = S.t; tone(110, 0.08, 'square', 0.06); S.fx.push({ x: p.x, y: p.y - 24, t: '단단한 암반', c: '#C9A27A', at: S.t }); } return; }
+    S.shake = Math.max(S.shake, drag ? 1.2 : 2.2);
+    // 드래그는 소리를 0.07초에 한 번만
+    if (!drag || S.t - (S.sndAt || -9) > 0.07) { S.sndAt = S.t; noise(drag ? 0.06 : 0.1, drag ? 0.25 : 0.4, 420 + dc * 160); tone(140 + dc * 35, 0.06, 'triangle', drag ? 0.05 : 0.08); }
+    for (var k = 0; k < (drag ? 4 : 9); k++) { var a = Math.random() * 7, sp = rnd(70, 190); S.parts.push({ x: p.x + Math.cos(a) * 14, y: p.y + Math.sin(a) * 14, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 120, col: 'rgb(' + col.join(',') + ')', at: S.t, big: k < 3, dirt: k < 3 ? Math.floor(Math.random() * 3) : undefined, rot: rnd(0, 6) }); }
+    // 숨은 아이템 드러내기
+    S.items.forEach(function (it) {
+      if (it.got) { return; }
+      var tot = 0, open = 0, r2 = (it.big ? 27 : 13) / CELL, gx0 = it.x / CELL, gy0 = it.y / CELL;
+      for (var yy = Math.floor(gy0 - r2); yy <= Math.ceil(gy0 + r2); yy++) { for (var xx = Math.floor(gx0 - r2); xx <= Math.ceil(gx0 + r2); xx++) { if ((xx - gx0) * (xx - gx0) + (yy - gy0) * (yy - gy0) > r2 * r2 || xx < 0 || yy < 0 || xx >= F.gw || yy >= F.gh) { continue; } tot++; if (DEP[yy * F.gw + xx] >= it.l) { open++; } } }
+      it.rev = tot ? open / tot : 0;
+      if (it.rev >= 1) {
+        it.got = true; var wx = F.x + it.x, wy = F.y + it.y;
+        // 콤보 : 직전 획득 후 2초 안에 또 캐면 +1 (점수 ×1.25, ×1.5 … 최대 ×3)
+        S.combo = S.t - S.lastGet <= CW() ? S.combo + 1 : 1; S.lastGet = S.t;
+        var mult = Math.min(3, 1 + 0.25 * (S.combo - 1));
+        S.fly.push({ k: it.k, x: wx, y: wy, at: S.t, dx: 0, big: true, n: it.big ? 3 : 1, sz: it.big ? 1.8 : 1, mult: mult });
+        if (S.combo >= 2) { S.fx.push({ x: wx, y: wy - (it.big ? 62 : 40), t: '콤보 ' + S.combo + '!', c: '#FFB547', at: S.t, big: S.combo >= 4 }); tone(520 + Math.min(10, S.combo) * 70, 0.07, 'triangle', 0.07); }
+        if (it.big) { S.fx.push({ x: wx, y: wy - 40, t: '대형! ' + IT[it.k].s + ' ×3', c: '#FFD66B', at: S.t, big: true }); S.flash = S.t; S.shake = Math.max(S.shake, 5); tone(660, 0.12, 'triangle', 0.1); setTimeout(function () { tone(990, 0.14, 'triangle', 0.1); }, 90); setTimeout(function () { tone(1320, 0.24, 'triangle', 0.1); }, 180); }
+        if (it.k === 'time') { S.left = Math.min(DUR + 20, S.left + 3); S.fx.push({ x: wx, y: wy - 16, t: '+3초', c: '#9FE8FF', at: S.t, big: true }); tone(880, 0.12, 'sine', 0.12); setTimeout(function () { tone(1320, 0.18, 'sine', 0.1); }, 90); }
+        else if (!it.big) { S.fx.push({ x: wx, y: wy - 18, t: IT[it.k].s, c: it.k === 'c4' ? '#FFD66B' : '#FFF4DE', at: S.t, big: it.k === 'c4' }); tone(it.k === 'c4' ? 980 : (it.k === 'c3' ? 820 : 660), 0.1, 'square', 0.07); if (it.k === 'c4') { S.flash = S.t; setTimeout(function () { tone(1320, 0.22, 'triangle', 0.1); }, 80); } }
+      }
+    });
+  }
+  // 깊이 격자를 부드럽게 이어 읽기 (칸 중심 기준 쌍선형) → 경계가 매끈해지고, 벽면에 사이 층이 띠로 보인다
+  function dAt(fx, fy) {
+    var gw = F.gw, gh = F.gh, x = fx - 0.5, y = fy - 0.5, x0 = Math.floor(x), y0 = Math.floor(y), tx = x - x0, ty = y - y0;
+    var xa = x0 < 0 ? 0 : (x0 >= gw ? gw - 1 : x0), xb = x0 + 1 < 0 ? 0 : (x0 + 1 >= gw ? gw - 1 : x0 + 1);
+    var ya = y0 < 0 ? 0 : (y0 >= gh ? gh - 1 : y0), yb = y0 + 1 < 0 ? 0 : (y0 + 1 >= gh ? gh - 1 : y0 + 1);
+    var a = DEP[ya * gw + xa], b = DEP[ya * gw + xb], c = DEP[yb * gw + xa], e = DEP[yb * gw + xb];
+    return (a + (b - a) * tx) * (1 - ty) + (c + (e - c) * tx) * ty;
+  }
+  // ── 텍스처 반복 티 줄이기 ──
+  // 원본 타일을 조각(PG px)마다 다른 위치에서 떼어 와 깔고, 조각 경계 띠(약 35%)만 부드럽게 섞어 이음매를 없앤다
+  // + 아주 넓은 범위의 밝기 얼룩
+  var PG = 72, PGW = 0, PGH = 0, POF = null, LOWG = 0, LOW = null, TS = [0, 0, 0];
+  function makePatches() {
+    PGW = Math.ceil(PW * 1.5 / PG) + 2; PGH = Math.ceil(PH * 1.5 / PG) + 2; POF = [];
+    for (var l = 0; l <= LAYERS; l++) { var a = new Int16Array(PGW * PGH * 2); for (var i = 0; i < a.length; i++) { a[i] = Math.floor(Math.random() * 512); } POF.push(a); }
+    LOWG = 100; var lw = Math.ceil(PW / LOWG) + 2, lh = Math.ceil(PH / LOWG) + 2; LOW = { w: lw, a: new Float32Array(lw * lh) }; for (var q = 0; q < LOW.a.length; q++) { LOW.a[q] = Math.random(); }
+  }
+  function sstep(t) { t = (t - 0.5) / 0.35 + 0.5; t = t < 0 ? 0 : t > 1 ? 1 : t; return t * t * (3 - 2 * t); }
+  function lowAt(px, py) {
+    var x = px / LOWG, y = py / LOWG, x0 = Math.floor(x), y0 = Math.floor(y), tx = x - x0, ty = y - y0, a = LOW.a, w = LOW.w;
+    tx = tx * tx * (3 - 2 * tx); ty = ty * ty * (3 - 2 * ty);
+    return (a[y0 * w + x0] * (1 - tx) + a[y0 * w + x0 + 1] * tx) * (1 - ty) + (a[(y0 + 1) * w + x0] * (1 - tx) + a[(y0 + 1) * w + x0 + 1] * tx) * ty;
+  }
+  function texAt(l, px, py) {
+    var T = TEX[l], O = POF[l], gx = px / PG - 0.5, gy = py / PG - 0.5, i0 = Math.floor(gx), j0 = Math.floor(gy), tx = sstep(gx - i0), ty = sstep(gy - j0);
+    var r = 0, g = 0, b = 0;
+    for (var c = 0; c < 4; c++) {
+      var ci = c & 1, cj = c >> 1, w = (ci ? tx : 1 - tx) * (cj ? ty : 1 - ty); if (w <= 0) { continue; }
+      var oi = ((j0 + cj + 1) * PGW + (i0 + ci + 1)) * 2, ti = ((((py + O[oi + 1]) & 511) << 9) + ((px + O[oi]) & 511)) * 4;
+      r += T[ti] * w; g += T[ti + 1] * w; b += T[ti + 2] * w;
+    }
+    TS[0] = r; TS[1] = g; TS[2] = b;
+  }
+  function renderField() {
+    if (TEX.filter(Boolean).length < LAYERS + 1) { return renderFieldFlat(); }
+    var d = IMG.data, u = CELL * K, x0 = 0, y0 = 0, x1 = PW, y1 = PH;
+    if (DR) { x0 = Math.max(0, DR[0] * u); y0 = Math.max(0, DR[1] * u); x1 = Math.min(PW, DR[2] * u); y1 = Math.min(PH, DR[3] * u); }
+    for (var py = y0; py < y1; py++) {
+      var fy = (py + 0.5) / u, row = (py & 255) * 256;
+      for (var px = x0; px < x1; px++) {
+        var fx = (px + 0.5) / u, dd = dAt(fx, fy), l = Math.round(dd), k = 1;
+        if (l > LAYERS) { l = LAYERS; }
+        // DEP 는 '깊이'(클수록 낮음). 빛은 왼쪽 위에서 → 왼쪽 위가 더 얕으면(높으면) 구덩이 안쪽 그늘진 벽, 더 깊으면 빛 받는 벽
+        // + 구덩이 바닥 중 왼쪽 위 벽 바로 아래에 드리운 그림자. 지표(파이지 않은 땅)에는 그림자가 생기지 않는다
+        var up = dd - dAt(fx - 0.35, fy - 0.45);
+        if (up > 0.02) { k -= Math.min(0.42, up * 0.55); } else if (up < -0.02) { k += Math.min(0.14, -up * 0.2); }
+        if (dd - dAt(fx - 1.1, fy - 1.5) > 0.5) { k *= 0.82; }
+        k *= 0.93 + 0.14 * lowAt(px, py);
+        var j = (py * PW + px) * 4; texAt(l, (px * 1.5) | 0, (py * 1.5) | 0); d[j] = TS[0] * k; d[j + 1] = TS[1] * k; d[j + 2] = TS[2] * k; d[j + 3] = 255;
+      }
+    }
+    if (DR) { OCX.putImageData(IMG, 0, 0, x0, y0, x1 - x0, y1 - y0); } else { OCX.putImageData(IMG, 0, 0); }
+    DR = null; dirty = false;
+  }
+  // 텍스처를 아직 못 불러왔을 때 : 단색 층
+  function renderFieldFlat() {
+    var d = IMG.data, gw = F.gw, gh = F.gh, u = CELL * K;
+    for (var y = 0; y < gh; y++) {
+      for (var x = 0; x < gw; x++) {
+        var i = y * gw + x, dd = DEP[i], c = LRGB[dd], n = NOI[i], k = 0.86 + n * 0.28;
+        // 벽면 음영 : 위·왼쪽이 더 높으면 그림자, 아래·오른쪽이 더 높으면 밝은 벽
+        var up = (y > 0 ? DEP[i - gw] : dd), lf = (x > 0 ? DEP[i - 1] : dd), dn = (y < gh - 1 ? DEP[i + gw] : dd), rt = (x < gw - 1 ? DEP[i + 1] : dd);
+        var up2 = (y > 1 ? DEP[i - gw * 2] : dd);
+        if (up < dd || lf < dd) { k *= 0.58; } else if (up2 < dd) { k *= 0.78; } else if (dn < dd || rt < dd) { k *= 1.12; }
+        if (dd === 0 && n > 0.62) { k *= 0.8; }
+        if (dd === 0 && NOI[(i * 7) % NOI.length] > 0.83) { k *= 1.18; }
+        var r0 = Math.min(255, c[0] * k), g0 = Math.min(255, c[1] * k), b0 = Math.min(255, c[2] * k);
+        for (var sy = 0; sy < u; sy++) { for (var sx = 0; sx < u; sx++) { var j = ((y * u + sy) * PW + x * u + sx) * 4; d[j] = r0; d[j + 1] = g0; d[j + 2] = b0; d[j + 3] = 255; } }
+      }
+    }
+    OCX.putImageData(IMG, 0, 0); DR = null; dirty = false;
+  }
+  function drawDig() {
+    if (dirty) { renderField(); }
+    var sh = S.shake || 0, ox = rnd(-sh, sh), oy = rnd(-sh, sh);
+    cx.save(); cx.translate(ox, oy);
+    // 공터 테두리 (나무 말뚝 울타리 느낌)
+    cx.fillStyle = '#4A3424'; rr(F.x - 8, F.y - 8, F.w + 16, F.h + 16, 20); cx.fill();
+    cx.save(); rr(F.x, F.y, F.w, F.h, 14); cx.clip();
+    cx.imageSmoothingEnabled = true; cx.drawImage(OFF, F.x, F.y, F.gw * CELL, F.gh * CELL);
+    // 안쪽 그늘
+    var vg = cx.createRadialGradient(F.x + F.w / 2, F.y + F.h / 2, F.h * 0.3, F.x + F.w / 2, F.y + F.h / 2, F.h * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(20,12,6,.35)'); cx.fillStyle = vg; cx.fillRect(F.x, F.y, F.w, F.h);
+    // 묻힌 아이템 : 그 층까지 파인 부분만 보인다 (전부 드러나면 획득)
+    S.items.forEach(function (it) {
+      if (it.got || !it.rev) { return; }
+      var wx = F.x + it.x, wy = F.y + it.y, R2 = (it.big ? 46 : 23) / CELL, gx0 = it.x / CELL, gy0 = it.y / CELL;
+      cx.save(); cx.beginPath();
+      for (var yy = Math.floor(gy0 - R2); yy <= Math.ceil(gy0 + R2); yy++) { for (var xx = Math.floor(gx0 - R2); xx <= Math.ceil(gx0 + R2); xx++) { if (xx < 0 || yy < 0 || xx >= F.gw || yy >= F.gh) { continue; } if (DEP[yy * F.gw + xx] >= it.l) { cx.rect(F.x + xx * CELL - 0.3, F.y + yy * CELL - 0.3, CELL + 0.6, CELL + 0.6); } } }
+      cx.clip();
+      icon(it.k, wx, wy + 2, it.big ? 33 : 16);
+      cx.restore();
+      if ((it.k === 'c4' || it.big) && it.rev > 0.3) { sparkle(wx + (it.big ? 26 : 12), wy - (it.big ? 24 : 12), it.big ? 11 : 8, S.t * 5); }
+    });
+    cx.restore();
+    // 삽질 자국 (삽이 내려꽂히는 짧은 연출 + 흙먼지 고리)
+    S.digs = S.digs.filter(function (g) {
+      var a = (S.t - g.at) / 0.32; if (a >= 1) { return false; }
+      if (IM.fx_dust) { var dz = 50 + a * 50; cx.save(); cx.globalAlpha = 0.75 * (1 - a); cx.drawImage(IM.fx_dust, g.x - dz / 2, g.y - dz / 2 - a * 8, dz, dz); cx.restore(); }
+      else { cx.strokeStyle = 'rgba(255,244,222,' + (0.55 * (1 - a)) + ')'; cx.lineWidth = 3; cx.beginPath(); cx.arc(g.x, g.y, 26 + a * 24, 0, 7); cx.stroke(); }
+      var dn = Math.min(1, a * 3);
+      if (IM.tool_shovel) { var ss = 46; cx.save(); cx.globalAlpha = 1 - a; cx.translate(g.x, g.y - 16 * (1 - dn)); cx.rotate(-0.45 * (1 - dn)); cx.drawImage(IM.tool_shovel, -ss * 0.72, -ss * 0.9, ss, ss); cx.restore(); }
+      else { shovel(g.x + 14, g.y - 30 + dn * 18, -0.5 + dn * 0.5, 1 - a); }
+      return true;
+    });
+    cx.restore();
+    if (S.flash && S.t - S.flash < 0.25) { cx.fillStyle = 'rgba(255,230,160,' + (0.35 * (1 - (S.t - S.flash) / 0.25)) + ')'; cx.fillRect(0, 0, W, H); }
+    S.fly = S.fly.filter(function (f) {
+      var tx = f.k === 'time' ? W - 70 : 31 + ['c1', 'c2', 'c3', 'c4'].indexOf(f.k) * 88, ty = f.k === 'time' ? 30 : 81;
+      return !pickup(f, tx, ty, 17, 11);
+    });
+  }
+  // ── 획득 연출 : ① 살짝 떠오름 → ② 반짝 → ③ 점점 빨라지며 상단 칸으로 빨려 들어감 ──
+  // r0 = 떠 있을 때 크기, r1 = 도착 크기. 끝나면 true (그때 개수·점수 반영)
+  var PU1 = 0.22, PU2 = 0.2, PU3 = 0.4;
+  function pickup(f, tx, ty, r0, r1) {
+    r0 *= f.sz || 1; var k = S.t - f.at, lift = f.big ? 26 : 18, sx = f.x + (f.dx || 0), sy = f.y - lift, x, y, r, a;
+    if (k < PU1) {
+      a = k / PU1; var e = 1 - Math.pow(1 - a, 3);
+      x = f.x + (f.dx || 0) * e; y = f.y - lift * e; r = r0 * (0.75 + 0.35 * e);
+      cx.fillStyle = 'rgba(255,240,200,' + (0.45 * (1 - a)) + ')'; cx.beginPath(); cx.arc(f.x, f.y, r0 * (1.2 + a * 1.4), 0, 7); cx.fill();
+      icon(f.k, x, y, r);
+    } else if (k < PU1 + PU2) {
+      a = (k - PU1) / PU2; x = sx; y = sy - Math.sin(a * Math.PI) * 3; r = r0 * 1.1;
+      if (!f.shone) { f.shone = true; if (f.big || f.k === 'jinsa') { tone(f.k === 'c4' || f.k === 'jinsa' ? 1560 : 1180, 0.09, 'sine', 0.06); } }
+      var gl = Math.sin(a * Math.PI);
+      cx.fillStyle = 'rgba(255,236,170,' + (0.35 * gl) + ')'; cx.beginPath(); cx.arc(x, y, r * 1.7, 0, 7); cx.fill();
+      icon(f.k, x, y, r);
+      sparkle(x + r * 0.7, y - r * 0.7, r * (0.4 + 0.5 * gl), S.t * 6);
+      if (f.k === 'c4' || f.k === 'jinsa') { sparkle(x - r * 0.8, y + r * 0.2, r * 0.45 * gl, S.t * 5 + 2); }
+    } else {
+      a = (k - PU1 - PU2) / PU3;
+      if (a >= 1) { var g0 = S.got[f.k] || 0; S.got[f.k] = g0 + (f.n || 1); if (f.k !== 'time' && Math.floor(S.got[f.k] / PER) > Math.floor(g0 / PER)) { S.made = S.made || {}; S.made[f.k] = S.t; tone(1046, 0.08, 'triangle', 0.09); setTimeout(function () { tone(1568, 0.16, 'triangle', 0.08); }, 70); } S.score += Math.round(IT[f.k].pts * (f.n || 1) * (f.mult || 1)); S.bump = S.t; return true; }
+      // 가속 : 이동량 = a^2.6 (처음엔 천천히, 끝에 확 빨라짐) · 출발점 위로 휜 곡선
+      var m = Math.pow(a, 2.6), cxp = sx + (tx - sx) * 0.15, cyp = Math.min(sy, ty) - 50;
+      x = (1 - m) * (1 - m) * sx + 2 * (1 - m) * m * cxp + m * m * tx; y = (1 - m) * (1 - m) * sy + 2 * (1 - m) * m * cyp + m * m * ty;
+      r = r0 * 1.1 + (r1 - r0 * 1.1) * m;
+      // 빨라질수록 꼬리
+      if (a > 0.3) { for (var g = 1; g <= 2; g++) { var m2 = Math.pow(Math.max(0, a - g * 0.07), 2.6); cx.globalAlpha = 0.25 / g; icon(f.k, (1 - m2) * (1 - m2) * sx + 2 * (1 - m2) * m2 * cxp + m2 * m2 * tx, (1 - m2) * (1 - m2) * sy + 2 * (1 - m2) * m2 * cyp + m2 * m2 * ty, r); } cx.globalAlpha = 1; }
+      icon(f.k, x, y, r);
+    }
+    return false;
+  }
+  function shovel(x, y, rot, alpha) {
+    cx.save(); cx.globalAlpha = Math.max(0, alpha); cx.translate(x, y); cx.rotate(rot);
+    cx.fillStyle = '#8A6440'; cx.strokeStyle = '#2B1A0F'; cx.lineWidth = 2; rr(-2.5, -34, 5, 26, 2); cx.fill(); cx.stroke();
+    cx.fillStyle = '#B9C2C6'; cx.beginPath(); cx.moveTo(-9, -9); cx.lineTo(9, -9); cx.lineTo(7, 6); cx.quadraticCurveTo(0, 13, -7, 6); cx.closePath(); cx.fill(); cx.stroke();
+    cx.restore();
+  }
+  function glass(x, y, r) {
+    cx.fillStyle = '#FFF4DE'; cx.strokeStyle = '#2B1A0F'; cx.lineWidth = 2;
+    cx.beginPath(); cx.moveTo(x - r * 0.7, y - r); cx.lineTo(x + r * 0.7, y - r); cx.lineTo(x, y); cx.lineTo(x + r * 0.7, y + r); cx.lineTo(x - r * 0.7, y + r); cx.lineTo(x, y); cx.closePath(); cx.fill(); cx.stroke();
+    cx.fillStyle = '#E8B640'; cx.beginPath(); cx.moveTo(x - r * 0.4, y + r * 0.8); cx.lineTo(x + r * 0.4, y + r * 0.8); cx.lineTo(x, y + r * 0.2); cx.closePath(); cx.fill();
+    cx.fillStyle = '#5B3A24'; cx.fillRect(x - r * 0.85, y - r - 2, r * 1.7, 3); cx.fillRect(x - r * 0.85, y + r - 1, r * 1.7, 3);
+  }
+  function sparkle(x, y, r, rot) {
+    if (IM.fx_spark) { var sz = r * 2.4 * (0.85 + 0.15 * Math.sin(rot * 1.7)); cx.save(); cx.translate(x, y); cx.rotate(Math.sin(rot * 0.3) * 0.3); cx.drawImage(IM.fx_spark, -sz / 2, -sz / 2, sz, sz); cx.restore(); return; }
+    cx.save(); cx.translate(x, y); cx.rotate(rot * 0.2); cx.fillStyle = 'rgba(255,214,107,.9)';
+    for (var i = 0; i < 4; i++) { cx.rotate(Math.PI / 2); cx.beginPath(); cx.moveTo(0, -r); cx.lineTo(2.5, -r * 0.35); cx.lineTo(-2.5, -r * 0.35); cx.closePath(); cx.fill(); }
+    cx.restore();
+  }
+
+  // ════════ 돌 부수기 ════════
+  var TIER = { 1: { hp: 1, r: 22, n: [1, 1] }, 2: { hp: 3, r: 32, n: [3, 4] }, 3: { hp: 6, r: 44, n: [6, 8] }, 4: { hp: 2, r: 30, n: [2, 3], life: 1.8 } };
+  // 4 = 황금 돌 : 1.8초만 있다가 사라짐 · 두 번 치면 깨지고 진사 2개 확정
+  function newRock() { var s = { mode: 'rock', t: 0, left: DUR, pre: 1.3, rocks: [], got: {}, fx: [], fly: [], parts: [], rings: [], hits: [], goldNext: rnd(4, 6) / GF(), score: 0, next: 0.6, taps: 0, shake: 0 }; S = s; for (var i = 0; i < 4; i++) { spawnRock(i < 2 ? 1 : 2); } return s; }
+  function spawnRock(tier) {
+    var T = TIER[tier];
+    for (var a = 0; a < 40; a++) {
+      var x = rnd(20 + T.r, W - 20 - T.r), y = rnd(124 + T.r, H - 24 - T.r);
+      if (S.rocks.some(function (o) { return Math.hypot(o.x - x, o.y - y) < o.r + T.r + 8; })) { continue; }
+      S.rocks.push({ x: x, y: y, tier: tier, hp: T.hp, r: T.r, born: S.t, hit: -9, seed: Math.random(), life: T.life || 0 }); return true;
+    }
+    return false;
+  }
+  // 황금 돌 이미지 : 중간 돌 그림을 금빛으로 물들여 한 번만 만들어 둔다
+  var GOLD = {};
+  function goldOf(n) {
+    if (GOLD[n]) { return GOLD[n]; } var im = IM[n]; if (!im) { return null; }
+    var c = document.createElement('canvas'); c.width = im.width; c.height = im.height; var g = c.getContext('2d');
+    g.drawImage(im, 0, 0); g.globalCompositeOperation = 'multiply'; g.fillStyle = '#FFC23A'; g.fillRect(0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(255,236,170,.28)'; g.fillRect(0, 0, c.width, c.height);
+    g.globalCompositeOperation = 'destination-in'; g.drawImage(im, 0, 0);
+    GOLD[n] = c; return c;
+  }
+  function rockAt(p) { for (var i = S.rocks.length - 1; i >= 0; i--) { var o = S.rocks[i]; if (Math.hypot(o.x - p.x, o.y - p.y) < o.r + 6) { return o; } } return null; }
+  function hitRock(o) {
+    S.taps++; o.hp--; o.hit = S.t; S.hits.push({ x: o.x, y: o.y, at: S.t });
+    noise(0.07, 0.4, 1600 + o.tier * -300); tone(220 - o.tier * 30, 0.06, 'square', 0.06);
+    for (var i = 0; i < 4; i++) { S.parts.push({ x: o.x + rnd(-o.r / 2, o.r / 2), y: o.y, vx: rnd(-120, 120), vy: rnd(-180, -60), col: '#A9A39A', at: S.t, sh: Math.floor(Math.random() * 4), rot: rnd(0, 6) }); }
+    if (o.hp > 0) { return; }
+    S.rocks.splice(S.rocks.indexOf(o), 1); S.rings.push({ x: o.x, y: o.y, r: o.r, at: S.t }); S.shake = Math.max(S.shake, o.tier * 1.8);
+    noise(0.22, 0.5, 700); tone(90, 0.2, 'triangle', 0.15, 50);
+    for (var j = 0; j < 12; j++) { S.parts.push({ x: o.x, y: o.y, vx: rnd(-200, 200), vy: rnd(-260, -60), col: j % 3 ? '#8A847C' : '#5A554F', at: S.t, big: true, sh: Math.floor(Math.random() * 4), rot: rnd(0, 6) }); }
+    var T = TIER[o.tier], n = Math.round(rnd(T.n[0], T.n[1]));
+    var base = pick([['white', 1], ['celadon', 1], ['black', 1]]);
+    for (var k = 0; k < n; k++) { var it = Math.random() < 0.7 ? base : pick([['white', 1], ['celadon', 1], ['black', 1]]); S.fly.push({ k: it, dx: rnd(-o.r * 0.7, o.r * 0.7), x: o.x + rnd(-o.r / 3, o.r / 3), y: o.y + rnd(-o.r / 3, o.r / 3), at: S.t + k * 0.04 }); }
+    var jb = (CFG.rareUp || 0) * 3 + (CFG.site === 'mine' ? 0.12 : 0), js = o.tier === 4 ? 2 : o.tier === 3 ? (Math.random() < 0.6 + jb ? (Math.random() < 0.3 ? 2 : 1) : 0) : (o.tier === 2 && Math.random() < 0.12 + jb * 0.6 ? 1 : 0);
+    for (var q = 0; q < js; q++) { S.fly.push({ k: 'jinsa', x: o.x, y: o.y, dx: rnd(-10, 10), big: true, at: S.t + 0.1 + q * 0.06 }); }
+    S.fx.push({ x: o.x, y: o.y - o.r, t: o.tier === 4 ? '황금 돌! 진사 +2' : js ? '진사 발견!' : '+' + n, c: js ? '#FF8A6B' : '#FFF4DE', at: S.t, big: !!js });
+    if (js) { tone(990, 0.12, 'triangle', 0.1); setTimeout(function () { tone(1480, 0.2, 'triangle', 0.08); }, 90); }
+  }
+  function stepRock(dt) {
+    S.goldNext -= dt;
+    if (S.goldNext <= 0) { if (S.left > 2 && spawnRock(4)) { tone(1560, 0.08, 'sine', 0.07); setTimeout(function () { tone(2093, 0.12, 'sine', 0.06); }, 70); } S.goldNext = rnd(6, 9) / GF(); }
+    S.rocks = S.rocks.filter(function (o) { if (o.life && S.t - o.born > o.life) { S.fx.push({ x: o.x, y: o.y - 10, t: '사라졌다…', c: '#C9A27A', at: S.t }); return false; } return true; });
+    S.next -= dt;
+    if (S.next <= 0) {
+      var t = S.t, n = t > 18 ? 2 : 1;
+      for (var i = 0; i < n; i++) { if (S.rocks.length < 20) { spawnRock(pick([[1, Math.max(0.25, 0.6 - t * 0.01)], [2, 0.32], [3, 0.08 + t * 0.008]])); } }
+      S.next = Math.max(0.3, 1.05 - t * 0.028);
+    }
+  }
+  function drawRock() {
+    var hud = ['white', 'celadon', 'black', 'jinsa'];
+    S.rings = S.rings.filter(function (g) { var a = (S.t - g.at) / 0.35; if (a >= 1) { return false; } cx.strokeStyle = 'rgba(255,244,222,' + (0.7 * (1 - a)) + ')'; cx.lineWidth = 4 * (1 - a) + 1; cx.beginPath(); cx.arc(g.x, g.y, g.r * (0.8 + a * 1.4), 0, 7); cx.stroke(); return true; });
+    S.rocks.forEach(function (o) {
+      var age = Math.min(1, (S.t - o.born) / 0.3), hk = S.t - o.hit < 0.12 ? 1 - (S.t - o.hit) / 0.12 : 0, r = o.r * (0.3 + 0.7 * ease(age)) * (1 - 0.1 * hk), sh = hk ? rnd(-2.5, 2.5) : 0, x = o.x + sh, y = o.y + (1 - ease(age)) * 10;
+      if (age < 1) { cx.strokeStyle = 'rgba(200,180,150,' + (0.6 * (1 - age)) + ')'; cx.lineWidth = 3; cx.beginPath(); cx.ellipse(o.x, o.y + o.r * 0.55, o.r * (0.8 + age * 0.8), o.r * 0.3 * (0.8 + age * 0.8), 0, 0, 7); cx.stroke(); }
+      var dmg = TIER[o.tier].hp - o.hp, rn = o.tier === 1 ? 'rock_s' : o.tier === 2 || o.tier === 4 ? 'rock_m_' + Math.min(2, dmg) : 'rock_l_' + Math.min(3, Math.round(dmg * 3 / 5)), rim = o.tier === 4 ? goldOf(rn) : IM[rn];
+      var gfade = o.life ? Math.min(1, (o.life - (S.t - o.born)) / 0.3) : 1; cx.save(); cx.globalAlpha = Math.max(0, gfade);
+      if (o.tier === 4) { var pl = 0.5 + 0.5 * Math.sin(S.t * 12), gg = cx.createRadialGradient(x, y, r * 0.5, x, y, r * 1.9); gg.addColorStop(0, 'rgba(255,214,107,' + (0.35 + 0.25 * pl) + ')'); gg.addColorStop(1, 'rgba(255,214,107,0)'); cx.fillStyle = gg; cx.beginPath(); cx.arc(x, y, r * 1.9, 0, 7); cx.fill();
+        cx.strokeStyle = '#FFD66B'; cx.lineWidth = 3; cx.beginPath(); cx.arc(x, y, r * 1.28, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.max(0, 1 - (S.t - o.born) / o.life)); cx.stroke(); }
+      cx.fillStyle = 'rgba(0,0,0,.28)'; cx.beginPath(); cx.ellipse(x + r * 0.08, y + r * (rim ? 0.22 : 0.55), r * (rim ? 1.02 : 1), r * (rim ? 0.92 : 0.35), 0, 0, 7); cx.fill();
+      if (rim) {
+        var sz = r * 2.25; cx.save(); cx.translate(x, y); cx.rotate((o.seed - 0.5) * 1.2); cx.drawImage(rim, -sz / 2, -sz / 2, sz, sz);
+        if (hk) { cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = 0.45 * hk; cx.drawImage(rim, -sz / 2, -sz / 2, sz, sz); }
+        cx.restore();
+        if (o.tier === 3) { sparkle(x + Math.cos(S.t * 2 + o.seed * 9) * r * 0.5, y - r * 0.3, 7, S.t * 5); }
+      } else {
+      var g = cx.createRadialGradient(x - r * 0.35, y - r * 0.45, 2, x, y, r); g.addColorStop(0, o.tier === 3 ? '#B7A8A0' : '#C9C4BC'); g.addColorStop(1, o.tier === 3 ? '#4E4440' : '#5A554F');
+      cx.fillStyle = g; cx.beginPath();
+      for (var a = 0; a < 9; a++) { var ang = a / 9 * Math.PI * 2, rr2 = r * (0.86 + 0.14 * Math.sin(o.seed * 40 + a * 2.1)); var px = x + Math.cos(ang) * rr2, py = y + Math.sin(ang) * rr2 * 0.86; a ? cx.lineTo(px, py) : cx.moveTo(px, py); }
+      cx.closePath(); cx.fill(); cx.strokeStyle = '#2B2622'; cx.lineWidth = 2.5; cx.stroke();
+      if (hk) { cx.fillStyle = 'rgba(255,255,255,' + (0.55 * hk) + ')'; cx.fill(); }
+      cx.fillStyle = 'rgba(255,255,255,.18)'; cx.beginPath(); cx.ellipse(x - r * 0.3, y - r * 0.4, r * 0.32, r * 0.16, -0.5, 0, 7); cx.fill();
+      if (o.tier === 3) { sparkle(x + Math.cos(S.t * 2 + o.seed * 9) * r * 0.5, y - r * 0.3, 7, S.t * 5); }      if (o.tier === 3) { cx.fillStyle = 'rgba(210,80,62,.55)'; for (var v = 0; v < 3; v++) { cx.beginPath(); cx.arc(x + Math.cos(o.seed * 9 + v * 2) * r * 0.45, y + Math.sin(o.seed * 7 + v * 2) * r * 0.35, 3.5, 0, 7); cx.fill(); } }
+      // 금 (맞은 만큼)
+      cx.strokeStyle = 'rgba(28,20,16,.8)'; cx.lineWidth = 2;
+      for (var c = 0; c < dmg; c++) { var a0 = o.seed * 10 + c * 2.3; cx.beginPath(); cx.moveTo(x + Math.cos(a0) * r * 0.1, y + Math.sin(a0) * r * 0.1); cx.lineTo(x + Math.cos(a0 + 0.4) * r * 0.5, y + Math.sin(a0 + 0.4) * r * 0.45); cx.lineTo(x + Math.cos(a0 - 0.2) * r * 0.85, y + Math.sin(a0 - 0.2) * r * 0.75); cx.stroke(); }
+      }
+      // 남은 타격 점
+      if (o.tier > 1) { for (var h = 0; h < TIER[o.tier].hp; h++) { var hx = x + (h - (TIER[o.tier].hp - 1) / 2) * 9, hy = y + r * 0.86 + 9; cx.beginPath(); cx.arc(hx, hy, 3.2, 0, 7); cx.fillStyle = h < o.hp ? '#FFF4DE' : 'rgba(255,244,222,.2)'; cx.fill(); } }
+      if (o.tier === 4) { sparkle(x + Math.cos(S.t * 3 + 1) * r * 0.7, y + Math.sin(S.t * 3 + 1) * r * 0.6, 8, S.t * 6); sparkle(x + Math.cos(S.t * 3 + 4) * r * 0.7, y + Math.sin(S.t * 3 + 4) * r * 0.6, 6, S.t * 6 + 2); }
+      cx.restore();
+    });
+    // 망치 : 들어 올렸다가 내려찍기 (머리 = 이미지 0.3,0.25 / 손잡이 끝 = 0.75,0.85 기준 회전)
+    S.hits = S.hits.filter(function (h) {
+      var a = (S.t - h.at) / 0.26; if (a >= 1 || !IM.tool_hammer) { return a < 1; }
+      var hs = 50, sw = a < 0.35 ? 0.7 * (1 - a / 0.35) : 0;
+      cx.save(); cx.globalAlpha = a < 0.6 ? 1 : 1 - (a - 0.6) / 0.4; cx.translate(h.x + 0.45 * hs, h.y + 0.6 * hs - 6); cx.rotate(sw); cx.drawImage(IM.tool_hammer, -0.75 * hs, -0.85 * hs, hs, hs); cx.restore();
+      return true;
+    });
+    S.fly = S.fly.filter(function (f) {
+      if (S.t < f.at) { return true; }
+      return !pickup(f, 31 + hud.indexOf(f.k) * 88, 81, 12, 8.5);
+    });
+  }
+
+  // ════════ 공통 ════════
+  var PT = {};
+  // 조작 방식 : 'drag' = 끌면서 파기·쓸어서 부수기 / 'tap' = 누를 때마다 (시작 화면에서 바꿀 수 있음)
+  // 흙 파기 = 탭, 돌 부수기 = 드래그(쓸기). 두 게임 모두 손가락 하나만 인식 (먼저 닿은 손가락)
+  var CTRL = 'tap', ACT = null;
+  var DSTEP = 18; // 드래그 중 이만큼 움직일 때마다 한 번 판다
+  function segHit(o, a, b) { // 선분 a-b 가 돌 원에 닿는가
+    var dx = b.x - a.x, dy = b.y - a.y, L = dx * dx + dy * dy, t = L ? Math.max(0, Math.min(1, ((o.x - a.x) * dx + (o.y - a.y) * dy) / L)) : 0;
+    var px = a.x + dx * t - o.x, py = a.y + dy * t - o.y; return px * px + py * py < (o.r + 4) * (o.r + 4);
+  }
+  cv.addEventListener('pointerdown', function (e) {
+    if (!running || S.left <= 0 || S.pre > 0) { return; } audio(); e.preventDefault();
+    if (ACT !== null && ACT !== e.pointerId) { return; } ACT = e.pointerId; CTRL = S.mode === 'rock' ? 'drag' : 'tap';
+    var p = toW(e);
+    if (CTRL === 'drag') { try { cv.setPointerCapture(e.pointerId); } catch (er) {} PT[e.pointerId] = { x: p.x, y: p.y, lx: p.x, ly: p.y, inR: [] }; (S.trail = S.trail || []).push({ id: e.pointerId, x: p.x, y: p.y, at: S.t }); }
+    if (S.mode === 'dig') { dig(p, CTRL === 'drag'); }
+    else { var o = rockAt(p); if (o) { hitRock(o); if (PT[e.pointerId]) { PT[e.pointerId].inR.push(o); } } else { S.taps++; } }
+  });
+  cv.addEventListener('pointermove', function (e) {
+    var q = PT[e.pointerId]; if (!q || CTRL !== 'drag' || !running || S.left <= 0 || S.pre > 0) { return; } e.preventDefault();
+    var p = toW(e); S.trail.push({ id: e.pointerId, x: p.x, y: p.y, at: S.t });
+    if (S.mode === 'dig') {
+      // 지난번 판 자리에서 DSTEP 마다 경로를 따라 판다 (빠르게 그어도 끊기지 않게)
+      var dx = p.x - q.lx, dy = p.y - q.ly, d = Math.hypot(dx, dy);
+      while (d >= DSTEP) { q.lx += dx / d * DSTEP; q.ly += dy / d * DSTEP; dig({ x: q.lx, y: q.ly }, true); dx = p.x - q.lx; dy = p.y - q.ly; d = Math.hypot(dx, dy); }
+    } else {
+      // 쓸고 지나간 돌을 한 번씩 친다. 돌 밖으로 나갔다가 다시 들어오면 또 친다
+      var a = { x: q.x, y: q.y };
+      q.inR = q.inR.filter(function (o) { return S.rocks.indexOf(o) >= 0 && segHit(o, a, p); });
+      S.rocks.slice().forEach(function (o) { if (q.inR.indexOf(o) < 0 && segHit(o, a, p)) { q.inR.push(o); hitRock(o); } });
+    }
+    q.x = p.x; q.y = p.y;
+  });
+  function upPt(e) { delete PT[e.pointerId]; if (ACT === e.pointerId) { ACT = null; } }
+  cv.addEventListener('pointerup', upPt); cv.addEventListener('pointercancel', upPt);
+  // 손가락 궤적 + 드래그 중인 손 아래 도구
+  function drawTrail() {
+    if (!S.trail) { return; }
+    S.trail = S.trail.filter(function (t) { return S.t - t.at < 0.16; });
+    var by = {}; S.trail.forEach(function (t) { (by[t.id] = by[t.id] || []).push(t); });
+    Object.keys(by).forEach(function (id) {
+      var L = by[id]; if (L.length < 2) { return; }
+      for (var i = 1; i < L.length; i++) { var a = 1 - (S.t - L[i].at) / 0.16; cx.strokeStyle = S.mode === 'dig' ? 'rgba(255,240,210,' + (0.5 * a) + ')' : 'rgba(255,255,255,' + (0.75 * a) + ')'; cx.lineWidth = (S.mode === 'dig' ? 10 : 6) * a + 1; cx.lineCap = 'round'; cx.beginPath(); cx.moveTo(L[i - 1].x, L[i - 1].y); cx.lineTo(L[i].x, L[i].y); cx.stroke(); }
+    });
+    if (S.mode === 'dig' && IM.tool_shovel) {
+      Object.keys(PT).forEach(function (id) { var q = PT[id], ss = 46; cx.save(); cx.globalAlpha = 0.95; cx.translate(q.x, q.y); cx.rotate(Math.sin(S.t * 30) * 0.08); cx.drawImage(IM.tool_shovel, -ss * 0.72, -ss * 0.9, ss, ss); cx.restore(); });
+    }
+  }
+  function stepCommon(dt) {
+    if (S.pre > 0) { var was = Math.ceil(S.pre / 0.45); S.pre -= dt; if (Math.ceil(S.pre / 0.45) !== was && S.pre > 0) { tone(660, 0.08, 'triangle', 0.08); } if (S.pre <= 0) { tone(990, 0.2, 'triangle', 0.1); S.goAt = S.t; } return; }
+    S.t += dt; S.left -= dt; S.shake = Math.max(0, (S.shake || 0) - dt * 14);
+    S.parts = S.parts.filter(function (q) { var a = S.t - q.at; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 520 * dt; return a < 0.7; });
+    S.fx = S.fx.filter(function (f) { return S.t - f.at < 0.9; });
+    if (S.left <= 5 && Math.ceil(S.left) !== S.tickSec) { S.tickSec = Math.ceil(S.left); if (S.left > 0) { tone(1000, 0.05, 'square', 0.06); } }
+    if (S.left <= 0 && !S.fly.length) { finish(); }
+  }
+  function drawBg() {
+    var g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#4E3A28'); g.addColorStop(1, '#3E2C1E'); cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+    if (S && S.mode === 'rock') {
+      cx.fillStyle = '#4A3424'; rr(7, 113, W - 14, H - 122, 20); cx.fill();
+      if (IM.bg_gravel) {
+        if (!PAT) { PAT = cx.createPattern(IM.bg_gravel, 'repeat'); if (PAT.setTransform && window.DOMMatrix) { PAT.setTransform(new DOMMatrix([1 / 3, 0, 0, 1 / 3, 0, 0])); } }
+        cx.fillStyle = PAT; rr(15, 121, W - 30, H - 138, 14); cx.fill();
+        var vg2 = cx.createRadialGradient(W / 2, H / 2 + 60, H * 0.25, W / 2, H / 2 + 60, H * 0.7); vg2.addColorStop(0, 'rgba(0,0,0,0)'); vg2.addColorStop(1, 'rgba(20,12,6,.38)'); cx.fillStyle = vg2; rr(15, 121, W - 30, H - 138, 14); cx.fill();
+        return;
+      }
+      var gg = cx.createLinearGradient(0, 120, 0, H); gg.addColorStop(0, '#7A6A55'); gg.addColorStop(1, '#5E5040'); cx.fillStyle = gg; rr(15, 121, W - 30, H - 138, 14); cx.fill();
+      if (!GRAV) { GRAV = []; for (var q = 0; q < 160; q++) { GRAV.push([Math.random(), Math.random(), Math.random()]); } }
+      for (var i = 0; i < GRAV.length; i++) { var px = 22 + GRAV[i][0] * (W - 44), py = 128 + GRAV[i][1] * (H - 160), pr = 1.2 + GRAV[i][2] * 3; cx.fillStyle = i % 3 ? 'rgba(0,0,0,.14)' : 'rgba(255,240,210,.10)'; cx.beginPath(); cx.ellipse(px, py, pr * 1.3, pr, i, 0, 7); cx.fill(); }
+    }
+  }
+  var PER = 5; // 조각 몇 개당 재료 1개
+  // 상단 칸 : 재료 개수(크게) + 다음 재료까지 모은 조각(점 5개)
+  function slot(k, x, iy, ir, tx, fs) {
+    var n = S.got[k] || 0, made = S.made && S.made[k] !== undefined && S.t - S.made[k] < 0.5 ? 1 - (S.t - S.made[k]) / 0.5 : 0, bp = S.bump && S.t - S.bump < 0.15 ? 2 : 0;
+    if (made) { cx.fillStyle = 'rgba(255,214,107,' + (0.45 * made) + ')'; cx.beginPath(); cx.arc(x, iy, ir * 2.4, 0, 7); cx.fill(); }
+    icon(k, x, iy, ir + bp + made * 4); txtL(IT[k].s + ' ' + Math.floor(n / PER), tx, 90, fs + made * 3, made ? '#FFD66B' : '#FFF4DE');
+    for (var i = 0; i < PER; i++) { cx.fillStyle = i < n % PER ? '#FFB547' : 'rgba(255,244,222,.18)'; rr(tx + i * 8, 96, 6, 4, 2); cx.fill(); }
+  }
+  // 9분할 (s = 원본 모서리 px, d = 화면 모서리 px)
+  function nine(im, s, x, y, w, h, d) {
+    var W0 = im.width, H0 = im.height, sx = [0, s, W0 - s, W0], sy = [0, s, H0 - s, H0], dx = [x, x + d, x + w - d, x + w], dy = [y, y + d, y + h - d, y + h];
+    for (var j = 0; j < 3; j++) { for (var i = 0; i < 3; i++) { cx.drawImage(im, sx[i], sy[j], sx[i + 1] - sx[i], sy[j + 1] - sy[j], dx[i], dy[j], dx[i + 1] - dx[i], dy[j + 1] - dy[j]); } }
+  }
+  // 가로 3분할 (s = 원본 끝 px, 높이는 h 에 맞춰 비례)
+  function three(im, s, x, y, w, h) {
+    var W0 = im.width, H0 = im.height, d = Math.min(w / 2, s * h / H0);
+    cx.drawImage(im, 0, 0, s, H0, x, y, d, h); cx.drawImage(im, s, 0, W0 - 2 * s, H0, x + d, y, w - 2 * d, h); cx.drawImage(im, W0 - s, 0, s, H0, x + w - d, y, d, h);
+  }
+  function drawHud() {
+    // 시간 막대
+    var lr = Math.max(0, S.left) / DUR, low = S.left < 8;
+    if (IM.panel_hud) { nine(IM.panel_hud, 55, 6, 6, W - 12, 106, 20); } else { cx.fillStyle = 'rgba(28,20,16,.85)'; rr(10, 10, W - 20, 98, 16); cx.fill(); }
+    if (IM.bar_time_frame && IM.bar_time_fill) {
+      var bx = 18, bw = W - 96, fw = (bw - 20) * Math.min(1, lr);
+      three(IM.bar_time_frame, 44, bx, 15, bw, 30);
+      if (fw > 4) { cx.save(); if (low && Math.sin(S.t * 14) > 0) { cx.globalAlpha = 0.7; } three(low && IM.bar_time_fill_low ? IM.bar_time_fill_low : IM.bar_time_fill, 9, bx + 10, 23, Math.max(10, fw), 13); cx.restore(); }
+    } else {
+      cx.fillStyle = '#2B1A0F'; rr(22, 22, W - 104, 16, 8); cx.fill();
+      cx.fillStyle = low ? (Math.sin(S.t * 14) > 0 ? '#E0533F' : '#FF8A6B') : '#9FE08F'; rr(22, 22, (W - 104) * Math.min(1, lr), 16, 8); cx.fill();
+    }
+    txtR(Math.max(0, Math.ceil(S.left)) + '초', W - 22, 37, 22, low ? '#FF8A6B' : '#FFF4DE');
+    txtL('점수 ' + S.score, 22, 60, 15, '#FFE7A8');
+    if (S.mode === 'dig') {
+      ['c1', 'c2', 'c3', 'c4'].forEach(function (k, i) { var x = 45 + i * 88; slot(k, x - 14, 81, 10, x - 1, 13); });
+      txtR('시간 +3초', W - 22, 60, 12, '#9FE8FF'); cx.font = "12px Jua, 'Noto Sans KR', sans-serif"; icon('time', W - 30 - cx.measureText('시간 +3초').width, 55, 6.5);
+    } else {
+      ['white', 'celadon', 'black', 'jinsa'].forEach(function (k, i) { var x = 45 + i * 88; slot(k, x - 14, 81, 8.5, x - 2, 13); });
+      txtR('큰 돌일수록 많이', W - 22, 60, 12, '#C9A27A');
+    }
+  }
+  function drawCombo() {
+    if (S.mode !== 'dig' || S.combo < 2) { return; }
+    var rem = CW() - (S.t - S.lastGet); if (rem <= 0) { return; }
+    var mult = Math.min(3, 1 + 0.25 * (S.combo - 1)), pop = Math.max(0, 1 - (S.t - S.lastGet) / 0.18), w = 150, x = W / 2 - w / 2, y = 128;
+    cx.save(); cx.translate(W / 2, y + 16); cx.scale(1 + pop * 0.15, 1 + pop * 0.15); cx.translate(-W / 2, -(y + 16));
+    cx.fillStyle = 'rgba(28,20,16,.78)'; rr(x, y, w, 34, 12); cx.fill();
+    txt('콤보 ' + S.combo + '  ×' + mult.toFixed(2).replace(/0$/, '').replace(/\.0$/, ''), W / 2, y + 21, 17, S.combo >= 5 ? '#FFD66B' : '#FFB547');
+    cx.fillStyle = 'rgba(255,255,255,.15)'; rr(x + 10, y + 27, w - 20, 4, 2); cx.fill();
+    cx.fillStyle = rem < 0.6 ? '#FF8A6B' : '#FFB547'; rr(x + 10, y + 27, (w - 20) * (rem / CW()), 4, 2); cx.fill();
+    cx.restore();
+  }
+  function drawFx() {
+    S.parts.forEach(function (q) {
+      var a = 1 - (S.t - q.at) / 0.7; cx.globalAlpha = Math.max(0, a);
+      if (q.dirt !== undefined && IM.fx_dirt_chunk) { var zd = 15; cx.save(); cx.translate(q.x, q.y); cx.rotate(q.rot + (S.t - q.at) * 6); cx.drawImage(IM.fx_dirt_chunk, q.dirt * 48, 0, 48, 48, -zd / 2, -zd / 2, zd, zd); cx.restore(); }
+      else if (q.sh !== undefined && IM.fx_rock_shard) { var z = q.big ? 16 : 11; cx.save(); cx.translate(q.x, q.y); cx.rotate(q.rot + (S.t - q.at) * 8); cx.drawImage(IM.fx_rock_shard, q.sh * 48, 0, 48, 48, -z / 2, -z / 2, z, z); cx.restore(); }
+      else { cx.fillStyle = q.col; cx.fillRect(q.x - (q.big ? 4 : 2.5), q.y - (q.big ? 4 : 2.5), q.big ? 8 : 5, q.big ? 8 : 5); }
+    });
+    cx.globalAlpha = 1;
+    S.fx.forEach(function (f) { var k = (S.t - f.at) / 0.9; cx.globalAlpha = 1 - k; cx.font = (f.big ? 22 : 16) + "px Jua, 'Noto Sans KR', sans-serif"; var hw = cx.measureText(f.t).width / 2 + 8; txt(f.t, Math.max(hw, Math.min(W - hw, f.x)), f.y - k * 28, f.big ? 22 : 16, f.c); cx.globalAlpha = 1; });
+    if (S.pre > 0) { cx.fillStyle = 'rgba(28,20,16,.45)'; cx.fillRect(0, 0, W, H); txt(S.pre > 0.45 ? '준비…' : '시작!', W / 2, H / 2, 46, '#FFD66B'); txt(S.mode === 'dig' ? '누를 때마다 맨 위 한 층씩 · 흙이 다 드러나야 획득!' : '큰 돌일수록 원료가 많이 나와요', W / 2, H / 2 + 44, 16, '#FFF4DE'); }
+    if (S.left <= 0) { cx.fillStyle = 'rgba(28,20,16,.5)'; cx.fillRect(0, 0, W, H); txt('그만!', W / 2, H / 2, 48, '#FFD66B'); }
+  }
+  function blob(x, y, r, d) { var g = cx.createRadialGradient(x - r * 0.3, y - r * 0.4, 1, x, y, r); g.addColorStop(0, d.col); g.addColorStop(1, d.dk); cx.fillStyle = g; cx.beginPath(); cx.moveTo(x - r, y + r * 0.5); cx.quadraticCurveTo(x - r * 0.8, y - r, x, y - r * 0.9); cx.quadraticCurveTo(x + r * 0.9, y - r, x + r, y + r * 0.5); cx.closePath(); cx.fill(); cx.strokeStyle = '#2B1A0F'; cx.lineWidth = 1.5; cx.stroke(); }
+  function gem(x, y, r, d) { var g = cx.createRadialGradient(x - r * 0.35, y - r * 0.4, 1, x, y, r); g.addColorStop(0, '#FFFFFF'); g.addColorStop(0.35, d.col); g.addColorStop(1, d.dk); cx.fillStyle = g; cx.beginPath(); cx.moveTo(x, y - r); cx.lineTo(x + r, y - r * 0.2); cx.lineTo(x + r * 0.6, y + r); cx.lineTo(x - r * 0.6, y + r); cx.lineTo(x - r, y - r * 0.2); cx.closePath(); cx.fill(); cx.strokeStyle = '#1C1410'; cx.lineWidth = 1.5; cx.stroke(); }
+  function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+  function rr(x, y, w, h, r) { cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath(); }
+  function txt(t, x, y, s, c) { cx.font = s + "px Jua, 'Noto Sans KR', sans-serif"; cx.textAlign = 'center'; cx.lineWidth = 4; cx.strokeStyle = 'rgba(28,20,16,.85)'; cx.strokeText(t, x, y); cx.fillStyle = c; cx.fillText(t, x, y); }
+  function txtL(t, x, y, s, c) { cx.font = s + "px Jua, 'Noto Sans KR', sans-serif"; cx.textAlign = 'left'; cx.fillStyle = c; cx.fillText(t, x, y); }
+  function txtR(t, x, y, s, c) { cx.font = s + "px Jua, 'Noto Sans KR', sans-serif"; cx.textAlign = 'right'; cx.fillStyle = c; cx.fillText(t, x, y); }
+
+  function loop(ts) {
+    var dt = Math.min(0.12, (ts - last) / 1000 || 0); last = ts;
+    if (running && S) { if (S.left > 0 && S.mode === 'rock') { stepRock(dt); } stepCommon(dt); }
+    var r = wrap.getBoundingClientRect();
+    cx.setTransform(DPR, 0, 0, DPR, 0, 0); cx.fillStyle = '#1C1410'; cx.fillRect(0, 0, r.width, r.height);
+    cx.setTransform(DPR * SC, 0, 0, DPR * SC, DPR * OX, DPR * OY);
+    drawBg();
+    if (S) { if (S.mode === 'dig') { drawDig(); } else { cx.save(); var sk = S.shake || 0; cx.translate(rnd(-sk, sk), rnd(-sk, sk)); drawRock(); cx.restore(); } drawTrail(); drawHud(); drawCombo(); drawFx(); }
+    requestAnimationFrame(loop);
+  }
+  var lastMode = 'dig';
+  function start(m) { ACT = null; PT = {}; DUR = 30 + (CFG.gTime || 0); audio(); lastMode = m; S = m === 'dig' ? newDig() : newRock(); running = true; document.getElementById('start').hidden = true; document.getElementById('end').hidden = true; tone(523, 0.12, 'triangle', 0.1); setTimeout(function () { tone(784, 0.18, 'triangle', 0.1); }, 110); }
+  function finish() {
+    if (!running) { return; } running = false;
+    if (EMBED) { try { parent.postMessage({ type: 'gather-done', mode: S.mode, got: S.got, score: S.score }, '*'); } catch (e) {} tone(523, 0.15, 'triangle', 0.12); setTimeout(function () { tone(784, 0.3, 'triangle', 0.12); }, 140); return; }
+    var nb = S.score > (BEST[S.mode] || 0); if (nb) { BEST[S.mode] = S.score; try { localStorage.setItem('chj-best', JSON.stringify(BEST)); } catch (e) {} bestTxt(); }
+    var keys = S.mode === 'dig' ? ['c1', 'c2', 'c3', 'c4'] : ['white', 'celadon', 'black', 'jinsa'];
+    document.getElementById('t2').textContent = S.mode === 'dig' ? '흙 파기 끝!' : '돌 부수기 끝!';
+    document.getElementById('endSub').textContent = '점수 ' + S.score + ' · 터치 ' + S.taps + '번' + (nb ? ' · 🏆 최고 기록' : '');
+    document.getElementById('endRes').innerHTML = keys.map(function (k) { return '<span>' + (IM[IT[k].img] ? '<img src="img/' + IT[k].img + '.png" alt="" width="40" height="40">' : '<i style="display:block;width:26px;height:26px;border-radius:' + (S.mode === 'dig' ? '50% 50% 40% 40%' : '30%') + ';background:radial-gradient(circle at 35% 30%,#fff 0,' + IT[k].col + ' 40%,' + IT[k].dk + ' 100%);border:2px solid #2B1A0F"></i>') + IT[k].n + '<small>' + IT[k].s + '</small><b>' + Math.floor((S.got[k] || 0) / PER) + '</b><small>조각 ' + (S.got[k] || 0) + '개' + ((S.got[k] || 0) % PER ? ' · ' + ((S.got[k] || 0) % PER) + '개 남음' : '') + '</small></span>'; }).join('');
+    document.getElementById('endNote').textContent = S.mode === 'dig' ? '특선은 6~7층 깊이에 숨어 있어요 · 흙이 반쯤 보이면 그 둘레를 마저 파 보세요' : '황금 돌은 진사 2개 확정 · 큰 돌(점 6개)에서도 진사가 잘 나와요';
+    document.getElementById('end').hidden = false;
+    tone(523, 0.15, 'triangle', 0.12); setTimeout(function () { tone(659, 0.15, 'triangle', 0.12); }, 120); setTimeout(function () { tone(784, 0.3, 'triangle', 0.12); }, 240);
+  }
+  document.querySelectorAll('.mode').forEach(function (b) { b.addEventListener('click', function () { start(b.getAttribute('data-m')); }); });
+  document.getElementById('again').addEventListener('click', function () { start(lastMode); });
+  document.getElementById('toTitle').addEventListener('click', function () { document.getElementById('end').hidden = true; document.getElementById('start').hidden = false; });
+  window.addEventListener('resize', fit); fit();
+  if (EMBED) {
+    document.getElementById('start').hidden = true;
+    window.addEventListener('message', function (e) {
+      var d = e.data || {}; if (d.type !== 'gather-start') { return; }
+      for (var k in (d.cfg || {})) { CFG[k] = d.cfg[k]; }
+      start(d.mode === 'rock' ? 'rock' : 'dig');
+    });
+    try { parent.postMessage({ type: 'gather-ready' }, '*'); } catch (e) {}
+  }
+  S = newDig(); // 시작 화면 뒤 배경
+  requestAnimationFrame(loop);
+})();
+</script>
