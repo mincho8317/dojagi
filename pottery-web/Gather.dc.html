@@ -24,6 +24,8 @@ button{font-family:inherit;cursor:pointer}
 @keyframes gJack{0%{transform:translate(-50%,-50%) scale(.2) rotate(-8deg);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15) rotate(2deg);opacity:1}80%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}100%{transform:translate(-50%,-50%) scale(1.05);opacity:0}}
 @keyframes gRays{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes rNeedle{0%{left:0%}50%{left:100%}100%{left:0%}}
+@keyframes rFly{0%{transform:translate(0,0) scale(1);opacity:1}70%{opacity:1}100%{transform:translate(var(--fx),var(--fy)) scale(.35);opacity:0}}
+@keyframes rPop{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
 @keyframes rPuff{0%{transform:translate(-50%,-50%) scale(.3);opacity:.9}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
 @keyframes rFold{0%{transform:translate(-50%,0) scale(1,1)}25%{transform:translate(-50%,0) scale(1.25,.7)}55%{transform:translate(-50%,0) scale(.88,1.12)}100%{transform:translate(-50%,0) scale(1,1)}}
 @keyframes rSquash{0%{transform:scale(1,1)}30%{transform:scale(1.18,.78)}100%{transform:scale(1,1)}}
@@ -120,7 +122,7 @@ button{font-family:inherit;cursor:pointer}
 
   <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
-      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">캐 온 원료를 다듬어 등급을 정해요 · 한 번에 5개 · 바늘이 가운데 올 때 누르면 특급!</span>
+      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">캐 온 원료 5개를 한 번에 다듬어 등급을 정해요 · 금색 칸을 노리면 특급!</span>
       <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
         <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
           <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{rs.title}} <span style="font-size:11.5px;color:#8A6440">{{rs.sub}}</span></span>
@@ -131,7 +133,7 @@ button{font-family:inherit;cursor:pointer}
                 <span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{rw.name}} <span style="color:#B9533A">원료 {{rw.raw}}</span></span>
                 <span style="font-size:10.5px;font-weight:700;color:#7A5434">{{rw.have}}</span>
               </span>
-              <button type="button" onClick="{{rw.go}}" aria-label="{{rw.name}} 다듬기" style="{{rw.btn}}">다듬기</button>
+              <button type="button" onClick="{{rw.go}}" aria-label="{{rw.name}} 다듬기" style="{{rw.btn}}">{{rw.btnT}}</button>
             </div>
           </sc-for>
         </div>
@@ -154,14 +156,15 @@ button{font-family:inherit;cursor:pointer}
   </sc-if>
 
   <sc-if value="{{refOn}}" hint-placeholder-val="{{false}}">
-    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 34%,#6B4A30 0,#3E2616 72%);display:flex;flex-direction:column;align-items:center">
-      <span style="margin-top:20px;font-family:'Jua',sans-serif;font-size:26px;color:#FFE7A8;text-shadow:0 2px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
-      <span style="margin-top:4px;font-size:13px;font-weight:700;color:#F6E7CC">{{refSub}}</span>
-      <div id="rstage" data-work="1" onPointerDown="{{refDown}}" style="position:relative;margin-top:14px;width:330px;height:300px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer">
+    <div role="dialog" aria-label="{{refTitle}}" style="position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;background:radial-gradient(ellipse at 50% 38%,#6B4A30 0,#3E2616 72%);overflow:hidden">
+      <span style="position:absolute;left:0;right:0;top:18px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:#FFE7A8;text-shadow:0 3px 0 rgba(0,0,0,.5)">{{refTitle}}</span>
+      <span style="position:absolute;left:16px;right:16px;top:62px;text-align:center;font-size:15px;font-weight:700;line-height:1.4;color:#F6E7CC;white-space:pre-line">{{refSub}}</span>
+      <div id="rstage" data-work="1" onPointerDown="{{refDown}}" style="position:absolute;left:0;top:96px;width:390px;height:380px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer">
         <span aria-hidden="true" style="{{boardS}}"></span>
         <span aria-hidden="true" style="{{bowlS}}"></span>
         <span aria-hidden="true" style="{{powderS}}"></span>
         <img dc-src="{{refImg}}" alt="" aria-hidden="true" draggable="false" style="{{refImgS}}">
+        <span aria-hidden="true" style="{{handsS}}">🤲</span>
         <span aria-hidden="true" style="{{bowlFront}}"></span>
         <span aria-hidden="true" style="{{pestleS}}"></span>
         <sc-for list="{{puffs}}" as="pf" hint-placeholder-count="0">
@@ -169,20 +172,33 @@ button{font-family:inherit;cursor:pointer}
         </sc-for>
         <span aria-hidden="true" style="{{hintS}}">{{hintT}}</span>
       </div>
-      <div aria-label="판정 게이지" style="position:relative;margin-top:10px;width:320px;height:40px;box-sizing:border-box;border:4px solid #2B1A0F;border-radius:14px;overflow:hidden;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%)">
-        <span aria-hidden="true" style="position:absolute;left:43%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:12px;color:#7A4A00">특급</span>
+      <div aria-label="{{gaugeAria}}" style="{{gaugeBox}}">
+        <span aria-hidden="true" style="{{gaugeZones}}"></span>
+        <span aria-hidden="true" style="{{gaugeTop}}">특급</span>
         <span aria-hidden="true" style="{{needle}}"></span>
       </div>
-      <div style="display:flex;gap:7px;margin-top:12px;min-height:30px;align-items:center">
-        <sc-for list="{{refRes}}" as="rr" hint-placeholder-count="5">
-          <span style="{{rr.s}}">{{rr.t}}</span>
-        </sc-for>
-      </div>
-      <span style="margin-top:4px;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8;min-height:24px">{{refFlash}}</span>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button type="button" onClick="{{refQuick}}" style="{{refQuickBtn}}">{{refQuickText}}</button>
-        <button type="button" onClick="{{refClose}}" style="all:unset;cursor:pointer;box-sizing:border-box;padding:9px 18px;border-radius:13px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">닫기</button>
-      </div>
+      <span style="position:absolute;left:0;right:0;top:560px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:{{refFlashC}};text-shadow:0 3px 0 rgba(0,0,0,.45)">{{refFlash}}</span>
+      <sc-if value="{{refDone}}" hint-placeholder-val="{{false}}">
+        <div style="position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.55)">
+          <div role="dialog" aria-label="다듬기 결과" style="width:330px;box-sizing:border-box;padding:18px 16px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+            <span style="font-family:'Jua',sans-serif;font-size:26px;color:#B9533A">다듬기 완료!</span>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+              <sc-for list="{{refSum}}" as="rs" hint-placeholder-count="2">
+                <span style="{{rs.box}}"><img dc-src="{{rs.img}}" alt="" aria-hidden="true" style="width:52px;height:52px;object-fit:contain"><span style="{{rs.badge}}">{{rs.grade}}</span><span style="font-family:'Jua',sans-serif;font-size:22px;color:#2B1A0F">×{{rs.n}}</span></span>
+              </sc-for>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#8A6440">{{refSumHint}}</span>
+            <div style="display:flex;gap:8px;width:100%">
+              <button type="button" onClick="{{refClose}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;background:#FFFDF5;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24;text-align:center">닫기</button>
+              <button type="button" onClick="{{refAgain}}" style="{{refAgainBtn}}">{{refAgainText}}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-for list="{{flyIn}}" as="fi" hint-placeholder-count="0">
+        <img dc-src="{{fi.img}}" alt="" aria-hidden="true" style="{{fi.s}}">
+      </sc-for>
+      <button type="button" onClick="{{refClose}}" aria-label="다듬기 그만두기" style="{{refX}}">✕</button>
     </div>
   </sc-if>
 
@@ -356,39 +372,41 @@ class Component extends DCLogic {
   }
   closeGame() { if (this.frame) { try { this.frame.remove(); } catch (e) {} } this.frame = null; this.G = null; this.setState({ tick: Date.now() }); }
   // ── 다듬기 : 손 토련(흙) · 절구질(유약 원료) — 바늘이 왕복하는 게이지, 가운데일수록 높은 등급 ──
+  // ── 다듬기 : 한 번에 5개 (5개 이상 있어야 시작) ──
+  // 손 토련 : 반죽을 꾹 누르고 있으면 압력 게이지가 차오른다 → 금색 칸에서 손을 떼면 특급 (넘치면 보통)
+  // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
   refOpen(rk) {
-    var g = this.loadG(), n = Math.min(5, (g.mats || {})[rk] || 0); if (!n) { this.say('다듬을 원료가 없다 · 채집에서 캐 와요'); this.sfx('fail'); return; }
-    this.R = { rk: rk, n: n, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [] };
+    var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있다 · 지금 ' + have + '개'); this.sfx('fail'); return; }
+    this.R = { rk: rk, n: 5, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], press: 0, pressAt: 0 };
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
   refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
-  // 1번 다듬기 = 1개. 판정은 그 순간 바늘 위치 (가운데 특급 · 주변 상급 · 나머지 보통). 결과는 끝나야 보여준다
-  refHit() {
-    var R = this.R; if (!R || R.done) { return; }
-    var d = Math.abs(this.refPos() - 0.5), gd = d < 0.07 ? 3 : (d < 0.2 ? 2 : 1);
-    R.res.push(gd); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
-    for (var i = 0; i < 5; i++) { R.puffs.push({ at: Date.now(), x: 165 + (Math.random() - 0.5) * 90, y: (this.D()[R.rk].kind === 'clay' ? 220 : 200) + (Math.random() - 0.5) * 30, r: 14 + Math.random() * 16 }); }
-    this.sfx(this.D()[R.rk].kind === 'clay' ? 'thud' : 'smash');
-    if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 450); }
+  // 판정 칸 : 절구는 가운데 대칭 · 토련은 압력 0.72~0.86 특급, 0.55~0.72 와 0.86~0.96 상급
+  refGrade(v, clay) { if (clay) { return v >= 0.72 && v < 0.86 ? 3 : ((v >= 0.55 && v < 0.72) || (v >= 0.86 && v < 0.96) ? 2 : 1); } var d = Math.abs(v - 0.5); return d < 0.07 ? 3 : (d < 0.2 ? 2 : 1); }
+  refHit(v) {
+    var R = this.R; if (!R || R.done || R.res.length >= R.n) { return; }
+    var clay = this.D()[R.rk].kind === 'clay';
+    R.res.push(this.refGrade(v, clay)); R.hitAt = Date.now(); R.puffs = (R.puffs || []).filter(function (q) { return Date.now() - q.at < 600; });
+    for (var i = 0; i < 6; i++) { R.puffs.push({ at: Date.now(), x: 195 + (Math.random() - 0.5) * 120, y: (clay ? 270 : 230) + (Math.random() - 0.5) * 40, r: 16 + Math.random() * 18 }); }
+    this.sfx(clay ? 'thud' : 'smash');
+    if (R.res.length >= R.n) { var self = this; setTimeout(function () { self.refCommit(); }, 550); }
     this.setState({ tick: Date.now() });
   }
-  // 흙 : 반죽을 끌어 앞으로 밀기 (70px 넘게 밀면 1번) · 원석 : 절구 아무 데나 톡 → 공이로 쿵
   refDown(e) {
-    var R = this.R, self = this; if (!R || R.done || R.res.length >= R.n) { return; } if (e && e.preventDefault) { e.preventDefault(); }
-    if (this.D()[R.rk].kind !== 'clay') { this.refHit(); return; }
-    var x0 = e.clientX, y0 = e.clientY, st = document.getElementById('rstage'), k = st ? st.getBoundingClientRect().width / 330 : 1, fired = false;
-    R.drag = { dx: 0, dy: 0 };
-    function mv(ev) { if (!self.R || fired) { return; } var dx = (ev.clientX - x0) / k, dy = (ev.clientY - y0) / k; self.R.drag = { dx: dx, dy: dy }; if (Math.hypot(dx, dy) >= 70) { fired = true; self.R.drag = null; self.refHit(); } else { self.setState({ tick: Date.now() }); } }
-    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); if (self.R) { self.R.drag = null; self.setState({ tick: Date.now() }); } }
-    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+    var R = this.R, self = this; if (!R || R.done || R.res.length >= R.n || Date.now() - R.hitAt < 380) { return; } if (e && e.preventDefault) { e.preventDefault(); }
+    if (this.D()[R.rk].kind !== 'clay') { this.refHit(this.refPos()); return; }
+    // 꾹 누르기 : 1.15초에 가득 · 누르는 동안 33ms 마다 갱신
+    R.pressAt = Date.now(); R.press = 0; clearInterval(this.pressT);
+    this.pressT = setInterval(function () { if (!self.R || !self.R.pressAt) { clearInterval(self.pressT); return; } self.R.press = Math.min(1.05, (Date.now() - self.R.pressAt) / 1150); if (self.R.press >= 1.05) { up(); return; } self.setState({ tick: Date.now() }); }, 33);
+    function up() { window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); clearInterval(self.pressT); if (!self.R || !self.R.pressAt) { return; } var v = Math.min(1.05, (Date.now() - self.R.pressAt) / 1150); self.R.pressAt = 0; self.R.press = 0; self.refHit(v); }
+    window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
-  refQuick() { var R = this.R; if (!R || R.done) { this.refOpen(R ? R.rk : ''); return; } while (R.res.length < R.n) { R.res.push(1); } this.refCommit(); }
-  refTap() {}
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
     mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - R.n);
     R.res.forEach(function (gd) { var k = D.out + gd; mats[k] = (mats[k] || 0) + 1; });
-    this.setG({ mats: mats }); R.done = true; this.sfx('reveal'); this.setState({ tick: Date.now() });
+    this.setG({ mats: mats }); R.done = true; R.doneAt = Date.now(); this.sfx('reveal'); this.setState({ tick: Date.now() });
+    var self = this; setTimeout(function () { self.setState({ tick: Date.now() }); }, 1300);
   }
   fmt(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), mm = Math.floor(s / 60), ss = s % 60; return mm + ':' + (ss < 10 ? '0' : '') + ss; }
   say(msg) { var self = this; this.setState({ toast: msg }); clearTimeout(this.tt); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200); }
@@ -430,8 +448,8 @@ class Component extends DCLogic {
     var GN = ['', '보통', '상급', '특급'];
     var refRow = function (rk) {
       var d = D[rk], raw = mats[rk] || 0, have = [1, 2, 3].map(function (gd) { return GN[gd] + ' ' + (mats[d.out + gd] || 0); }).join(' · ');
-      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); },
-        btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;padding:7px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (raw > 0 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
+      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기' : raw + '/5',
+        btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (raw >= 5 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
     var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#D46A86;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
     var out = {
@@ -469,42 +487,67 @@ class Component extends DCLogic {
       out.againText = TT.tix > 0 ? '한 번 더 · ' + (G.ev ? '🌸' : '🎫') + '1' : '채집권 없음';
     }
     var Rf = this.R;
-    out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = 'display:none'; out.hintT = ''; out.puffs = []; out.refDown = function () {};
+    out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = out.handsS = out.refX = 'display:none'; out.hintT = ''; out.puffs = []; out.flyIn = []; out.refSum = []; out.refDone = false; out.refDown = function () {};
+    out.gaugeBox = out.gaugeZones = out.gaugeTop = 'display:none'; out.gaugeAria = '';
     if (Rf) {
-      var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length, fin = cnt >= Rf.n;
+      var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length, prs = Rf.pressAt ? Rf.press : 0;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = Rf.done ? '다듬기 완료!' : (clay ? '반죽을 손가락으로 앞으로 쭉 밀어요' : '절구를 톡 눌러 공이로 쿵 찧어요') + ' · 바늘이 가운데일 때!';
+      out.refSub = clay ? '반죽을 꾹 누르고 있다가\n게이지가 금색 칸일 때 손을 떼요' : '바늘이 금색 칸에 왔을 때\n절구를 톡 눌러 쿵 찧어요';
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
+      out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
       if (clay) {
-        // 나무판 위 반죽 : 미는 방향으로 늘어나고, 다 밀면 접히며 탁
-        var dg = Rf.drag || { dx: 0, dy: 0 }, len = Math.min(70, Math.hypot(dg.dx, dg.dy)), ang = Math.atan2(dg.dy, dg.dx) * 180 / Math.PI, st = 1 + len / 140;
-        out.boardS = 'position:absolute;left:20px;right:20px;bottom:24px;height:120px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#C9955E 0,#9C6A3C 70%,#7A5030 100%);box-shadow:0 8px 0 #5B3A24,inset 0 -6px 0 rgba(0,0,0,.18)';
-        out.refImgS = 'position:absolute;left:50%;bottom:58px;width:150px;height:150px;object-fit:contain;transform-origin:50% 80%;' + (hit ? 'animation:rFold .42s ease-out;transform:translate(-50%,0)' : 'transform:translate(-50%,0) translate(' + (dg.dx * 0.35).toFixed(1) + 'px,' + (dg.dy * 0.35).toFixed(1) + 'px) rotate(' + ang.toFixed(0) + 'deg) scale(' + st.toFixed(2) + ',' + (1 / Math.sqrt(st)).toFixed(2) + ') rotate(' + (-ang).toFixed(0) + 'deg)') + ';filter:drop-shadow(0 6px 0 rgba(0,0,0,.25))';
-        out.hintS = Rf.done || Rf.drag ? 'display:none' : "position:absolute;left:50%;top:6px;transform:translateX(-50%);font-family:'Jua',sans-serif;font-size:16px;color:#FFE7A8;white-space:nowrap;animation:gBlink 1.2s infinite";
-        out.hintT = '👆 반죽을 쭉 밀기';
+        out.boardS = 'position:absolute;left:24px;right:24px;bottom:36px;height:150px;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,#C9955E 0,#9C6A3C 70%,#7A5030 100%);box-shadow:0 10px 0 #5B3A24,inset 0 -8px 0 rgba(0,0,0,.18)';
+        // 누를수록 납작하게 퍼지고, 떼면 접히며 탁
+        var sy = 1 - prs * 0.32, sx = 1 + prs * 0.28;
+        out.refImgS = 'position:absolute;left:50%;bottom:80px;width:200px;height:200px;object-fit:contain;transform-origin:50% 92%;' + (hit && !prs ? 'animation:rFold .45s ease-out;transform:translate(-50%,0)' : 'transform:translate(-50%,0) scale(' + sx.toFixed(2) + ',' + sy.toFixed(2) + ')') + ';filter:drop-shadow(0 8px 0 rgba(0,0,0,.25))';
+        out.handsS = 'position:absolute;left:50%;bottom:' + (230 - prs * 70).toFixed(0) + 'px;transform:translateX(-50%) rotate(180deg);font-size:76px;line-height:1;pointer-events:none;' + (prs ? '' : 'opacity:.85;');
+        out.hintS = prs || cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;animation:gBlink 1.2s infinite";
+        out.hintT = '👇 반죽을 꾹 누르기';
+        // 압력 게이지 (아래→위로 차오름)
+        out.gaugeAria = '누르는 힘';
+        out.gaugeBox = 'position:absolute;left:30px;right:30px;top:492px;height:52px;box-sizing:border-box;border:5px solid #2B1A0F;border-radius:16px;overflow:hidden;background:#3E2616';
+        out.gaugeZones = 'position:absolute;inset:0;background:linear-gradient(90deg,#8A847C 0 55%,#5C9BD1 55% 72%,#FFD66B 72% 86%,#5C9BD1 86% 96%,#C0392B 96% 100%);opacity:.9';
+        out.gaugeTop = "position:absolute;left:72%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A4A00";
+        out.needle = 'position:absolute;top:-3px;bottom:-3px;left:' + (Math.min(1, prs) * 100).toFixed(1) + '%;width:10px;margin-left:-5px;border-radius:5px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 8px rgba(255,255,255,.9);' + (prs ? '' : 'opacity:.5;');
       } else {
-        // 절구 : 원석이 찧을수록 작아지고 가루가 쌓인다 · 공이가 내려찍힘
         var left = 1 - cnt / Rf.n;
-        out.bowlS = 'position:absolute;left:55px;right:55px;bottom:30px;height:150px;border-radius:24px 24px 90px 90px;background:linear-gradient(#8A6440,#5B3A24);box-shadow:inset 0 14px 0 rgba(0,0,0,.35),0 8px 0 #3E2616';
-        out.powderS = 'position:absolute;left:50%;bottom:' + (120) + 'px;transform:translateX(-50%);width:' + (40 + cnt * 22) + 'px;height:' + (10 + cnt * 6) + 'px;border-radius:50% 50% 10px 10px;background:radial-gradient(ellipse at 50% 30%,#FFFDF5 0,#E8E0D2 70%)';
-        out.refImgS = 'position:absolute;left:50%;bottom:' + (128 + cnt * 4) + 'px;width:' + Math.round(80 * (0.35 + 0.65 * left)) + 'px;height:' + Math.round(80 * (0.35 + 0.65 * left)) + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s;' + (fin ? 'opacity:0;' : '');
-        out.bowlFront = 'position:absolute;left:50px;right:50px;bottom:118px;height:22px;border-radius:50%;border:6px solid #6B4A2E;border-top-color:transparent;box-sizing:border-box';
-        out.pestleS = 'position:absolute;left:50%;top:-6px;margin-left:-14px;width:28px;height:150px;border-radius:14px;background:linear-gradient(90deg,#B8865A,#E2B887 45%,#9C6A3C);box-shadow:0 0 0 3px #5B3A24;transform-origin:50% 100%;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-34px) rotate(-8deg);');
-        out.hintS = Rf.done ? 'display:none' : "position:absolute;left:8px;top:40px;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8;animation:gBlink 1.2s infinite";
-        out.hintT = '👆 톡! 쿵';
+        out.bowlS = 'position:absolute;left:70px;right:70px;bottom:34px;height:190px;border-radius:28px 28px 110px 110px;background:linear-gradient(#8A6440,#5B3A24);box-shadow:inset 0 16px 0 rgba(0,0,0,.35),0 10px 0 #3E2616';
+        out.powderS = 'position:absolute;left:50%;bottom:170px;transform:translateX(-50%);width:' + (50 + cnt * 28) + 'px;height:' + (12 + cnt * 8) + 'px;border-radius:50% 50% 12px 12px;background:radial-gradient(ellipse at 50% 30%,#FFFDF5 0,#E8E0D2 70%)';
+        out.refImgS = 'position:absolute;left:50%;bottom:' + (178 + cnt * 5) + 'px;width:' + Math.round(110 * (0.3 + 0.7 * left)) + 'px;height:' + Math.round(110 * (0.3 + 0.7 * left)) + 'px;object-fit:contain;transform:translateX(-50%)' + (hit ? ' scale(1.15,.8)' : '') + ';transition:width .2s,height .2s;' + (cnt >= Rf.n ? 'opacity:0;' : '');
+        out.bowlFront = 'position:absolute;left:64px;right:64px;bottom:164px;height:28px;border-radius:50%;border:7px solid #6B4A2E;border-top-color:transparent;box-sizing:border-box';
+        out.pestleS = 'position:absolute;left:50%;top:66px;margin-left:-18px;width:36px;height:160px;border-radius:18px;background:linear-gradient(90deg,#B8865A,#E2B887 45%,#9C6A3C);box-shadow:0 0 0 3px #5B3A24;transform-origin:50% 100%;' + (hit ? 'animation:rPound .4s ease-out;' : 'transform:translateY(-40px) rotate(-8deg);');
+        out.hintS = cnt >= Rf.n ? 'display:none' : "position:absolute;left:0;right:0;bottom:-4px;text-align:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8;animation:gBlink 1.2s infinite";
+        out.hintT = '👆 절구를 톡!';
+        out.gaugeAria = '판정 게이지';
+        out.gaugeBox = 'position:absolute;left:30px;right:30px;top:492px;height:52px;box-sizing:border-box;border:5px solid #2B1A0F;border-radius:16px;overflow:hidden;background:#3E2616';
+        out.gaugeZones = 'position:absolute;inset:0;background:linear-gradient(90deg,#8A847C 0 30%,#5C9BD1 30% 43%,#FFD66B 43% 57%,#5C9BD1 57% 70%,#8A847C 70% 100%);opacity:.9';
+        out.gaugeTop = "position:absolute;left:43%;width:14%;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A4A00";
+        out.needle = cnt >= Rf.n ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;top:-3px;bottom:-3px;width:10px;margin-left:-5px;border-radius:5px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 8px rgba(255,255,255,.9);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
       }
       out.puffs = (Rf.puffs || []).filter(function (q) { return now - q.at < 600; }).map(function (q) { return { s: 'position:absolute;left:' + q.x.toFixed(0) + 'px;top:' + q.y.toFixed(0) + 'px;width:' + (q.r * 2).toFixed(0) + 'px;height:' + (q.r * 2).toFixed(0) + 'px;border-radius:50%;background:' + (clay ? 'rgba(200,160,110,.55)' : 'rgba(255,253,245,.75)') + ';animation:rPuff .6s ease-out forwards;pointer-events:none' }; });
-      out.needle = Rf.done ? 'display:none' : (Rf.needleS || (Rf.needleS = 'position:absolute;top:-2px;bottom:-2px;width:8px;margin-left:-4px;border-radius:4px;background:#FFFDF5;border:2px solid #2B1A0F;box-shadow:0 0 6px rgba(255,255,255,.8);animation:rNeedle ' + (Rf.P * 2) + 'ms linear infinite;animation-delay:-' + ((now - Rf.t0) % (Rf.P * 2)) + 'ms'));
-      out.refRes = []; for (var i = 0; i < Rf.n; i++) {
-        var gd = Rf.done ? Rf.res[i] : 0, did = i < cnt;
-        out.refRes.push({ t: Rf.done ? GN[gd] : (did ? '✓' : ''), s: "display:inline-flex;align-items:center;justify-content:center;min-width:" + (Rf.done ? 46 : 26) + "px;height:" + (Rf.done ? 30 : 26) + "px;padding:0 3px;border-radius:" + (Rf.done ? 9 : 13) + "px;font-family:'Jua',sans-serif;font-size:14px;" + (Rf.done ? (gd === 3 ? 'background:#FFD66B;color:#7A4A00;border:2px solid #B07A1E' : (gd === 2 ? 'background:#5C9BD1;color:#FFFDF5;border:2px solid #2E5E8A' : 'background:#A89880;color:#FFFDF5;border:2px solid #6E6250')) : (did ? 'background:#E8B640;color:#2B1A0F;border:2px solid #2B1A0F' : 'background:rgba(255,255,255,.1);color:#C9B08C;border:2px dashed #8A6440')) });
+      out.refFlash = hit && !Rf.done ? (clay ? '꾹! 탁!' : '쿵!') : '';
+      out.refFlashC = '#FFE7A8';
+      // 끝 : 같은 등급끼리 묶어서 보여주고, 다듬은 재료가 보관함으로 날아간다
+      if (Rf.done) {
+        var c = { 1: 0, 2: 0, 3: 0 }; Rf.res.forEach(function (x) { c[x]++; });
+        var GC = { 1: ['#A89880', '#6E6250'], 2: ['#5C9BD1', '#2E5E8A'], 3: ['#FFD66B', '#B07A1E'] }, GT = { 1: '보통', 2: '상급', 3: '특급' };
+        var flying = now - Rf.doneAt < 1200;
+        if (flying) {
+          var k0 = 0; [3, 2, 1].forEach(function (gd) { for (var j = 0; j < c[gd]; j++) { var sx = 195 - 2 * 46 + k0 * 46; out.flyIn.push({ img: dd.img, s: 'position:absolute;left:' + (sx - 26) + 'px;top:290px;width:52px;height:52px;object-fit:contain;z-index:4;filter:drop-shadow(0 0 8px ' + GC[gd][0] + ');--fx:' + (60 - sx) + 'px;--fy:-280px;animation:rPop .3s ' + (k0 * 0.06).toFixed(2) + 's both,rFly .7s ' + (0.45 + k0 * 0.08).toFixed(2) + 's ease-in forwards' }); k0++; } });
+        }
+        out.refDone = !flying;
+        out.refSum = [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) {
+          return { img: dd.img, grade: GT[gd] + ' ' + dd.name, n: c[gd], box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:86px;padding:8px 6px;border-radius:16px;background:#FFFDF5;border:3px solid ' + GC[gd][1] + ';animation:rPop .35s both',
+            badge: "padding:1px 8px;border-radius:8px;font-family:'Jua',sans-serif;font-size:13px;background:" + GC[gd][0] + ';color:' + (gd === 3 ? '#5A3A00' : '#FFFDF5') };
+        });
+        var lf = mats[Rf.rk] || 0;
+        out.refSumHint = '보관함에 넣었어요 · 남은 ' + dd.name + ' 원료 ' + lf + '개';
+        out.refAgain = function () { self.refOpen(Rf.rk); };
+        out.refAgainText = lf >= 5 ? '한 번 더 (5개)' : '원료 부족 (' + lf + '/5)';
+        out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
+        out.gaugeBox = 'display:none'; out.needle = 'display:none';
       }
-      out.refFlash = Rf.done ? (function () { var c = [0, 0, 0, 0]; Rf.res.forEach(function (x) { c[x]++; }); return '특급 ' + c[3] + ' · 상급 ' + c[2] + ' · 보통 ' + c[1]; })() : (hit ? (clay ? '꾹!' : '쿵!') : cnt + ' / ' + Rf.n);
-      var lf = (mats[Rf.rk] || 0);
-      out.refQuick = function () { if (Rf.done) { self.refOpen(Rf.rk); } else { self.refQuick(); } };
-      out.refQuickText = Rf.done ? (lf > 0 ? '이어서 다듬기 (' + lf + ')' : '원료 없음') : '대충 하기 (남은 것 모두 보통)';
-      out.refQuickBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:9px 14px;border-radius:13px;font-family:Jua,sans-serif;font-size:15px;' + (Rf.done && !lf ? 'background:#6B5A48;border:3px solid #3E2616;color:#C9B08C' : 'background:#E8B640;border:3px solid #2B1A0F;color:#2B1A0F');
-      out.refClose = function () { self.R = null; self.setState({ tick: Date.now() }); };
+      out.refClose = function () { clearInterval(self.pressT); self.R = null; self.setState({ tick: Date.now() }); };
       if (now - Rf.hitAt < 650) { var self2 = this; clearTimeout(this.pt); this.pt = setTimeout(function () { self2.setState({ tick: Date.now() }); }, 120); }
     }
     return out;
