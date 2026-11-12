@@ -312,18 +312,18 @@ class Component extends DCLogic {
   }
   walkGap(g) {
     var n = 0; for (var k in (g.pieces || {})) { if (g.pieces[k].where === 'shelf') { n++; } }
-    return Math.max(15000, 45000 - n * 5000);
+    return Math.max(45000, 135000 - n * 15000); // 취향 손님만 오므로 간격을 넉넉히
   }
   makeWalk(g, t) {
     var NAMES = [['산책하던 이웃', 'CHAR_WALK_A'], ['출근길 직장인', 'CHAR_WALK_B'], ['여행객', 'CHAR_WALK_C'], ['동네 할머니', 'CHAR_WALK_D'], ['신혼부부', 'CHAR_WALK_E'], ['미대생', 'CHAR_WALK_F']];
     var seed = Math.floor(Math.random() * 1000);
     var nm = NAMES[seed % NAMES.length];
-    var taste = seed % 10 < 3;
+    var taste = true; // 구매(지나가는) 손님은 없앴다 · 찾는 그릇이 있는 취향 손님만
     var shapes = ['cup', 'bowl', 'dish'], glazes = ['', '', 'white', 'celadon', 'black'];
     return { id: 'wk' + t + '_' + seed, type: taste ? 'taste' : 'walk', name: nm[0], res: nm[1], seed: seed, at: t, want: taste ? { shape: shapes[seed % 3], glaze: glazes[Math.floor(seed / 3) % glazes.length] } : null };
   }
   spawnWalk(g) {
-    var now = Date.now(), w = (g.walkins || []).slice(), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = false;
+    var now = Date.now(), w0 = g.walkins || [], w = w0.filter(function (x) { return x.type !== 'walk'; }), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = w.length !== w0.length;
     if (!nx) { nx = now + 4000; changed = true; }
     while (nx <= now && w.length < 4 && guard++ < 8) { w.push(this.makeWalk(g, nx)); nx += gap; changed = true; }
     if (w.length >= 4 && nx <= now) { nx = now + gap; changed = true; }

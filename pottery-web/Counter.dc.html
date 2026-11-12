@@ -383,7 +383,7 @@ class Component extends DCLogic {
             { label: '맡을게요', tone: 'go', run: function () {
               var m0 = self.state.g[KEY] || {};
               var patch = {}; patch[KEY] = { i: m0.i || 0, acc: true, dl: m0.dl || {}, mig: m0.mig || {}, thanks: false, log: m0.log || [] };
-              if (!self.state.g.track || self.state.g.track === 'min' && (self.state.g.quests || {}).minDone) { patch.track = LN; }
+              var trNow = QL.tracked(self.state.g); if (!trNow.length || (trNow.length === 1 && trNow[0] === 'min' && (self.state.g.quests || {}).minDone)) { patch.track = LN; patch.tracks = [LN]; }
               self.setG(patch);
               self.say('의뢰 내역서에 「' + md.title + '」이(가) 적혔다 · 제작 화면 체크리스트에 표시된다');
             } },
@@ -426,12 +426,12 @@ class Component extends DCLogic {
         if (cups.length) {
           var best = g.pieces[cups[0]];
           var pay = Math.round(400 * (gradeMul[best.grade] || 1) / 10) * 10;
-          m.face = '기대'; m.lines = ['잔은 어떻게 되어가나요?', '(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 이 빛깔, 할머님 잔이랑 꼭 닮았어요.'];
+          m.face = '기대'; m.lines = ['잔은 어떻게 되어가나요?', '(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 이 빛깔, 할머님 잔이랑 꼭 닮았어요.', '이 잔으로 차를 마시면 할머님이 곁에 계신 것 같을 거예요. 가게에도 소문을 내둘게요.'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
               var f = fame(20);
-              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
-              self.setState({ line: 0 });
+              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; qq.minThanks = true; return qq; })() });
+              self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
               self.say('의뢰 완료 · 골드 +' + pay + ' · 명성 +20 · 신뢰 +1');
             } },
             { label: '조금만 더 다듬을게요', tone: '', run: function () { self.next('“네, 천천히 하세요.”'); } }
@@ -516,7 +516,7 @@ class Component extends DCLogic {
       var good = this.find(g, function (p) { return p.where === 'shelf' && (p.grade === '수작' || p.grade === '명작' || p.grade === '요변'); });
       if (good.length) {
         list.push({
-          id: 'curator', cat: 'buy', kind: 'curator', name: '미술관 큐레이터', res: 'CHAR_CURATOR', tone: '#7A5A93', tag: '방문객', tagBg: '#7A5A93', face: '관찰',
+          id: 'curator', cat: 'req', kind: 'curator', name: '미술관 큐레이터', res: 'CHAR_CURATOR', tone: '#7A5A93', tag: '방문객', tagBg: '#7A5A93', face: '관찰',
           lines: ['진열대의 ' + g.pieces[good[0]].name + ', 소문이 자자하던데요.', '잠시 가까이서 보여주실 수 있을까요?'],
           choices: [
             { label: '진열대로 안내하기', tone: 'go', href: 'Display.dc.html', run: function () { self.setG({ curatorCall: Date.now() }); } },
@@ -553,7 +553,7 @@ class Component extends DCLogic {
       list.push(node2);
     });
     if (g.inviteGuest) {
-      var inv = { id: 'invite', cat: 'buy', kind: 'walk', name: '다회 손님', res: 'CHAR_CAFE', tone: '#D46A86', tag: '🌸 봄 다회 초대', tagBg: '#D46A86' };
+      var inv = { id: 'invite', cat: 'req', kind: 'walk', name: '다회 손님', res: 'CHAR_CAFE', tone: '#D46A86', tag: '🌸 봄 다회 초대', tagBg: '#D46A86' };
       var cands = (g.order || []).filter(function (id) { var pp = g.pieces[id]; return pp && (pp.where === 'shelf' || pp.where === 'store'); });
       cands.sort(function (x, y) { return (g.pieces[y].value || 0) - (g.pieces[x].value || 0); });
       if (!cands.length) {
@@ -575,8 +575,9 @@ class Component extends DCLogic {
       }
       list.push(inv);
     }
-    (g.walkins || []).forEach(function (w) {
-      var node = { id: w.id, cat: 'buy', kind: 'walk', name: w.name, res: w.res, tone: '#6B5A45', tag: w.type === 'taste' ? '취향 손님' : '지나가는 손님', tagBg: w.type === 'taste' ? '#C8601E' : '#8A7A63' };
+    // 구매 손님은 없앴다 · 판매는 판매(진열대) 탭에서만 · 찾는 그릇이 있는 취향 손님만 의뢰 손님으로 온다
+    (g.walkins || []).filter(function (w) { return w.type !== 'walk'; }).forEach(function (w) {
+      var node = { id: w.id, cat: 'req', kind: 'walk', name: w.name, res: w.res, tone: '#6B5A45', tag: w.type === 'taste' ? '취향 손님' : '지나가는 손님', tagBg: w.type === 'taste' ? '#C8601E' : '#8A7A63' };
       if (w.type === 'walk') {
         var shelf = (g.order || []).filter(function (id) { return g.pieces[id] && g.pieces[id].where === 'shelf'; });
         if (!shelf.length) {
@@ -661,7 +662,7 @@ class Component extends DCLogic {
   next(msg) {
     if (this.state.deliver) { var sk = {}; for (var k0 in (this.state.delSkip || {})) { sk[k0] = true; } sk[this.state.deliver] = true; this.setState({ delSkip: sk }); }
     if (this.state.deliver) { this.setState({ deliver: '', line: 0, enterN: this.state.enterN + 1 }); if (msg) { this.say(msg); } return; }
-    var ct = this.state.ctab || 'req';
+    var ct = this.state.ctab === 'del' ? 'del' : 'req';
     var n = this.guests(this.state.g).filter(function (x) { return x.kind !== 'wait' && x.kind !== 'deliver' && (x.cat || 'buy') === ct; }).length || 1;
     this.setState({ gi: (this.state.gi + 1) % n, line: 0, enterN: this.state.enterN + 1 });
     if (msg) { this.say(msg); }
@@ -670,7 +671,7 @@ class Component extends DCLogic {
     var self = this;
     var s = this.state;
     var g = s.g;
-    var all = this.guests(g), ctab = s.ctab || 'req';
+    var all = this.guests(g), ctab = s.ctab === 'del' ? 'del' : 'req';
     var allV = all.filter(function (x) { return x.kind === 'offer' || x.kind === 'thanks' || x.kind === 'curator' || x.kind === 'walk'; });
     var list = ctab === 'del' ? [] : allV.filter(function (x) { return (x.cat || 'buy') === ctab; });
     var reqN = allV.filter(function (x) { return x.cat === 'req'; }).length, buyN = allV.filter(function (x) { return x.cat !== 'req'; }).length;
@@ -702,7 +703,7 @@ class Component extends DCLogic {
     var nxs = Math.max(0, Math.ceil(((g.walkNext || Date.now()) - Date.now()) / 1000));
     if ((g.walkins || []).length < 4) { queue.push({ name: '다음 손님 ' + nxs + '초', style: 'flex:0 0 auto;padding:4px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;background:transparent;color:#8A6440;border:2px dashed #C9B08A;' }); }
     return {
-      ctabs: [{ id: 'req', label: '의뢰 손님', n: reqN, sub: reqN ? '대화 ' + reqN : '없음' }, { id: 'del', label: '납품 대기', n: delL.length, sub: delL.length ? '납품 ' + delL.length : '없음' }, { id: 'buy', label: '구매 손님', n: buyN, sub: buyN ? '판매 ' + buyN : '대기 중' }].map(function (t) {
+      ctabs: [{ id: 'req', label: '의뢰 손님', n: reqN, sub: reqN ? '대화 ' + reqN : '없음' }, { id: 'del', label: '납품 대기', n: delL.length, sub: delL.length ? '납품 ' + delL.length : '없음' }].map(function (t) {
         var on = ctab === t.id;
         return { label: t.label, sub: t.sub, on: on ? 'true' : 'false', pick: function () { try { localStorage.setItem('ctab', t.id); } catch (e) {} self.setState({ ctab: t.id, gi: 0, line: 0, deliver: '', enterN: s.enterN + 1 }); },
           style: 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border-radius:14px;font-family:Jua,sans-serif;' + (on ? 'background:#FFD66B;border:3px solid #3E2616;box-shadow:0 3px 0 #3E2616;color:#2B1A0F' : 'background:rgba(255,244,222,.92);border:3px solid #8A6440;color:#5B3A24'),

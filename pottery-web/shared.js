@@ -342,6 +342,13 @@
       var m = g.mq || {}, i = m.i || 0, def = MAIN[i] || null;
       return { i: i, def: def, acc: !!m.acc && !!def, dl: m.dl || {}, mig: m.mig || {}, allDone: i >= MAIN.length, lvOk: def ? (g.fameLv || 1) >= def.needLv : false, thanks: !!m.thanks };
     }
+    // 제작 안내를 켠 의뢰들 (여러 개 가능) · 예전 저장(track 하나)은 그대로 읽고, 아무것도 안 정했으면 첫 의뢰
+    function tracked(g, act) {
+      act = act || active(g); var ids = act.map(function (x) { return x.id; });
+      if (Array.isArray(g.tracks)) { return g.tracks.filter(function (id) { return ids.indexOf(id) >= 0; }); }
+      if (g.track && ids.indexOf(g.track) >= 0) { return [g.track]; }
+      return ids.length ? [ids[0]] : [];
+    }
     function active(g) {
       var ms = mainState(g), out = [];
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
@@ -433,13 +440,13 @@
       items.forEach(function (x, i) {
         if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
         var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '' };
+        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '' };
         order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
         log.push({ name: x.name, action: x.grade + ' · 대기함' });
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>
@@ -554,7 +561,7 @@
       '.trk-r .n{flex:1 1 auto;min-width:0;font-family:Jua,sans-serif;font-size:13px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trk-r .p{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B3A24}.trk-r.ok .p{color:#2F6328}' +
       '.trk-c{margin-top:2px;padding:4px 6px;border-radius:8px;background:#2E6B5F;color:#FFFDF5;font-size:11.5px;font-weight:700;line-height:1.35}.trk-c b{font-family:Jua,sans-serif;font-weight:400;font-size:12.5px;color:#FFE7A8}' +
       '.trk-r.pulse{animation:trkP .9s ease-out}@keyframes trkP{0%{box-shadow:0 0 0 0 rgba(63,138,53,.9);transform:scale(1.06)}100%{box-shadow:0 0 0 10px rgba(63,138,53,0);transform:scale(1)}}' +
-      '.trk.mini{width:auto}.trk.mini .trk-h{padding:4px 9px;min-height:30px}.trk.mini .t{display:none}' +
+      '.trk-q{margin-top:3px;padding:1px 4px;font-family:Jua,sans-serif;font-size:11.5px;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trk.mini{width:auto}.trk.mini .trk-h{padding:4px 9px;min-height:30px}.trk.mini .t{display:none}' +
       '.trk-pill{all:unset;cursor:pointer;position:fixed;z-index:9990;transform-origin:100% 0;padding:7px 11px;border-radius:14px;background:rgba(255,250,240,.97);border:2.5px solid #5B3A24;font-family:Jua,sans-serif;font-size:13px;color:#5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3)}';
     document.head.appendChild(css);
     var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
@@ -568,27 +575,32 @@
       var g = load();
       var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
       var list = L.active(g);
-      var tid = g.track; var q = list.filter(function (x) { return x.id === tid; })[0] || list[0];
-      if (!q) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내 의뢰 고르기' : '📋 진행 중인 의뢰 없음'; return; }
+      var tids = L.tracked(g, list), qs = list.filter(function (x) { return tids.indexOf(x.id) >= 0; });
+      if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내 의뢰 고르기' : '📋 진행 중인 의뢰 없음'; return; }
       pill.style.display = 'none'; box.style.display = hide ? 'none' : 'block'; box.className = 'trk' + (open ? '' : ' mini'); place(box);
-      var A = L.alloc(g)[q.id], left = 0, html = '', curTag = window.__wheelTarget || '', curRow = null;
-      A.items.forEach(function (r) {
-        var isCur = PAGE === 'Wheel' && curTag === r.tag;
-        if (isCur || (!curRow && !r.ok)) { curRow = r; }
-        var cls = r.done ? 'done' : (r.ok ? 'ok' : (r.wip ? 'wip' : '')); if (!r.done) { left++; }
-        var k = q.id + ':' + r.key, was = prev[k], now = r.dl + r.readyN;
-        var pulse = was !== undefined && now > was; prev[k] = now;
-        if (pulse) { try { window.__sfx && window.__sfx('reveal'); } catch (e) {} }
-        var need = r.n - r.dl;
-        var st = r.done ? '납품✓' : (r.ok ? '완성 ' + Math.min(need, r.readyN) + '/' + need : (r.wip ? '제작 중 ' + r.wip + (r.readyN ? '·완성 ' + r.readyN : '') : (r.readyN ? '완성 ' + r.readyN + '/' + need : '0/' + need)));
-        html += '<div class="trk-r ' + cls + (isCur ? ' cur' : '') + (pulse ? ' pulse' : '') + '"><span class="i">' + (r.done || r.ok ? '✓' : (r.wip ? '…' : '')) + '</span><span class="n">' + esc(r.it.name) + (r.n > 1 ? ' ×' + r.n : '') + '</span><span class="p">' + st + '</span></div>';
+      var AL = L.alloc(g, list), curTag = window.__wheelTarget || '', curRow = null, body = '', okN = 0, totN = 0;
+      qs.forEach(function (q) {
+        var A = AL[q.id], html = '';
+        A.items.forEach(function (r) {
+          var isCur = PAGE === 'Wheel' && curTag === r.tag;
+          if (isCur || (!curRow && !r.ok)) { curRow = r; }
+          var cls = r.done ? 'done' : (r.ok ? 'ok' : (r.wip ? 'wip' : ''));
+          var k = q.id + ':' + r.key, was = prev[k], now = r.dl + r.readyN;
+          var pulse = was !== undefined && now > was; prev[k] = now;
+          if (pulse) { try { window.__sfx && window.__sfx('reveal'); } catch (e) {} }
+          var need = r.n - r.dl;
+          var st = r.done ? '납품✓' : (r.ok ? '완성 ' + Math.min(need, r.readyN) + '/' + need : (r.wip ? '제작 중 ' + r.wip + (r.readyN ? '·완성 ' + r.readyN : '') : (r.readyN ? '완성 ' + r.readyN + '/' + need : '0/' + need)));
+          html += '<div class="trk-r ' + cls + (isCur ? ' cur' : '') + (pulse ? ' pulse' : '') + '"><span class="i">' + (r.done || r.ok ? '✓' : (r.wip ? '…' : '')) + '</span><span class="n">' + esc(r.it.name) + (r.n > 1 ? ' ×' + r.n : '') + '</span><span class="p">' + st + '</span></div>';
+        });
+        var allOk = A.items.every(function (r) { return r.ok; }); totN++; if (allOk) { okN++; }
+        body += (qs.length > 1 ? '<div class="trk-q">' + esc(q.title) + (allOk ? ' · 납품 가능' : '') + '</div>' : '') + html;
       });
-      var allOk = A.items.every(function (r) { return r.ok; });
-      var condLine = '';
-      if (curRow && !allOk) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
-      if (allOk) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품하자</div>'; }
-      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(q.title) + '</span><span class="c' + (allOk ? ' ok' : '') + '">' + (allOk ? (open ? '납품 가능' : '✓ 납품') : '완성 ' + A.items.filter(function (r) { return r.ok; }).length + '/' + A.items.length) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
-        (open ? '<div class="trk-b">' + html + condLine + '</div>' : '');
+      var allOkAll = okN === totN, condLine = '';
+      if (curRow && !curRow.ok) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
+      else if (allOkAll) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품하자</div>'; }
+      var head = qs.length > 1 ? '제작 안내 ' + qs.length + '건' : qs[0].title;
+      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(head) + '</span><span class="c' + (allOkAll ? ' ok' : '') + '">' + (allOkAll ? (open ? '납품 가능' : '✓ 납품') : (qs.length > 1 ? '납품 가능 ' + okN + '/' + totN : '완성 ' + AL[qs[0].id].items.filter(function (r) { return r.ok; }).length + '/' + AL[qs[0].id].items.length)) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
+        (open ? '<div class="trk-b">' + body + condLine + '</div>' : '');
     }
     render(); setInterval(render, 1000); window.addEventListener('storage', render); window.addEventListener('resize', render);
   };
@@ -906,9 +918,15 @@
         var gi = giftIn(g), shelfN = pieceN(g, ['shelf']);
         if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(4, { tut2Seen: 3 }); return; }
       }
-      if (st.passive && st.pages.indexOf(PAGE) < 0) { return; } // 직접 제작·납품하는 동안에는 끌고 가지 않는다
+      // 직접 제작·납품하는 동안에는 끌고 가지 않는다 · 단, 의뢰를 막 받은 뒤(1단계)에는 물레까지 안내한다
+      if (st.passive && k !== 1 && st.pages.indexOf(PAGE) < 0) { return; }
       if (st.pages.indexOf(PAGE) < 0) {
         if (spotEl) { return; }
+        if (k === 1) { // 의뢰를 받은 뒤 : 공방으로 → 물레
+          if (PAGE === 'Main') { act('t2go1m', true, linkTo('Wheel'), '「물레」를 눌러 의뢰 기물을 빚으러 가요'); }
+          else { act('t2go1', true, function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「물레」를 눌러요'); }
+          return;
+        }
         act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, (PAGE === 'Main' ? '「' + ({ Counter: '카운터', Display: '진열대' }[st.go] || NAMES[st.go] || st.go) + '」를 눌러 이동해요' : '여기를 눌러 ' + (NAMES[st.go] || st.go) + '(으)로 가요'));
         return;
       }
@@ -1160,5 +1178,20 @@
   // 화면 좌표가 요소 안인지
   S.ptIn = function (el, x, y) {
     if (!el) { return false; } var r = el.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  };
+  // 유약을 담근 만큼만 칠한 그릇 채색 · 위쪽(입구 쪽)은 흙 빛, 아래 cov 비율만 유약 빛
+  // 같은 문서 어디서나 url(#id)로 쓰도록 숨은 svg 하나에 그라데이션을 모아 둔다
+  S.covFill = function (top, bot, cov) {
+    try {
+      var c = Math.max(0, Math.min(1, cov)), stop = (1 - c), id = 'cvf_' + String(top).replace('#', '') + '_' + String(bot).replace('#', '') + '_' + Math.round(c * 100);
+      if (!document.getElementById(id)) {
+        var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
+        if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
+        var lg = document.createElementNS(NS, 'linearGradient'); lg.setAttribute('id', id); lg.setAttribute('x1', '0'); lg.setAttribute('y1', '0'); lg.setAttribute('x2', '0'); lg.setAttribute('y2', '1');
+        [[0, top], [Math.max(0, stop - 0.015), top], [Math.min(1, stop + 0.015), bot], [1, bot]].forEach(function (p) { var st = document.createElementNS(NS, 'stop'); st.setAttribute('offset', p[0].toFixed(3)); st.setAttribute('stop-color', p[1]); lg.appendChild(st); });
+        host.firstChild.appendChild(lg);
+      }
+      return 'url(#' + id + ')';
+    } catch (e) { return bot; }
   };
 })();

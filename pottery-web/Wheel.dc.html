@@ -314,6 +314,7 @@ class Component extends DCLogic {
         if (wp.target && (!f.g.wheelPick || f.g.wheelPick === wp.target)) { f.target = wp.target; }
         this.touched = wp.touched || []; this.touchedH = wp.touchedH || 0; f.resumed = true;
         var qf0 = this.questFor(f.target, qk); if (qf0 && !qk[f.target]) { f.target = qf0; }
+        if (!f.g.wheelPick && (!qk[f.target] || qk[f.target].full)) { var ks2 = Object.keys(qk).filter(function (k) { return !qk[k].full; }); if (ks2.length) { f.target = ks2[0]; } }
       }
     } catch (e) {}
     this.state = f;
@@ -427,14 +428,15 @@ class Component extends DCLogic {
     this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000);
   }
   questTargets(g) {
-    var L = this.qlib(), act = L.active(g || {}), tid = (g || {}).track, out = {};
-    var q = act.filter(function (x) { return x.id === tid; })[0] || act[0];
-    if (!q) { return out; }
-    var A = L.alloc(g, act)[q.id];
+    // 제작 안내를 켠 의뢰 모두의 기물을 목표로 쓴다
+    var L = this.qlib(), act = L.active(g || {}), tids = L.tracked(g || {}, act), out = {}, AL = L.alloc(g, act);
+    act.filter(function (x) { return tids.indexOf(x.id) >= 0; }).forEach(function (q) {
+    var A = AL[q.id];
     A.items.forEach(function (r) {
       var it = r.it; if (!it.prof) { return; }
       var p = it.prof, n = p.length, left = r.n - r.dl - r.readyN - r.wip;
       out[r.tag] = { n: it.shapeN || it.name, full: left <= 0, left: left, req: it, tag: r.tag, qtitle: q.title, H: it.H, T: [3.5, 6], f: function (u) { var x = u * (n - 1), lo = Math.floor(x), hi = Math.min(n - 1, lo + 1); return p[lo] + (p[hi] - p[lo]) * (x - lo); } };
+    });
     });
     return out;
   }
