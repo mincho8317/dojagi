@@ -1092,9 +1092,11 @@
       reveal: function (t) { tone('sine', mf(79), t, 0.003, 0.15, 0.7); tone('sine', mf(86), t + 0.08, 0.003, 0.12, 0.8); },
       rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
       meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
+      dot: function (t, k) { var st = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31], m = 72 + st[Math.min(st.length - 1, k || 0)]; tone('sine', mf(m), t, 0.002, 0.07, 0.12); tone('triangle', mf(m) * 2, t, 0.002, 0.02, 0.06); },
+      pop: function (t) { tone('triangle', 380, t, 0.003, 0.16, 0.12, null, 900); noise(t, 0.08, 'bandpass', 1200, 1.5, 0.12); },
       thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
     };
-    window.__sfx = function (n) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01); } catch (e) {} };
+    window.__sfx = function (n, k) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01, k); } catch (e) {} };
     window.__clay = function (a) { clayLvl += Math.min(0.08, a * 0.012); };
     var lastTap = 0;
     document.addEventListener('pointerdown', function (e) {
