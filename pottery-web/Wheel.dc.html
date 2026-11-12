@@ -495,11 +495,9 @@ class Component extends DCLogic {
     ];
   }
   mul() { return this.state.speed === 'slow' ? 0.6 : (this.state.speed === 'fast' ? 1.6 : 1.0); }
-  limit() {
-    var s = this.state, lim = 2.5;
-    this.claysDef().forEach(function (c) { if (c.id === s.clay) { lim = c.limit; } });
-    return lim;
-  }
+  limit() { return this.qlib().clayOf(this.state.clay || 'basic').thin; }
+  // 흙 등급별 조작 : 손맛(모양 변하는 정도) · 벽 깎임 · 보정 범위
+  clayFeel() { return this.qlib().clayOf(this.state.clay || 'basic'); }
   consumeClay() {
     var g = this.state.g, c = this.state.clay;
     if (c === 'basic') { this._mq = g.matsQ || {}; this._cq = 1; return g.mats || {}; }
@@ -535,7 +533,8 @@ class Component extends DCLogic {
   wtune() {
     var rf = this.qlib().fx((this.state && this.state.g) || {});
     // 성형 보정 조정값 · 허용 범위(목표 대비 비율), 보정 속도(초당 비율), 완료 판정, 손댄 구간 유지 시간
-    return { snapTol: 0.10 + (rf.snapTol || 0), snapRate: 2.4 * (1 + (rf.snapRate || 0)), doneTol: 0.035 + (rf.doneTol || 0), hTol: 0.08 + (rf.snapTol || 0), hRate: 2.0 * (1 + (rf.snapRate || 0)), touchMs: 1400 };
+    var sn = this.qlib().clayOf((this.state && this.state.clay) || 'basic').snap;
+    return { snapTol: (0.10 + (rf.snapTol || 0)) * sn, snapRate: 2.4 * (1 + (rf.snapRate || 0)), doneTol: 0.035 + (rf.doneTol || 0), hTol: (0.08 + (rf.snapTol || 0)) * sn, hRate: 2.0 * (1 + (rf.snapRate || 0)), touchMs: 1400 };
   }
   snapStep(dt) {
     var s = this.state; if (s.fx || !this.touched) { return null; }
@@ -596,7 +595,8 @@ class Component extends DCLogic {
   }
   shapeMove(p, dx, dy, axis, sub) {
     var s = this.state;
-    var m = this.mul();
+    var CF = this.clayFeel();
+    var m = this.mul() * CF.feel;
     var base = 290;
     var r = s.r.slice(), t = s.t.slice(), H = s.H, w = s.w;
     var lim0 = this.limit();
@@ -625,7 +625,7 @@ class Component extends DCLogic {
       for (var q = 0; q < 12; q++) {
         var ww = Math.exp(-Math.pow(q - cw, 2) / 14);
         if (ww < 0.03) { continue; }
-        if (dw > 0) { t[q] = t[q] - 0.02 * dw * ww * m * damp(t[q]); } else { t[q] = Math.min(12, t[q] - 0.02 * dw * ww * m); }
+        if (dw > 0) { t[q] = t[q] - 0.02 * dw * ww * m * CF.carve / CF.feel * damp(t[q]); } else { t[q] = Math.min(12, t[q] - 0.02 * dw * ww * m); }
       }
       var r0 = r.slice(), t0 = t.slice(), sk = Math.min(0.5, 0.02 * Math.abs(dw) * m);
       for (var z = 1; z < 11; z++) {
@@ -944,9 +944,10 @@ class Component extends DCLogic {
       sheetTitle: s.sheet === 'clay' ? '흙 고르기' : '목표 모양 고르기',
       sheetSub: s.sheet === 'clay' ? '흙을 바꾸면 물레에 새 흙을 올린다 · 빚던 모양은 사라진다' : '모양만 정한다 · 유약은 시유 단계에서 고른다',
       sheetRows: s.sheet === 'clay' ? claysOut.map(function (c, i) {
+        var QLc = self.qlib();
         var rec = g.goal && clays[i].id === g.goal.clay;
         return {
-          name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: '보유 ' + c.own + ' · 최소 두께 ' + clays[i].limit + 'mm', img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
+          name: clays[i].n + (clays[i].id === 'basic' ? ' 점토' : ''), meta: QLc.clayOf(clays[i].id).grade + '급 · 보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm' + (QLc.clayOf(clays[i].id).note ? ' · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0] : ''), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
           goal: '', goalStyle: 'display:none',
           tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),

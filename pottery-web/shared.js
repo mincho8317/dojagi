@@ -163,7 +163,7 @@
     }
     function colorRoll(it, match, heat, g) {
       var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], qb = qualBonus(it), R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0) + qb), R0[1]];
-      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0));
+      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0) + clayOf(it.clay, it.glaze).color * 2);
       pct = Math.max(5, Math.min(100, pct));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }
@@ -182,6 +182,26 @@
       return { mats: m, matsQ: {}, q: 1 };
     }
     function topQ() { return 1; }
+    // ── 흙 등급 (1급 최고 ~ 4급) : 등급 공통 수치 + 흙별 특이사항 ──
+    // sell 판매 배율 · thin 최소 두께(mm) · color 발색 점수(1점 = 발색 +2%) · feel 손맛(모양 변하는 정도) · carve 벽 깎임 속도 · snap 보정 범위
+    var CGRADE = {
+      4: { sell: 0.7, thin: 3.0, color: 0, feel: 0.85, carve: 0.8, snap: 1.2 },
+      3: { sell: 1.0, thin: 2.7, color: 1, feel: 1.0, carve: 1.0, snap: 1.0 },
+      2: { sell: 1.3, thin: 2.4, color: 2, feel: 1.15, carve: 1.2, snap: 0.85 },
+      1: { sell: 1.5, thin: 2.0, color: 4, feel: 1.3, carve: 1.4, snap: 0.7 }
+    };
+    var CTRAIT = {
+      basic: { g: 4 }, refined: { g: 3 },
+      kaolin: { g: 2, sell: -0.05, carve: -0.15, note: '차분함 · 벽 깎임 -15%' },
+      porcelain: { g: 2, sell: 0.1, thin: -0.1, color: 1, feel: 0.1, note: '예민함 · 손맛 +10% · 발색 +1' },
+      spring: { g: 2, sell: 0.05, thin: -0.2, colorG: { sakura: 1 }, note: '벚꽃유 발색 +1' },
+      premium: { g: 1 }
+    };
+    function clayOf(id, glaze) {
+      var t = CTRAIT[id] || CTRAIT.basic, b = CGRADE[t.g];
+      return { grade: t.g, sell: Math.round((b.sell + (t.sell || 0)) * 100) / 100, thin: Math.round((b.thin + (t.thin || 0)) * 10) / 10,
+        color: b.color + (t.color || 0) + ((t.colorG || {})[glaze] || 0), feel: b.feel * (1 + (t.feel || 0)), carve: b.carve * (1 + (t.carve || 0)), snap: b.snap, note: t.note || '' };
+    }
     // 유약 1회에 드는 원료 (벚꽃유는 축제 한정이라 원료 없음)
     var GMAT = { white: 'gz_white', celadon: 'gz_celadon', black: 'gz_black', jinsa: 'jinsa' };
     var GMATN = { white: '장석', celadon: '청자 철분', black: '흑유 철광', jinsa: '진사' };
@@ -408,7 +428,7 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { clayOf: clayOf, CGRADE: CGRADE, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>

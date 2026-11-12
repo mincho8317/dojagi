@@ -383,8 +383,8 @@ class Component extends DCLogic {
     };
   }
   colorOf(item, match) {
-    var T = this.tables(), cl = T.CLAY[item.clay] || T.CLAY.basic;
-    var a = { '정합': 2, '근접': 1, '불일치': 0 }[match] || 0, b = { ok: 1, drip: -1 }[item.thick] || 0, c = cl.q >= 6 ? 1 : 0;
+    var T = this.tables(), cl = this.qlib().clayOf(item.clay, item.glaze);
+    var a = { '정합': 2, '근접': 1, '불일치': 0 }[match] || 0, b = { ok: 1, drip: -1 }[item.thick] || 0, c = cl.grade <= 3 ? 1 : 0;
     var n = Math.max(1, Math.min(5, 1 + a + b + c));
     return { n: n, why: '기본 1 · 온도 ' + match + ' +' + a + ' · 유약 ' + ({ thin: '얇음', ok: '고르게', thick: '두꺼움', drip: '흘러내림' }[item.thick] || '-') + ' ' + (b < 0 ? b : '+' + b) + ' · 흙 ' + (c ? '정제 이상 +1' : '기본 +0') };
   }
@@ -405,7 +405,7 @@ class Component extends DCLogic {
     var T = this.tables(), QL = this.qlib(), TU = QL.TUNE;
     var sh = T.SH[item.shape] || T.SH.dish;
     var gl = T.GL[item.glaze] || T.GL.white;
-    var cl = T.CLAY[item.clay] || T.CLAY.basic;
+    var cl = this.qlib().clayOf(item.clay, item.glaze);
     var match = this.matchOf(temp, gl.opt);
     var br = this.riskOf(item, heat).p;
     var name = gl.pre + ' ' + sh.n;
@@ -421,7 +421,7 @@ class Component extends DCLogic {
     if (cr.yohen) { name = '요변 ' + name; }
     var cv = TU.colorValue, cm = cv[0] + (cv[1] - cv[0]) * cr.pct / 100;
     var mult = TU.gradeMul[grade] || 1;
-    var value = Math.round(sh.base * mult * cl.m * cm * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 100;
+    var value = Math.round(sh.base * mult * cl.sell * cm * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 100;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
     var why = Object.keys(sk.parts).map(function (k) { return PN[k] + ' ' + sk.parts[k]; }).join(' · ');
