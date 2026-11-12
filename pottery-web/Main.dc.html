@@ -44,7 +44,7 @@ button{font-family:inherit;cursor:pointer}
         <span style="position:absolute;left:180px;top:606px;font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8">입구</span>
         <div class="bg-floor-locked" style="{{lockedHide}}position:absolute;left:27px;top:470px;width:336px;height:118px;box-sizing:border-box;border:2px dashed #3E2616;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-shadow:0 1px 2px rgba(0,0,0,.6)">
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">확장 구역 · 공방 승급</span>
-          <span style="font-size:12px;font-weight:700;color:#F1DDBD">연구 「공방 확장」 · 7×7 → 7×9</span>
+          <span style="font-size:12px;font-weight:700;color:#F1DDBD">연구로 공방을 넓힐 수 있어요</span>
         </div>
         
 
@@ -197,12 +197,12 @@ button{font-family:inherit;cursor:pointer}
           </button>
         </sc-for>
         <sc-if value="{{reqEmpty}}" hint-placeholder-val="{{false}}">
-          <span style="align-self:center;font-size:12px;color:#2F6328;font-weight:700">필수 설비가 모두 배치되어 있다</span>
+          <span style="align-self:center;font-size:12px;color:#2F6328;font-weight:700">필수 설비가 모두 배치되어 있어요</span>
         </sc-if>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
         <span style="flex:0 0 auto;padding:2px 8px;border-radius:8px;background:#8A7A63;font-family:'Jua',sans-serif;font-size:11.5px;color:#FFF4DE">선택</span>
-        <span style="font-size:11px;color:#7A5434">보조 설비 · 꾸미기 용품 · 없어도 된다</span>
+        <span style="font-size:11px;color:#7A5434">보조 설비 · 꾸미기 용품 · 없어도 돼요</span>
       </div>
       <div style="display:flex;gap:6px;overflow-x:auto;min-height:40px">
         <sc-for list="{{trayOpt}}" as="tr" hint-placeholder-count="2">
@@ -212,7 +212,7 @@ button{font-family:inherit;cursor:pointer}
           </button>
         </sc-for>
         <sc-if value="{{optEmpty}}" hint-placeholder-val="{{false}}">
-          <a href="Shop.dc.html" style="align-self:center;font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">수납된 선택 설비가 없다 · 상점 →</a>
+          <a href="Shop.dc.html" style="align-self:center;font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">수납된 선택 설비가 없어요 · 상점 →</a>
         </sc-if>
       </div>
     </div>
@@ -447,7 +447,7 @@ class Component extends DCLogic {
     return [
       { id: 'wheel', step: '성형' }, { id: 'dry', step: '건조' }, { id: 'trim', step: '굽깎기' },
       { id: 'bisque', step: '초벌' }, { id: 'glaze', step: '유약' }, { id: 'brush', step: '붓칠' },
-      { id: 'kiln', step: '소성' }, { id: 'counter', step: '손님' }, { id: 'shelf', step: '판매' }
+      { id: 'kiln', step: '재벌' }, { id: 'counter', step: '손님' }, { id: 'shelf', step: '진열' }
     ];
   }
   dims(id, rot) {
@@ -579,7 +579,7 @@ class Component extends DCLogic {
     }
 
     var SCR = { wheel: 'Wheel.dc.html', dry: 'Dry.dc.html', bisque: 'Bisque.dc.html', glaze: 'Glaze.dc.html', kiln: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', shelf: 'Display.dc.html', counter: 'Counter.dc.html' };
-    var FN = { wheel: '성형', dry: '건조', bisque: '초벌', glaze: '유약', kiln: '소성', shelf: '판매', counter: '손님' };
+    var FN = { wheel: '성형', dry: '건조', bisque: '초벌', glaze: '유약', kiln: '재벌', shelf: '진열', counter: '손님' };
     var firstId = flow.filter(function (x) { return !!SCR[x]; })[0] || 'wheel';
     var dg = s.dg;
     var items = [];
@@ -617,7 +617,7 @@ class Component extends DCLogic {
           return function () {
             if (self.state.editing) { return; }
             if (cc.deco) { self.say(cc.label + ' · 꾸미기 소품'); return; }
-            self.say(cc.label + ' 작업은 다음 목업에서');
+            self.say(cc.label + ' 작업은 곧 열려요');
           };
         })(id, c),
         pDown: (function (iid, pos) {
@@ -658,7 +658,7 @@ class Component extends DCLogic {
             self.setState({ dg: null, sel: g2.id });
           } else {
             self.setState({ dg: null });
-            self.say('그 자리에는 놓을 수 없다');
+            self.say('그 자리에는 놓을 수 없어요');
           }
         }
       });
@@ -692,27 +692,27 @@ class Component extends DCLogic {
         pick: function () {
           var curLay = self.layoutFor(self.state.g);
           var f = self.firstFree(curLay, uid, 0) || self.firstFree(curLay, uid, 1);
-          if (!f) { self.say('빈자리가 없다 · 다른 설비를 먼저 수납하자'); return; }
+          if (!f) { self.say('빈자리가 없어요 · 다른 설비를 먼저 수납해요'); return; }
           var nl = {}; for (var k2 in curLay) { nl[k2] = curLay[k2]; }
           nl[uid] = f;
           var sp = {}; sp[uid] = false;
           self.saveLayout(nl, sp);
           self.setState({ sel: uid });
-          self.say(c.label + '을(를) 꺼냈다 · 끌어서 원하는 자리로');
+          self.say(c.label + '을(를) 꺼냈어요 · 끌어서 원하는 자리로');
         }
       };
     });
 
     var SD = {
-      wheel: { title: '물레', bg: 'ROOM_SIDE_WHEEL', wall: '#E8D5B7', obj: 'OBJ_WHEEL_SIDE', href: 'Wheel.dc.html', action: '물레 앞에 앉기', sub: '흙을 골라 빚는다' },
-      dry: { title: '건조대', bg: 'ROOM_SIDE_DRY', wall: '#EFE0C2', obj: 'OBJ_DRYRACK_SIDE', href: 'Dry.dc.html', action: '건조대 살피기', sub: '마른 것만 골라 뺀다' },
-      trim: { title: '굽깎이대', bg: 'ROOM_SIDE_TRIM', wall: '#E8D5B7', obj: 'OBJ_TRIM_SIDE', href: '', action: '굽깎이는 다음 목업에서', sub: '' },
+      wheel: { title: '물레', bg: 'ROOM_SIDE_WHEEL', wall: '#E8D5B7', obj: 'OBJ_WHEEL_SIDE', href: 'Wheel.dc.html', action: '물레 앞에 앉기', sub: '흙을 골라 빚어요' },
+      dry: { title: '건조대', bg: 'ROOM_SIDE_DRY', wall: '#EFE0C2', obj: 'OBJ_DRYRACK_SIDE', href: 'Dry.dc.html', action: '건조대 살피기', sub: '마른 것만 골라 빼요' },
+      trim: { title: '굽깎이대', bg: 'ROOM_SIDE_TRIM', wall: '#E8D5B7', obj: 'OBJ_TRIM_SIDE', href: '', action: '굽깎이는 곧 열려요', sub: '' },
       bisque: { title: '초벌 가마', bg: 'ROOM_SIDE_BISQUE', img: '_blob/cc5233e1cfa6aec8da5807b241b539ab.webp', wall: '#E2C7AC', obj: 'OBJ_BISQUE_SIDE' },
-      glaze: { title: '유약대', bg: 'ROOM_SIDE_GLAZE', wall: '#DCE3D6', obj: 'OBJ_GLAZE_SIDE', href: 'Glaze.dc.html', action: '유약 바르기', sub: '꾹 눌러 담근다' },
-      brush: { title: '붓·시유대', bg: 'ROOM_SIDE_BRUSH', wall: '#DCE3D6', obj: 'OBJ_BRUSH_SIDE', href: '', action: '붓칠은 다음 목업에서', sub: '' },
-      kiln: { title: '재벌 가마', bg: 'ROOM_SIDE_KILN', wall: '#D8B8A0', obj: 'OBJ_KILN_SIDE', href: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', action: firing ? '가마 열기' : '가마 채우기', sub: firing ? '목업: 시간을 건너뛰고 연다' : '대기 ' + kilnN + '점을 칸에 넣는다' },
+      glaze: { title: '유약대', bg: 'ROOM_SIDE_GLAZE', wall: '#DCE3D6', obj: 'OBJ_GLAZE_SIDE', href: 'Glaze.dc.html', action: '유약 바르기', sub: '꾹 눌러 담가요' },
+      brush: { title: '붓·시유대', bg: 'ROOM_SIDE_BRUSH', wall: '#DCE3D6', obj: 'OBJ_BRUSH_SIDE', href: '', action: '붓칠은 곧 열려요', sub: '' },
+      kiln: { title: '재벌 가마', bg: 'ROOM_SIDE_KILN', wall: '#D8B8A0', obj: 'OBJ_KILN_SIDE', href: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', action: firing ? '가마 열기' : '가마 채우기', sub: firing ? '굽는 중 · 눌러서 가마 보기' : '대기 ' + kilnN + '점을 칸에 넣어요' },
       shelf: { title: '진열대', bg: 'ROOM_SIDE_SHELF', wall: '#EADCC8', obj: 'OBJ_SHELF_SIDE', href: 'Display.dc.html', action: '진열대 보기', sub: '전시 · 판매 · 방문객' },
-      counter: { title: '카운터', bg: 'ROOM_SIDE_COUNTER', img: '_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp', wall: '#E3C9A3', href: 'Counter.dc.html', action: guests.length ? '손님 맞이하기 · ' + guests.length + '명' : '손님 기다리기', sub: '얼굴 보고 의뢰를 받고 완성품을 건넨다' }
+      counter: { title: '카운터', bg: 'ROOM_SIDE_COUNTER', img: '_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp', wall: '#E3C9A3', href: 'Counter.dc.html', action: guests.length ? '손님 맞이하기 · ' + guests.length + '명' : '손님 기다리기', sub: '얼굴 보고 의뢰를 받고 완성품을 건네요' }
     };
     function chip(text, tone) {
       return { text: text, style: 'padding:3px 10px;border-radius:10px;font-family:Jua,sans-serif;font-size:12px;' + (tone === 'go' ? 'background:#4A9440;color:#FFFDF5' : (tone === 'warn' ? 'background:#C8601E;color:#FFFDF5' : 'background:rgba(255,244,222,.92);color:#5B3A24;border:2px solid #8A6440')) };
@@ -721,7 +721,7 @@ class Component extends DCLogic {
       if (id === 'counter') { return [chip('줄 선 손님 ' + guests.length, guests.length ? 'go' : ''), chip('진행 중 의뢰 ' + activeQ, '')]; }
       if (id === 'wheel') { return [chip('건조대 빈칸 ' + Math.max(0, 4 - dryList.length), dryList.length >= 4 ? 'warn' : '')]; }
       if (id === 'dry') { return [chip('말리는 중 ' + dryList.length + '/' + Math.min(9, 3 + (self.qlib().fx(g).dryRack || 0)), ''), chip('완전 건조 ' + dryDone, dryDone ? 'go' : '')]; }
-      if (id === 'bisque') { return [chip('초벌 대기 ' + bqList.length, bqList.length ? 'go' : ''), chip(bq.state === 'firing' ? (bqDone ? '다 구웠다' : '굽는 중 ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초')) : '800℃ · 20분', bq.state === 'firing' ? 'warn' : '')]; }
+      if (id === 'bisque') { return [chip('초벌 대기 ' + bqList.length, bqList.length ? 'go' : ''), chip(bq.state === 'firing' ? (bqDone ? '다 구웠어요' : '굽는 중 ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초')) : '800℃ · 20분', bq.state === 'firing' ? 'warn' : '')]; }
       if (id === 'glaze') { return [chip('시유 대기 ' + glazeN, glazeN ? 'go' : ''), chip('재벌 대기 ' + kilnN, '')]; }
       if (id === 'kiln') { return [chip(firing ? (kLeftS > 0 ? '소성 중 ' + Math.floor(kLeftS / 3600) + '시간 ' + Math.floor(kLeftS % 3600 / 60) + '분' : '소성 완료') : '비어 있음', firing ? 'warn' : ''), chip('소성 ' + (g.firings || 38) + '회', '')]; }
       if (id === 'shelf') { return [chip('전시 ' + shelf + '/6', ''), chip('명성 +' + shelf * 3 + '/h', 'go')]; }
@@ -752,7 +752,7 @@ class Component extends DCLogic {
         chipsWrap: 'position:absolute;left:16px;right:16px;top:180px;display:flex;justify-content:center;flex-wrap:wrap;gap:5px;' + late,
         chips: chipsOf(sid),
         guestRes: firstGuest ? firstGuest.res : '빈 카운터',
-        guestLine: firstGuest ? firstGuest.line : '지금은 손님이 없다',
+        guestLine: firstGuest ? firstGuest.line : '지금은 손님이 없어요',
         lateGuest: 'position:absolute;left:200px;top:226px;max-width:176px;box-sizing:border-box;padding:7px 10px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-size:11.5px;line-height:1.45;color:#2B1A0F;' + late,
         hasLink: false, hasBtn: false, href: 'Main.dc.html', action: '', actionSub: '',
         actionStyle: green + 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 5px 0 #2F6328;' + late,
@@ -761,27 +761,27 @@ class Component extends DCLogic {
       if (sid === 'bisque') {
         p.hasBtn = true;
         if (bq.state === 'firing' && !bqDone) {
-          p.action = '굽는 중 · ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초'); p.actionSub = '옥으로 바로 완료할 수 있다';
+          p.action = '굽는 중 · ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초'); p.actionSub = '옥으로 바로 완료할 수 있어요';
           p.btnStyle = green + 'background:#3E2616;border:3px solid #2B1A0F;color:#FFB979;' + late;
-          p.run = function () { self.say('초벌이 끝나길 기다리자'); };
+          p.run = function () { self.say('초벌이 끝나길 기다려요'); };
         } else if (bqDone) {
           p.action = '꺼내서 유약대로'; p.actionSub = (bq.items || []).length + '점 · 초벌 완료';
           p.btnStyle = green + 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 5px 0 #2F6328;color:#FFFDF5;' + late;
           p.run = function () {
             var its = (bq.items || []).map(function (x) { var y = {}; for (var kk in x) { y[kk] = x[kk]; } return y; });
             self.setG({ glazeList: (g.glazeList || []).concat(its), bisque: { state: 'idle', start: 0, items: [] } });
-            self.say(its.length + '점을 유약대로 옮겼다');
+            self.say(its.length + '점을 유약대로 옮겼어요');
           };
         } else {
           p.action = bqList.length ? '초벌 굽기 · ' + bqList.length + '점' : '초벌 대기 없음';
-          p.actionSub = bqList.length ? '800℃로 수분과 유기물을 날린다' : '건조대에서 빼면 여기로 온다';
+          p.actionSub = bqList.length ? '800℃로 수분과 유기물을 날려요' : '건조대에서 빼면 여기로 와요';
           p.btnStyle = green + (bqList.length ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 5px 0 #8A3D10;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;') + late;
           p.run = function () {
-            if (!bqList.length) { self.say('초벌할 기물이 없다 · 건조대에서 빼오자'); return; }
+            if (!bqList.length) { self.say('초벌할 기물이 없어요 · 건조대에서 빼 와요'); return; }
             var surv = [], brokeN = 0;
             bqList.forEach(function (x) { if (x.dry === 'early' && Math.random() < 0.12) { brokeN++; } else { surv.push(x); } });
             self.setG({ bisqueList: [], bisque: { state: 'firing', start: Date.now(), items: surv }, shards: g.shards + brokeN * 2, broken: (g.broken || 0) + brokeN });
-            self.say('초벌 시작 · ' + surv.length + '점' + (brokeN ? ' · 반건조 ' + brokeN + '점이 터졌다' : ''));
+            self.say('초벌 시작 · ' + surv.length + '점' + (brokeN ? ' · 반건조 ' + brokeN + '점이 터졌어요' : ''));
           };
         }
       } else if (d.href) {
@@ -835,10 +835,10 @@ class Component extends DCLogic {
       trayOpt: tray.filter(function (t) { return !t.req; }),
       reqEmpty: !missing.length,
       optEmpty: !tray.filter(function (t) { return !t.req; }).length,
-      reqNote: missing.length ? '공정에 꼭 필요 · ' + missing.length + '개를 배치해야 완료할 수 있다' : '물레·건조대·초벌·유약대·재벌·진열대·카운터',
+      reqNote: missing.length ? '공정에 꼭 필요 · ' + missing.length + '개를 배치해야 완료할 수 있어요' : '물레·건조대·초벌·유약대·재벌·진열대·카운터',
       doneStyle: 'all:unset;cursor:pointer;padding:6px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (missing.length ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5'),
       finishEdit: function () {
-        if (missing.length) { self.say('필수 설비를 먼저 배치하자 · ' + missing.map(function (m) { return cat[m].label; }).join(', ')); return; }
+        if (missing.length) { self.say('필수 설비를 먼저 배치해요 · ' + missing.map(function (m) { return cat[m].label; }).join(', ')); return; }
         self.setState({ editing: false, sel: '' });
       },
       editing: s.editing,
@@ -878,11 +878,11 @@ class Component extends DCLogic {
           self.saveLayout(nl);
         } else {
           var f = self.firstFree(lay, id2, nr);
-          if (!f) { self.say('돌릴 공간이 없다'); return; }
+          if (!f) { self.say('돌릴 공간이 없어요'); return; }
           var nl2 = {}; for (var k3 in lay) { nl2[k3] = lay[k3]; }
           nl2[id2] = f;
           self.saveLayout(nl2);
-          self.say('그 자리에선 돌릴 수 없어 빈 곳으로 옮겼다');
+          self.say('그 자리에선 돌릴 수 없어 빈 곳으로 옮겼어요');
         }
       },
       storeSel: function () {
@@ -891,8 +891,8 @@ class Component extends DCLogic {
         var sp = {}; sp[id2] = true;
         self.saveLayout(nl, sp);
         self.setState({ sel: '' });
-        var warn = { wheel: ' · 성형 단계가 빠진다', dry: ' · 건조 단계가 빠진다', bisque: ' · 초벌 단계가 빠진다', glaze: ' · 유약 단계가 빠진다', kiln: ' · 소성 단계가 빠진다', counter: ' · 손님을 맞을 수 없다', shelf: ' · 전시 명성이 멈춘다' }[id2] || '';
-        self.say(cat[id2].label + '을(를) 수납함에 넣었다' + (cat[id2].core ? ' · 필수 설비라 다시 배치해야 완료할 수 있다' : ''));
+        var warn = { wheel: ' · 성형 단계가 빠져요', dry: ' · 건조 단계가 빠져요', bisque: ' · 초벌 단계가 빠져요', glaze: ' · 유약 단계가 빠져요', kiln: ' · 소성 단계가 빠져요', counter: ' · 손님을 맞을 수 없어요', shelf: ' · 전시 명성이 멈춰요' }[id2] || '';
+        self.say(cat[id2].label + '을(를) 수납함에 넣었어요' + (cat[id2].core ? ' · 필수 설비라 다시 배치해야 완료할 수 있어요' : ''));
       },
       closeSel: function () { self.setState({ sel: '' }); },
       prev: function () { if (idx > 0) { self.goIdx(idx - 1); } },

@@ -328,7 +328,7 @@ class Component extends DCLogic {
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
   buyEvTix() {
     var g = this.loadG(), price = 50, j = this.jadeOf(g);
-    if (j < price) { this.say('옥이 부족하다'); this.sfx('fail'); return; }
+    if (j < price) { this.say('옥이 부족해요'); this.sfx('fail'); return; }
     var T = this.tixState(g, true), ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
     ga.etix = T.tix + 1; ga.etAt = T.at;
     this.setG({ gather: ga, jade: j - price, jadeV: 2 }); this.say('축제 채집권 +1 · 옥 -' + price); this.sfx('coin');
@@ -344,7 +344,7 @@ class Component extends DCLogic {
   start0(mode, ev) {
     this.sfx('tap');
     var g = this.loadG(), T = this.tixState(g, ev);
-    if (T.tix <= 0) { this.say((ev ? '축제 채집권' : '채집권') + '이 없다 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
+    if (T.tix <= 0) { this.say((ev ? '축제 채집권' : '채집권') + '이 없어요 · ' + this.fmt(T.next) + ' 뒤 1장 충전'); this.sfx('fail'); return; }
     var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
     if (ev) { ga.etix = T.tix - 1; ga.etAt = T.tix >= T.max ? Date.now() : T.at; } else { ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at; }
     this.setG({ gather: ga });
@@ -398,7 +398,7 @@ class Component extends DCLogic {
   // 손 토련 : 반죽을 꾹 누르고 있으면 압력 게이지가 차오른다 → 금색 칸에서 손을 떼면 특급 (넘치면 보통)
   // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
   refOpen(rk) {
-    var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있다 · 지금 ' + have + '개'); this.sfx('fail'); return; }
+    var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있어요 · 지금 ' + have + '개'); this.sfx('fail'); return; }
     this.R = { rk: rk, n: 5, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
@@ -553,7 +553,7 @@ class Component extends DCLogic {
           newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#4A9440;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
       });
       var TT = this.tixState(g, G.ev);
-      out.resTitle = R.length ? (G.mode === 'dig' ? '흙을 캤다!' : '원석을 모았다!') : '아쉽다…';
+      out.resTitle = R.length ? (G.mode === 'dig' ? '흙을 캤어요!' : '원석을 모았어요!') : '아쉽다…';
       out.resSub = '점수 ' + G.score; out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
       out.resHint = R.length ? '「다듬기」 탭에서 다듬으면 보통·상급·특급이 정해져요' : '다음엔 조금 더 깊이 파 봐요';
       out.closeGame = function () { self.closeGame(); };

@@ -95,7 +95,6 @@ button{font-family:inherit;cursor:pointer}
     </sc-if>
   </div>
 
-  <button type="button" onClick="{{reset}}" style="{{resetStyle}}">{{resetLabel}}</button>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:40px;right:40px;top:380px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
@@ -185,7 +184,7 @@ class Component extends DCLogic {
       ash: { c: '#9A9B6E', n: '재유', d: '장작가마 전용' }
     };
     var GRADE = { '범작': '#8A7A63', '양작': '#8A7A63', '수작': '#4E7D74', '명작': '#C9962E', '요변': '#7A5A93' };
-    var WHERE = { shelf: '진열 중', store: '창고', sold: '납품함', museum: '미술관 소장' };
+    var WHERE = { shelf: '진열 중', store: '보관 중', sold: '납품함', museum: '미술관 소장' };
 
     var seen = {}, works = [];
     var ids = g.order || [];
@@ -268,13 +267,13 @@ class Component extends DCLogic {
       shapes: shapes,
       counts: { works: worksFound + '/' + WORK_SLOTS, glazes: glazesFound + '/' + glazes.length, shapes: shapesFound + '/' + shapes.length, broken: g.broken || 0 },
       total: { found: foundCount, all: allCount, bar: 'width:' + Math.round(foundCount / allCount * 100) + '%;height:100%;border-radius:5px;background:#E3B23C' },
-      resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아간다' : '목업 초기화',
+      resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아가요' : '목업 초기화',
       resetStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;text-align:center;padding:10px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (armed ? 'background:#B9533A;border:3px solid #7A2F1E;color:#FFFDF5;' : 'background:rgba(43,26,15,.75);border:2px solid #3E2616;color:#E8D3B5;'),
       reset: function () {
         if (!armed) { self.setState({ armed: true }); return; }
         try { localStorage.removeItem('pottery-proto-v1'); } catch (e) {}
         self.setState({ g: self.gdef(), armed: false });
-        self.say('모든 화면이 처음 상태로 돌아갔다');
+        self.say('모든 화면이 처음 상태로 돌아갔어요');
       },
       toast: this.state.toast,
       toastOn: this.state.toast !== ''

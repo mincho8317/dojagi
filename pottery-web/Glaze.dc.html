@@ -160,7 +160,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
       <div role="dialog" aria-label="유약 고르기" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 알맞은 담금 시간이 다르다</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 알맞은 담금 시간이 달라요</span></div>
           <button type="button" onClick="{{gsClose}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8">✕</button>
         </div>
         <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:2px">
@@ -425,7 +425,7 @@ class Component extends DCLogic {
       if (wasHold) { self.finish(); }
       self.setState({ drag: false, dragDip: null });
       if (!wasHold && !lifted && moved < 8 && Date.now() - t0 < 450) { self.setState({ pkOpen: true }); }
-      else if (!wasHold && moved >= 8) { self.say('조금 더 내려 유약에 닿게 해요 · 깊이 담글수록 빨리 입혀진다', 'fail'); }
+      else if (!wasHold && moved >= 8) { self.say('조금 더 내려 유약에 닿게 해요 · 깊이 담글수록 빨리 입혀져요', 'fail'); }
     }
     this.offDrag = function () { end(true); };
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
@@ -449,9 +449,9 @@ class Component extends DCLogic {
   start(viaDrag) {
     if (this.state.holding) { return; }
     var cur = this.current();
-    if (!cur) { this.say('유약 바를 기물이 없다', 'fail'); return; }
+    if (!cur) { this.say('유약 바를 기물이 없어요', 'fail'); return; }
     var QG = this.qlib();
-    if (this.noMat(this.state.g, this.gz())) { this.say(QG.GMATN[this.gz()] + '이(가) 없다 · ' + (this.gz() === 'sakura' ? '축제 채집지에서 모은다' : '채집 「돌 부수기」 후 다듬거나 상점에서 산다'), 'fail'); return; }
+    if (this.noMat(this.state.g, this.gz())) { this.say(QG.GMATN[this.gz()] + '이(가) 없어요 · ' + (this.gz() === 'sakura' ? '축제 채집지에서 모아요' : '채집 「돌 부수기」 후 다듬거나 상점에서 사요'), 'fail'); return; }
     var self = this;
     this.t0 = Date.now(); this.effMs = 0; this.lastT = Date.now(); this.maxCov = viaDrag ? (this.curCov || 0) : 1; if (!viaDrag) { this.curCov = 1; }
     try { window.__sfx && window.__sfx('splash'); } catch (e) {} 
@@ -498,7 +498,7 @@ class Component extends DCLogic {
     try { window.__sfx && window.__sfx('drip'); if (zone === 'ok') { setTimeout(function () { try { window.__sfx('ok'); } catch (e) {} }, 60); } else if (zone === 'drip') { window.__sfx('fail'); } } catch (e) {}
     this.liftFx(zone, ms);
     this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0 });
-    var label = { thin: '얇게 입혀졌다 · 발색 +0', ok: '고르게 입혀졌다 · 발색 +1', thick: '조금 두껍다 · 발색 +0', drip: '너무 두껍다 · 흘러내릴 수 있다 · 발색 -1' }[zone];
+    var label = { thin: '얇게 입혀졌어요 · 발색 +0', ok: '고르게 입혀졌어요 · 발색 +1', thick: '조금 두꺼워요 · 발색 +0', drip: '너무 두꺼워요 · 흘러내릴 수 있어요 · 발색 -1' }[zone];
     this.say(label + ' · 가마 대기로' + (rest.length ? ' · 다음 기물' : ''), zone === 'ok' ? 'ok' : 'fail');
   }
   renderVals0() {
@@ -613,17 +613,17 @@ class Component extends DCLogic {
       gradeCycle: function () {
         if (s.holding || EG === 'sakura') { return; }
         var I = self.matInfo(g, EG), own = I.gs.filter(function (x) { return x.n > 0; });
-        if (own.length < 2) { self.say(own.length ? '다른 등급 원료가 없다' : '원료가 없다', 'fail'); return; }
+        if (own.length < 2) { self.say(own.length ? '다른 등급 원료가 없어요' : '원료가 없어요', 'fail'); return; }
         var i = own.map(function (x) { return x.gd; }).indexOf(I.gd), nx = own[(i + 1) % own.length];
         var mg = {}; for (var k in (s.mg || {})) { mg[k] = s.mg[k]; } mg[EG] = nx.gd; self.setState({ mg: mg });
-        self.say(['', '보통', '상급', '특급'][nx.gd] + ' ' + self.qlib().GMATN[EG] + '을(를) 쓴다 · 발색 +' + [0, 0, 4, 8][nx.gd] + '%');
+        self.say(['', '보통', '상급', '특급'][nx.gd] + ' ' + self.qlib().GMATN[EG] + '을(를) 써요 · 발색 +' + [0, 0, 4, 8][nx.gd] + '%');
       },
       gsClose: function () { self.setState({ gsOpen: false }); },
       gsShow: !!s.gsOpen,
       gg: (function () { var T = self.zoneT(EG), W = 2400; function w(x) { return 'flex:0 0 ' + (x / W * 100).toFixed(2) + '%;'; } return { s1: w(T[0]), s2: w(T[1] - T[0]), s3: w(T[2] - T[1]) }; })(),
       plumOn: !!(g.patterns || {}).plum,
       plumPressed: s.plum ? 'true' : 'false',
-      plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐다' : '매화 문양을 넣는다 · 소성 후 값어치 +20%'); } },
+      plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐어요' : '매화 문양을 넣어요 · 소성 후 값어치 +20%'); } },
       plumStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 8px;border-radius:14px;font-family:Jua,sans-serif;font-size:11px;' + (s.plum ? 'background:#FCE3EA;border:3px solid #D46A86;box-shadow:0 0 0 2px #F4B6C4;color:#A94767' : 'background:#FFFDF5;border:3px dashed #C9A27A;color:#8A6440'),
       cur: (function () { var pp = self.potOf(cur || { shape: 'cup' }, '#E8DCCB'); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var flip = !!(s.drag || s.holding), yCut = vbA[1] + (140 - clipPy - 10) * vbA[2] / 120; return { flip: 'transform:rotate(' + (flip ? 180 : 0) + 'deg);transform-origin:50% 50%;transition:transform .22s ease-out;overflow:visible', clipY: s.holding ? '-3000' : '9999', clipH: s.holding ? (yCut + 3000).toFixed(1) : '1', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? '#E8DCCB' : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
       ripple: (function () { var top = 208 + Math.round(dip * 125), sub = top + 140 - 390; if (sub <= 4) { return 'display:none'; } var t = Date.now() / 1000, w = 96 + 14 * Math.sin(t * 7), h = w * 0.24; return 'position:absolute;left:' + (195 - w / 2).toFixed(1) + 'px;top:' + (390 - h / 2).toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;box-sizing:border-box;border-radius:50%;border:2.5px solid rgba(255,255,255,.75);box-shadow:0 0 0 5px rgba(255,255,255,.18);pointer-events:none'; })(),
@@ -645,7 +645,7 @@ class Component extends DCLogic {
       pk: self.pickBox({
         on: !!s.pkOpen, multi: false, title: '유약 바를 기물', sub: '초벌 완료 ' + list.length + '점 · 눌러서 고르기',
         rows: list.map(function (it) { return self.pickRow(it, { stage: 'bisque', single: true, on: cur && it.id === cur.id, tag: cur && it.id === cur.id ? '지금 선택' : '', tap: function () { self.selIn(it.id); } }); }),
-        emptyText: '초벌 완료된 기물이 없다', emptyHref: 'Bisque.dc.html', emptyLink: '초벌 가마로 →'
+        emptyText: '초벌 완료된 기물이 없어요', emptyHref: 'Bisque.dc.html', emptyLink: '초벌 가마로 →'
       }),
       potWrap: 'position:absolute;left:135px;top:' + potTop + 'px;width:120px;height:140px;transition:' + (s.drag ? 'none' : 'top .18s ease-out') + ';clip-path:inset(-40px -30px ' + Math.max(0, potTop + 140 - 390) + 'px -30px);' + ((s.potHide || 0) > Date.now() ? 'opacity:0;' : ''),
       tubColor: 'rgba(255,248,235,.35)',
@@ -663,7 +663,7 @@ class Component extends DCLogic {
       condStyle: 'position:absolute;left:40px;right:40px;top:482px;display:' + (needQuest ? 'flex' : 'none') + ';align-items:center;justify-content:center;gap:7px;padding:7px 12px;border-radius:20px;border:3px solid #FFF4DE;box-shadow:0 3px 0 rgba(43,26,15,.4);font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + (condOk ? '#2F6328' : '#8A5A36'),
       condText: condOk ? '✓ 민 씨 의뢰 조건 · 찻잔 + 청자유' : '민 씨 의뢰: 찻잔에 청자유',
       holdLabel: s.holding ? '담그는 중…' : '꾹 눌러 담그기',
-      holdSub: s.holding ? (s.drag ? '적정에서 위로 올려 꺼낸다' : '적정에서 손을 떼면 건진다') : (cur ? (cur.goalName || (SH[cur.shape] || SH.dish).n) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
+      holdSub: s.holding ? (s.drag ? '적정에서 위로 올려 꺼내요' : '적정에서 손을 떼면 건져요') : (cur ? (cur.goalName || (SH[cur.shape] || SH.dish).n) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
       holdStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:11px 0;border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;' + (s.holding ? 'background:#2F6328;border:3px solid #1F4A1A;box-shadow:0 1px 0 #1F4A1A;transform:translateY(3px);color:#FFFDF5;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;'),
       holdStart: function (e) { if (s.drag) { return; } if (e && e.preventDefault) { e.preventDefault(); } self.start(); },
       holdEnd: function () { if (!self.state.drag) { self.finish(); } },
@@ -732,7 +732,7 @@ class Component extends DCLogic {
     var n = o.count || 0;
     return {
       on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
-      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
       confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
@@ -780,8 +780,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

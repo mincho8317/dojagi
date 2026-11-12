@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#2B1A0F">
-<title>진열대와 방문객</title>
+<title>진열</title>
 <script src="./support.js"></script>
 <script src="./shared.js"></script>
 </head>
@@ -61,7 +61,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
       <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
     </a>
-    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">진열대 {{shelfCount}}/6</div>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">진열 {{shelfCount}}/6</div>
     <span style="flex:0 0 auto;padding:4px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;font-family:'Jua',sans-serif;font-size:12px;color:#9FE08F">명성 +{{fameRate}}/h</span>
   </div>
 
@@ -100,7 +100,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <div style="position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;padding:8px 10px;border-radius:16px;display:flex;align-items:center;gap:8px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4)">
     <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
       <span style="font-family:'Jua',sans-serif;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{sel.name}} <span style="font-size:12px;color:#7A5434">{{sel.grade}}</span></span>
-      <span style="font-size:12px;color:#2E6B5F;font-weight:700">평가액 {{sel.value}}G · {{sel.meta}}</span>
+      <span style="font-size:12px;color:#2E6B5F;font-weight:700">{{sel.line}}</span>
     </div>
     <button type="button" onClick="{{toStore}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;border-radius:12px;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">내리기</button>
   </div>
@@ -127,7 +127,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <div id="dstore" style="{{storeArea}}">
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">보관 중 {{storeCount}}점</span>
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F;white-space:nowrap">보관 중 {{storeCount}}점</span>
       <span style="flex:1 1 auto;min-width:0;padding:0 6px;font-size:10.5px;line-height:1.3;color:#7A5434">{{storeHint}}</span>
       <button type="button" onClick="{{smashBtn}}" style="{{smashBtnStyle}}">{{smashBtnText}}</button>
       <button type="button" onClick="{{sellBtn}}" style="{{sellBtnStyle}}">{{sellBtnText}}</button>
@@ -142,7 +142,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         </button>
       </sc-for>
       <sc-if value="{{storeEmpty}}" hint-placeholder-val="{{false}}">
-        <span style="grid-column:1 / -1;padding:14px 0;text-align:center;font-size:12px;color:#7A5434;line-height:1.6">보관 중인 작품이 없다<br>가마에서 꺼낸 작품이 여기로 온다</span>
+        <span style="grid-column:1 / -1;padding:14px 0;text-align:center;font-size:12px;color:#7A5434;line-height:1.6">보관 중인 작품이 없어요<br>가마에서 꺼낸 작품이 여기로 와요</span>
       </sc-if>
     </div>
   </div>
@@ -202,7 +202,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">받을 골드</span>
           <span style="font-family:'Jua',sans-serif;font-size:21px;color:#8A6410">+{{cf.sum}}G</span>
         </div>
-        <span style="text-align:center;font-size:11px;color:#7A5434">판매해도 도감 기록은 남는다</span>
+        <span style="text-align:center;font-size:11px;color:#7A5434">판매해도 도감 기록은 남아요</span>
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
           <button type="button" onClick="{{cf.no}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24">취소</button>
           <button type="button" onClick="{{cf.yes}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">판매하기</button>
@@ -634,10 +634,10 @@ class Component extends DCLogic {
       var g = self.state.g, p = g.pieces[sid]; if (!p) { return; }
       if (over === 'shelf') {
         var n = 0; for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { n++; } }
-        if (n >= 6) { self.say('진열대가 가득 찼다 · 먼저 하나를 내리자'); return; }
-        self.movePiece(sid, 'shelf'); self.setState({ sel: sid }); self.say(p.name + '을(를) 진열대에 올렸다');
+        if (n >= 6) { self.say('진열대가 가득 찼어요 · 먼저 하나를 내려요'); return; }
+        self.movePiece(sid, 'shelf'); self.setState({ sel: sid }); self.say(p.name + '을(를) 진열대에 올렸어요');
       } else if (over === 'store') {
-        self.movePiece(sid, 'store'); self.setState({ sel: '' }); self.say(p.name + '을(를) 내려서 보관했다');
+        self.movePiece(sid, 'store'); self.setState({ sel: '' }); self.say(p.name + '을(를) 내려서 보관했어요');
       } else if (over === 'smash') {
         self.smash(sid);
       } else if (over === 'sell') {
@@ -712,7 +712,7 @@ class Component extends DCLogic {
         tap: function () {
           if (Date.now() - (self.dragEnd || 0) < 300) { return; }
           if (self.state.sellMode) { self.togglePick(sid); return; }
-          self.say('끌어서 진열대에 올리거나 판매 상자에 넣자');
+          self.say('끌어서 진열대에 올리거나 판매 상자에 넣어요');
         }
       };
     });
@@ -721,14 +721,14 @@ class Component extends DCLogic {
       rows: storeIds.map(function (sid) {
         var p = g.pieces[sid];
         var r = self.pickRow(p, { stage: 'glazed', single: true, tag: p.grade + ' · ' + (p.value || 0).toLocaleString() + 'G', tap: function () {
-          self.movePiece(sid, 'shelf'); self.setState({ pkOpen: false, sel: sid, stSel: '' }); self.say(p.name + '을(를) 진열대에 올렸다');
+          self.movePiece(sid, 'shelf'); self.setState({ pkOpen: false, sel: sid, stSel: '' }); self.say(p.name + '을(를) 진열대에 올렸어요');
         } });
         r.pot = self.potOf(p, p.tint || GC[p.glaze] || '#F2EFE6'); r.name = p.name; r.meta = '평가액 ' + (p.value || 0).toLocaleString() + 'G';
         r.tagStyle = badgeOf(p.grade);
         r.tag = p.grade;
         return r;
       }),
-      emptyText: '보관 중인 작품이 없다', emptyHref: 'Kiln.dc.html', emptyLink: '가마로 가기 →'
+      emptyText: '보관 중인 작품이 없어요', emptyHref: 'Kiln.dc.html', emptyLink: '가마로 가기 →'
     });
 
     var selId = this.state.sel && g.pieces[this.state.sel] && g.pieces[this.state.sel].where === 'shelf' ? this.state.sel : shelfIds[0];
@@ -765,7 +765,7 @@ class Component extends DCLogic {
         if (!sellIds.length) { self.setState({ sellMode: false, sellPick: {}, pickKind: '' }); return; }
         self.smash(sellIds.slice());
       },
-      storeHint: this.state.sellMode ? '카드를 눌러 선택' : (D && D.from === 'shelf' ? '여기에 놓으면 보관' : '끌어서 진열대·판매 상자로'),
+      storeHint: this.state.sellMode ? '카드를 눌러 선택' : (D && D.from === 'shelf' ? '여기에 놓으면 보관' : '끌어서 진열대나 판매 상자로'),
       sellBtnText: this.state.sellMode ? (sellIds.length ? '판매 ' + sellIds.length + '점' : '닫기') : '판매',
       sellBtnStyle: (this.state.sellMode && this.state.pickKind === 'smash' ? 'display:none!important;' : '') + 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (this.state.sellMode && sellIds.length ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;animation:navPulse 1s ease-in-out infinite' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;color:#5B3A24'),
       sellBtn: function () {
@@ -784,39 +784,39 @@ class Component extends DCLogic {
       stores: stores, storeEmpty: !storeIds.length, stOn: !!stP,
       stName: stP ? stP.name : '', stValue: stP ? (stP.value || 0).toLocaleString() : '0',
       sellStore: function () { if (!stP) { return; } self.movePiece(stId, 'sold', { gold: g.gold + Math.round((stP.value || 0) * (1 + (QLd.fx(g).sell || 0))) }); self.setState({ stSel: '' }); self.say(stP.name + ' 판매 · 골드 +' + (stP.value || 0).toLocaleString()); },
-      showStore: function () { if (!stP) { return; } if (shelfIds.length >= 6) { self.say('진열대가 가득 찼다 · 먼저 하나를 내리자'); return; } self.movePiece(stId, 'shelf'); self.setState({ stSel: '', sel: stId }); self.say(stP.name + '을(를) 진열대에 올렸다'); },
+      showStore: function () { if (!stP) { return; } if (shelfIds.length >= 6) { self.say('진열대가 가득 찼어요 · 먼저 하나를 내려요'); return; } self.movePiece(stId, 'shelf'); self.setState({ stSel: '', sel: stId }); self.say(stP.name + '을(를) 진열대에 올렸어요'); },
       slots: slots,
       shelfCount: shelfIds.length,
       storeCount: storeIds.length,
       fameRate: shelfIds.length * 3,
-      sel: selP ? { name: selP.name, grade: selP.grade + (typeof selP.skill === 'number' ? ' · 실력 ' + selP.skill + '점' : ''), value: selP.value.toLocaleString(), meta: '발색 ' + QLd.colorPctOf(selP) + '%' + (selP.yohen ? ' 요변' : '') } : { name: '진열된 작품 없음', grade: '', value: '0', meta: '' },
+      sel: selP ? { name: selP.name, grade: selP.grade + (typeof selP.skill === 'number' ? ' · 실력 ' + selP.skill + '점' : ''), value: selP.value.toLocaleString(), line: '평가액 ' + selP.value.toLocaleString() + 'G · 발색 ' + QLd.colorPctOf(selP) + '%' + (selP.yohen ? ' 요변' : '') } : { name: '진열된 작품 없음', grade: '', value: '0', line: '보관함에서 작품을 끌어 올려요' },
       target: target ? { name: target.name, grade: target.grade, offer: offer.toLocaleString(), pot: self.potOf(target, GC[target.glaze] || '#F2EFE6') } : { name: '', grade: '', offer: '0', pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 } },
       visitorOn: curatorWaiting && this.state.visitor,
       canRecall: curatorWaiting && !this.state.visitor,
       toast: this.state.toast,
       toastOn: this.state.toast !== '',
       addSlot: function () {
-        if (!storeIds.length) { self.say('창고가 비어 있다. 가마에서 꺼낼 때 보관을 고르면 여기로 온다'); return; }
+        if (!storeIds.length) { self.say('보관 중인 작품이 없어요 · 가마에서 꺼낸 작품이 여기로 와요'); return; }
         self.movePiece(storeIds[0], 'shelf');
-        self.say(g.pieces[storeIds[0]].name + '을(를) 진열대에 올렸다');
+        self.say(g.pieces[storeIds[0]].name + '을(를) 진열대에 올렸어요');
       },
       toStore: function () {
         if (!selId) { return; }
         self.movePiece(selId, 'store');
         self.setState({ sel: '' });
-        self.say(selP.name + '을(를) 내려서 보관했다');
+        self.say(selP.name + '을(를) 내려서 보관했어요');
       },
       sellSel: function () {
         if (!selId) { return; }
         self.movePiece(selId, 'sold', { gold: g.gold + Math.round(selP.value * (1 + (QLd.fx(g).sell || 0))) });
         self.setState({ sel: '' });
-        self.say(selP.name + ' 판매 · 골드 +' + selP.value.toLocaleString() + ' · 도감 기록은 남는다');
+        self.say(selP.name + ' 판매 · 골드 +' + selP.value.toLocaleString() + ' · 도감 기록은 남아요');
       },
       send: function () {
         var x = g.fameXp + 45, lv = g.fameLv;
         while (x >= 100) { lv++; x -= 100; }
         self.movePiece(targetId, 'museum', { gold: g.gold + offer, fameLv: lv, fameXp: x, curator: 'done' });
-        self.say(target.name + '이(가) 미술관으로 떠났다 · 골드 +' + offer.toLocaleString() + ' · 명성 +45');
+        self.say(target.name + '이(가) 미술관으로 떠났어요 · 골드 +' + offer.toLocaleString() + ' · 명성 +45');
       },
       keep: function () { self.setState({ visitor: false }); self.say('“알겠습니다. 다음에 또 들르지요.”'); },
       recall: function () { self.setState({ visitor: true }); }
@@ -879,7 +879,7 @@ class Component extends DCLogic {
     var n = o.count || 0;
     return {
       on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
-      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
       confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
@@ -894,8 +894,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

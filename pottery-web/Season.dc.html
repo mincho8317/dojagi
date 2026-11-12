@@ -31,7 +31,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <div style="position:absolute;left:12px;right:12px;top:64px;height:118px;box-sizing:border-box;border:3px solid #A94767;border-radius:18px;overflow:hidden;isolation:isolate;background:#FCEBD8;box-shadow:0 3px 0 rgba(122,47,68,.35);display:flex;flex-direction:column;justify-content:flex-end;padding:10px 14px;gap:2px">
     <img src="_blob/23194812f55e80eeab54bfa8d94875e6.webp" alt="" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;pointer-events:none;z-index:-1">
     <span style="font-family:'Jua',sans-serif;font-size:24px;color:#7A2F44">봄 다회</span>
-    <span style="max-width:58%;font-size:12px;line-height:1.4;color:#7A2F44">벚꽃 아래 찻자리를 차리는 계절 · 한정 물품은 시즌이 끝나면 사라진다</span>
+    <span style="max-width:58%;font-size:12px;line-height:1.4;color:#7A2F44">벚꽃 아래 찻자리를 차리는 계절 · 한정 물품은 시즌이 끝나면 사라져요</span>
     <span style="align-self:flex-start;margin-top:4px;padding:2px 10px;border-radius:9px;background:#7A2F44;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7EE">남은 기간 D-{{dday}}</span>
   </div>
 
@@ -145,7 +145,7 @@ class Component extends DCLogic {
         btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#A08890;border:2px solid #D8C3C8' : (done ? 'background:#D46A86;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#C9A0AB;border:2px solid #E6C3CC')),
         claim: function () {
           if (got) { return; }
-          if (!done) { self.say('아직 조건을 채우지 못했다 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
+          if (!done) { self.say('아직 조건을 채우지 못했어요 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
           var c = {}; for (var x in (sea.claimed || {})) { c[x] = sea.claimed[x]; } c[m.id] = true;
           self.setG({ season: save({ petals: sea.petals + m.reward, claimed: c }) });
           self.say('꽃잎 +' + m.reward);
@@ -170,8 +170,8 @@ class Component extends DCLogic {
         icon: 'margin-top:8px;width:54px;height:54px;box-sizing:border-box;border:2px solid rgba(91,58,36,.25);border-radius:12px;background:' + it.col + ';display:flex;align-items:center;justify-content:center;text-align:center;color:#7A2F44',
         priceStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (got ? 'background:#D8C3C8;color:#FFF' : (afford ? 'background:#D46A86;color:#FFF' : 'background:#F1D5DC;color:#A94767')),
         buy: function () {
-          if (got) { self.say('이미 가지고 있다'); return; }
-          if (!afford) { self.say('꽃잎이 ' + (it.price - sea.petals) + '장 부족하다 · 축제 미션으로 모으자'); return; }
+          if (got) { self.say('이미 가지고 있어요'); return; }
+          if (!afford) { self.say('꽃잎이 ' + (it.price - sea.petals) + '장 부족해요 · 축제 미션으로 모아요'); return; }
           var b = {}; for (var x in (sea.bought || {})) { b[x] = sea.bought[x]; } b[it.id] = true;
           var p = { season: save({ petals: sea.petals - it.price, bought: b }) };
           it.apply(p);

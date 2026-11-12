@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#2B1A0F">
-<title>창고</title>
+<title>작업 대기</title>
 <script src="./support.js"></script>
 <script src="./shared.js"></script>
 </head>
@@ -39,15 +39,15 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 
   <div role="tablist" aria-label="의뢰 분류" style="position:absolute;left:12px;right:12px;top:64px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
     <a href="Commission.dc.html" role="tab" aria-selected="false" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">진행 중</a>
-    <a href="Commission.dc.html" role="tab" aria-selected="false" onClick="{{goDone}}" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">확인서</a>
-    <span role="tab" aria-selected="true" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616;box-shadow:0 3px 0 #3E2616">창고 {{total}}</span>
+    <a href="Commission.dc.html" role="tab" aria-selected="false" onClick="{{goDone}}" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">완료</a>
+    <span role="tab" aria-selected="true" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:#FFD66B;color:#2B1A0F;border:3px solid #3E2616;box-shadow:0 3px 0 #3E2616">작업 대기 {{total}}</span>
   </div>
-  <div style="position:absolute;left:12px;right:12px;top:112px;display:flex;flex-wrap:wrap;gap:5px">
+  <div style="position:absolute;left:12px;right:12px;top:112px;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:5px;padding-bottom:2px">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="6">
       <span style="{{lg.style}}">{{lg.text}}</span>
     </sc-for>
   </div>
-  <span style="position:absolute;left:12px;top:146px;font-size:11px;color:#7A5434">진행이 앞선 순서대로 1번부터 · 누르면 다음 작업으로</span>
+  <span style="position:absolute;left:12px;top:146px;font-size:11px;color:#7A5434">공정이 앞선 그릇부터 1번 · 누르면 그 작업으로 가요</span>
 
 
   <div class="wood-wall" style="position:absolute;left:10px;right:10px;top:164px;bottom:100px;box-sizing:border-box;border:6px solid #5B3A24;border-bottom-width:10px;border-radius:10px 10px 4px 4px;box-shadow:inset 0 0 18px rgba(43,26,15,.45);overflow-y:auto">
@@ -70,7 +70,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
     </sc-for>
     <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
       <div style="padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
-        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#3E2616">선반이 비어 있다</span>
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#3E2616">선반이 비어 있어요</span>
         <a href="Wheel.dc.html" style="padding:8px 16px;border-radius:12px;background:#4A9440;border:3px solid #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-decoration:none">물레로 가서 빚기</a>
       </div>
     </sc-if>
@@ -182,7 +182,7 @@ class Component extends DCLogic {
     add(fresh, function () { return { rank: 8, tag: '완성', tone: 'ready', href: 'Display.dc.html', fill: 'glazed', next: '진열·판매' }; });
     add(batch, function (x) { var kl = g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0; return { rank: 7, tag: kl ? '재벌 ' + (kl >= 3600 ? Math.floor(kl / 3600) + '시간 ' + Math.floor(kl % 3600 / 60) + '분' : Math.ceil(kl / 60) + '분') : '재벌 완료', tone: kl ? 'busy' : 'ready', href: 'KilnOpen.dc.html', fill: 'glazed', next: kl ? '굽는 중' : '꺼내기' }; });
     add(placed, function () { return { rank: 6, tag: '가마 칸에', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '불 지피기' }; });
-    add(g.kilnList || [], function () { return { rank: 5, tag: '소성 대기', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '가마에 넣기' }; });
+    add(g.kilnList || [], function () { return { rank: 5, tag: '재벌 대기', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '가마에 넣기' }; });
     add(g.glazeList || [], function () { return { rank: 4, tag: '유약 대기', tone: 'ready', href: 'Glaze.dc.html', fill: 'bisque', next: '유약 바르기' }; });
     add(firingB ? (bq.items || []) : [], function () { return { rank: 3, tag: bqLeft ? '초벌 ' + (bqLeft >= 60 ? Math.ceil(bqLeft / 60) + '분' : bqLeft + '초') : '초벌 완료', tone: bqLeft ? 'busy' : 'ready', href: 'Bisque.dc.html', fill: 'bisque', next: bqLeft ? '초벌 중' : '꺼내기' }; });
     add(g.bisqueList || [], function (x) { return { rank: 2, tag: x.dry === 'early' ? '반건조' : '초벌 대기', tone: x.dry === 'early' ? 'warn' : 'ready', href: 'Bisque.dc.html', fill: 'dry', next: '초벌 가마에 넣기' }; });
@@ -211,12 +211,12 @@ class Component extends DCLogic {
     }
     var cnt = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     all.forEach(function (r) { cnt[r.rank]++; });
-    var LG = [['건조 대기', 0], ['건조 중', 1], ['초벌 대기', 2], ['초벌 중', 3], ['유약 대기', 4], ['소성 대기', 5], ['가마 칸', 6], ['재벌 중', 7], ['완성', 8]];
+    var LG = [['건조 대기', 0], ['건조 중', 1], ['초벌 대기', 2], ['초벌 중', 3], ['유약 대기', 4], ['재벌 대기', 5], ['가마 칸', 6], ['재벌 중', 7], ['완성', 8]];
     return {
       goDone: function () { try { var gg = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); gg.commTab = 'done'; localStorage.setItem('pottery-proto-v1', JSON.stringify(gg)); } catch (e) {} },
       total: all.length, empty: all.length === 0,
       tiers: all.length ? tiers : [],
-      legend: LG.filter(function (l) { return cnt[l[1]] > 0; }).map(function (l) { return { text: l[0] + ' ' + cnt[l[1]], style: 'padding:2px 9px;border-radius:9px;background:#FFF4DE;border:2px solid #8A6440;font-family:Jua,sans-serif;font-size:12px;color:#5B3A24' }; })
+      legend: LG.filter(function (l) { return cnt[l[1]] > 0; }).map(function (l) { return { text: l[0] + ' ' + cnt[l[1]], style: 'flex:0 0 auto;white-space:nowrap;padding:2px 9px;border-radius:9px;background:#FFF4DE;border:2px solid #8A6440;font-family:Jua,sans-serif;font-size:12px;color:#5B3A24' }; })
     };
   }
 }

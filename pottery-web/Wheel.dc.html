@@ -396,7 +396,7 @@ class Component extends DCLogic {
   componentDidMount() {
     var selfW = this; this.wipI = setInterval(function () { try { selfW.saveWip(); } catch (e) {} }, 700);
     try { window.addEventListener('pagehide', function () { try { selfW.saveWip(); } catch (e) {} }); } catch (e) {}
-    if (this.state.resumed) { setTimeout(function () { try { selfW.say('↩ 빚던 그릇을 이어서 만든다'); } catch (e) {} }, 600); }
+    if (this.state.resumed) { setTimeout(function () { try { selfW.say('↩ 빚던 그릇을 이어서 만들어요'); } catch (e) {} }, 600); }
     try { this.tutBoot(); } catch (e) {}
     try { this.sndBoot(); } catch (e) {}
     var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} try { selfB.trackBoot(); } catch (e) {} }, 0);
@@ -513,7 +513,7 @@ class Component extends DCLogic {
     if (!c || this.qlib().isTut(g)) { this._mq = {}; this._cq = 1; return g.mats || {}; } // 튜토리얼 흙은 줄지 않는다
     var QL = this.qlib();
     this._mq = g.matsQ || {}; this._cq = QL.topQ(g, c);
-    if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈다'); return g.mats || {}; }
+    if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈어요'); return g.mats || {}; }
     var t = QL.takeClay(g, c); this._mq = t.matsQ; this._cq = t.q;
     return t.mats;
   }
@@ -538,7 +538,7 @@ class Component extends DCLogic {
     this.setState(nf);
     this.clearFx(nf.fx.k, 1300);
     this.setG({ shards: s.g.shards + 1, mats: mats, matsQ: this._mq || {} });
-    this.say(msg + ' · 파편 +1 · 새 흙을 올렸다', 'fail');
+    this.say(msg + ' · 파편 +1 · 새 흙을 올렸어요', 'fail');
   }
   wtune() {
     var rf = this.qlib().fx((this.state && this.state.g) || {});
@@ -567,7 +567,7 @@ class Component extends DCLogic {
       newly.forEach(function (j) { sp.push({ i: j, k: k + j }); });
       out.segFx = sp;
       try { window.__sfx && window.__sfx(done.every(Boolean) && hOk ? 'ok' : 'reveal'); } catch (e) {}
-      if (done.every(Boolean) && hOk && !this.perfectSaid) { this.perfectSaid = true; this.say('완벽! 모든 구간이 목표 선에 맞았다 · 완성을 눌러요', 'ok'); }
+      if (done.every(Boolean) && hOk && !this.perfectSaid) { this.perfectSaid = true; this.say('완벽! 모든 구간이 목표 선에 맞았어요 · 완성을 눌러요', 'ok'); }
     }
     return out;
   }
@@ -579,13 +579,13 @@ class Component extends DCLogic {
     var w = s.w, t = s.t;
     if (false) {
       w = w + dt * (s.speed === 'slow' ? 100 / 90 : (s.speed === 'fast' ? 100 / 40 : 100 / 60));
-      if (w >= 100) { this.failWith('시간이 지나 흔들림이 커져 무너졌다'); return; }
-      if (s.w < 70 && w >= 70) { this.say('흔들림이 커진다 · 서둘러 마무리하자'); }
+      if (w >= 100) { this.failWith('시간이 지나 흔들림이 커져 무너졌어요'); return; }
+      if (s.w < 70 && w >= 70) { this.say('흔들림이 커져요 · 서둘러 마무리해요'); }
     }
     var stage = s.stage;
     if (stage === 'center' && w < 15) {
       stage = 'shape';
-      this.say('중심이 잡혔다 · 이제 벽을 밀어 모양을 낸다');
+      this.say('중심이 잡혔어요 · 이제 벽을 밀어 모양을 내요');
     }
     var st = { phase: s.phase + dt * (s.speed === 'slow' ? 2 : (s.speed === 'fast' ? 7 : 4)), w: w, t: t, stage: stage };
     var sn = this.snapStep(dt); if (sn) { for (var k in sn) { st[k] = sn[k]; } }
@@ -659,8 +659,8 @@ class Component extends DCLogic {
       grab = { mode: 'v', ci: 11, side: 'R', dir: d > 0.3 ? 'up' : (d < -0.3 ? 'down' : (s.grab ? s.grab.dir : '')) };
     }
     var tmin = Math.min.apply(null, t);
-    if (tmin < this.limit()) { this.failWith('벽이 너무 얇아져 찢어졌다'); return; }
-    if (w > 100) { this.failWith('흔들림이 쌓여 중심이 무너졌다'); return; }
+    if (tmin < this.limit()) { this.failWith('벽이 너무 얇아져 찢어졌어요'); return; }
+    if (w > 100) { this.failWith('흔들림이 쌓여 중심이 무너졌어요'); return; }
     try { window.__clay && window.__clay(Math.abs(dx) + Math.abs(dy)); } catch (e) {}
     this.setState({ r: r, t: t, H: H, w: w, wOn: true, grab: grab });
   }
@@ -905,12 +905,12 @@ class Component extends DCLogic {
         dot: 'flex:0 0 auto;width:26px;height:20px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 3px rgba(255,231,168,.9))' : ''), img: c.img,
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;padding:4px 4px;border-radius:11px;' + (on ? 'background:#5B3A24;border:2px solid #3E2616;color:#FFE7A8;' : (avail ? 'background:#FFF4DE;border:2px solid #8A6440;color:#5B3A24;' : 'background:#D9CDB6;border:2px dashed #A8987C;color:#7A6A55;')),
         pick: function () {
-          if (!avail) { self.say('흙이 없다 · 채집에서 캐서 다듬거나 상점에서 산다', 'fail'); return; }
+          if (!avail) { self.say('흙이 없어요 · 채집에서 캐서 다듬거나 상점에서 사요', 'fail'); return; }
           if (s.clay === c.id) { return; }
           self.resetPointers();
           var nf = self.fresh(); nf.clay = c.id;
           self.setState(nf);
-          self.say(c.n + ' 흙을 새로 올렸다');
+          self.say(c.n + ' 흙을 새로 올렸어요');
         }
       };
     });
@@ -929,10 +929,10 @@ class Component extends DCLogic {
     var QT0 = this.questTargets(g), targets = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(this.baseShapes(QT0)); // 의뢰와 같은 모양의 기본 모양은 숨김(중복·미집계 방지)
     var dryCount = (g.formedList || []).length;
     var hint;
-    if (s.wrapping) { hint = '감싸는 중 · 흔들림이 가라앉는다'; }
+    if (s.wrapping) { hint = '감싸는 중 · 흔들림이 가라앉아요'; }
     else if (s.squeezePrep) { hint = '그대로 꾸욱 · 양손을 떼지 말기'; }
-    else if (!shaping) { hint = s.touchUI ? '양손으로 흙 양옆을 동시에 꾸욱 누르고 있기 · 흔들림이 가라앉는다' : '흙을 꾹 누르고 있기 · 손으로 감싸 흔들림을 가라앉힌다'; }
-    else if (this.drag && this.drag.axis) { hint = this.drag.axis === 'v' ? (s.grab && s.grab.mode === 'w' ? '위로 쓸면 얇게, 아래로 쓸면 두껍게 · 쓴 자리는 매끈하게 다듬어진다' : '높이 손잡이를 올리면 높아지고, 내리면 낮아진다 · 두께는 그대로') : '바깥으로 밀면 넓어지고, 안으로 모으면 좁아진다'; }
+    else if (!shaping) { hint = s.touchUI ? '양손으로 흙 양옆을 동시에 꾸욱 누르고 있기 · 흔들림이 가라앉아요' : '흙을 꾹 누르고 있기 · 손으로 감싸 흔들림을 가라앉혀요'; }
+    else if (this.drag && this.drag.axis) { hint = this.drag.axis === 'v' ? (s.grab && s.grab.mode === 'w' ? '위로 쓸면 얇게, 아래로 쓸면 두껍게 · 쓴 자리는 매끈하게 다듬어져요' : '높이 손잡이를 올리면 높아지고, 내리면 낮아져요 · 두께는 그대로') : '바깥으로 밀면 넓어지고, 안으로 모으면 좁아져요'; }
     else { hint = '좌우로 밀어 모양 · 벽을 위아래로 쓸어 두께 · 위의 높이 손잡이로 높이' ; }
 
     function pid(e) { return String(e.pointerId); }
@@ -952,7 +952,7 @@ class Component extends DCLogic {
       closeSheet: function () { self.setState({ sheet: '' }); },
       sheetOn: !!s.sheet,
       sheetTitle: s.sheet === 'clay' ? '흙 고르기' : '목표 모양 고르기',
-      sheetSub: s.sheet === 'clay' ? '흙을 바꾸면 물레에 새 흙을 올린다 · 빚던 모양은 사라진다' : '모양만 정한다 · 유약은 시유 단계에서 고른다',
+      sheetSub: s.sheet === 'clay' ? '흙을 바꾸면 물레에 새 흙을 올려요 · 빚던 모양은 사라져요' : '모양만 정해요 · 유약은 시유 단계에서 골라요',
       sheetRows: s.sheet === 'clay' ? claysOut.map(function (c, i) {
         var QLc = self.qlib();
         var rec = g.goal && clays[i].id === g.goal.clay;
@@ -1047,7 +1047,7 @@ class Component extends DCLogic {
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
       noMenu: function (e) { if (e && e.preventDefault) { e.preventDefault(); } },
       pDown: function (e) {
-        if (!self.state.clay) { self.say('흙이 없다 · 채집에서 캐서 다듬거나 상점에서 산다', 'fail'); return; }
+        if (!self.state.clay) { self.say('흙이 없어요 · 채집에서 캐서 다듬거나 상점에서 사요', 'fail'); return; }
         var el = e.currentTarget;
         try { el.setPointerCapture(e.pointerId); } catch (err) {}
         var p = self.toView(el, e.clientX, e.clientY);
@@ -1070,7 +1070,7 @@ class Component extends DCLogic {
               }, 300);
             } else {
               self.setState({ grab: null });
-              self.say('흙 왼쪽과 오른쪽을 한 손씩 눌러야 감싼다', 'fail');
+              self.say('흙 왼쪽과 오른쪽을 한 손씩 눌러야 감싸요', 'fail');
             }
             return;
           }
@@ -1144,8 +1144,8 @@ class Component extends DCLogic {
         self.setState({ target: targets[(targets.indexOf(s.target) + 1) % targets.length] });
       },
       finish: function () {
-        if (!shaping) { self.say('중심부터 잡아야 빚을 수 있다', 'fail'); return; }
-        if (dryCount >= 6) { self.say('성형 대기 선반이 가득 찼다 · 건조대에 먼저 올리자', 'fail'); return; }
+        if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
+        if (dryCount >= 6) { self.say('성형 대기 선반이 가득 찼어요 · 건조대에 먼저 올려요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
         var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
@@ -1165,7 +1165,7 @@ class Component extends DCLogic {
         nf.fx = { kind: 'ok', k: Date.now(), path: self.profile(s.r, s.H, 0).path, H: s.H, stars: stars };
         self.setState(nf);
         self.clearFx(nf.fx.k, 1800);
-        if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었다! 건조대로 가자'); } else { self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올리자'); }
+        if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었어요! 건조대로 가요'); } else { self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올려요'); }
       }
     };
   }
@@ -1176,8 +1176,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

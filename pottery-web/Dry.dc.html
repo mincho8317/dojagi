@@ -99,7 +99,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
             <button type="button" id="{{s.id}}" onClick="{{s.add}}" aria-label="빈 칸 · 기물 올리기" style="all:unset;cursor:pointer;justify-self:center;width:56px;height:56px;margin-bottom:16px;box-sizing:border-box;border:2px dashed rgba(70,40,15,.6);border-radius:50%;background:rgba(255,244,222,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;line-height:1;font-family:'Jua',sans-serif;color:#5B3A24"><span style="font-size:22px">+</span><span style="font-size:12px">올리기</span></button>
           </sc-if>
           <sc-if value="{{s.locked}}" hint-placeholder-val="{{false}}">
-            <span aria-label="잠긴 칸 · 연구로 확장" style="{{s.lkH}}box-sizing:border-box;border:2px dashed rgba(70,40,15,.3);border-radius:12px;background:rgba(43,26,15,.12);display:flex;flex-direction:{{s.lkDir}};align-items:center;justify-content:center;gap:3px;font-family:'Jua',sans-serif;font-size:11px;color:rgba(70,40,15,.6)"><img src="_blob/3478e3c5f877596d8ab1d79ffa7d0f5c.webp" alt="" aria-hidden="true" style="width:20px;height:20px;object-fit:contain;opacity:.5">연구로 확장</span>
+            <span aria-label="잠긴 칸 · 연구로 확장" style="{{s.lkH}}box-sizing:border-box;border:2px dashed rgba(70,40,15,.5);border-radius:12px;background:rgba(43,26,15,.2);display:flex;flex-direction:{{s.lkDir}};align-items:center;justify-content:center;gap:3px;font-family:'Jua',sans-serif;font-size:11px;color:rgba(60,34,12,.9)"><img src="_blob/3478e3c5f877596d8ab1d79ffa7d0f5c.webp" alt="" aria-hidden="true" style="width:20px;height:20px;object-fit:contain;opacity:.8">연구로 확장</span>
           </sc-if>
         </sc-for>
       </div>
@@ -306,14 +306,14 @@ class Component extends DCLogic {
   // 대기함 → 건조대 (끌어 놓기)
   addDry(ids) {
     var self = this, cur = this.state.g, now2 = Date.now(), CAP = Math.min(9, Math.max((cur.dryList || []).length, 3 + (this.qlib().fx(cur).dryRack || 0)));
-    var free = CAP - (cur.dryList || []).length; if (free <= 0) { this.say('건조대가 가득 찼다 · 마른 것부터 빼자'); return 0; }
+    var free = CAP - (cur.dryList || []).length; if (free <= 0) { this.say('건조대가 가득 찼어요 · 마른 것부터 빼요'); return 0; }
     var add = (cur.formedList || []).filter(function (x) { return ids.indexOf(x.id) >= 0; }).slice(0, free).map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } y.start = now2 - Math.round(1800000 * (self.qlib().fx(cur).dryCut || 0)); return y; });
     if (!add.length) { return 0; }
     var addIds = add.map(function (x) { return x.id; });
     this.setG({ dryList: (cur.dryList || []).concat(add), formedList: (cur.formedList || []).filter(function (x) { return addIds.indexOf(x.id) < 0; }) });
     this.setState({ dSel: add[0].id });
     try { window.__sfx && window.__sfx('ok'); } catch (e) {}
-    this.say(add.length + '점을 건조대에 올렸다');
+    this.say(add.length + '점을 건조대에 올렸어요');
     return add.length;
   }
   trayDown(e, id) {
@@ -326,7 +326,7 @@ class Component extends DCLogic {
       },
       tint: 'rgba(255,214,107,.35)',
       drop: function () { self.addDry([id]); },
-      miss: function (x, y) { if (window.PotteryShared.ptIn(document.querySelector('[role=group].wood-wall'), x, y)) { self.say('건조대가 가득 찼다 · 마른 것부터 빼자'); } }
+      miss: function (x, y) { if (window.PotteryShared.ptIn(document.querySelector('[role=group].wood-wall'), x, y)) { self.say('건조대가 가득 찼어요 · 마른 것부터 빼요'); } }
     });
   }
   tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Dry'); }
@@ -336,7 +336,7 @@ class Component extends DCLogic {
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
   jadeSpend(cost, run) {
     var self = this, have = this.jadeOf(this.state.g);
-    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족해요 · 상점에서 충전'); return; }
     if (document.querySelector('.jade-ov')) { return; }
     var gem = '<svg width="54" height="54" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.4" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width=".9" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.5" stroke-linecap="round"></path></svg>';
     var ov = document.createElement('div'); ov.className = 'jade-ov';
@@ -350,7 +350,7 @@ class Component extends DCLogic {
     var row = document.createElement('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
     function btn(label, css, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:17px;' + css; b.addEventListener('click', fn); return b; }
     row.appendChild(btn('취소', 'background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434', function () { ov.remove(); }));
-    row.appendChild(btn('사용하기', 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;color:#FFFDF5', function () { ov.remove(); var h2 = self.jadeOf(self.state.g); if (h2 < cost) { self.say('옥이 부족하다'); return; } run(h2 - cost); self.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!'); }));
+    row.appendChild(btn('사용하기', 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;color:#FFFDF5', function () { ov.remove(); var h2 = self.jadeOf(self.state.g); if (h2 < cost) { self.say('옥이 부족해요'); return; } run(h2 - cost); self.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!'); }));
     bx.appendChild(row); ov.appendChild(bx);
     ov.addEventListener('click', function (e) { if (e.target === ov) { ov.remove(); } });
     document.body.appendChild(ov);
@@ -423,7 +423,7 @@ class Component extends DCLogic {
     return 'ok'; // 최대는 완전 건조 (과건조 없음)
   }
   openPick() {
-    if ((this.state.g.dryList || []).length >= 4) { this.say('건조대가 가득 찼다 · 마른 것부터 빼자'); return; }
+    if ((this.state.g.dryList || []).length >= 4) { this.say('건조대가 가득 찼어요 · 마른 것부터 빼요'); return; }
     this.setState({ pkOpen: true, pkSel: {} });
   }
   pull(ids) {
@@ -471,7 +471,7 @@ class Component extends DCLogic {
     for (var i = 0; i < 9; i++) {
       var it = list[i];
       if (!it) {
-        slots.push({ filled: false, empty: true, add: function () { self.say((self.state.g.formedList || []).length ? '위 대기함의 그릇을 끌어다 빈 칸에 놓자' : '성형 대기 그릇이 없다 · 물레에서 빚어 오자'); }, card: 'position:relative;box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px' });
+        slots.push({ filled: false, empty: true, add: function () { self.say((self.state.g.formedList || []).length ? '위 대기함의 그릇을 끌어다 빈 칸에 놓아요' : '성형 대기 그릇이 없어요 · 물레에서 빚어 와요'); }, card: 'position:relative;box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:transparent;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px' });
         continue;
       }
       var pct = Math.max(0, (now - it.start) / 1800000 * 100);
@@ -491,14 +491,14 @@ class Component extends DCLogic {
         state: STATE[z].t,
         stateStyle: 'font-family:Jua,sans-serif;font-size:13px;color:' + STATE[z].c,
         marker: 'position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:#2B1A0F;border:1px solid #FFF4DE;left:' + Math.min(100, pct) + '%',
-        btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 초벌 대기로') : '아직 질다',
+        btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 초벌 대기로') : '아직 질어요',
         btnStyle: btnOn + (canPull ? (z === 'early' ? 'background:#D9A93A;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;color:#2B1A0F;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;') : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
         card: 'box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:#FFF4DE;border:3px solid ' + (z === 'ok' ? '#2F6328' : '#5B3A24') + ';box-shadow:0 4px 0 rgba(43,26,15,.4)' + (z === 'ok' ? ',0 0 0 3px #A9D69E' : '') + ';display:flex;flex-direction:column;gap:8px',
         pull: (function (id, p, zz) {
           return function () {
-            if (p < 50) { self.say('아직 질어서 들면 형태가 무너진다'); return; }
+            if (p < 50) { self.say('아직 질어서 들면 형태가 무너져요'); return; }
             self.pull([id]);
-            self.say(zz === 'early' ? '반건조로 뺐다 · 건조·소성 중 파손 위험이 오른다' : '완전 건조 · 초벌 대기로 옮겼다');
+            self.say(zz === 'early' ? '반건조로 뺐어요 · 건조·소성 중 파손 위험이 올라요' : '완전 건조 · 초벌 대기로 옮겼어요');
           };
         })(it.id, pct, z)
       });
@@ -540,17 +540,17 @@ class Component extends DCLogic {
     var rows = formedL.map(function (it) {
       return self.pickRow(it, { stage: 'wet', on: !!sel[it.id], tag: '성형 완료', tap: function () {
         var ns = {}; for (var k in sel) { ns[k] = sel[k]; }
-        if (ns[it.id]) { delete ns[it.id]; } else { if (selIds.length >= free) { self.say(free ? '빈 칸이 ' + free + '개뿐이다' : '건조대가 가득 찼다'); return; } ns[it.id] = true; }
+        if (ns[it.id]) { delete ns[it.id]; } else { if (selIds.length >= free) { self.say(free ? '빈 칸이 ' + free + '개뿐이에요' : '건조대가 가득 찼어요'); return; } ns[it.id] = true; }
         self.setState({ pkSel: ns });
       } });
     });
     var pk = this.pickBox({
       on: !!this.state.pkOpen, multi: true, rows: rows, count: selIds.length,
-      title: '건조대에 올릴 기물', sub: '빈 칸 ' + free + '개 · 여러 점 고를 수 있다',
-      emptyText: '성형 완료된 기물이 없다', emptyHref: 'Wheel.dc.html', emptyLink: '물레로 가기 →',
-      confirmLabel: selIds.length ? selIds.length + '점 올리기' : '기물을 골라주자',
+      title: '건조대에 올릴 기물', sub: '빈 칸 ' + free + '개 · 여러 점 고를 수 있어요',
+      emptyText: '성형 완료된 기물이 없어요', emptyHref: 'Wheel.dc.html', emptyLink: '물레로 가기 →',
+      confirmLabel: selIds.length ? selIds.length + '점 올리기' : '기물을 골라 주세요',
       confirm: function () {
-        if (!selIds.length) { self.say('올릴 기물을 골라주자'); return; }
+        if (!selIds.length) { self.say('올릴 기물을 골라 주세요'); return; }
         var cur = self.state.g, now2 = Date.now();
         var base0 = (cur.dryList || []).length;
         var add = (cur.formedList || []).filter(function (x) { return sel[x.id]; }).map(function (x, j) { var y = {}; for (var k in x) { y[k] = x[k]; } y.start = now2 - Math.round(1800000 * (self.qlib().fx(cur).dryCut || 0)); y.inAt = now2 + (0.85 + j * 0.12) * 1000; return y; });
@@ -558,7 +558,7 @@ class Component extends DCLogic {
         self.flyIn(add.map(function (x) { return self.potOf(x, self.fillOf(x, 'wet')); }), tos);
         self.setG({ dryList: (cur.dryList || []).concat(add), formedList: (cur.formedList || []).filter(function (x) { return !sel[x.id]; }) });
         self.setState({ pkOpen: false, pkSel: {} });
-        self.say(add.length + '점을 건조대에 올렸다');
+        self.say(add.length + '점을 건조대에 올렸어요');
       }
     });
     var formed = [];
@@ -567,7 +567,7 @@ class Component extends DCLogic {
       return { id: x.id, name: x.goalName || nm, aria: nm + ' · 끌어서 건조대에 올리기', pot: self.potOf(x, self.fillOf(x, 'wet')), badge: 'display:none', badgeText: '',
         style: 'all:unset;cursor:grab;position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;user-select:none;-webkit-user-select:none;touch-action:pan-x',
         down: function (e) { self.trayDown(e, x.id); },
-        tap: function () { if (Date.now() - (window.__potDragEnd || 0) < 350) { return; } self.say('꾹 잡고 아래 건조대 빈 칸으로 끌어 놓자'); } };
+        tap: function () { if (Date.now() - (window.__potDragEnd || 0) < 350) { return; } self.say('꾹 잡고 아래 건조대 빈 칸으로 끌어 놓아요'); } };
     });
     return {
       tray: tray, trayN: formedL.length, trayEmpty: !formedL.length, trayEmptyText: '물레에서 빚으면 여기에 쌓여요',
@@ -576,12 +576,12 @@ class Component extends DCLogic {
       pk: pk,
       openPick: function () { self.openPick(); },
       formedPeek: formedL.slice(0, 3).map(function (x) { return self.potOf(x, self.fillOf(x, 'wet')); }),
-      pickBtnSub: !formedL.length ? '물레에서 빚으면 여기 쌓인다' : (free ? '눌러서 골라 올리기 · 빈 칸 ' + free : '건조대가 가득 찼다'),
+      pickBtnSub: !formedL.length ? '물레에서 빚으면 여기 쌓여요' : (free ? '눌러서 골라 올리기 · 빈 칸 ' + free : '건조대가 가득 찼어요'),
       pickBtn: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:18px;' + (formedL.length && free ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 4px 0 #8A6440;color:#5B3A24'),
       formed: formed, formedN: formedL.length, noFormed: formedL.length === 0,
       slots: slots, tiers: tiers, cap: CAP,
       selOn: !!selV, selNone: !selV, sel: selV || { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, name: '', clay: '', stars: '', state: '', pct: 0, stateStyle: '', btn: '', btnStyle: '', pull: function () {} },
-      selHint: list.length ? '선반의 기물을 눌러 상태를 확인' : '선반이 비어 있다 · 위 대기함에서 그릇을 끌어다 놓자',
+      selHint: list.length ? '선반의 기물을 눌러 상태를 확인' : '선반이 비어 있어요 · 위 대기함에서 그릇을 끌어다 놓아요',
       count: list.length,
       glazeQ: (g.bisqueList || []).length,
       goBisque: function () { self.setG({ mainFocus: 'bisque' }); },
@@ -596,7 +596,7 @@ class Component extends DCLogic {
           on: true, wind: recent && ok, wa: 'animation-name:dryWind' + sfx,
           btn: 'all:unset;cursor:pointer;align-self:center;width:190px;height:62px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border-radius:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;background:#FFFDF5;border:3px solid #2F7A5E;box-shadow:0 4px 0 #2F7A5E',
           svg: 'transform-origin:20px 36px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''),
-          title: recent ? (res === 'perfect' ? '완벽한 바람! ' : (res === 'hit' ? '좋은 바람! ' : '빗나갔다')) + (ok && (self.state.fanStreak || 0) > 1 ? ' 연속 ' + self.state.fanStreak : '') : '타이밍 부채질',
+          title: recent ? (res === 'perfect' ? '완벽한 바람! ' : (res === 'hit' ? '좋은 바람! ' : '빗나갔어요')) + (ok && (self.state.fanStreak || 0) > 1 ? ' 연속 ' + self.state.fanStreak : '') : '타이밍 부채질',
           left: '남은 ' + self.fmtLeft(leftMs),
           zone: 'position:absolute;top:0;bottom:0;left:' + ((c - T.zone / 2) * 100).toFixed(1) + '%;width:' + (T.zone * 100).toFixed(1) + '%;background:#7FD1AE;transition:left .25s',
           perfect: 'position:absolute;top:0;bottom:0;left:' + ((c - T.perfect / 2) * 100).toFixed(1) + '%;width:' + (T.perfect * 100).toFixed(1) + '%;background:#2FA57A;transition:left .25s',
@@ -607,15 +607,15 @@ class Component extends DCLogic {
           tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
         };
       })(),
-      fanSub: (function () { var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); }); return mx > 0 ? (self.jadeCost(mx) ? '옥 ' + self.jadeCost(mx).toLocaleString() : '무료') + ' · ' + self.fmtLeft(mx) + ' 남음' : '다 말랐다'; })(),
+      fanSub: (function () { var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); }); return mx > 0 ? (self.jadeCost(mx) ? '옥 ' + self.jadeCost(mx).toLocaleString() : '무료') + ' · ' + self.fmtLeft(mx) + ' 남음' : '다 말랐어요'; })(),
       fan: function () {
         var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); });
-        if (!list.length || mx <= 0) { self.say(list.length ? '이미 다 말랐다 · 빼서 초벌로 보내자' : '말리고 있는 작품이 없다'); return; }
+        if (!list.length || mx <= 0) { self.say(list.length ? '이미 다 말랐어요 · 빼서 초벌로 보내요' : '말리고 있는 작품이 없어요'); return; }
         self.jadeSpend(self.jadeCost(mx), function (nj) { var now0 = Date.now(); self.setG({ jadeV: 2, jade: nj, dryList: self.state.g.dryList.map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } if (now0 - x.start < 1800000) { y.start = now0 - 1800000; } return y; }) }); });
       },
       pullAll: function () {
         var n = self.pull(doneIds);
-        self.say(n ? n + '점을 초벌 대기로 옮겼다' : '완전히 마른 작품이 없다');
+        self.say(n ? n + '점을 초벌 대기로 옮겼어요' : '완전히 마른 작품이 없어요');
       },
       toast: this.state.toast,
       toastOn: this.state.toast !== ''
@@ -678,7 +678,7 @@ class Component extends DCLogic {
     var n = o.count || 0;
     return {
       on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
-      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
       confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
@@ -726,8 +726,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

@@ -50,7 +50,7 @@ button{font-family:inherit;cursor:pointer}
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
         <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
       </sc-for>
-      <a href="Queue.dc.html" role="tab" aria-selected="false" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">창고 {{wipN}}</a>
+      <a href="Queue.dc.html" role="tab" aria-selected="false" style="all:unset;cursor:pointer;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;background:rgba(255,244,222,.85);color:#5B3A24;border:3px solid #8A6440">작업 대기 {{wipN}}</a>
     </div>
 
     <sc-if value="{{isActive}}" hint-placeholder-val="{{true}}">
@@ -150,7 +150,7 @@ button{font-family:inherit;cursor:pointer}
         </div>
       </sc-if>
       <sc-if value="{{noR}}" hint-placeholder-val="{{false}}">
-        <div style="margin-top:40px;padding:24px 16px;background:#FFFDF5;border:3px dashed #8A6440;border-radius:8px;text-align:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">아직 발행된 납품 확인서가 없다</div>
+        <div style="margin-top:40px;padding:24px 16px;background:#FFFDF5;border:3px dashed #8A6440;border-radius:8px;text-align:center;font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">아직 발행된 납품 확인서가 없어요</div>
       </sc-if>
     </div>
     </sc-if>
@@ -163,7 +163,6 @@ button{font-family:inherit;cursor:pointer}
         </sc-for>
       </div>
       <span style="font-family:'Jua',sans-serif;font-size:12px;color:#7A5434">{{streakText}}</span>
-      <button type="button" onClick="{{skipDay}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:3px 8px;border-radius:9px;background:#5B3A24;font-size:12px;font-weight:700;color:#FFE7A8">목업 +1일</button>
     </div>
   </div>
 
@@ -257,29 +256,29 @@ class Component extends DCLogic {
     var bowl = count(function (p) { return p.shape === 'bowl'; });
     var whCup = count(function (p) { return p.shape === 'cup' && p.glaze === 'white'; });
     var defs = [
-      { id: 'min', who: '민 씨', role: '찻집 주인', portrait: 'PORTRAIT_MIN', tag: '사연', title: '청자 찻잔 한 점', memo: '할머님께 받아 쓰던 잔이 깨졌다. 비슷한 잔을 원한다.', reward: '400G × 등급 · 명성 +20', conds: [{ t: '형태 · 잔', ok: celCup > 0 }, { t: '유약 · 청자', ok: celCup > 0 }, { t: '보유 ' + Math.min(1, celCup) + '/1', ok: celCup > 0 }], ready: celCup > 0, acc: q.min, done: q.minDone, thanks: q.minThanks },
-      { id: 'guest', who: '이름 없는 손님', role: '동네 주민', portrait: 'PORTRAIT_GUEST', tag: '일간', title: '밥공기 하나', memo: '유약은 상관없고 튼튼하면 된다.', reward: '350G · 명성 +8', conds: [{ t: '형태 · 사발/공기', ok: bowl > 0 }, { t: '보유 ' + Math.min(1, bowl) + '/1', ok: bowl > 0 }], ready: bowl > 0, acc: q.guest, done: q.guestDone, thanks: q.guestThanks },
-      { id: 'week', who: '카페 사장', role: '골목 카페', portrait: 'PORTRAIT_CAFE', tag: '주간', title: '카페 잔 세트', memo: '하얀 잔 세 점. 모양이 비슷하면 좋다.', reward: '3,600G · 파편 20', conds: [{ t: '형태 · 잔', ok: whCup >= 3 }, { t: '유약 · 백자', ok: whCup >= 3 }, { t: '보유 ' + Math.min(3, whCup) + '/3', ok: whCup >= 3 }], ready: whCup >= 3, acc: q.week, done: q.weekDone, thanks: q.weekThanks }
+      { id: 'min', who: '민 씨', role: '찻집 주인', portrait: 'PORTRAIT_MIN', tag: '사연', title: '청자 찻잔 한 점', memo: '할머님께 받아 쓰던 잔이 깨졌어요. 비슷한 잔을 원해요.', reward: '400G × 등급 · 명성 +20', conds: [{ t: '형태 · 잔', ok: celCup > 0 }, { t: '유약 · 청자', ok: celCup > 0 }, { t: '보유 ' + Math.min(1, celCup) + '/1', ok: celCup > 0 }], ready: celCup > 0, acc: q.min, done: q.minDone, thanks: q.minThanks },
+      { id: 'guest', who: '이름 없는 손님', role: '동네 주민', portrait: 'PORTRAIT_GUEST', tag: '일간', title: '밥공기 하나', memo: '유약은 상관없고 튼튼하면 돼요.', reward: '350G · 명성 +8', conds: [{ t: '형태 · 사발/공기', ok: bowl > 0 }, { t: '보유 ' + Math.min(1, bowl) + '/1', ok: bowl > 0 }], ready: bowl > 0, acc: q.guest, done: q.guestDone, thanks: q.guestThanks },
+      { id: 'week', who: '카페 사장', role: '골목 카페', portrait: 'PORTRAIT_CAFE', tag: '주간', title: '카페 잔 세트', memo: '하얀 잔 세 점. 모양이 비슷하면 좋아요.', reward: '3,600G · 파편 20', conds: [{ t: '형태 · 잔', ok: whCup >= 3 }, { t: '유약 · 백자', ok: whCup >= 3 }, { t: '보유 ' + Math.min(3, whCup) + '/3', ok: whCup >= 3 }], ready: whCup >= 3, acc: q.week, done: q.weekDone, thanks: q.weekThanks }
     ];
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' };
     (g.tasteOrders || []).forEach(function (o) {
       var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
       var n = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); });
       var left = Math.max(0, 3 - Math.floor((Date.now() - o.at) / 86400000));
-      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했다 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
     });
     (g.tasteDone || []).forEach(function (o) {
       var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
-      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했다', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했어요', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
     });
     var Lm = this.limits(), now = Date.now();
     defs[0].need = '청자 찻잔 ×1'; defs[0].req = 1; defs[0].hv = celCup; defs[0].at = q.minAt; defs[0].lim = Lm.min;
     defs[1].need = '사발 ×1'; defs[1].req = 1; defs[1].hv = bowl; defs[1].at = q.guestAt; defs[1].lim = Lm.guest;
     defs[2].need = '백자 찻잔 ×3'; defs[2].req = 3; defs[2].hv = whCup; defs[2].at = q.weekAt; defs[2].lim = Lm.week;
-    (g.tasteOrders || []).forEach(function (o) { defs.forEach(function (d) { if (d.id === o.id) { d.need = d.title + ' ×1'; d.req = 1; d.hv = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); }); d.at = o.at; d.lim = Lm.order; d.memo = '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했다'; } }); });
+    (g.tasteOrders || []).forEach(function (o) { defs.forEach(function (d) { if (d.id === o.id) { d.need = d.title + ' ×1'; d.req = 1; d.hv = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); }); d.at = o.at; d.lim = Lm.order; d.memo = '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요'; } }); });
     (g.failLog || []).forEach(function (f2) {
       var t2 = f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.shape] || '그릇') : f2.title;
-      defs.push({ id: 'f' + f2.id, who: f2.who, role: '기한 초과', portrait: 'PORTRAIT', tag: '실패', title: t2, need: t2, memo: '기한 안에 건네지 못했다 · 사연·일간·주간 손님은 다시 의뢰하러 온다', reward: '없음', conds: [{ t: '기한 초과', ok: false }], ready: false, acc: true, done: true, thanks: true, failed: true, req: 1, hv: 0 });
+      defs.push({ id: 'f' + f2.id, who: f2.who, role: '기한 초과', portrait: 'PORTRAIT', tag: '실패', title: t2, need: t2, memo: '기한 안에 건네지 못했어요 · 사연·일간·주간 손님은 다시 의뢰하러 와요', reward: '없음', conds: [{ t: '기한 초과', ok: false }], ready: false, acc: true, done: true, thanks: true, failed: true, req: 1, hv: 0 });
     });
     function fmt(ms) {
       if (ms <= 0) { return '기한 초과'; }
@@ -294,7 +293,7 @@ class Component extends DCLogic {
     var active = act;
     var done = defs.filter(function (d) { return d.done; });
     var list = s.tab === 'done' ? [] : act;
-    var CRN = { Wheel: '성형', Dry: '건조', Bisque: '초벌', Glaze: '유약', Kiln: '소성', KilnOpen: '소성' };
+    var CRN = { Wheel: '성형', Dry: '건조', Bisque: '초벌', Glaze: '유약', Kiln: '재벌', KilnOpen: '재벌' };
     var cards = list.map(function (q, ci) {
       var A = AL[q.id], tracked = trackIds.indexOf(q.id) >= 0;
       var lim = q.kind === 'order' ? Lm.order : LIMQ[q.id];
@@ -328,7 +327,7 @@ class Component extends DCLogic {
         trackOn: tracked ? 'true' : 'false',
         trackLabel: tracked ? '📌 제작 안내 끄기' : '📌 제작 안내 켜기',
         trackStyle: 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (tracked ? 'background:#5B3A24;color:#FFE7A8;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px dashed #8A6440'),
-        trackTap: function () { var cur = QL.tracked(self.loadG(), act), on = cur.indexOf(q.id) >= 0, nx = on ? cur.filter(function (x) { return x !== q.id; }) : cur.concat([q.id]); self.setG({ tracks: nx, track: nx[0] || '' }); self.say(on ? '「' + q.title + '」 제작 안내를 껐다' : '「' + q.title + '」을(를) 제작 화면 체크리스트에 띄운다 · 여러 개 켤 수 있다'); },
+        trackTap: function () { var cur = QL.tracked(self.loadG(), act), on = cur.indexOf(q.id) >= 0, nx = on ? cur.filter(function (x) { return x !== q.id; }) : cur.concat([q.id]); self.setG({ tracks: nx, track: nx[0] || '' }); self.say(on ? '「' + q.title + '」 제작 안내를 껐어요' : '「' + q.title + '」을(를) 제작 화면 체크리스트에 띄워요 · 여러 개 켤 수 있어요'); },
         href: allOk || A.deliverable ? 'Counter.dc.html' : 'Wheel.dc.html',
         goLabel: allOk || A.deliverable ? '납품하러 가기 →' : '제작하러 가기 →',
         go: function () {
@@ -346,7 +345,7 @@ class Component extends DCLogic {
     if (!MS.open) { return; }
     if (s.tab !== 'done' && MS.def && !MS.allDone && !MS.acc && !MS.thanks) {
       cards.unshift({ who: MS.def.who, role: MS.def.role, title: MS.def.title, tag: MS.line === 'season' ? '시즌' : '메인', hasP: !!PIMG[MS.def.res], pimg: PIMG[MS.def.res] || '', tagStyle: 'flex:0 0 auto;padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + (MS.line === 'season' ? '#C2577A' : '#7A3E8E'),
-        stat: MS.lvOk ? '카운터에서 기다리는 중 · 이야기를 듣고 수락하자' : '명성 Lv.' + MS.def.needLv + ' 필요 (지금 Lv.' + (g.fameLv || 1) + ')', statStyle: 'font-size:12.5px;font-weight:700;color:#7A3E8E', time: '', timeStyle: 'display:none',
+        stat: MS.lvOk ? '카운터에서 기다리는 중 · 이야기를 듣고 수락해요' : '명성 Lv.' + MS.def.needLv + ' 필요 (지금 Lv.' + (g.fameLv || 1) + ')', statStyle: 'font-size:12.5px;font-weight:700;color:#7A3E8E', time: '', timeStyle: 'display:none',
         items: [], reward: QL.payout(MS.def, MS).gold.toLocaleString() + 'G · 파편 ' + QL.payout(MS.def, MS).shards, trackOn: 'false', trackLabel: '아직 수락 전', trackStyle: 'all:unset;flex:1 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;background:#E9DCC3;color:#8A7A63', trackTap: function () {},
         href: 'Counter.dc.html', goLabel: '카운터로 →', go: function () { try { localStorage.setItem('ctab', 'req'); } catch (e) {} }, goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;background:#7A3E8E;border:3px solid #4E2660;color:#FFFDF5',
         cls: 'memo-peach', wrap: 'position:relative;box-sizing:border-box;padding:2px 2px 4px;filter:drop-shadow(0 5px 5px rgba(40,20,5,.38));opacity:.95', pin: 'position:absolute;left:50%;top:-26px;width:26px;height:30px;margin-left:-13px;z-index:2', tape: 'display:none' });
@@ -387,7 +386,7 @@ class Component extends DCLogic {
       rDown: function (e) { self.sx = e.clientX; },
       rUp: function (e) { if (self.sx == null) { return; } var dx = e.clientX - self.sx; self.sx = null; if (dx < -50 && ri < rec.length - 1) { self.setState({ ri: ri + 1 }); } else if (dx > 50 && ri > 0) { self.setState({ ri: ri - 1 }); } }
     };
-    var T = [{ id: 'active', label: '진행 중 ' + active.length }, { id: 'done', label: '확인서 ' + rec.length }];
+    var T = [{ id: 'active', label: '진행 중 ' + active.length }, { id: 'done', label: '완료 ' + rec.length }];
     var lc = 'Wheel'; try { lc = localStorage.getItem('lastCraft') || ''; } catch (e) {}
     if (lc === 'Kiln' && g.kiln === 'firing') { lc = 'KilnOpen'; }
     var wipAll = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'].reduce(function (a, k) { return a + ((g[k] || []).length); }, 0) + ((g.bisque || {}).items || []).length + (g.kiln === 'firing' ? (g.batchItems || []).length : 0);
@@ -403,7 +402,7 @@ class Component extends DCLogic {
       cards: cards,
       resume: { on: !!lc, href: (lc || 'Wheel') + '.dc.html', label: '이어서 만들기 · ' + (CRN[lc] || '성형'), sub: '마지막으로 하던 공정으로 돌아가요 · 작업 중 ' + wipAll + '점' },
       empty: cards.length === 0,
-      emptyText: s.tab === 'done' ? '아직 마친 의뢰가 없다' : '수락한 의뢰가 없다 · 카운터 「의뢰 손님」에서 의뢰를 받아보자',
+      emptyText: s.tab === 'done' ? '아직 마친 의뢰가 없어요' : '수락한 의뢰가 없어요 · 카운터 「의뢰 손님」에서 의뢰를 받아 봐요',
       toCounter: function () {},
       skipDay: function () {
         var g2 = self.loadG(), q2 = {}; for (var k in (g2.quests || {})) { q2[k] = g2.quests[k]; }

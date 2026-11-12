@@ -30,7 +30,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 
   <sc-for list="{{spots}}" as="sp" hint-placeholder-count="5">
     <button type="button" onClick="{{sp.tap}}" aria-label="{{sp.aria}}" style="{{sp.box}}">
-      <span style="{{sp.bldg}}"><span style="font-size:7.5px;font-weight:900;line-height:1.1">{{sp.res}}</span><span style="font-size:7px">300×270</span></span>
+      <span style="{{sp.bldg}}"><span aria-hidden="true" style="font-size:40px;line-height:1">{{sp.ic}}</span></span>
       <span style="{{sp.plate}}">{{sp.name}}</span>
       <span style="{{sp.chip}}">{{sp.status}}</span>
     </button>
@@ -44,7 +44,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <span style="{{det.stStyle}}">{{det.status}}</span>
           <button type="button" onClick="{{det.close}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;width:42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8">✕</button>
         </div>
-        <div style="height:120px;box-sizing:border-box;border:2px dashed #7A5434;border-radius:14px;background:{{det.bg}};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#3E2616"><span style="font-size:9.5px;font-weight:900">{{det.scene}}</span><span style="font-size:9px">매점 전경 1110×360</span></div>
+        <div style="height:120px;box-sizing:border-box;border:2px dashed #7A5434;border-radius:14px;background:{{det.bg}};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#3E2616"><span aria-hidden="true" style="font-size:56px;line-height:1">{{det.ic}}</span></div>
         <span style="font-size:12.5px;line-height:1.6;color:#5B3A24">{{det.desc}}</span>
         <div style="display:flex;flex-direction:column;gap:5px">
           <span style="font-family:'Jua',sans-serif;font-size:14px">이 동네가 좋아하는 스타일</span>
@@ -58,7 +58,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <span style="font-family:'Jua',sans-serif;font-size:14px">찾아오는 손님</span>
           <div style="display:flex;gap:6px">
             <sc-for list="{{det.guests}}" as="gu" hint-placeholder-count="3">
-              <span style="flex:1 1 0;height:74px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:12px;background:#F3E3C4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center"><span style="font-size:7px;font-weight:900;color:#5B3A24">{{gu.res}}</span><span style="font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F">{{gu.name}}</span></span>
+              <span style="flex:1 1 0;height:74px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:12px;background:#F3E3C4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;text-align:center"><span aria-hidden="true" style="font-size:26px;line-height:1">🧑</span><span style="font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F">{{gu.name}}</span></span>
             </sc-for>
           </div>
         </div>
@@ -138,11 +138,11 @@ class Component extends DCLogic {
 
   data() {
     return [
-      { id: 'home', name: '공방 골목', res: 'OBJ_TOWN_HOME', x: 35, y: 135, lv: 1, cost: 0, base: true, bg: '#EADBC0', desc: '할머니의 공방이 있는 오래된 골목. 모든 이야기가 여기서 시작된다.', likes: ['찻잔', '사발', '종지'], guests: [['CHAR_MIN', '민 씨'], ['CHAR_WALK_D', '동네 할머니'], ['CHAR_CAFE', '카페 사장']], storyTitle: '1장 · 할머니의 물레', story: '물려받은 공방을 다시 여는 이야기', perks: ['기본 손님 방문', '의뢰 내역서'] },
-      { id: 'market', name: '오일장 매점', res: 'OBJ_TOWN_MARKET', x: 245, y: 205, lv: 3, cost: 5000, soon: true, bg: '#F2D7A6', desc: '닷새마다 장이 서는 마을 장터. 튼튼하고 값싼 생활 그릇이 잘 팔린다.', likes: ['사발', '백자', '양작 이상'], guests: [['CHAR_MKT_A', '국밥집 사장'], ['CHAR_MKT_B', '새댁'], ['CHAR_MKT_C', '장돌뱅이']], storyTitle: '2장 · 장날의 그릇', story: '장터 국밥집 사장이 가게 그릇을 통째로 바꾸고 싶어 한다', perks: ['매점 진열 3칸 추가', '선호 스타일 판매가 +30%', '장날(5일마다) 손님 2배'] },
-      { id: 'temple', name: '산사 다실', res: 'OBJ_TOWN_TEMPLE', x: 50, y: 345, lv: 5, cost: 15000, soon: true, bg: '#D9E4CF', desc: '산 중턱 절의 작은 다실. 스님과 다인들이 고요한 찻그릇을 찾는다.', likes: ['다완', '청자', '흑유'], guests: [['CHAR_TMP_A', '주지 스님'], ['CHAR_TMP_B', '다인'], ['CHAR_TMP_C', '순례자']], storyTitle: '3장 · 고요한 찻자리', story: '오래 비어 있던 다실을 다시 채울 찻사발을 부탁받는다', perks: ['매점 진열 3칸 추가', '다완·청자 판매가 +40%', '스테이지 「산사」 분류 해금'] },
-      { id: 'harbor', name: '항구 매점', res: 'OBJ_TOWN_HARBOR', x: 95, y: 612, lv: 5, cost: 20000, soon: true, bg: '#CFDCE8', desc: '바다 건너 손님이 드나드는 항구. 크고 튼튼한 항아리가 배에 실린다.', likes: ['항아리', '흑유', '대형'], guests: [['CHAR_HBR_A', '무역상'], ['CHAR_HBR_B', '선장'], ['CHAR_HBR_C', '외국 수집가']], storyTitle: '4장 · 바다를 건너는 항아리', story: '외국 수집가가 공방 이름을 듣고 찾아온다', perks: ['대량 납품 해금', '항아리 판매가 +40%', '스테이지 「항구」 분류 해금'] },
-      { id: 'gallery', name: '미술관 거리', res: 'OBJ_TOWN_GALLERY', x: 210, y: 465, lv: 9, cost: 0, soon: true, bg: '#EDE3F3', desc: '도시의 갤러리와 미술관이 모인 거리. 명작 이상만 다룬다.', likes: ['명작 이상', '요변'], guests: [['CHAR_CURATOR', '큐레이터'], ['CHAR_GAL_A', '평론가'], ['CHAR_GAL_B', '컬렉터']], storyTitle: '5장 · 이름을 남기다', story: '도시의 갤러리에서 첫 개인전을 연다', perks: ['경매 해금 (예정)', '개인전 개최 (예정)'] }
+      { id: 'home', name: '공방 골목', res: 'OBJ_TOWN_HOME', x: 35, y: 135, lv: 1, cost: 0, base: true, bg: '#EADBC0', desc: '할머니의 공방이 있는 오래된 골목. 모든 이야기가 여기서 시작돼요.', likes: ['찻잔', '사발', '종지'], guests: [['CHAR_MIN', '민 씨'], ['CHAR_WALK_D', '동네 할머니'], ['CHAR_CAFE', '카페 사장']], storyTitle: '1장 · 할머니의 물레', story: '물려받은 공방을 다시 여는 이야기', perks: ['기본 손님 방문', '의뢰 내역서'] },
+      { id: 'market', name: '오일장 매점', res: 'OBJ_TOWN_MARKET', x: 245, y: 205, lv: 3, cost: 5000, soon: true, bg: '#F2D7A6', desc: '닷새마다 장이 서는 마을 장터. 튼튼하고 값싼 생활 그릇이 잘 팔려요.', likes: ['사발', '백자', '양작 이상'], guests: [['CHAR_MKT_A', '국밥집 사장'], ['CHAR_MKT_B', '새댁'], ['CHAR_MKT_C', '장돌뱅이']], storyTitle: '2장 · 장날의 그릇', story: '장터 국밥집 사장이 가게 그릇을 통째로 바꾸고 싶어 해요', perks: ['매점 진열 3칸 추가', '선호 스타일 판매가 +30%', '장날(5일마다) 손님 2배'] },
+      { id: 'temple', name: '산사 다실', res: 'OBJ_TOWN_TEMPLE', x: 50, y: 345, lv: 5, cost: 15000, soon: true, bg: '#D9E4CF', desc: '산 중턱 절의 작은 다실. 스님과 다인들이 고요한 찻그릇을 찾아요.', likes: ['다완', '청자', '흑유'], guests: [['CHAR_TMP_A', '주지 스님'], ['CHAR_TMP_B', '다인'], ['CHAR_TMP_C', '순례자']], storyTitle: '3장 · 고요한 찻자리', story: '오래 비어 있던 다실을 다시 채울 찻사발을 부탁받아요', perks: ['매점 진열 3칸 추가', '다완·청자 판매가 +40%', '스테이지 「산사」 분류 해금'] },
+      { id: 'harbor', name: '항구 매점', res: 'OBJ_TOWN_HARBOR', x: 95, y: 612, lv: 5, cost: 20000, soon: true, bg: '#CFDCE8', desc: '바다 건너 손님이 드나드는 항구. 크고 튼튼한 항아리가 배에 실려요.', likes: ['항아리', '흑유', '대형'], guests: [['CHAR_HBR_A', '무역상'], ['CHAR_HBR_B', '선장'], ['CHAR_HBR_C', '외국 수집가']], storyTitle: '4장 · 바다를 건너는 항아리', story: '외국 수집가가 공방 이름을 듣고 찾아와요', perks: ['대량 납품 해금', '항아리 판매가 +40%', '스테이지 「항구」 분류 해금'] },
+      { id: 'gallery', name: '미술관 거리', res: 'OBJ_TOWN_GALLERY', x: 210, y: 465, lv: 9, cost: 0, soon: true, bg: '#EDE3F3', desc: '도시의 갤러리와 미술관이 모인 거리. 명작 이상만 다뤄요.', likes: ['명작 이상', '요변'], guests: [['CHAR_CURATOR', '큐레이터'], ['CHAR_GAL_A', '평론가'], ['CHAR_GAL_B', '컬렉터']], storyTitle: '5장 · 이름을 남기다', story: '도시의 갤러리에서 첫 개인전을 열어요', perks: ['경매 해금 (예정)', '개인전 개최 (예정)'] }
     ];
   }
   renderVals() {
@@ -153,10 +153,11 @@ class Component extends DCLogic {
       if (g.fameLv < d.lv) { return ['명성 Lv.' + d.lv, 'lock']; }
       return ['개설 가능', 'ready'];
     }
+    var TIC = { home: '🏡', market: '🏪', temple: '🍵', harbor: '⚓', gallery: '🖼️' };
     var spots = D.map(function (d) {
       var st = stat(d);
       return {
-        name: d.name, res: d.res, status: st[0], aria: d.name + ' · ' + st[0],
+        name: d.name, res: d.res, ic: TIC[d.id] || '🏠', status: st[0], aria: d.name + ' · ' + st[0],
         box: 'all:unset;cursor:pointer;position:absolute;left:' + d.x + 'px;top:' + d.y + 'px;width:110px;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:2',
         bldg: 'width:100px;height:90px;box-sizing:border-box;border:3px dashed ' + (st[1] === 'lock' || st[1] === 'soon' ? '#7E7466' : '#3E2616') + ';border-radius:14px 14px 6px 6px;background:' + (st[1] === 'lock' || st[1] === 'soon' ? 'rgba(120,110,100,.45)' : d.bg) + ';display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3E2616;' + (st[1] === 'ready' ? 'animation:glowP 1.6s ease-in-out infinite;' : ''),
         plate: 'padding:2px 10px;border-radius:9px;background:#5B3A24;border:2px solid #3E2616;font-family:Jua,sans-serif;font-size:13px;color:#FFE7A8;white-space:nowrap',
@@ -169,20 +170,20 @@ class Component extends DCLogic {
     if (d) {
       var st = stat(d);
       det = {
-        on: true, name: d.name, status: st[0], desc: d.desc, likes: d.likes, bg: d.bg, scene: d.res.replace('OBJ_TOWN', 'SCENE_SHOP'),
+        on: true, name: d.name, status: st[0], desc: d.desc, likes: d.likes, bg: d.bg, ic: TIC[d.id] || '🏠',
         guests: d.guests.map(function (x) { return { res: x[0], name: x[1] }; }),
         storyTitle: d.storyTitle, story: d.story, perks: d.perks,
         stStyle: 'padding:2px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (st[1] === 'open' ? 'background:#4A9440;color:#FFFDF5' : (st[1] === 'ready' ? 'background:#E3B23C;color:#2B1A0F' : 'background:#5B3A24;color:#FFE7A8')),
-        goLabel: st[1] === 'open' ? (d.base ? '공방으로 가기' : '매점 관리 · 다음 목업') : (st[1] === 'ready' ? '매점 열기 · ' + d.cost.toLocaleString() + 'G' : (st[1] === 'soon' ? '다음 업데이트에서 열린다' : '명성 Lv.' + d.lv + '에 열린다')),
+        goLabel: st[1] === 'open' ? (d.base ? '공방으로 가기' : '매점 관리 · 준비 중') : (st[1] === 'ready' ? '매점 열기 · ' + d.cost.toLocaleString() + 'G' : (st[1] === 'soon' ? '다음 업데이트에서 열려요' : '명성 Lv.' + d.lv + '에 열려요')),
         goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (st[1] === 'ready' || (st[1] === 'open' && d.base) ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
         go: function () {
           if (st[1] === 'ready') {
-            if (g.gold < d.cost) { self.say('골드가 ' + (d.cost - g.gold).toLocaleString() + ' 부족하다'); return; }
+            if (g.gold < d.cost) { self.say('골드가 ' + (d.cost - g.gold).toLocaleString() + ' 부족해요'); return; }
             var o = {}; for (var k in open) { o[k] = open[k]; } o[d.id] = true;
             self.setG({ gold: g.gold - d.cost, townOpen: o });
             self.say(d.name + ' 개점 · ' + d.storyTitle + ' 시작');
-          } else if (st[1] === 'open' && d.base) { self.say('공방 골목은 지금 있는 곳이다'); }
-          else { self.say(st[1] === 'soon' ? '대형 업데이트로 공개 예정' : (st[1] === 'open' ? '매점 진열·관리 화면은 다음 목업에서' : '명성 Lv.' + d.lv + '부터 열 수 있다')); }
+          } else if (st[1] === 'open' && d.base) { self.say('공방 골목은 지금 있는 곳이에요'); }
+          else { self.say(st[1] === 'soon' ? '다음 업데이트에서 열려요' : (st[1] === 'open' ? '매점 관리는 곧 열려요' : '명성 Lv.' + d.lv + '부터 열 수 있어요')); }
         },
         close: function () { self.setState({ det: '' }); }
       };

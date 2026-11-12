@@ -79,11 +79,11 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-family:'Jua',sans-serif;font-size:16px;color:#5B3A24">데이터</span>
       <button type="button" onClick="{{tutAgain}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;background:#FFFDF5;border:2px solid #5B3A24;color:#5B3A24">튜토리얼 처음부터 다시 하기</button>
       <button type="button" onClick="{{reset}}" style="{{resetStyle}}">{{resetLabel}}</button>
-      <span style="font-size:10.5px;color:#7A5434;text-align:center">진행 상황은 이 기기의 브라우저에만 저장된다</span>
+      <span style="font-size:10.5px;color:#7A5434;text-align:center">진행 상황은 이 기기에만 저장돼요</span>
     </section>
 
     <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;border-top:2px dashed #E1CDA9">
-      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">도자기 공방 · 플레이 테스트 목업</span>
+      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#7A5434">도자기 공방</span>
       <span style="font-size:10.5px;color:#A8987C">{{version}}</span>
     </div>
   </div>
@@ -281,14 +281,14 @@ class Component extends DCLogic {
       fbSubmitLabel: s.sending ? '보내는 중…' : (s.star ? '피드백 보내기' : '별점을 먼저 골라주세요'),
       fbSubmitStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:14px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:19px;' + (s.star ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#D9CDB8;border:3px solid #B5A486;color:#8A7A63'),
       doneText: (s.sentRemote ? '개발팀에 전달됐어요.' : '이 기기에 저장됐어요.') + '\n보내주신 의견은 다음 업데이트에 반영할게요.',
-      resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아간다' : '진행 상황 초기화',
+      resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아가요' : '진행 상황 초기화',
       resetStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (armed ? 'background:#B9533A;border:3px solid #7A2F1E;color:#FFFDF5;' : 'background:#FFFDF5;border:2px solid #B9533A;color:#B9533A;'),
       reset: function () {
         if (!armed) { self.setState({ armed: true }); return; }
         var keep = { settings: g.settings, feedbacks: g.feedbacks };
         try { localStorage.setItem('pottery-proto-v1', JSON.stringify(keep)); } catch (e) {}
         self.setState({ g: self.loadG(), armed: false });
-        self.say('진행 상황이 처음으로 돌아갔다 · 설정과 피드백은 유지');
+        self.say('진행 상황이 처음으로 돌아갔어요 · 설정과 피드백은 유지');
       },
       tutAgain: function () {
         try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); delete o.tut; localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); ['tutProg', 'tutCardSeen', 'tutJade_dry', 'tutJade_bq', 'tutJade_kiln'].forEach(function (k) { localStorage.removeItem(k); }); Object.keys(localStorage).forEach(function (k) { if (/^tutWh_/.test(k)) { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); self.setState({ g: self.loadG() }); } catch (e) {}

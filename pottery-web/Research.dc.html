@@ -258,14 +258,14 @@ class Component extends DCLogic {
         btnStyle: 'all:unset;cursor:pointer;flex:1 1 auto;box-sizing:border-box;min-height:48px;text-align:center;padding:10px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;' + (act ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547')
       },
       doResearch: function () {
-        if (cst === 'done') { self.say('이미 끝낸 연구다'); return; }
-        if (cst === 'locked') { self.say('선행 연구를 먼저 마쳐야 한다'); return; }
+        if (cst === 'done') { self.say('이미 끝낸 연구예요'); return; }
+        if (cst === 'locked') { self.say('선행 연구를 먼저 마쳐야 해요'); return; }
         if (cst === 'cond') { self.say('조건: ' + QL.RCOND[cur.cond].t); return; }
-        if (!canPay) { self.say((g.shards || 0) < cur.shards ? '파편이 ' + (cur.shards - (g.shards || 0)) + ' 모자라다' : '골드가 ' + (cur.gold - (g.gold || 0)).toLocaleString() + ' 모자라다'); return; }
+        if (!canPay) { self.say((g.shards || 0) < cur.shards ? '파편이 ' + (cur.shards - (g.shards || 0)) + ' 모자라요' : '골드가 ' + (cur.gold - (g.gold || 0)).toLocaleString() + ' 모자라요'); return; }
         var r2 = {}; for (var k in R) { r2[k] = R[k]; } r2[cur.id] = true;
         self.setG({ res: r2, shards: (g.shards || 0) - cur.shards, gold: (g.gold || 0) - cur.gold });
         try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
-        var extra = cur.fx.dryRack ? ' · 건조대 ' + Math.min(9, 3 + (QL.fx({ res: r2 }).dryRack || 0)) + '칸' : (cur.fx.expand ? ' · 공방 바닥 7×9 · 공방에서 배치해 보자' : '');
+        var extra = cur.fx.dryRack ? ' · 건조대 ' + Math.min(9, 3 + (QL.fx({ res: r2 }).dryRack || 0)) + '칸' : (cur.fx.expand ? ' · 공방 바닥 7×9 · 공방에서 배치해 봐요' : '');
         self.say('「' + cur.name + '」 완료' + extra);
         clearTimeout(self.ft); self.setState({ fxAt: Date.now() }); self.ft = setTimeout(function () { self.setState({ fxAt: 0 }); }, 900);
       },

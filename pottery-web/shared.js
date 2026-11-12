@@ -1,6 +1,8 @@
 // 도자기 프로토타입 공용 코드 · src/qlib.js, src/boots.js, src/tut.js, src/snd.js 에서 생성 (mkshared.py)
 (function () {
   var S = window.PotteryShared = {};
+  // 한글은 단어 단위로 줄바꿈 (「요」 한 글자만 다음 줄로 넘어가는 것 방지)
+  try { var _wb = document.createElement('style'); _wb.textContent = 'body{word-break:keep-all;overflow-wrap:break-word}'; (document.head || document.documentElement).appendChild(_wb); } catch (e) {}
   // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
   S.qlib = function () {
     if (this._ql) { return this._ql; }
@@ -191,7 +193,7 @@
       3: { n: '특급 ', sell: 1.3, thin: 2.4, carve: 1.0, feel: 1.0, snap: 1.0, color: 2 }
     };
     var CCOLOR = {
-      w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +2 · 잘 갈라진다', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
+      w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +2 · 잘 갈라져요', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
       y: { n: '황토', aff: { celadon: 1, black: 1 }, sell: -0.05, snap: 0.1, note: '청자·흑유 +1 · 보정 +10%', col: '#D2AE7C', wet: '#B48A58', dry: '#E2C79E' },
       r: { n: '적토', aff: { jinsa: 2, black: 1, white: -1 }, thin: 0.1, feel: -0.1, note: '진사 +2 · 끈기 좋아 손맛 -10%', col: '#B9765A', wet: '#9A5A40', dry: '#D49A7E' },
       k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 +2 · 단단해 두께 변화 -10%', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
@@ -226,9 +228,9 @@
       jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410' }
     };
     var STORY = [
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '국밥집 그릇이 모자라요', intro: ['할머님 공방이 다시 문을 열었다면서? 반가워라.', '우리 국밥집 그릇이 하나둘 깨져서 말이야. 종지랑 사발 좀 부탁해도 될까?'], done: ['그래, 이 손맛이야. 할머님 그릇이랑 꼭 닮았네.', '단골들한테 자랑 좀 해야겠다.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '국밥집 그릇이 모자라요', intro: ['할머님 공방이 다시 문을 열었다면서? 반가워라.', '우리 국밥집 그릇이 하나둘 깨져서 말이야. 종지랑 사발 좀 부탁해도 될까?'], done: ['그래, 이 손맛이야. 할머님 그릇이랑 꼭 닮았네.', '단골들한테 자랑 좀 해야겠어요.'] },
       { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['단골들이 그릇 바뀐 걸 알아보더라고.', '이번엔 단골상에 올릴 걸로 조금 넉넉하게 부탁해. 종지는 두 개!'], done: ['상이 환해졌어. 국물 맛까지 좋아진 것 같다니까.'] },
-      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 손님이 배로 와.', '큰 그릇이 더 있어야겠어. 이번엔 색도 좀 섞어 볼까?'], done: ['이걸로 대목은 걱정 없겠다. 고마워.'] },
+      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 손님이 배로 와.', '큰 그릇이 더 있어야겠어. 이번엔 색도 좀 섞어 볼까?'], done: ['이걸로 대목은 걱정 없겠어요. 고마워.'] },
       { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 새 메뉴를 만들자네.', '새 메뉴엔 새 그릇이 어울리지 않겠어?'], done: ['손주가 그릇 사진을 찍어 가더라. 요즘 애들은 참.'] },
       { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['사실 할머님이랑 나랑 오랜 친구였어.', '할머님이 마지막으로 빚어 주신 접시를 닮은 걸 하나 갖고 싶어.'], done: ['…그래. 이 접시야. 고마워, 정말.', '이제 접시 모양은 네 손에 익었을 거야.'] },
       { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], title: '찻자리 첫 잔', intro: ['윤 할매께 소개받았습니다. 다도를 가르치고 있지요.', '수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 학생들도 좋아할 겁니다.'] },
@@ -243,7 +245,7 @@
       { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '매병', title: '그림 속 매병', intro: ['제 그림 속에 늘 그리던 병이 있어요. 어깨가 풍만한 매병이요.', '그림이 아니라 진짜로 보고 싶어요.'], done: ['그림보다 아름다워요. 이제 이 병을 그릴게요.'] },
       { id: 'm16', npc: 'jang', ch: 'jar', st: ['j1', 'j2', 'j3'], title: '장독대가 비었구먼', intro: ['허허, 소문 듣고 왔네.', '장독대 항아리가 몇 개 깨졌어. 장 담글 철이 오는데 말이야.'], done: ['튼튼하구먼. 장맛이 기대되네.'] },
       { id: 'm17', npc: 'jang', ch: 'jar', st: ['j4', 'j5', 'j6'], title: '꿀단지와 젓갈단지', intro: ['손녀가 꿀을 좋아해서 말이야. 작은 단지도 필요하네.'], done: ['손녀가 단지가 귀엽다고 좋아하더군.'] },
-      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '큰 독을 들이자', intro: ['올해는 장을 넉넉히 담그려 하네. 큰 독이 필요해.'], done: ['이만하면 동네 사람들 장도 나눠 줄 수 있겠어.'] },
+      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '큰 독을 들여요', intro: ['올해는 장을 넉넉히 담그려 하네. 큰 독이 필요해.'], done: ['이만하면 동네 사람들 장도 나눠 줄 수 있겠어.'] },
       { id: 'm19', npc: 'jang', ch: 'jar', st: ['j10', 'j11', 'j12'], title: '동네 장 나눔', intro: ['장을 동네에 나누기로 했네. 담아 줄 항아리가 더 있어야겠어.'], done: ['다들 고맙다고 인사하러 오더군. 자네 덕이야.'] },
       { id: 'm20', npc: 'jang', ch: 'jar', st: ['j13', 'j14', 'j15'], unlockNote: '달항아리', title: '보름달 항아리', intro: ['자네 할머님이 늘 말씀하셨지. 언젠가 달항아리를 빚겠다고.', '그 꿈, 자네가 대신 이뤄 주겠나?'], done: ['…보름달이구먼. 할머님도 기뻐하실 거야.', '이제 이 공방은 온전히 자네 거야.'] }
     ];
@@ -566,7 +568,7 @@
       '.trk-pill{all:unset;cursor:pointer;position:fixed;z-index:9990;transform-origin:100% 0;padding:7px 11px;border-radius:14px;background:rgba(255,250,240,.97);border:2.5px solid #5B3A24;font-family:Jua,sans-serif;font-size:13px;color:#5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3)}';
     document.head.appendChild(css);
     var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
-    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.textContent = '📋 제작 안내 의뢰 고르기';
+    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.textContent = '📋 제작 안내';
     document.body.appendChild(box); document.body.appendChild(pill);
     var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen2_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
     var prev = {};
@@ -577,7 +579,7 @@
       var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
       var list = L.active(g);
       var tids = L.tracked(g, list), qs = list.filter(function (x) { return tids.indexOf(x.id) >= 0; });
-      if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내 의뢰 고르기' : '📋 진행 중인 의뢰 없음'; return; }
+      if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내' : '📋 의뢰 없음'; pill.setAttribute('aria-label', list.length ? '제작 안내할 의뢰 고르기' : '진행 중인 의뢰 없음'); return; }
       pill.style.display = 'none'; box.style.display = hide ? 'none' : 'block'; box.className = 'trk' + (open ? '' : ' mini'); place(box);
       var AL = L.alloc(g, list), curTag = window.__wheelTarget || '', curRow = null, body = '', okN = 0, totN = 0;
       qs.forEach(function (q) {
@@ -598,7 +600,7 @@
       });
       var allOkAll = okN === totN, condLine = '';
       if (curRow && !curRow.ok) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
-      else if (allOkAll) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품하자</div>'; }
+      else if (allOkAll) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품해요</div>'; }
       var head = qs.length > 1 ? '제작 안내 ' + qs.length + '건' : qs[0].title;
       box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(head) + '</span><span class="c' + (allOkAll ? ' ok' : '') + '">' + (allOkAll ? (open ? '납품 가능' : '✓ 납품') : (qs.length > 1 ? '납품 가능 ' + okN + '/' + totN : '완성 ' + AL[qs[0].id].items.filter(function (r) { return r.ok; }).length + '/' + AL[qs[0].id].items.length)) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
         (open ? '<div class="trk-b">' + body + condLine + '</div>' : '');
@@ -612,7 +614,7 @@
     if (window.__tutBooted) { return; }
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
-    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '가마 소성', KilnOpen: '가마 열기', Display: '진열대·판매', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '재벌', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
     var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town', 'Gather']];
     var DONE1 = 9; // 기초 튜토리얼 완료 값 (화면 코드의 tut < 9 판정과 맞춤)
     var STEPS = [
@@ -780,7 +782,7 @@
       return L;
     }
     function freshStart(keep) {
-      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 1000000, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tut(Wh_|Fan_|Jade_|2$)/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
     }

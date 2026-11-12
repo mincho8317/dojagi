@@ -143,11 +143,11 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           </span>
         </div>
         <sc-if value="{{questHit}}" hint-placeholder-val="{{false}}">
-          <span style="padding:4px 10px;border-radius:10px;background:#4A9440;font-family:'Jua',sans-serif;font-size:12.5px;color:#FFFDF5;text-align:center">민 씨 의뢰 조건 충족 · 보관해서 카운터에서 건네자</span>
+          <span style="padding:4px 10px;border-radius:10px;background:#4A9440;font-family:'Jua',sans-serif;font-size:12.5px;color:#FFFDF5;text-align:center">민 씨 의뢰 조건 충족 · 보관해서 카운터에서 건네요</span>
         </sc-if>
       </sc-if>
       <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
-        <span style="font-size:13px;line-height:1.6;color:#E8D3B5;text-align:center">가마 안에서 금이 갔다.<br>파편과 재료 일부는 돌아온다.</span>
+        <span style="font-size:13px;line-height:1.6;color:#E8D3B5;text-align:center">가마 안에서 금이 갔어요.<br>파편과 재료 일부는 돌아와요.</span>
         <div style="display:flex;justify-content:center;gap:16px">
           <span style="font-family:'Jua',sans-serif;font-size:16px;color:#9FD4C6">파편 +3</span>
           <span style="font-family:'Jua',sans-serif;font-size:16px;color:#E8D3B5">점토 30% 회수</span>
@@ -218,7 +218,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         </div>
       </sc-if>
       <sc-if value="{{noLog}}" hint-placeholder-val="{{false}}">
-        <span style="font-size:13px;color:#5B3A24;text-align:center;line-height:1.6">가마가 비어 있다.<br>유약 바른 기물을 넣고 불을 지펴야 한다.</span>
+        <span style="font-size:13px;color:#5B3A24;text-align:center;line-height:1.6">가마가 비어 있어요.<br>유약 바른 기물을 넣고 불을 지펴야 해요.</span>
       </sc-if>
       <a href="Queue.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">대기함 보기</a>
       <a href="Kiln.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">가마 채우러 가기</a>
@@ -333,7 +333,7 @@ class Component extends DCLogic {
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
   jadeSpend(cost, run) {
     var self = this, have = this.jadeOf(this.state.g);
-    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족하다 · 상점에서 충전'); return; }
+    if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족해요 · 상점에서 충전'); return; }
     if (document.querySelector('.jade-ov')) { return; }
     var gem = '<svg width="54" height="54" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.4" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width=".9" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.5" stroke-linecap="round"></path></svg>';
     var ov = document.createElement('div'); ov.className = 'jade-ov';
@@ -347,7 +347,7 @@ class Component extends DCLogic {
     var row = document.createElement('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
     function btn(label, css, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:17px;' + css; b.addEventListener('click', fn); return b; }
     row.appendChild(btn('취소', 'background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434', function () { ov.remove(); }));
-    row.appendChild(btn('사용하기', 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;color:#FFFDF5', function () { ov.remove(); var h2 = self.jadeOf(self.state.g); if (h2 < cost) { self.say('옥이 부족하다'); return; } run(h2 - cost); self.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!'); }));
+    row.appendChild(btn('사용하기', 'background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;color:#FFFDF5', function () { ov.remove(); var h2 = self.jadeOf(self.state.g); if (h2 < cost) { self.say('옥이 부족해요'); return; } run(h2 - cost); self.say('옥 ' + cost.toLocaleString() + '개 사용 · 바로 완료!'); }));
     bx.appendChild(row); ov.appendChild(bx);
     ov.addEventListener('click', function (e) { if (e.target === ov) { ov.remove(); } });
     document.body.appendChild(ov);
@@ -526,7 +526,7 @@ class Component extends DCLogic {
         return {
           clock: self.fmtLeft(kLeft), cost: self.jadeCost(kLeft) ? '옥 ' + self.jadeCost(kLeft).toLocaleString() : '무료',
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:linear-gradient(90deg,#E07A2E,#FFB24A)',
-          note: items.length + '점이 굽는 중 · 끝나면 하나씩 꺼낸다',
+          note: items.length + '점이 굽는 중 · 끝나면 하나씩 꺼내요',
           glow: 'radial-gradient(circle,rgba(255,150,60,' + pu.toFixed(2) + ') 0%,rgba(0,0,0,0) 66%)',
           skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jadeV: 2, jade: nj, kilnStart: Date.now() - KD }); setTimeout(function () { self.startDoor(); }, 30); }); }
         };
@@ -663,7 +663,7 @@ class Component extends DCLogic {
     var n = o.count || 0;
     return {
       on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
-      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
       confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
@@ -711,8 +711,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

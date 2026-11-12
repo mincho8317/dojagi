@@ -88,7 +88,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         </button>
       </sc-for>
       <sc-if value="{{delEmpty}}" hint-placeholder-val="{{false}}">
-        <span style="font-size:12.5px;color:#7A5434;text-align:center;line-height:1.6">조건을 채운 의뢰가 없다<br>작품이 준비되면 여기서 손님을 부를 수 있다</span>
+        <span style="font-size:12.5px;color:#7A5434;text-align:center;line-height:1.6">조건을 채운 의뢰가 없어요<br>작품이 준비되면 여기서 손님을 부를 수 있어요</span>
       </sc-if>
     </div>
   </sc-if>
@@ -100,8 +100,8 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </sc-if>
       <sc-if value="{{guest.noImg}}" hint-placeholder-val="{{true}}">
       <div class="bob" style="position:absolute;left:95px;top:0;width:200px;height:300px;box-sizing:border-box;border:3px dashed {{guest.tone}};border-radius:24px 24px 12px 12px;background:rgba(255,248,235,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#3E2616;text-align:center">
-        <span style="font-size:11.5px;font-weight:900">{{guest.res}}</span>
-        <span style="font-size:10.5px">손님 입상 600×900 · 표정 {{guest.face}}</span>
+        <span aria-hidden="true" style="font-size:96px;line-height:1">🧑</span>
+        <span style="font-family:Jua,sans-serif;font-size:16px">{{guest.name}}</span>
       </div>
       </sc-if>
     </div>
@@ -374,7 +374,7 @@ class Component extends DCLogic {
       } else if (!MS.acc) {
         mn.kind = 'offer'; mn.face = '부탁';
         if (!MS.lvOk) {
-          mn.lines = [md.intro[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같다 · 지금 Lv.' + (g.fameLv || 1) + ')'];
+          mn.lines = [md.intro[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같아요 · 지금 Lv.' + (g.fameLv || 1) + ')'];
           mn.choices = [{ label: '명성을 쌓고 올게요', tone: '', run: function () { self.next(''); } }];
         } else {
           mn.lines = md.intro;
@@ -385,7 +385,7 @@ class Component extends DCLogic {
               var patch = {}; patch[KEY] = { i: m0.i || 0, acc: true, dl: m0.dl || {}, mig: m0.mig || {}, thanks: false, log: m0.log || [] };
               var trNow = QL.tracked(self.state.g); if (!trNow.length || (trNow.length === 1 && trNow[0] === 'min' && (self.state.g.quests || {}).minDone)) { patch.track = LN; patch.tracks = [LN]; }
               self.setG(patch);
-              self.say('의뢰 내역서에 「' + md.title + '」이(가) 적혔다 · 제작 화면 체크리스트에 표시된다');
+              self.say('의뢰 내역서에 「' + md.title + '」이(가) 적혔어요 · 제작 화면 체크리스트에 표시돼요');
             } },
             { label: '다음에요', tone: '', run: function () { self.next('“언제든 다시 들를게.”'); } }
           ];
@@ -418,7 +418,7 @@ class Component extends DCLogic {
         m.face = '부탁'; m.lines = ['어서 오세요… 아, 여기가 그 할머님 공방 맞죠?', '할머님께 늘 받아 쓰던 찻잔이 깨졌어요. 매일 아침 그 잔으로 차를 마셨거든요.', '비슷한 걸 하나만 부탁드려도 될까요? 청자빛이면 좋겠어요.'];
         m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }, { t: '선호: 수작 이상' }], reward: '400G · 명성 +2 · 신뢰 +1' };
         m.choices = [
-          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔다'); } },
+          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
           { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
         ];
         if (self.tutNow() === 0) { m.choices = [m.choices[0]]; }
@@ -460,7 +460,7 @@ class Component extends DCLogic {
         u.face = '무심'; u.lines = ['밥공기 하나만 주문해도 될까요?', '모양만 둥글면 유약은 아무거나 괜찮아요.'];
         u.card = { title: '둥근 밥공기', conds: [{ t: '사발' }, { t: '유약 무관' }], reward: '350G' };
         u.choices = [
-          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ guest: true }); self.say('의뢰 내역서에 「둥근 밥공기」가 적혔다'); } },
+          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ guest: true }); self.say('의뢰 내역서에 「둥근 밥공기」가 적혔어요'); } },
           { label: '다음에요', tone: '', run: function () { self.next(''); } }
         ];
       } else if (!q.guestDone) {
@@ -491,7 +491,7 @@ class Component extends DCLogic {
         c.face = '설렘'; c.lines = ['새로 카페를 열었어요. 창가 자리에 놓을 잔이 필요해요.', '백자 찻잔 세 점, 높고 단정한 걸로 부탁드려도 될까요?'];
         c.card = { title: '카페 잔 세트', conds: [{ t: '찻잔 3점' }, { t: '백자유' }], reward: '3,600G · 파편 20 · 신뢰 +3' };
         c.choices = [
-          { label: '맡을게요 (7일)', tone: 'go', run: function () { self.setQ({ week: true }); self.say('의뢰 내역서에 「카페 잔 세트」가 적혔다'); } },
+          { label: '맡을게요 (7일)', tone: 'go', run: function () { self.setQ({ week: true }); self.say('의뢰 내역서에 「카페 잔 세트」가 적혔어요'); } },
           { label: '다음에요', tone: '', run: function () { self.next(''); } }
         ];
       } else if (!q.weekDone) {
@@ -582,7 +582,7 @@ class Component extends DCLogic {
         var shelf = (g.order || []).filter(function (id) { return g.pieces[id] && g.pieces[id].where === 'shelf'; });
         if (!shelf.length) {
           node.face = '아쉬움'; node.lines = ['(진열대를 둘러본다)', '오늘은 진열된 게 없네요. 다음에 들를게요.'];
-          node.choices = [{ label: '배웅하기', tone: '', run: function () { self.leaveWalk(w, '진열대가 비어 손님이 그냥 돌아갔다'); } }, { label: '진열대 채우러 가기', tone: 'go', href: 'Display.dc.html' }];
+          node.choices = [{ label: '배웅하기', tone: '', run: function () { self.leaveWalk(w, '진열대가 비어 손님이 그냥 돌아갔어요'); } }, { label: '진열대 채우러 가기', tone: 'go', href: 'Display.dc.html' }];
         } else {
           var pid = shelf[w.seed % shelf.length], p = g.pieces[pid], price = self.priceOf(g, p, 1);
           node.face = '흥미'; node.lines = ['(진열대를 천천히 둘러본다)', p.name + ', 이거 참 예쁘네요.', '이걸로 할게요. 얼마예요?'];
@@ -595,10 +595,10 @@ class Component extends DCLogic {
       } else {
         var wantT = (w.want.glaze ? GN[w.want.glaze] + ' ' : '') + (SN[w.want.shape] || '그릇');
         var hits = self.find(g, function (pp) { return pp.shape === w.want.shape && (!w.want.glaze || pp.glaze === w.want.glaze); });
-        node.card = { title: wantT + ' 찾는 손님', conds: [{ t: SN[w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '진열대 · 창고 모두 가능' }], reward: '시세 +40%' };
+        node.card = { title: wantT + ' 찾는 손님', conds: [{ t: SN[w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '진열 · 보관 모두 가능' }], reward: '시세 +40%' };
         if (hits.length) {
           var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 1.4);
-          node.face = '반가움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '(' + (hp.where === 'shelf' ? '진열대' : '창고') + '에서 ' + hp.name + '을(를) 꺼내 보인다)', '바로 이거예요! 값은 넉넉히 드릴게요.'];
+          node.face = '반가움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '(' + (hp.where === 'shelf' ? '진열대' : '보관함') + '에서 ' + hp.name + '을(를) 꺼내 보인다)', '바로 이거예요! 값은 넉넉히 드릴게요.'];
           node.choices = [
             { label: '판매하기 · ' + hprice.toLocaleString() + 'G', tone: 'go', run: function () { self.sellWalk(w, hits[hits.length - 1], hprice); } },
             { label: '그건 안 팔아요', tone: '', run: function () { self.leaveWalk(w, '“그럼 다른 데 알아볼게요.”'); } }
@@ -611,7 +611,7 @@ class Component extends DCLogic {
               var cur = self.state.g, ord = { id: 'to' + Date.now(), name: w.name, res: w.res, want: w.want, at: Date.now() };
               self.setG({ tasteOrders: (cur.tasteOrders || []).concat([ord]), walkins: (cur.walkins || []).filter(function (z) { return z.id !== w.id; }) });
               self.setState({ line: 0, enterN: self.state.enterN + 1 });
-              self.say('의뢰 내역서에 「' + wantT + '」 주문이 적혔다 · 준비되면 납품에서 부르자');
+              self.say('의뢰 내역서에 「' + wantT + '」 주문이 적혔어요 · 준비되면 납품에서 불러요');
             } },
             { label: '어렵겠어요', tone: '', run: function () { self.leaveWalk(w, '“그럼 다른 데 알아볼게요.”'); } }
           ];
@@ -643,7 +643,7 @@ class Component extends DCLogic {
       try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
       this.say((LN === 'season' ? '시즌' : '메인') + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + ' · 파편 +' + pay.shards + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
     } else {
-      this.say(ids.length + '점 납품 · 남은 기물은 완성되면 다시 건네자');
+      this.say(ids.length + '점 납품 · 남은 기물은 완성되면 다시 건네요');
     }
     this.setG(patch);
     this.setState({ line: 0, enterN: this.state.enterN + 1, deliver: all ? LN : '' });
@@ -710,7 +710,7 @@ class Component extends DCLogic {
           subStyle: 'font-family:Noto Sans KR,sans-serif;font-size:11.5px;font-weight:700;color:' + (t.id === 'del' && delL.length ? '#2F6328' : '#7A5434') };
       }),
       queueRow: 'position:absolute;left:12px;right:12px;top:122px;align-items:center;gap:6px;display:' + (ctab === 'del' ? 'none' : 'flex'),
-      emptyTitle: ctab === 'req' ? '지금은 의뢰 손님이 없다' : '지금은 구매 손님이 없다',
+      emptyTitle: ctab === 'req' ? '지금은 의뢰 손님이 없어요' : '지금은 구매 손님이 없어요',
       delN: delL.length,
       delBtn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (delL.length ? 'background:#4A9440;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;' : 'background:#FFF4DE;color:#8A6440;border:3px solid #C9B08A;'),
       delOpen: ctab === 'del' && !inDel,
@@ -720,7 +720,7 @@ class Component extends DCLogic {
       queue: queue,
       hasGuest: !!cur,
       noGuest: !cur && ctab !== 'del',
-      nextGuest: ctab === 'req' ? '진행 중인 의뢰는 의뢰 내역서에서 확인 · 완성되면 납품 손님이 찾아온다' : '다음 손님까지 ' + Math.max(0, Math.ceil(((g.walkNext || Date.now()) - Date.now()) / 1000)) + '초 · 진열대가 채워질수록 자주 온다',
+      nextGuest: ctab === 'req' ? '진행 중인 의뢰는 의뢰 내역서에서 확인 · 완성되면 납품 손님이 찾아와요' : '다음 손님까지 ' + Math.max(0, Math.ceil(((g.walkNext || Date.now()) - Date.now()) / 1000)) + '초 · 진열대가 채워질수록 자주 와요',
       guest: (function () { var CH = { CHAR_WALK_A: ['_blob/5c9039297f4140af280ddc5d8c29f1d8.webp', '_blob/5c9039297f4140af280ddc5d8c29f1d8.webp', '_blob/5c9039297f4140af280ddc5d8c29f1d8.webp'], CHAR_WALK_B: ['_blob/56842aecbfbf36e871d3a88553c994b7.webp', '_blob/56842aecbfbf36e871d3a88553c994b7.webp', '_blob/56842aecbfbf36e871d3a88553c994b7.webp'], CHAR_WALK_C: ['_blob/508d74e08961f6ee6d2842676a07a0ff.webp', '_blob/508d74e08961f6ee6d2842676a07a0ff.webp', '_blob/508d74e08961f6ee6d2842676a07a0ff.webp'], CHAR_WALK_D: ['_blob/ed271278d8689ec7ad4a625c7a394620.webp', '_blob/ed271278d8689ec7ad4a625c7a394620.webp', '_blob/ed271278d8689ec7ad4a625c7a394620.webp'], CHAR_WALK_E: ['_blob/e70f6b87f40eebdb5ea5904560008b54.webp', '_blob/e70f6b87f40eebdb5ea5904560008b54.webp', '_blob/e70f6b87f40eebdb5ea5904560008b54.webp'], CHAR_WALK_F: ['_blob/dff17864488675fa3c1e0591dfe63c72.webp', '_blob/dff17864488675fa3c1e0591dfe63c72.webp', '_blob/dff17864488675fa3c1e0591dfe63c72.webp'], CHAR_GUEST: ['_blob/0a3fb7853f4ae205b33b343c6c1318fb.webp', '_blob/f57631287b2029926da5c35a0d2f0a71.webp', '_blob/0a3fb7853f4ae205b33b343c6c1318fb.webp'], CHAR_CURATOR: ['_blob/23b7b044f48072ca55bab6b54deb1b60.webp', '_blob/03a328d4ea7622f6949c549414b9dd47.webp', '_blob/6233e82f7763126a3822d7602b6e845c.webp'], CHAR_MIN: ['_blob/f5ff87ba961b89436c380e77c10e73d0.webp', '_blob/02631b5878c7fe875dd455d917a1baf3.webp', '_blob/591272dc96dbfdbd6df09d772a76cc92.webp'], CHAR_CAFE: ['_blob/fc84dd5964faa20720f7847eb79ff2bd.webp', '_blob/ea5ca7ccdb67bfa9a1ee010aaa5e181d.webp', '_blob/fab38383f3845ad8a576c2f3e14b8ac5.webp'] }; var FI = { offer: 2, wait: 0, deliver: 1, thanks: 1, curator: 0 }; var set = cur && CH[cur.res]; var im = set ? set[FI[cur.kind] !== undefined ? FI[cur.kind] : 0] : ''; return cur ? { name: cur.name, res: cur.res, tone: cur.tone, tag: cur.tag, tagBg: cur.tagBg, face: cur.face, img: im, hasImg: !!im, noImg: !im } : { name: '', res: '', tone: '#5B3A24', tag: '', tagBg: '#5B3A24', face: '', img: '', hasImg: false, noImg: true }; })(),
       guestWrap: 'position:absolute;left:0;top:150px;width:390px;height:300px;animation:' + (s.enterN % 2 ? 'enterA' : 'enterB') + ' .45s ease-out both',
       line: lines[li],
@@ -744,8 +744,8 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
-      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '판매', href: 'Display.dc.html' }
+      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
   }

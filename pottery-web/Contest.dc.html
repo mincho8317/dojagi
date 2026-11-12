@@ -191,7 +191,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           </sc-for>
           <sc-if value="{{pk.empty}}" hint-placeholder-val="{{false}}">
             <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 0">
-              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">보관·진열 중인 작품이 없다</span>
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A5434">보관·진열 중인 작품이 없어요</span>
               <a href="Wheel.dc.html" style="font-family:'Jua',sans-serif;font-size:14px;color:#2F6328">물레로 가서 빚기 →</a>
             </div>
           </sc-if>
@@ -349,7 +349,7 @@ class Component extends DCLogic {
     var n = o.count || 0;
     return {
       on: !!o.on, title: o.title || '', sub: o.sub || '', rows: o.rows || [], empty: !(o.rows || []).length,
-      emptyText: o.emptyText || '고를 기물이 없다', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
+      emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
       confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
@@ -364,7 +364,7 @@ class Component extends DCLogic {
   data0() {
     return {
       chapters: [
-        { id: 'table', kind: '용도', group: 'use', label: '식기', icon: 'ICON_CAT_TABLE', img: '_blob/2a30c76aea86fc44a061b326d6b9c96c.webp', title: '식기 · 밥상에 오르는 그릇', desc: '종지, 사발, 대접 · 매일 쓰는 그릇일수록 선이 단정해야 한다', res: 'BANNER_CAT_TABLE', bg: 'linear-gradient(90deg,#F4F1EA,#EADBC0)', lv: 1 },
+        { id: 'table', kind: '용도', group: 'use', label: '식기', icon: 'ICON_CAT_TABLE', img: '_blob/2a30c76aea86fc44a061b326d6b9c96c.webp', title: '식기 · 밥상에 오르는 그릇', desc: '종지, 사발, 대접 · 매일 쓰는 그릇일수록 선이 단정해야 해요', res: 'BANNER_CAT_TABLE', bg: 'linear-gradient(90deg,#F4F1EA,#EADBC0)', lv: 1 },
         { id: 'tea', kind: '용도', group: 'use', label: '찻잔', icon: 'ICON_CAT_TEA', img: '_blob/0109f2b3b48a15eab1221b0cd9c3a3a5.webp', title: '찻잔 · 찻자리의 그릇', desc: '잔과 다완 · 손에 쥐었을 때의 곡선이 핵심', res: 'BANNER_CAT_TEA', bg: 'linear-gradient(90deg,#CFE0D6,#EADBC0)', lv: 1 },
         { id: 'vase', kind: '용도', group: 'use', label: '꽃병', icon: 'ICON_CAT_VASE', img: '_blob/7740462a294e5fa32bbd938c6df01dcd.webp', title: '꽃병 · 꽃을 꽂는 그릇', desc: '매병과 화병 · 좁은 목과 풍만한 어깨', res: 'BANNER_CAT_VASE', bg: 'linear-gradient(90deg,#E8DDEE,#EADBC0)', lv: 3 },
         { id: 'jar', kind: '용도', group: 'use', label: '항아리', icon: 'ICON_CAT_JAR', img: '_blob/8d68851c718a6be2933d08169bf4581a.webp', title: '항아리 · 담고 저장하는 그릇', desc: '달항아리와 장독 · 큰 몸통의 균형', res: 'BANNER_CAT_JAR', bg: 'linear-gradient(90deg,#E6DCCB,#EADBC0)', lv: 4 },
@@ -378,21 +378,21 @@ class Component extends DCLogic {
   }
   genStages() {
     var P = {
-      dish: { n: '종지', H: 60, p: [40, 45, 50, 55, 59, 63, 66, 69, 72, 74, 76, 78], s: '간장과 양념을 담는 작은 종지. 낮고 넓게 벌린다.' },
-      sabal: { n: '사발', H: 85, p: [36, 44, 52, 59, 65, 70, 74, 78, 81, 84, 86, 88], s: '밥과 국을 담던 넉넉한 사발. 굽에서 입까지 부드럽게 퍼진다.' },
+      dish: { n: '종지', H: 60, p: [40, 45, 50, 55, 59, 63, 66, 69, 72, 74, 76, 78], s: '간장과 양념을 담는 작은 종지. 낮고 넓게 벌려요.' },
+      sabal: { n: '사발', H: 85, p: [36, 44, 52, 59, 65, 70, 74, 78, 81, 84, 86, 88], s: '밥과 국을 담던 넉넉한 사발. 굽에서 입까지 부드럽게 퍼져요.' },
       daejeop: { n: '대접', H: 70, p: [40, 50, 60, 68, 74, 78, 82, 85, 87, 89, 90, 91], s: '넓고 얕은 대접. 낮게, 넓게 벌리는 게 관건.' },
-      plate: { n: '접시', H: 40, p: [50, 60, 68, 75, 80, 84, 87, 89, 91, 92, 93, 94], s: '반찬을 올리는 얕은 접시. 거의 눕히듯 벌린다.' },
+      plate: { n: '접시', H: 40, p: [50, 60, 68, 75, 80, 84, 87, 89, 91, 92, 93, 94], s: '반찬을 올리는 얕은 접시. 거의 눕히듯 벌려요.' },
       jan: { n: '잔', H: 110, p: [34, 33, 32, 33, 35, 37, 39, 41, 43, 44, 45, 46], s: '위로 갈수록 살짝 벌어지는 소박한 잔.' },
       chatjan: { n: '찻잔', H: 125, p: [32, 34, 36, 38, 39, 40, 41, 42, 42, 43, 43, 44], s: '높고 곧은 찻잔. 몸통을 고르게 세우는 연습.' },
       tongjan: { n: '통잔', H: 95, p: [38, 39, 40, 40, 41, 41, 42, 42, 42, 43, 43, 43], s: '원통처럼 곧게 선 잔. 벽 두께를 고르게.' },
-      dawan: { n: '다완', H: 90, p: [34, 40, 47, 53, 58, 62, 65, 67, 68, 69, 69, 68], s: '두 손에 감기는 찻사발. 입이 살짝 오므라든다.' },
-      hwabyeong: { n: '화병', H: 150, p: [28, 36, 44, 48, 48, 44, 36, 26, 18, 16, 18, 22], s: '가는 목에 한두 송이를 꽂는 화병. 목을 조이다 무너지기 쉽다.' },
-      byeong: { n: '병', H: 140, p: [30, 40, 46, 48, 46, 40, 30, 20, 15, 14, 14, 16], s: '술과 물을 담는 병. 어깨에서 목으로 급하게 조인다.' },
-      maebyeong: { n: '매병', H: 160, p: [30, 38, 46, 52, 55, 55, 52, 46, 38, 28, 20, 22], s: '어깨가 풍만하고 허리가 잘록한 매병. 좁은 입이 핵심이다.' },
+      dawan: { n: '다완', H: 90, p: [34, 40, 47, 53, 58, 62, 65, 67, 68, 69, 69, 68], s: '두 손에 감기는 찻사발. 입이 살짝 오므라들어요.' },
+      hwabyeong: { n: '화병', H: 150, p: [28, 36, 44, 48, 48, 44, 36, 26, 18, 16, 18, 22], s: '가는 목에 한두 송이를 꽂는 화병. 목을 조이다 무너지기 쉬워요.' },
+      byeong: { n: '병', H: 140, p: [30, 40, 46, 48, 46, 40, 30, 20, 15, 14, 14, 16], s: '술과 물을 담는 병. 어깨에서 목으로 급하게 조여요.' },
+      maebyeong: { n: '매병', H: 160, p: [30, 38, 46, 52, 55, 55, 52, 46, 38, 28, 20, 22], s: '어깨가 풍만하고 허리가 잘록한 매병. 좁은 입이 핵심이에요.' },
       hangari: { n: '항아리', H: 140, p: [36, 50, 60, 66, 68, 68, 64, 58, 50, 44, 40, 40], s: '곡식을 담는 항아리. 어깨를 둥글게.' },
       jangdok: { n: '장독', H: 170, p: [36, 50, 62, 70, 74, 74, 70, 62, 52, 42, 36, 36], s: '장을 담그는 큰 독. 크게, 튼튼하게.' },
       danji: { n: '단지', H: 110, p: [34, 46, 56, 62, 64, 62, 58, 52, 46, 42, 40, 40], s: '꿀과 젓갈을 담는 작은 단지.' },
-      moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32], s: '보름달처럼 둥근 몸통. 위아래 균형이 무너지면 달이 찌그러진다.' },
+      moonjar: { n: '달항아리', H: 150, p: [34, 48, 60, 68, 72, 74, 73, 69, 60, 48, 36, 32], s: '보름달처럼 둥근 몸통. 위아래 균형이 무너지면 달이 찌그러져요.' },
       lotuscup: { n: '연꽃잔', H: 60, p: [26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70], s: '봄 다회의 잔. 낮고 활짝 핀 꽃처럼.' }
     };
     var GL = ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'jinsa', 'black', 'white', 'celadon', 'jinsa', 'black', 'white'];
@@ -417,7 +417,7 @@ class Component extends DCLogic {
           id: c.pre + (i + 1), ch: c.id, idx: i, name: GP[gz] + ' ' + sz.n + b.n,
           prof: b.p.map(function (v) { return Math.round(v * sz.k * 10) / 10; }), H: Math.round(b.H * sz.k), glaze: gz, lv: c.lv, clay: last ? c.cl[c.cl.length - 1] : c.cl[Math.min(c.cl.length - 1, Math.floor(i / 5))], shapeN: sz.n + b.n, wshape: WS[key] || 'bowl',
           newShape: last ? c.un : '', newName: last ? b.n : '',
-          story: b.s + (last ? ' 처음 재현하면 도감과 물레 틀에 ' + b.n + '이(가) 등록된다.' : '')
+          story: b.s + (last ? ' 처음 재현하면 도감과 물레 틀에 ' + b.n + '이(가) 등록돼요.' : '')
         });
       }
     });
@@ -490,7 +490,7 @@ class Component extends DCLogic {
             iconStyle: 'flex:0 0 46px;width:46px;height:46px;object-fit:contain;' + (c.soon ? 'filter:grayscale(1) opacity(.55);' : ''),
             stateStyle: 'flex:0 0 auto;padding:3px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (on ? 'background:#FFD66B;color:#2B1A0F' : (c.soon ? 'background:#7A5A93;color:#FFF' : (lk ? 'background:#5B3A24;color:#FFE7A8' : (done ? 'background:#C9962E;color:#FFF' : 'background:' + gr.col + ';color:#FFF')))),
             pick: function () {
-              if (c.soon) { self.say(c.label + ' 스테이지는 다음 업데이트에서 열린다'); return; }
+              if (c.soon) { self.say(c.label + ' 스테이지는 다음 업데이트에서 열려요'); return; }
               try { localStorage.setItem('contestChLast', c.id); } catch (e) {}
               self.setState({ ch: c.id, catOpen: false }); self.scrollCur();
             }
@@ -553,7 +553,7 @@ class Component extends DCLogic {
       clrOn: Q.length > 0, clear: function () { self.setG({ goalQ: [] }); },
       subOn: batch.length > 0, subN: batch.length + '개', submitAll: function () { self.submitAll(batch); },
       addOn: addable.length > 0 && !batch.length, addLabel: '＋ 미클리어 ' + addable.length + '개 담기',
-      addAll: function () { var nq = Q.concat(addable.map(gOf)); self.setG({ goalQ: nq }); self.say('스테이지 ' + addable.map(function (x) { return x.idx + 1; }).join('·') + '을(를) 목표로 담았다'); },
+      addAll: function () { var nq = Q.concat(addable.map(gOf)); self.setG({ goalQ: nq }); self.say('스테이지 ' + addable.map(function (x) { return x.idx + 1; }).join('·') + '을(를) 목표로 담았어요'); },
       goOn: Q.length > 0, go: function () { self.setG({ goal: Q[0], goalJump: true }); }
     };
     var det = { on: false };
@@ -563,7 +563,7 @@ class Component extends DCLogic {
     if (cur) {
       var cch = D.chapters.filter(function (c) { return c.id === cur.ch; })[0];
       var clist = D.stages.filter(function (x) { return x.ch === cur.ch; });
-      var lk = chLock(cch) ? chLock(cch) + '이 필요하다' : (cur.idx > 0 && !(rec[clist[cur.idx - 1].id] > 0) ? (cur.idx) + ' 스테이지를 ★1 이상으로 클리어하면 열린다' : '');
+      var lk = chLock(cch) ? chLock(cch) + '이 필요해요' : (cur.idx > 0 && !(rec[clist[cur.idx - 1].id] > 0) ? (cur.idx) + ' 스테이지를 ★1 이상으로 클리어하면 열려요' : '');
       var b = rec[cur.id] || 0, bs = ''; for (var j2 = 0; j2 < 3; j2++) { bs += j2 < b ? '★' : '☆'; }
       var dis = !!lk || !fitN;
       det = {
@@ -571,18 +571,18 @@ class Component extends DCLogic {
         pot: self.potOf({ prof: cur.prof, H: cur.H }, '#F3E3C4'), dash: '6 5', h: Math.round(cur.H) + 'mm',
         conds: [GN[cur.glaze], '높이 ' + Math.round(cur.H) + 'mm 안팎', '모양 일치 60%↑', '추천 흙 · ' + (CLN[cur.clay] || '기본 점토')].concat(cur.newShape ? ['신규 모양 · ' + cur.newName] : []),
         best: bs, reward: '별 1개마다 300G · 파편 5' + (cur.newShape ? ' · 첫 클리어 시 ' + cur.newName + ' 해금' : ''),
-        rule: lk ? '잠김 · ' + lk : '조건을 모두 채운 작품만 출품할 수 있다 · 출품해도 작품은 돌아온다',
+        rule: lk ? '잠김 · ' + lk : '조건을 모두 채운 작품만 출품할 수 있어요 · 출품해도 작품은 돌아와요',
         goDis: dis ? 'true' : 'false',
         goSub: lk ? '잠김' : (fitN ? '조건 충족 ' + fitN + '점' : '조건에 맞는 작품 없음'),
         goSubStyle: 'font-size:10.5px;' + (dis ? 'color:#6E6557' : 'color:#E2F3D9'),
         goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;font-family:Jua,sans-serif;' + (dis ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5'),
-        go: function () { if (lk) { self.say(lk); return; } if (!fitN) { self.say('조건에 맞는 작품이 없다 · 먼저 작품을 만들어 보자'); return; } self.setState({ pkOpen: true, pkSel: '' }); },
+        go: function () { if (lk) { self.say(lk); return; } if (!fitN) { self.say('조건에 맞는 작품이 없어요 · 먼저 작품을 만들어 봐요'); return; } self.setState({ pkOpen: true, pkSel: '' }); },
         make: function () { self.setG({ goal: { sid: cur.id, num: cur.idx + 1, name: cur.name, shapeN: cur.shapeN, prof: cur.prof, H: cur.H, glaze: cur.glaze, clay: cur.clay, wshape: cur.wshape }, goalJump: true }); },
         close: function () { self.setState({ det: '' }); },
         qPressed: inQ(cur.id) ? 'true' : 'false',
         qLabel: inQ(cur.id) ? '✓ 목표에 담음 · 눌러서 빼기' : (lk && chLock(cch) ? '잠긴 챕터' : '＋ 목표에 담기 (여러 개 담아 한꺼번에 만들기)'),
         qStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:13.5px;' + (inQ(cur.id) ? 'background:#E2F0DA;border:2px solid #4A9440;color:#2F6328' : 'background:#FFFDF5;border:2px dashed #8A6440;color:#5B3A24'),
-        qTap: function () { if (chLock(cch)) { self.say(chLock(cch) + '이 필요하다'); return; } if (inQ(cur.id)) { self.setG({ goalQ: Q.filter(function (q) { return q.sid !== cur.id; }) }); return; } if (Q.length >= 6) { self.say('목표는 성형 선반 크기인 6개까지 담을 수 있다'); return; } self.setG({ goalQ: Q.concat([gOf(cur)]) }); self.say((cur.idx + 1) + ' 스테이지를 목표로 담았다 · ' + (Q.length + 1) + '개'); }
+        qTap: function () { if (chLock(cch)) { self.say(chLock(cch) + '이 필요해요'); return; } if (inQ(cur.id)) { self.setG({ goalQ: Q.filter(function (q) { return q.sid !== cur.id; }) }); return; } if (Q.length >= 6) { self.say('목표는 성형 선반 크기인 6개까지 담을 수 있어요'); return; } self.setG({ goalQ: Q.concat([gOf(cur)]) }); self.say((cur.idx + 1) + ' 스테이지를 목표로 담았어요 · ' + (Q.length + 1) + '개'); }
       };
     }
     var rows = cur ? cands.slice().sort(function (x, y) { return (chk[y].fit ? 1 : 0) - (chk[x].fit ? 1 : 0); }).map(function (id) {
@@ -597,7 +597,7 @@ class Component extends DCLogic {
         starStyle: c.fit ? 'position:absolute;right:-8px;top:-8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;background:#E3B23C;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5' : 'display:none',
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : (c.fit ? 'background:#FFFDF5;border:3px solid #E3B23C;box-shadow:0 3px 0 #C9962E' : 'background:#F1EADC;border:2px solid #D6C6A8;opacity:.72')),
         tap: function () {
-          if (!c.fit) { self.say('조건 미충족 · ' + [c.gOk ? '' : '유약', c.sOk ? '' : '모양', c.hOk ? '' : '높이'].filter(Boolean).join('·') + '이(가) 맞지 않는다'); return; }
+          if (!c.fit) { self.say('조건 미충족 · ' + [c.gOk ? '' : '유약', c.sOk ? '' : '모양', c.hOk ? '' : '높이'].filter(Boolean).join('·') + '이(가) 맞지 않아요'); return; }
           self.setState({ pkSel: on ? '' : id });
         }
       };
@@ -639,7 +639,7 @@ class Component extends DCLogic {
           { k: '종합 일치도', v: R.j.score + '%', vs: 'font-family:Jua,sans-serif;font-size:16px;color:#7A2F1E' }
         ],
         newOn: !!R.newShape, newName: R.newName || '',
-        reward: R.gain ? '새로 얻은 별 ' + R.gain + '개 · 골드 +' + (R.gain * 300) + ' · 파편 +' + (R.gain * 5) : (R.j.stars ? '최고 기록을 넘지 못했다 · 보상 없음' : '별 1개는 일치도 60% 이상'),
+        reward: R.gain ? '새로 얻은 별 ' + R.gain + '개 · 골드 +' + (R.gain * 300) + ' · 파편 +' + (R.gain * 5) : (R.j.stars ? '최고 기록을 넘지 못했어요 · 보상 없음' : '별 1개는 일치도 60% 이상'),
         close: function () { self.setState({ res: null }); }
       };
     }

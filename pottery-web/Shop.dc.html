@@ -199,7 +199,7 @@ class Component extends DCLogic {
   }
   spend(cost, ok, extra) {
     var g = this.state.g;
-    if (g.gold < cost) { this.say('골드가 ' + (cost - g.gold).toLocaleString() + ' 모자라다'); return false; }
+    if (g.gold < cost) { this.say('골드가 ' + (cost - g.gold).toLocaleString() + ' 모자라요'); return false; }
     var patch = { gold: g.gold - cost };
     for (var k in (extra || {})) { patch[k] = extra[k]; }
     this.setG(patch);
@@ -234,7 +234,7 @@ class Component extends DCLogic {
         buy: function () {
           var o = {}; for (var k in G.mats) { o[k] = G.mats[k]; }
           o[m.id] = (o[m.id] || 0) + 1;
-          self.spend(m.price, m.name + '을(를) 샀다', { mats: o });
+          self.spend(m.price, m.name + '을(를) 샀어요', { mats: o });
         }
       };
     });
@@ -252,10 +252,10 @@ class Component extends DCLogic {
         label: owned ? '배치됨' : d.price.toLocaleString(),
         style: 'all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (owned ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;'),
         buy: function () {
-          if (owned) { self.say('이미 공방에 놓여 있다'); return; }
+          if (owned) { self.say('이미 공방에 놓여 있어요'); return; }
           var o = {}; for (var k in G.deco) { o[k] = G.deco[k]; }
           o[d.id] = true;
-          self.spend(d.price, d.name + '을(를) 공방에 놓았다', { deco: o });
+          self.spend(d.price, d.name + '을(를) 공방에 놓았어요', { deco: o });
         }
       };
     });
@@ -274,17 +274,17 @@ class Component extends DCLogic {
       trimLabel: G.trim ? '보유 중' : '800',
       trimStyle: G.trim ? trimOwned : trimBuy,
       buyTrim: function () {
-        if (G.trim) { self.say('공방에 설치되어 있다'); return; }
-        self.spend(800, '굽깎이대를 들였다 · 2차 성형 해금', { trim: true });
+        if (G.trim) { self.say('공방에 설치되어 있어요'); return; }
+        self.spend(800, '굽깎이대를 들였어요 · 2차 성형 해금', { trim: true });
       },
       tryBrush: function () {
-        if (G.brush) { self.say('공방에 설치되어 있다'); return; }
-        if (G.fameLv < 4) { self.say('명성 Lv.4가 되면 살 수 있다 · 현재 Lv.' + G.fameLv); return; }
-        self.spend(2000, '붓 · 시유대를 들였다 · 붓칠 해금', { brush: true });
+        if (G.brush) { self.say('공방에 설치되어 있어요'); return; }
+        if (G.fameLv < 4) { self.say('명성 Lv.4가 되면 살 수 있어요 · 현재 Lv.' + G.fameLv); return; }
+        self.spend(2000, '붓 · 시유대를 들였어요 · 붓칠 해금', { brush: true });
       },
       tryElec: function () {
-        if (G.gold < 12000) { self.say('골드가 ' + (12000 - G.gold).toLocaleString() + ' 모자라다'); return; }
-        self.say('명성 Lv.3 충족 · 구매 흐름은 다음 목업에서 추가 예정');
+        if (G.gold < 12000) { self.say('골드가 ' + (12000 - G.gold).toLocaleString() + ' 모자라요'); return; }
+        self.say('곧 구매할 수 있어요');
       },
       brushReq: G.fameLv >= 4 ? '명성 Lv.4 충족' : '명성 Lv.4 필요',
       brushLabel: G.brush ? '보유 중' : '2,000',
