@@ -708,15 +708,18 @@
     function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
     function nextOf(g) { return STEPS[g.tut].next; }
     function guideNext(g) {
-      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
-      var nx = nextOf(g); if (nx === PAGE) { return; }
-      if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return; } // 가마를 여는 연출 중에는 끌고 가지 않는다
-      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return; } } catch (e) {}
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return true; }
+      var nx = nextOf(g); if (nx === PAGE) { return true; }
+      if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return true; } // 가마를 여는 연출 중에는 끌고 가지 않는다
+      var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return true; } } catch (e) {}
       // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
       var nm = { Wheel: '물레', Dry: '건조대', Bisque: '초벌 가마', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
       var ok = PAGE === 'Main' ? spotlight(linkTo(nx), '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
       if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
+      return ok;
     }
+    // 밝힐 곳이 아직 안 그려졌거나 안내 창이 떠 있으면 조금 뒤 다시 찾는다
+    function guideRetry(delay, n) { setTimeout(function () { if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { if (n > 0) { guideRetry(700, n - 1); } return; } if (!guideNext(load()) && n > 0) { guideRetry(700, n - 1); } }, delay); }
     function guideJade(g) {
       var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 3: ['Bisque', '바로 완료', 'bq'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
       if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
@@ -834,7 +837,7 @@
       }
       if (PAGE === 'Glaze' && t === 4 && (g.glazeList || []).length) {
         var gzBtn = qsel('button[aria-label^="유약 고르기 · 지금"]')();
-        if (qsel('button[aria-label="청자유"]')()) { act('gzCel', true, qsel('button[aria-label="청자유"]'), '「📋 의뢰」 태그가 붙은 유약이 의뢰 조건이에요 · 민 씨가 원한 청자유를 골라요'); }
+        if (qsel('div[role=dialog] button[aria-label$="청자유"]')()) { act('gzCel', true, qsel('div[role=dialog] button[aria-label$="청자유"]'), '「📋 의뢰」 태그가 붙은 유약이 의뢰 조건이에요 · 민 씨가 원한 청자유를 골라요'); }
         else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
         else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 그릇 위 원형 게이지가 초록일 때 위로 올려 꺼내요'); }
       }
@@ -842,7 +845,7 @@
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
         if (g.kiln === 'firing') { if (anyWith('가마 열고 꺼내기')()) { act('knOpen', true, anyWith('가마 열고 꺼내기'), '다 구워졌어요! 가마를 열어 꺼내요'); } }
         else if (btnWith('적정')()) { act('knSel', true, btnWith('적정'), '넣을 그릇을 골라요'); }
-        else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[data-kwait]')() || qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')(); }, '그릇을 꾹 잡고 끌어서 초록으로 빛나는 「✓ 맞음」 칸에 놓아요 · 맞는 온도는 그릇 이름 아래에 적혀 있어요'); }
+        else if ((g.kilnList || []).length) { act('knPut', true, function () { return qsel('button[data-kwait]')() || qsel('button[aria-label^="작품 넣기 · 맞는 자리"]')(); }, '그릇을 꾹 잡고 끌어서 초록으로 빛나는 「✓ 맞음」 칸에 놓아요 · 맞는 온도는 가마 아래 설명 칸에 나와요'); }
         else if (filled) { act('knFire', true, btnWith('불 지피기'), '다 넣었으면 불을 지펴요'); }
       }
     }
@@ -939,7 +942,7 @@
           g.tut = fin ? DONE1 : nt; save(g); if (fin) { t2W({ k: 0, seen: -1 }); }
           try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
-          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 의뢰의 종류, 제작 중 의뢰 확인, 이벤트, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); setTimeout(function () { guideNext(load()); }, 450); } }]);
+          overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 의뢰의 종류, 제작 중 의뢰 확인, 이벤트, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
           notify();
         }
       }
@@ -994,7 +997,8 @@
     } else {
       check(true);
       var gS = load(); try { var sv0 = localStorage.getItem('tutCardSeen'); if (sv0 !== null && +sv0 > gS.tut) { localStorage.removeItem('tutCardSeen'); } } catch (e) {}
-      if (!showCard(gS, false)) { setTimeout(function () { if (!document.querySelector('.tut-ov')) { guideNext(load()); } }, 1200); }
+      // 화면이 늦게 그려지면 밝힐 곳이 아직 없을 수 있어 몇 번 더 찾아본다
+      if (!showCard(gS, false)) { guideRetry(1200, 8); }
     }
     setInterval(function () { check(false); guideJade(load()); guideAct(load()); tour(load()); }, 1000);
   };
