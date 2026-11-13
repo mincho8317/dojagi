@@ -107,7 +107,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <div aria-hidden="true" style="{{ripple}}"></div>
   <sc-if value="{{ringOn}}" hint-placeholder-val="{{false}}">
-    <div aria-hidden="true" style="position:absolute;left:272px;top:268px;width:96px;height:96px;z-index:7;pointer-events:none">
+    <div aria-hidden="true" style="position:absolute;left:147px;top:118px;width:96px;height:96px;z-index:7;pointer-events:none">
       <svg width="96" height="96" viewBox="0 0 96 96">
         <circle cx="48" cy="48" r="44" fill="rgba(43,26,15,.85)" stroke="#FFF4DE" stroke-width="3"></circle>
         <g transform="rotate(-90 48 48)">
@@ -144,7 +144,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <span style="position:relative;flex:0 0 40px;height:40px;display:flex;align-items:center;justify-content:center"><img dc-src="{{selGz.img}}" alt="" aria-hidden="true" draggable="false" style="width:36px;height:40px;object-fit:contain"><span style="{{selGz.chip}}">{{selGz.chipText}}</span></span>
         <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
           <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{selGz.name}}</span>
-          <span style="font-size:12px;font-weight:700;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{selGz.okText}} · {{selGz.price}}</span>
+          <span style="font-size:12px;font-weight:700;color:#7A5434;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{selGz.price}}</span>
           <span style="{{selGz.goalStyle}}">{{selGz.goal}}</span>
         </span>
         <span style="flex:0 0 auto;padding:3px 9px;border-radius:9px;background:#5B3A24;font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">바꾸기 ▾</span>
@@ -169,7 +169,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
               <span style="{{z.tagStyle}}">{{z.tag}}</span>
               <span style="position:relative;width:52px;height:52px;display:flex;align-items:center;justify-content:center"><img dc-src="{{z.img}}" alt="" aria-hidden="true" draggable="false" style="width:48px;height:52px;object-fit:contain"><span style="{{z.chip}}">{{z.chipText}}</span></span>
               <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{z.name}}</span>
-              <span style="font-size:12px;color:#7A5434;text-align:center">{{z.okText}} · {{z.price}}</span>
+              <span style="font-size:12px;color:#7A5434;text-align:center">{{z.price}}</span>
               <span style="{{z.goalStyle}}">{{z.goal}}</span>
             </button>
           </sc-for>
@@ -369,7 +369,7 @@ class Component extends DCLogic {
     this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 1900);
   }
   zoneT(id) {
-    var z = this.qlib().fx((this.state && this.state.g) || {}).glazeZone || 0, T0 = ({ white: [700, 1100, 1400], celadon: [900, 1300, 1650], black: [550, 850, 1100], jinsa: [1100, 1450, 1800], sakura: [800, 1000, 1250] })[id || this.gz()] || [800, 1200, 1500];
+    var z = this.qlib().fx((this.state && this.state.g) || {}).glazeZone || 0, T0 = ({ white: [600, 1300, 1650], celadon: [800, 1550, 1900], black: [500, 1100, 1450], jinsa: [1000, 1750, 2100], sakura: [700, 1350, 1700] })[id || this.gz()] || [700, 1400, 1750];
     return [T0[0] - z, T0[1] + z, T0[2] + z]; // 연구 「담금 손」: 적정 구간 양쪽 확대
   }
   zoneOf(ms) {
@@ -498,7 +498,7 @@ class Component extends DCLogic {
     try { window.__sfx && window.__sfx('drip'); if (zone === 'ok') { setTimeout(function () { try { window.__sfx('ok'); } catch (e) {} }, 60); } else if (zone === 'drip') { window.__sfx('fail'); } } catch (e) {}
     this.liftFx(zone, ms);
     this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0 });
-    var label = { thin: '얇게 입혀졌어요 · 발색 +0', ok: '고르게 입혀졌어요 · 발색 +1', thick: '조금 두꺼워요 · 발색 +0', drip: '너무 두꺼워요 · 흘러내릴 수 있어요 · 발색 -1' }[zone];
+    var label = { thin: '얇게 입혀졌어요', ok: '고르게 입혀졌어요 · 발색 +2%', thick: '조금 두꺼워요', drip: '너무 두꺼워요 · 흘러내릴 수 있어요 · 발색 -2%' }[zone];
     this.say(label + ' · 가마 대기로' + (rest.length ? ' · 다음 기물' : ''), zone === 'ok' ? 'ok' : 'fail');
   }
   renderVals0() {
@@ -543,7 +543,7 @@ class Component extends DCLogic {
         chipText: known ? '' : '?',
         chip: 'position:absolute;right:-4px;bottom:-4px;width:14px;height:14px;border-radius:50%;border:2px solid #5B3A24;font-family:Jua,sans-serif;font-size:9px;display:flex;align-items:center;justify-content:center;background:' + (known ? d.fired : '#FFF4DE'),
         goal: gl.text, goalStyle: gl.style,
-        id: d.id, okText: '적정 ' + (zt[0] / 1000).toFixed(1) + '~' + (zt[1] / 1000).toFixed(1) + '초',
+        id: d.id, okText: '',
         tag: on ? '사용 중' : (d.id === goalG ? '📋 의뢰' : (d.event ? '🌸 ' + (d.owned ? '봄 축제 한정' : '축제 상점') : (o.none ? '없음' : ''))),
         tagStyle: 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (!(on || d.id === goalG || d.event || o.none) ? 'display:none;' : '') + (on ? 'background:#2F6328;color:#FFF' : (d.id === goalG ? 'background:#7A5A93;color:#FFF' : (d.event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))),
         rowStyle: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (on ? 'background:#FFF;border:3px solid #2F6328;box-shadow:0 0 0 3px #A9D69E' : (o.none ? 'background:#E9DFCF;border:3px dashed #B5A486;opacity:.8' : 'background:#FFFDF5;border:3px solid #C9A27A')),
@@ -634,10 +634,10 @@ class Component extends DCLogic {
       potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 끌어내려 입구부터 담그기') : '위 대기함에서 기물 고르기',
       potDown: function (e) { if (!cur) { self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
-      subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '% · ' + (s.holdMs / 1000).toFixed(1) + '초' : '유약 수면 · 깊이 담글수록 빨리 ↓',
+      subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : '유약 수면 · 깊이 담글수록 빨리 ↓',
       liftOn: !!s.lift,
       liftText: s.lift ? ({ ok: '✓ 적정! 고르게 입혀짐', thin: '△ 얇음', thick: '△ 두꺼운 편', drip: '✕ 흘러내림' })[s.lift.zone] : '',
-      liftSub: s.lift ? (s.lift.ms / 1000).toFixed(2) + '초 · 적정 ' + (this.zoneT(EG)[0] / 1000).toFixed(1) + '~' + (this.zoneT(EG)[1] / 1000).toFixed(1) + '초' : '',
+      liftSub: s.lift ? ({ ok: '발색 +2%', thin: '조금 더 오래 담가요', thick: '조금 일찍 꺼내요', drip: '발색 -2%' })[s.lift.zone] : '',
       liftStyle: s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
       liftStars: s.lift && s.lift.zone === 'ok' ? [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { var a = i / 8 * Math.PI * 2, r = 70 + (i % 2) * 22; return { s: 'position:absolute;left:187px;top:316px;font-size:' + (14 + (i % 3) * 4) + 'px;color:#FFE27A;text-shadow:0 0 6px #fff;--dx:' + Math.round(Math.cos(a) * r) + 'px;--dy:' + Math.round(Math.sin(a) * r) + 'px;animation:liftStar .75s ease-out ' + (i * 0.02).toFixed(2) + 's both' }; }) : [],
       liftDrops: s.lift ? [0, 1, 2, 3, 4].map(function (i) { return { s: 'position:absolute;left:' + (160 + i * 17) + 'px;top:' + (330 + (i % 2) * 6) + 'px;width:7px;height:11px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:' + selG.raw + ';animation:dropFall .7s ease-in ' + (i * 0.07).toFixed(2) + 's both' }; }) : [],
