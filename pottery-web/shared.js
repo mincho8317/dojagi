@@ -326,7 +326,7 @@
     };
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?'], done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데. 또 그릇을 맡아도 되나.)', '나: (민 씨 찻잔은, 할머니 말대로 딱 한 번이었는데.)', '나: (…그래도 할머니 그릇을 아직 기다리는 사람이 있었구나.)'], accLabel: '한 번만 더 할게요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
       { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['우리 집 단골들은 그릇 바뀐 걸 귀신같이 알아.', '강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '단골상에 올릴 걸로 넉넉히 부탁해. 종지는 두 개!'], done: ['상이 환해졌어.', '…자네 어릴 적엔 할매 속 꽤나 썩였지. 그래도 할매는 한 번을 안 다그치더라.'] },
       { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 서울 사는 손주 녀석이 내려와.', '손님도 배로 오고. 잔칫상엔 자잘한 그릇이 많이 들어.', '작은 걸로 한 벌 부탁해.'], done: ['이걸로 대목은 걱정 없겠어. 손주 녀석이 그릇 예쁘다고 난리여.'] },
       { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
@@ -433,7 +433,7 @@
         var unlock = ''; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; } });
         var cnt = items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n); }, 0);
         var sameCh = story.filter(function (x) { return x.ch === q.ch; }), inCh = sameCh.indexOf(q);
-        return { id: q.id, idx: qi, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
+        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
       });
     }
     var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
@@ -1545,13 +1545,13 @@
     // 줄 = [말하는 사람('' = 내레이션), 대사, {fx: 'shake' | 'knock' | 'flash'}]
     var SCENES = {
       prologue: { title: '프롤로그 · 빈 공방', steps: [
-        { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
+        { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…아가. 공방은 네 맘대로 혀. 팔아도 괜찮어.', { face: 'sick' }], ['할머니', '근디… 가마에 불은, 딱 한 번만 더 넣어 봐.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
         { img: 'cg/p2.webp', pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
         { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33', img: 'cg/p2.webp' },
         { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
       after_min: { title: '마지막 납품', steps: [
-        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
+        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '…할머니, 가마에 불 한 번 넣었어요.', { face: 'sad' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
         { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
