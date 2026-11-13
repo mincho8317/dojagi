@@ -235,11 +235,11 @@
     // ── 등장인물 · 대사 ─────────────────────────────
     // {이름} = 플레이어가 정한 주인공 이름 · 할머니 = 강 할매 (손님마다 부르는 호칭이 다르다)
     var NPC = {
-      yoon: { name: '윤 할매', role: '골목 국밥집 주인', res: 'CHAR_WALK_D', tone: '#B9533A', call: '강 할매' },
-      cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CURATOR', tone: '#4E7D74', call: '강 선생님' },
-      jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_WALK_F', tone: '#7A5A93', call: '강 여사님' },
+      yoon: { name: '윤 할매', role: '골목 국밥집 주인', res: 'CHAR_YOON', tone: '#B9533A', call: '강 할매' },
+      cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CHA', tone: '#4E7D74', call: '강 선생님' },
+      jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_JEONG', tone: '#7A5A93', call: '강 여사님' },
       festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_WALK_B', tone: '#C2577A', call: '강 선생님' },
-      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410', call: '명옥이' },
+      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_JANG', tone: '#8A6410', call: '명옥이' },
       dudu: { name: '두두리', role: '지하실 너머 문지기 도깨비', res: 'CHAR_DUDU', tone: '#3E6B8A', call: '묵 할멈', dok: true },
       bulmok: { name: '불목이', role: '외눈 대장장이 도깨비', res: 'CHAR_BULMOK', tone: '#8A3D10', call: '강 선생', dok: true },
       kids: { name: '방울이와 도롱이', role: '꼬마 도깨비 남매', res: 'CHAR_KIDS', tone: '#6B8E3A', call: '강 할머니', dok: true }
@@ -276,7 +276,7 @@
         ['end', '매듭', '손주에게 가게를 맡기기로 했어요. “내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.”']
       ] },
       cha: { name: '차 선생', role: '동네 다도 선생', call: '강 선생님', rows: [
-        [0, '기본', '50대 · 다도 선생 · 단정하고 조심스러워요'],
+        [0, '기본', '30대 · 다도 선생 · 단정하고 조심스러워요'],
         [1, '과거', '도예가가 꿈이었어요. 강 선생님께 배우다가 재능이 없다며 그만두고 다도로 갔어요'],
         [2, '지금', '다도 교실 학생이 점점 줄고 있어요'],
         [4, '마음에 걸린 것', '강 선생님이 아프실 때 끝내 병문안을 못 갔어요. 마지막 인사를 못 했어요'],
@@ -1526,33 +1526,42 @@
     function PN() { return load().pname || '손녀'; }
     function tx(t) { var g = load(); return String(t).split('{이름}').join(g.pname || '손녀').split('{공방}').join(g.wsName || '강 할매네 공방'); }
     // 말하는 사람 흉상 · img 가 생기면 그림으로 바뀐다 (side: 대사 상자 왼쪽/오른쪽)
+    var IMG = function (k, f) { return 'char/b_' + k + '_' + f + '.webp'; };
+    // 카운터 손님 그림 · wait 기본(기다림) / joy 기쁨(납품) / ask 부탁(의뢰) / face 얼굴(목록 썸네일)
+    var CI = {}; [['CHAR_MIN', 'min'], ['CHAR_YOON', 'yoon'], ['CHAR_CHA', 'cha'], ['CHAR_JEONG', 'jeong'], ['CHAR_JANG', 'jang'], ['CHAR_DUDU', 'dudu'], ['CHAR_BULMOK', 'bulmok'], ['CHAR_KIDS', 'kids']].forEach(function (r) {
+      CI[r[0]] = { wait: 'char/c_' + r[1] + '_wait.webp', joy: 'char/c_' + r[1] + '_joy.webp', ask: 'char/c_' + r[1] + '_ask.webp', face: 'char/f_' + r[1] + '.webp' };
+    });
+    S.CHARIMG = CI;
+    // 말하는 사람 흉상 · faces = 표정별 그림, 줄마다 {face: '...'} 로 고른다 (없으면 def)
     var ART = {
-      '나': { id: 'me', emo: '🧑', tone: '#B87A4B', side: 'l', img: null },
-      '할머니': { id: 'grandma', emo: '👵', tone: '#7A5A3A', side: 'r', img: null },
-      '두두리': { id: 'dudu', emo: '👹', tone: '#3E6B8A', side: 'r', img: null },
-      '???': { id: 'dudu', emo: '👹', tone: '#26323A', side: 'r', img: null, shadow: true },
-      '민 씨': { id: 'min', emo: '🍵', tone: '#A3442C', side: 'r', img: null }
+      '나': { id: 'me', emo: '🧑', tone: '#8A93A6', side: 'l', def: 'neutral', faces: { neutral: IMG('me', 'neutral'), smile: IMG('me', 'smile'), surprise: IMG('me', 'surprise'), sad: IMG('me', 'sad') },
+        ws: { neutral: IMG('mews', 'neutral'), smile: IMG('mews', 'smile'), surprise: IMG('mews', 'surprise'), proud: IMG('mews', 'proud'), sad: IMG('mews', 'neutral') } },
+      '할머니': { id: 'grandma', emo: '👵', tone: '#7A5A3A', side: 'r', def: 'smile', faces: { smile: IMG('grandma', 'smile'), stubborn: IMG('grandma', 'stubborn'), sick: IMG('grandma', 'sick') } },
+      '두두리': { id: 'dudu', emo: '👹', tone: '#3E6B8A', side: 'r', def: 'laugh', faces: { laugh: IMG('dudu', 'laugh'), sulk: IMG('dudu', 'sulk'), muk: IMG('dudu', 'muk') } },
+      '???': { id: 'dudu', emo: '👹', tone: '#26323A', side: 'r', def: 'laugh', shadow: true, faces: { laugh: IMG('dudu', 'laugh') } },
+      '민 씨': { id: 'min', emo: '🍵', tone: '#6E8A5A', side: 'r', img: null }
     };
+    function artImg(a, face, outfit) { if (!a || !a.faces) { return a && a.img; } var set = (outfit && a[outfit]) || a.faces; return set[face] || set[a.def] || a.faces[a.def]; }
     // 줄 = [말하는 사람('' = 내레이션), 대사, {fx: 'shake' | 'knock' | 'flash'}]
     var SCENES = {
       prologue: { title: '프롤로그 · 빈 공방', steps: [
-        { pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.'], ['', '그게, 마지막으로 들은 말이었다.']] },
-        { pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…'], ['나', '아직도 할머니 온기가 남아 있는 것 같아.']] },
+        { pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
+        { pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
         { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33' },
-        { pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.'], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
+        { pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
       after_min: { title: '마지막 납품', steps: [
-        { pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.'], ['나', '만족하셔서 다행이야.'], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
+        { pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
         { pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
-      dok_intro: { title: '지하실 너머', steps: [
-        { pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?']] },
-        { pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.'], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.'], ['', '커다란 어깨가 축 처진다.']] },
-        { pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.'], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.'], ['나', '그럼… 다음부터 제가 묵을 가져올게요.'], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
+      dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
+        { pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?', { face: 'surprise' }]] },
+        { pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
+        { pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.', { face: 'muk' }], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
         { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 원료 5개로 재료 1~3개를 만들어요', bg: '#3A3022' }
       ] },
-      ep1_end: { title: '에피소드 1 · 새 간판', steps: [
-        { pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.']] },
+      ep1_end: { title: '에피소드 1 · 새 간판', outfit: 'ws', steps: [
+        { pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
         { input: 'wsName', q: '공방 이름을 지어 주세요', ph: '공방 이름 (최대 10자)', defFn: function () { return PN() + '네 공방'; }, bg: '#2A2A44' },
         { pic: '🪧', cap: '새로 걸린 간판', bg: '#4A3422', amb: 'sparkle', lines: [['', '새 간판이 걸렸다. 「{공방}」', { fx: 'flash' }], ['', '강 할매네 공방은, 이제 {이름}의 공방이 되었다.'], ['', '— 에피소드 1 「강 할매네 공방」 끝 —']] }
       ] }
@@ -1582,7 +1591,7 @@
       // 흉상 · 대사 상자 위에 붙여서 누가 말하는지 바로 보이게
       '.st-bust{position:absolute;bottom:176px;width:150px;height:178px;border-radius:70px 70px 14px 14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.45);border:3px solid rgba(255,244,222,.85);transition:opacity .2s}' +
       '.st-bust.l{left:18px}.st-bust.r{right:18px}.st-bust.in{animation:stBustIn .32s both}.st-bust.talk{animation:stTalk .3s}' +
-      '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover}' +
+      '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b,.st-bust.shadow img{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover;object-position:50% 0}' +
       '.st-bust u{position:absolute;left:0;right:0;top:6px;text-decoration:none;text-align:center;font-size:10px;color:rgba(255,244,222,.7)}' +
       '.st-dlg{position:absolute;left:14px;right:14px;bottom:24px;min-height:144px;box-sizing:border-box;padding:20px 18px 30px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 20px rgba(0,0,0,.4);color:#2B1A0F}' +
       '.st-dlg.narr{background:rgba(30,20,12,.88);border-color:rgba(255,231,168,.55);box-shadow:0 8px 20px rgba(0,0,0,.4);color:#FFF4DE}' +
@@ -1632,6 +1641,7 @@
     // 컷신 재생 · opt.replay 면 이름 입력은 건너뛴다
     S.storyPlay = function (id, done, opt) {
       var sc = SCENES[id]; if (!sc) { if (done) { done(); } return; }
+      try { sc.steps.forEach(function (st) { (st.lines || []).forEach(function (ln) { var src = artImg(ART[ln[0]], ln[2] && ln[2].face, sc.outfit); if (src) { new Image().src = src; } }); }); } catch (e) {}
       opt = opt || {};
       var ov = document.createElement('div'); ov.className = 'st-ov tut-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', sc.title);
       var box = document.createElement('div'); box.className = 'st-box'; ov.appendChild(box);
@@ -1658,19 +1668,23 @@
         bust = null; lastWho = null;
         dlg = document.createElement('div'); dlg.className = 'st-dlg'; box.appendChild(dlg);
       }
-      function setBust(who) {
+      function setBust(who, face) {
         var a = who ? ART[who] : null;
         if (!a) { if (bust) { bust.remove(); bust = null; } lastWho = who; return; }
-        if (bust && lastWho === who) { bust.classList.remove('talk'); void bust.offsetWidth; bust.classList.add('talk'); return; }
+        var src = artImg(a, face, sc.outfit);
+        if (bust && lastWho === who) {
+          var im0 = bust.querySelector('img'); if (im0 && src && im0.getAttribute('src') !== src) { im0.setAttribute('src', src); }
+          bust.classList.remove('talk'); void bust.offsetWidth; bust.classList.add('talk'); return;
+        }
         if (bust) { bust.remove(); }
-        bust = document.createElement('div'); bust.className = 'st-bust in ' + a.side + (a.shadow ? ' shadow' : '');
+        bust = document.createElement('div'); bust.className = 'st-bust in ' + a.side + (a.shadow ? ' shadow' : '') + (src ? ' art' : '');
         bust.style.background = 'linear-gradient(180deg,' + a.tone + ',#1E140C)';
-        bust.innerHTML = a.img ? '<img alt="" src="' + a.img + '">' : '<u>그림 자리</u><b aria-hidden="true">' + a.emo + '</b>';
+        bust.innerHTML = src ? '<img alt="" src="' + src + '">' : '<u>그림 자리</u><b aria-hidden="true">' + a.emo + '</b>';
         box.insertBefore(bust, dlg); lastWho = who;
       }
       function line() {
         var st = steps[si], ln = st.lines[li] || ['', ''], who = ln[0], a = ART[who], text = tx(ln[1]);
-        setBust(who);
+        setBust(who, ln[2] && ln[2].face);
         dlg.className = 'st-dlg' + (who ? '' : ' narr');
         var side = a ? a.side : 'l';
         dlg.innerHTML = (who ? '<span class="st-who ' + side + '">' + tx(who === '나' ? PN() : who) + '</span>' : '') + '<div class="st-txt" aria-live="polite"></div><span class="st-next" style="visibility:hidden">눌러서 계속 ▼</span>';

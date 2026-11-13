@@ -288,6 +288,7 @@ class Component extends DCLogic {
     var QL = this.qlib(), act = QL.active(g), AL = QL.alloc(g, act), MS = QL.mainState(g);
     var PIMG = { CHAR_WALK_A: '_blob/5c9039297f4140af280ddc5d8c29f1d8.webp', CHAR_WALK_B: '_blob/56842aecbfbf36e871d3a88553c994b7.webp', CHAR_WALK_C: '_blob/508d74e08961f6ee6d2842676a07a0ff.webp', CHAR_WALK_D: '_blob/ed271278d8689ec7ad4a625c7a394620.webp', CHAR_WALK_E: '_blob/e70f6b87f40eebdb5ea5904560008b54.webp', CHAR_WALK_F: '_blob/dff17864488675fa3c1e0591dfe63c72.webp', CHAR_GUEST: '_blob/0a3fb7853f4ae205b33b343c6c1318fb.webp', CHAR_CURATOR: '_blob/23b7b044f48072ca55bab6b54deb1b60.webp', CHAR_MIN: '_blob/f5ff87ba961b89436c380e77c10e73d0.webp', CHAR_CAFE: '_blob/fc84dd5964faa20720f7847eb79ff2bd.webp' };
     defs.forEach(function (d) { if (d.pimg) { PIMG[d.portrait] = d.pimg; } });
+    var CI = (window.PotteryShared || {}).CHARIMG || {}; for (var ck in CI) { PIMG[ck] = CI[ck].face; }
     var trackIds = QL.tracked(g, act);
     var LIMQ = { min: Lm.min, guest: Lm.guest, week: Lm.week };
     var active = act;
