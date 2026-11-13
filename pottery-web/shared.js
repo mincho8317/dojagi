@@ -239,7 +239,7 @@
       cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CURATOR', tone: '#4E7D74', call: '강 선생님' },
       jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_WALK_F', tone: '#7A5A93', call: '강 여사님' },
       festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_WALK_B', tone: '#C2577A', call: '강 선생님' },
-      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410', call: '강 여사' },
+      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_WALK_A', tone: '#8A6410', call: '명옥이' },
       dudu: { name: '두두리', role: '지하실 너머 문지기 도깨비', res: 'CHAR_DUDU', tone: '#3E6B8A', call: '묵 할멈', dok: true },
       bulmok: { name: '불목이', role: '외눈 대장장이 도깨비', res: 'CHAR_BULMOK', tone: '#8A3D10', call: '강 선생', dok: true },
       kids: { name: '방울이와 도롱이', role: '꼬마 도깨비 남매', res: 'CHAR_KIDS', tone: '#6B8E3A', call: '강 할머니', dok: true }
@@ -252,7 +252,7 @@
         { ch: 'vase', npc: 'jeong', title: '정윤의 화실', town: 'harbor' },
         { ch: 'jar', npc: 'jang', title: '장 씨네 장독대', town: 'gallery' }
       ] },
-      dok: { n: 1, title: '김 서방, 오랜만이구먼!', chapters: [
+      dok: { n: 1, title: '김 서방, 오랜만이다!', chapters: [
         { ch: 'dok1', npc: 'dudu', title: '두두리의 묵 잔치' },
         { ch: 'dok2', npc: 'bulmok', title: '불목이의 대장간' },
         { ch: 'dok3', npc: 'kids', title: '방울이와 도롱이' }
@@ -273,7 +273,7 @@
         [2, '지금', '무릎이 안 좋아 가게를 접을까 고민 중이에요. 손주가 이어받겠다는데 영 못 미더워요'],
         [4, '마음에 걸린 것', '내가 그만두면 이 국밥 맛이 끊길까 봐요'],
         [2, '취향', '투박한 황토 사발, 흑유'],
-        ['end', '매듭', '손주에게 가게를 맡기기로 했어요. “이어받는다는 게 꼭 똑같이 하는 건 아니더라.”']
+        ['end', '매듭', '손주에게 가게를 맡기기로 했어요. “내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.”']
       ] },
       cha: { name: '차 선생', role: '동네 다도 선생', call: '강 선생님', rows: [
         [0, '기본', '50대 · 다도 선생 · 단정하고 조심스러워요'],
@@ -285,19 +285,19 @@
       ] },
       jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', call: '강 여사님', rows: [
         [0, '기본', '30대 · 꽃집 겸 화실 · 밝지만 조금 지쳐 있어요'],
-        [1, '과거', '도시에서 디자이너로 일하다 번아웃이 와서 고향에 내려왔어요. 강 여사님이 공방 한쪽에서 그림을 그리게 해 줬어요'],
+        [1, '과거', '서울에서 게임 회사 원화가로 일하다 번아웃이 와서 고향에 내려왔어요. 강 여사님이 공방 한쪽에서 그림을 그리게 해 줬어요'],
         [2, '지금', '1년째 그림을 못 그리고 있어요'],
         [4, '마음에 걸린 것', '다시 그려도 될까, 또 무너지면 어쩌지'],
         [2, '취향', '백자, 매병, 매화 문양'],
         ['end', '매듭', '동네 작은 전시에서 {이름} 님의 매병 옆에 새 그림을 걸었어요. 둘 다 다시 시작했어요']
       ] },
-      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', call: '강 여사', rows: [
+      jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', call: '명옥이', rows: [
         [0, '기본', '80대 · 장 담그는 이웃 · 말수가 적어요'],
-        [1, '과거', '강 여사와 어릴 적 같은 동네에서 자랐어요. 장독은 늘 이 공방 가마에서 구웠어요'],
-        [2, '지금', '혼자 장을 담가 동네에 나눠 줘요'],
+        [1, '과거', '명옥이(강 할매)와 어릴 적 같은 동네에서 자랐어요. 장독은 늘 이 공방 가마에서 구웠어요'],
+        [2, '지금', '명옥이가 해마다 하던 장 나눔을 올해부터 이어서 해요'],
         [4, '마음에 걸린 것', '끝내 하지 못한 말이 있어요'],
         [2, '취향', '흑토, 큰 독, 흑유'],
-        ['end', '매듭', '보름달 항아리에 장을 담가 강 여사 기일에 동네에 나눴어요. 처음으로 {이름}의 이름을 불렀어요']
+        ['end', '매듭', '명옥이가 빚고 싶어 하던 보름달 항아리를 받았어요. 끝까지 “명옥이 손녀”라고만 부르다, 처음으로 {이름}의 이름을 불렀어요']
       ] },
       dudu: { name: '두두리', role: '문지기 도깨비', call: '묵 할멈', dok: true, rows: [
         [0, '기본', '덩치 큰 문지기 도깨비 · 호쾌한 먹보 · 목소리가 크고 허풍이 심해요'],
@@ -326,47 +326,47 @@
     };
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있수?', intro: ['강 할매 있수? 공방 문이 열렸길래 반가워서….', '…그랬구먼. 그 양반이.', '(한참 말이 없다가) 그래도 국밥집 그릇은 깨지더라. 종지랑 사발 좀 부탁해도 되겄나?'], done: ['…손맛이 강 할매 그릇이랑 닮았네.', '자네가 그 집 손녀지? 또 올게.'] },
-      { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['우리 집 단골들은 그릇 바뀐 걸 귀신같이 알아.', '강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이네.', '단골상에 올릴 걸로 넉넉히 부탁해. 종지는 두 개!'], done: ['상이 환해졌어. 강 할매가 봤으면 웃었을 거야.'] },
-      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 손님이 배로 와.', '강 할매는 명절마다 그릇을 하나씩 덤으로 얹어 줬지. 깨질 걸 다 안다는 듯이.', '큰 그릇이 더 있어야겠어.'], done: ['이걸로 대목은 걱정 없겠어. 덤은 없나? 농담이야, 농담.'] },
-      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 새 메뉴를 만들자네. 나는 무릎도 시원찮고….', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는데.', '손주가 그러더라. 새 메뉴니까 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐구먼.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
-      { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 내가 그만둬도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠나?'], done: ['…그래. 이 접시야. 고마워, 정말.', '이어받는다는 게 꼭 똑같이 하는 건 아니더라. 자네도 그래.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?'], done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
+      { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['우리 집 단골들은 그릇 바뀐 걸 귀신같이 알아.', '강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '단골상에 올릴 걸로 넉넉히 부탁해. 종지는 두 개!'], done: ['상이 환해졌어.', '…자네 어릴 적엔 할매 속 꽤나 썩였지. 그래도 할매는 한 번을 안 다그치더라.'] },
+      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 서울 사는 손주 녀석이 내려와.', '손님도 배로 오고. 잔칫상엔 자잘한 그릇이 많이 들어.', '작은 걸로 한 벌 부탁해.'], done: ['이걸로 대목은 걱정 없겠어. 손주 녀석이 그릇 예쁘다고 난리여.'] },
+      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
+      { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 나 없어도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠어?'], done: ['…그려. 이 접시여. 고마워, 정말.', '손주 녀석 국밥, 내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.'] },
       // ── 2챕터 · 차 선생의 찻자리 ──
       { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], title: '강 선생님의 제자', intro: ['윤 할매께 소식 들었습니다. …강 선생님께 흙을 배웠던 사람입니다.', '저는 결국 그릇 대신 차를 택했지요.', '다도 수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 선생님 잔을 처음 쥐었을 때가 떠오릅니다.'] },
       { id: 'm07', npc: 'cha', ch: 'tea', st: ['c4', 'c5', 'c6'], n: { c4: 2 }, minGrade: '수작', title: '수업 견본 잔', intro: ['학생이 줄고 있습니다. 좋은 잔을 보여 주면 마음이 동하지 않을까 해서요.', '견본으로 쓸 잔이니, 수작 이상으로 부탁드립니다.'], done: ['잔이 가지런하니 찻자리가 정갈해졌습니다. 학생 한 명이 다시 오겠다고 하더군요.'] },
-      { id: 'm08', npc: 'cha', ch: 'tea', st: ['c7', 'c8', 'c9'], title: '계절의 찻잔', intro: ['계절마다 잔을 바꾸는 건 강 선생님께 배운 고집이지요.', '이번 계절에 어울리는 잔을 부탁합니다.'], done: ['계절이 잔 안에 들어온 것 같습니다.'] },
-      { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병문안을 끝내 못 갔습니다. 약해진 모습을 볼 자신이 없었어요.', '{이름} 님은 1년을 곁에 있었다지요. …부럽고, 부끄럽습니다.', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
-      { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], unlockNote: '다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다. 이 다완으로 선생님께 첫 차를 올리겠습니다.', '늦었지만, 이제야 인사를 드리는 것 같습니다.'] },
+      { id: 'm08', npc: 'cha', ch: 'tea', st: ['c7', 'c8', 'c9'], title: '계절의 찻잔', intro: ['다시 온다던 그 학생 말입니다. 고등학생인데, 차 맛을 안다고 우기더군요.', '이번 계절에 어울리는 잔으로, 그 아이 몫까지 부탁합니다.'], done: ['그 아이가 잔을 들고 한참 웃더군요. 계절이 잔 안에 들어온 것 같다고.', '…제가 하려던 말을 빼앗겼습니다.'] },
+      { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병원 앞까지 갔다가 돌아왔습니다. 세 번이나요.', '약해진 모습을 볼 자신이 없었습니다. {이름} 님은 1년을 곁에 있었다지요.', '나: (…나도, 할머니한테 끝내 못 한 말이 있는데.)', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
+      { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], unlockNote: '다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다.', '다회 날, 첫 잔은 선생님 자리에 두겠습니다.'] },
       // ── 3챕터 · 정윤의 화실 ──
-      { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '…아. 그랬구나. 몰랐어요, 정말.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병이요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
-      { id: 'm12', npc: 'jeong', ch: 'vase', st: ['v4', 'v5', 'v6'], title: '빈 캔버스', intro: ['서울에서 디자이너로 일했어요. 어느 날 펜을 못 잡겠더라고요.', '여기 내려와서도 1년째 빈 캔버스만 보고 있어요.', '…그림 대신 병이라도 놓아 보려고요. 화실에 둘 병을 부탁해요.'], done: ['병을 놓으니 빈 캔버스가 덜 무서워요. 이상하죠?'] },
+      { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '(사정을 들은 정윤이, 들고 온 꽃다발을 말없이 작업대에 내려놓는다)', '…늦었네요, 제가.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병 하나랑, 가게에 둘 것도 몇 개요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
+      { id: 'm12', npc: 'jeong', ch: 'vase', st: ['v4', 'v5', 'v6'], title: '빈 캔버스', intro: ['(휴대폰 속 빈 캔버스 사진을 보여 주며) 이거, 1년째 이래요.', '서울에서 게임 회사 원화가였어요. 마감 끝나면 다음 마감이 와 있고… 어느 날 펜을 못 잡겠더라고요.', '…어? {이름} 님도 게임 회사였어요? 기획자요? 아, 그럼 다 아시겠네. 업데이트 전날 밤.', '(둘이 동시에 한숨을 쉬고, 정윤이 처음으로 크게 웃는다)', '그림 대신 병이라도 놓아 보려고요. 화실에 둘 병을 부탁해요.'], done: ['병을 놓으니 빈 캔버스가 덜 무서워요.', '다음엔 {이름} 님이 제 얼굴 좀 봐 주세요. 마감 전 표정인지 아닌지.'] },
       { id: 'm13', npc: 'jeong', ch: 'vase', st: [], type: 'gather', mats: { cr1: 5 }, rw: { gold: 900, shards: 20 }, title: '흙으로 만든 물감', intro: ['여사님이 알려 주셨어요. 적토를 곱게 갈면 물감이 된대요.', '적토 다섯 덩이만 나눠 주실 수 있을까요? 그걸로 다시 그려 볼래요.'], done: ['손이 떨리는데… 붓을 잡았어요. 고마워요.'] },
       { id: 'm14', npc: 'jeong', ch: 'vase', st: ['v10', 'v11', 'v12'], title: '봄 화단의 병', intro: ['그림 한 장을 끝냈어요! 가게 앞 화단 그림이에요.', '그림 속 화단에 진짜 병을 놓고 싶어요.'], done: ['지나가는 사람들이 그림이랑 병을 같이 찍어 가요.'] },
-      { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '매병', title: '그림 속 매병', intro: ['동네 작은 전시에 나가기로 했어요. 무섭지만요.', '여사님 공방 그림 옆에, {이름} 님 매병을 같이 놓고 싶어요.'], done: ['그림보다 매병이 더 예쁘다고들 해요. 질투 나네요!', '우리 둘 다, 다시 시작한 거죠?'] },
+      { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '매병', title: '그림 속 매병', intro: ['동네 작은 전시에 나가기로 했어요. 무섭지만요.', '여사님 공방 그림 옆에, {이름} 님 매병을 같이 놓고 싶어요.'], done: ['그림보다 매병이 더 예쁘다고들 해요. 질투 나네요!', '다음 전시도 같이 나가요. 이번엔 제가 먼저 신청할게요.'] },
       // ── 4챕터 · 장 씨네 장독대 ──
-      { id: 'm16', npc: 'jang', ch: 'jar', st: ['j1', 'j2', 'j3'], title: '장독대가 비었구먼', intro: ['…강 여사네 손녀인가.', '장독대 항아리가 몇 개 깨졌네. 장 담글 철이 오는데 말이야.'], done: ['튼튼하구먼. 강 여사 독처럼.'] },
-      { id: 'm17', npc: 'jang', ch: 'jar', st: [], type: 'visit', rw: { gold: 1000, shards: 30, mats: { ck1: 5 } }, title: '어릴 적 이야기', intro: ['강 여사랑 나는 저 냇가 건너 같은 동네에서 났네.', '그 사람은 어릴 때부터 흙장난을 좋아했지. 손이 늘 시커멨어.', '내 장독은 다 이 공방 가마에서 구웠어. 오십 년을.', '(흑토 꾸러미를 내민다) 장독 빚을 흙이네. 강 여사한테 주려던 거야.'], done: ['…말이 길었구먼. 늙은이 수다였네.'] },
-      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '큰 독을 들여요', intro: ['올해는 장을 넉넉히 담그려 하네. 큰 독이 필요해.'], done: ['이만하면 동네 사람들 장도 나눠 줄 수 있겠어.'] },
-      { id: 'm19', npc: 'jang', ch: 'jar', st: ['j10', 'j11', 'j12'], title: '동네 장 나눔', intro: ['강 여사 기일에 동네에 장을 나누려 하네. 그 사람이 하던 일이야.', '담아 줄 항아리가 더 있어야겠어.'], done: ['다들 고맙다고 인사하러 오더군. 강 여사 얘기를 한참 했지.'] },
-      { id: 'm20', npc: 'jang', ch: 'jar', st: ['j13', 'j14', 'j15'], unlockNote: '달항아리', title: '보름달 항아리', intro: ['강 여사가 늘 그랬지. 언젠가 보름달 같은 항아리를 빚겠다고.', '…그 말, 나한테 처음 한 말이었네. 열일곱 살 때.', '자네가 대신 빚어 주겠나?'], done: ['…보름달이구먼.', '고맙네, {이름}.', '이제 이 공방은 온전히 자네 거야.'] }
+      { id: 'm16', npc: 'jang', ch: 'jar', st: ['j1', 'j2', 'j3'], title: '장독대가 비었구먼', intro: ['…명옥이 손녀로구먼.', '장독대 항아리가 몇 개 깨졌네. 장 담글 철이 오는데 말이야.'], done: ['튼튼하구먼. 명옥이 독처럼.'] },
+      { id: 'm17', npc: 'jang', ch: 'jar', st: [], type: 'visit', rw: { gold: 1000, shards: 30, mats: { ck1: 5 } }, title: '어릴 적 이야기', intro: ['명옥이랑 나는 저 냇가 건너 같은 동네에서 났네.', '그 사람은 어릴 때부터 흙장난을 좋아했지. 손이 늘 시커멨어.', '내 장독은 다 이 공방 가마에서 구웠어. 오십 년을.', '아들 보내고 나서는… 손녀 하나 보고 살았지.', '(흑토 꾸러미를 내민다) 장독 빚을 흙이네. 명옥이한테 주려던 거야.'], done: ['…말이 길었구먼. 늙은이 수다였네.'] },
+      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '작은 독 여럿', intro: ['올해는 골목 집집마다 장을 조금씩 담가 주려 하네.', '작은 독이 여럿 필요해.'], done: ['이만하면 집집마다 하나씩 돌아가겠구먼.'] },
+      { id: 'm19', npc: 'jang', ch: 'jar', st: ['j10', 'j11', 'j12'], title: '동네 장 나눔', intro: ['명옥이가 해마다 하던 장 나눔을, 올해는 내가 하려네.', '담아 줄 항아리가 더 있어야겠어.'], done: ['다들 고맙다고 인사하러 오더군. 명옥이 얘기를 한참 했지.'] },
+      { id: 'm20', npc: 'jang', ch: 'jar', st: ['j13', 'j14', 'j15'], unlockNote: '달항아리', title: '보름달 항아리', intro: ['명옥이가 늘 그랬지. 언젠가 보름달 같은 항아리를 빚겠다고.', '…그 말, 나한테 처음 한 말이었네. 열일곱 살 때.', '자네가 대신 빚어 주겠나?'], done: ['…보름달이구먼.', '고맙네, {이름}.'] }
     ];
     // ── 도깨비 이야기 · 에피소드 1 (지하실 너머) ──
     var DSTORY = [
-      { id: 'd01', npc: 'dudu', ch: 'dok1', st: ['da1', 'da2'], title: '묵 그릇이 없어!', intro: ['김 서방! 묵 가져왔나? …어, 그릇이 없네!', '묵 할멈이 준 묵그릇이 지난겨울에 와장창 깨졌거든.', '큼직한 걸로 빚어 줘! 묵이 춤을 출 만큼!'], done: ['이거지! 묵이 그릇에서 덩실덩실!'] },
-      { id: 'd02', npc: 'dudu', ch: 'dok1', st: ['da3'], title: '방망이 받침', intro: ['도깨비 체면이 있지, 방망이를 맨바닥에 둘 순 없잖아!', '묵 할멈은 늘 납작한 그릇에 올려 줬어.'], done: ['크하하! 이제 마을에서 내 방망이가 제일 멋지다!'] },
+      { id: 'd01', npc: 'dudu', ch: 'dok1', st: ['da1', 'da2'], title: '묵 그릇이 없어!', intro: ['김 서방! 묵 가져왔나? …어, 그릇이 없네!', '묵 할멈이 준 묵그릇이 지난겨울에 와장창 깨졌거든.', '묵 담을 대접이랑 양념장 종지! 묵이 춤을 출 만큼 멋지게!'], done: ['이거지! 묵이 그릇에서 덩실덩실!'] },
+      { id: 'd02', npc: 'dudu', ch: 'dok1', st: ['da3'], title: '방망이 받침', intro: ['도깨비 체면이 있지, 방망이를 맨바닥에 둘 순 없잖아!', '묵 할멈은 늘 우묵한 사발에 꽂아 줬어.'], done: ['크하하! 이제 마을에서 내 방망이가 제일 멋지다!'] },
       { id: 'd03', npc: 'dudu', ch: 'dok1', st: [], type: 'visit', rw: { gold: 500, shards: 20, mats: { ry: 6, ow: 4 } }, title: '묵 할멈이 처음 온 날', intro: ['묵 할멈이 처음 여기 왔을 때 말이야, 길을 잃고 울고 있었어. 열 살쯤이었나.', '내가 겁주려고 크게 웃었는데, 그 꼬마가 품에서 메밀묵을 꺼내 주더라고.', '그날부터 친구야. 오십 년도 넘게.', '(두두리가 흙 원료와 원석을 한 아름 안겨 준다) 이건 그냥 줄게. 친구 손녀니까!'], done: ['크흠… 눈에 먼지가 들어갔네.'] },
       { id: 'd04', npc: 'dudu', ch: 'dok1', st: ['da4', 'da5'], title: '이웃 도깨비 잔치', intro: ['김 서방이 묵 가져온다고 소문이 났어! 이웃들이 잔치하재.', '잔치 그릇 두 개만 더!'], done: ['잔치 대성공! 다들 김 서방 이름을 외웠어. 김 서방이라고.'] },
       { id: 'd05', npc: 'dudu', ch: 'dok1', st: ['da6', 'da7'], title: '두두리의 큰 잔', intro: ['사실 걱정했어. 묵 할멈이 안 오면 지하실 문이 영영 닫힐까 봐.', '근데 김 서방이 왔잖아! 우리 우정의 잔을 빚자고!'], done: ['김 서방이 묵만 잘 가져오면 문은 안 닫혀!', '참, 대장간 불목이가 김 서방을 보고 싶대. 무뚝뚝해도 착한 놈이야.'] },
-      { id: 'd06', npc: 'bulmok', ch: 'dok2', st: ['db1', 'db2'], title: '말 없는 대장장이', intro: ['……강 선생 손녀냐.', '물항아리. 화로 옆에 둘 거.', '……(끝)'], done: ['……쓸 만하다.'] },
-      { id: 'd07', npc: 'bulmok', ch: 'dok2', st: ['db3', 'db4'], minGrade: '수작', title: '쇠 식힐 대야', intro: ['달군 쇠를 식힐 대야다. 금 가면 다친다.', '수작 이상으로.'], done: ['……좋다. 강 선생 것만큼.'] },
+      { id: 'd06', npc: 'bulmok', ch: 'dok2', st: ['db1', 'db2'], title: '말 없는 대장장이', intro: ['……강 선생 손녀냐.', '물항아리. 화로 옆에 둘 거. 대접도.', '(그게 다였다)'], done: ['……쓸 만하다.'] },
+      { id: 'd07', npc: 'bulmok', ch: 'dok2', st: ['db3', 'db4'], minGrade: '수작', title: '쇠 식힐 항아리', intro: ['달군 쇠 식힐 물항아리다. 금 가면 다친다.', '……쉴 때 쓸 잔도. 수작 이상으로.'], done: ['……좋다. 강 선생 것만큼.'] },
       { id: 'd08', npc: 'bulmok', ch: 'dok2', st: [], type: 'gather', mats: { gb1: 4 }, rw: { gold: 900, shards: 25 }, title: '화로 벽 고치기', intro: ['화로 벽이 갈라졌다. 철광 섞은 흙으로 바른다.', '철광 원료 네 개. 강 선생도 그렇게 했다.'], done: ['……불이 다시 산다.'] },
       { id: 'd09', npc: 'bulmok', ch: 'dok2', st: [], type: 'visit', rw: { gold: 700, shards: 25, mats: { oj: 3 } }, title: '꺼져 가던 화로', intro: ['……예전에, 이 화로가 꺼져 가던 해가 있었다.', '마을 방망이를 아무도 못 고쳤지. 강 선생이 와서 사흘 밤을 흙을 쌓았다.', '고맙다는 말을, 못 했다.', '(불목이가 붉은 원석을 내민다) ……진사다. 받아라.'], done: ['……너한테 하는 거 아니다. 강 선생한테 하는 거다.'] },
-      { id: 'd10', npc: 'bulmok', ch: 'dok2', st: ['db5', 'db6'], title: '불목이의 찻잔', intro: ['……찻잔. 두 개.', '하나는 내 거, 하나는…… 강 선생 자리.'], done: ['……불 다루는 건 강 선생한테 배웠다. 너도 배워라.', '꼬마들이 너 찾더라. 시끄러운 놈들이다.'] },
+      { id: 'd10', npc: 'bulmok', ch: 'dok2', st: ['db5', 'db6'], title: '불목이의 찻잔', intro: ['……찻잔 하나. 대접 하나.', '찻잔은 내 거. 대접은…… 강 선생 자리. 그 사람은 차보다 국을 좋아했다.'], done: ['……불 다루는 건 강 선생한테 배웠다. 너도 배워라.', '꼬마들이 너 찾더라. 시끄러운 놈들이다.'] },
       { id: 'd11', npc: 'kids', ch: 'dok3', st: ['dc1', 'dc2'], title: '소꿉놀이 그릇', intro: ['방울이: 김 서방이다! 진짜 사람이다!', '도롱이: 소꿉놀이 그릇 만들어 줘! 강 할머니처럼!'], done: ['방울이: 우와, 강 할머니 그릇이랑 똑같아!', '도롱이: 아니야, 이게 더 커!'] },
       { id: 'd12', npc: 'kids', ch: 'dok3', st: ['dc3'], choose: { key: 'dc3', any: ['white', 'celadon'] }, title: '누구 그릇이 더 예뻐?', intro: ['방울이: 나는 하얀 게 좋아!', '도롱이: 나는 파르스름한 게 좋아!', '둘이 동시에: 김 서방이 골라 줘!'], done: ['(두 꼬마가 한참 다투다 웃는다)'], doneBy: { white: ['방울이: 거봐, 하얀 게 이겼지!', '도롱이: 흥, 다음엔 내 거야!'], celadon: ['도롱이: 거봐, 파란 게 이겼지!', '방울이: 흥, 다음엔 내 거야!'] } },
-      { id: 'd13', npc: 'kids', ch: 'dok3', st: ['dc4', 'dc5'], title: '숨바꼭질 단지', intro: ['도롱이: 숨바꼭질할 때 보물 숨길 단지가 필요해!', '방울이: 강 할머니는 맨날 사탕 넣어 줬는데….'], done: ['도롱이: 보물 넣었다! 안 알려 줄 거야!'] },
+      { id: 'd13', npc: 'kids', ch: 'dok3', st: ['dc4', 'dc5'], title: '보물 그릇', intro: ['도롱이: 숨바꼭질할 때 보물 숨길 그릇이 필요해!', '방울이: 강 할머니는 맨날 사탕 넣어 줬는데….'], done: ['도롱이: 보물 넣었다! 안 알려 줄 거야!'] },
       { id: 'd14', npc: 'kids', ch: 'dok3', st: [], type: 'visit', rw: { gold: 600, shards: 30, mats: { rw: 5 } }, title: '강 할머니는 언제 와?', intro: ['방울이: 김 서방, 강 할머니는 언제 와?', '(뭐라고 말해야 할지 몰라 한참 망설인다)', '도롱이: …어른들이 그러는데, 이제 안 온대.', '방울이: 그래도 김 서방이 오니까 괜찮아. 이거, 강 할머니랑 캐던 하얀 흙이야.'], done: ['방울이: 또 놀러 와야 해. 약속!'] },
-      { id: 'd15', npc: 'kids', ch: 'dok3', st: ['dc6', 'dc7'], title: '마을 한가운데 큰 독', intro: ['도롱이: 쉿, 비밀인데… 마을 한가운데 큰 독 있잖아.', '방울이: 금이 갔대. 어른들이 쉬쉬해.', '도롱이: 그릇 두 개만 만들어 줘. 그 앞에 물 떠 놓고 빌 거야.'], done: ['방울이: 할미가 그러는데, 큰 독은 강 할머니만 고칠 수 있대.', '도롱이: 김 서방도 강 할머니 손녀니까… 고칠 수 있지?', '(도깨비 이야기는 다음 에피소드로 이어져요)'] }
+      { id: 'd15', npc: 'kids', ch: 'dok3', st: ['dc6', 'dc7'], title: '마을 한가운데 큰 독', intro: ['도롱이: 쉿, 비밀인데… 마을 한가운데 큰 독 있잖아.', '방울이: 금이 갔대. 어른들이 쉬쉬해.', '도롱이: 그릇 두 개만 만들어 줘. 그 앞에 물 떠 놓고 빌 거야.'], done: ['방울이: 할미가 그러는데, 큰 독은 강 할머니만 고칠 수 있대.', '도롱이: 김 서방도 강 할머니 손녀니까… 고칠 수 있지?'] }
     ];
     var CHLV = { table: 1, tea: 1, vase: 3, jar: 4, dok1: 1, dok2: 2, dok3: 3 };
     var GP = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' };
@@ -1516,7 +1516,7 @@
     }
   })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
-  // 컷신 그림 자리는 지금은 큰 이모지 + 설명(일러스트가 생기면 교체)
+  // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다
   (function () {
     if (typeof window === 'undefined' || typeof document === 'undefined') { return; }
     var KEY = 'pottery-proto-v1';
@@ -1525,45 +1525,109 @@
     function patch(p) { var g = load(); for (var k in p) { g[k] = p[k]; } save(g); return g; }
     function PN() { return load().pname || '손녀'; }
     function tx(t) { var g = load(); return String(t).split('{이름}').join(g.pname || '손녀').split('{공방}').join(g.wsName || '강 할매네 공방'); }
+    // 말하는 사람 흉상 · img 가 생기면 그림으로 바뀐다 (side: 대사 상자 왼쪽/오른쪽)
+    var ART = {
+      '나': { id: 'me', emo: '🧑', tone: '#B87A4B', side: 'l', img: null },
+      '할머니': { id: 'grandma', emo: '👵', tone: '#7A5A3A', side: 'r', img: null },
+      '두두리': { id: 'dudu', emo: '👹', tone: '#3E6B8A', side: 'r', img: null },
+      '???': { id: 'dudu', emo: '👹', tone: '#26323A', side: 'r', img: null, shadow: true },
+      '민 씨': { id: 'min', emo: '🍵', tone: '#A3442C', side: 'r', img: null }
+    };
+    // 줄 = [말하는 사람('' = 내레이션), 대사, {fx: 'shake' | 'knock' | 'flash'}]
     var SCENES = {
       prologue: { title: '프롤로그 · 빈 공방', steps: [
-        { pic: '🏚️', cap: '골목 끝, 할머니의 공방', bg: '#2B2A33', lines: [['', '할머니가 쓰러지신 지 1년.'], ['', '곁을 지켰지만, 결국 보내 드렸다.'], ['', '남은 건 골목 끝 작은 공방 하나.'], ['나', '…정리만 하고 가자. 오래 걸리진 않을 거야.']] },
-        { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤' },
-        { pic: '🗝️', cap: '먼지 쌓인 공방 문', bg: '#3A2A1E', lines: [['나', '{이름}. 강 할매네 손녀.'], ['', '문을 열자 오래된 흙 냄새가 났다.'], ['', '그때, 누군가 문을 두드렸다.']] }
+        { pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.'], ['', '그게, 마지막으로 들은 말이었다.']] },
+        { pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…'], ['나', '아직도 할머니 온기가 남아 있는 것 같아.']] },
+        { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33' },
+        { pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.'], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
       after_min: { title: '마지막 납품', steps: [
-        { pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#33402E', lines: [['', '민 씨는 잔을 품에 안고 한참 웃다 돌아갔다.'], ['나', '…이상하다. 꽤 뿌듯하네.'], ['나', '그래도 정리는 해야지. 딱 이것까지만.'], ['', '그런데 다음 날부터, 손님이 하나둘 찾아오기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
+        { pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.'], ['나', '만족하셔서 다행이야.'], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
+        { pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', steps: [
-        { pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', lines: [['', '흙이 다 떨어졌다. 이제 정말 그만둬야 하나.'], ['', '덜컹—'], ['', '공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?']] },
-        { pic: '👹', cap: '안개 낀 골짜기, 커다란 도깨비', bg: '#20343A', lines: [['???', '크하하! 김 서방, 오랜만이구먼!'], ['나', '기, 김 서방…? 저는 {이름}인데요.'], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구먼.'], ['', '커다란 어깨가 축 처진다.']] },
-        { pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.'], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.'], ['나', '그럼… 다음부터 제가 묵을 가져올게요.'], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!']] },
-        { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 원료 5개로 재료 1~3개를 만들어요' }
+        { pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?']] },
+        { pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.'], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.'], ['', '커다란 어깨가 축 처진다.']] },
+        { pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.'], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.'], ['나', '그럼… 다음부터 제가 묵을 가져올게요.'], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
+        { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 원료 5개로 재료 1~3개를 만들어요', bg: '#3A3022' }
       ] },
       ep1_end: { title: '에피소드 1 · 새 간판', steps: [
-        { pic: '🌕', cap: '보름달 항아리', bg: '#2A2A3A', lines: [['', '장 씨 할아버지가 처음으로 내 이름을 불렀다.'], ['', '이제 손님들은 강 할매가 아니라 나를 찾아온다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.']] },
-        { input: 'wsName', q: '공방 이름을 지어 주세요', ph: '공방 이름 (최대 10자)', defFn: function () { return PN() + '네 공방'; } },
-        { pic: '🪧', cap: '새로 걸린 간판', bg: '#3A2A1E', lines: [['', '새 간판이 걸렸다. 「{공방}」'], ['', '강 할매네 공방은, 이제 {이름}의 공방이 되었다.'], ['', '— 에피소드 1 「강 할매네 공방」 끝 —']] }
+        { pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.']] },
+        { input: 'wsName', q: '공방 이름을 지어 주세요', ph: '공방 이름 (최대 10자)', defFn: function () { return PN() + '네 공방'; }, bg: '#2A2A44' },
+        { pic: '🪧', cap: '새로 걸린 간판', bg: '#4A3422', amb: 'sparkle', lines: [['', '새 간판이 걸렸다. 「{공방}」', { fx: 'flash' }], ['', '강 할매네 공방은, 이제 {이름}의 공방이 되었다.'], ['', '— 에피소드 1 「강 할매네 공방」 끝 —']] }
       ] }
     };
     var css = document.createElement('style');
     css.textContent = '.st-ov,.st-ov.tut-ov{position:fixed;inset:0;z-index:10060;background:#120C08;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif}' +
-      '.st-box{position:relative;width:min(390px,100vw);height:min(844px,100vh);display:flex;flex-direction:column;overflow:hidden}' +
-      '.st-pic{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:background .5s}' +
-      '.st-pic b{font-size:96px;line-height:1;font-weight:400;animation:stIn .5s both}.st-pic i{font-style:normal;font-size:13px;color:rgba(255,244,222,.7);padding:3px 12px;border-radius:10px;border:1.5px dashed rgba(255,244,222,.35)}' +
-      '.st-dlg{flex:0 0 auto;margin:0 14px 22px;min-height:150px;box-sizing:border-box;padding:16px 18px 34px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE;position:relative;color:#2B1A0F}' +
-      '.st-who{position:absolute;left:16px;top:-18px;padding:3px 14px;border-radius:12px;background:#5B3A24;color:#FFE7A8;font-size:15px}' +
-      '.st-txt{font-family:"Noto Sans KR",sans-serif;font-size:16px;line-height:1.65;word-break:keep-all;white-space:pre-line}.st-txt.narr{color:#5B3A24;font-style:italic}' +
-      '.st-next{position:absolute;right:16px;bottom:10px;font-size:12px;color:#8A6440;animation:stBlink 1.2s infinite}' +
-      '.st-skip{all:unset;cursor:pointer;position:absolute;right:14px;top:14px;z-index:2;padding:7px 14px;border-radius:14px;background:rgba(255,244,222,.15);border:2px solid rgba(255,244,222,.4);color:#FFF4DE;font-size:13px}' +
-      '.st-ttl{position:absolute;left:16px;top:18px;z-index:2;color:rgba(255,244,222,.75);font-size:13px}' +
+      '.st-box{position:relative;width:min(390px,100vw);height:min(844px,100vh);overflow:hidden;background:#120C08}' +
+      '.st-box.fx-shake{animation:stShake .5s}.st-box.fx-knock{animation:stKnock .6s}' +
+      '.st-scene{position:absolute;inset:0;overflow:hidden;animation:stFade .6s both}' +
+      '.st-cg{position:absolute;inset:-4%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:46%;box-sizing:border-box;gap:16px;animation:stKB 16s ease-in-out infinite alternate}' +
+      '.st-cg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}' +
+      '.st-cg b{font-size:150px;line-height:1;font-weight:400;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));animation:stFloat 4s ease-in-out infinite}' +
+      '.st-cg i{font-style:normal;font-size:13px;color:rgba(255,244,222,.75);padding:3px 12px;border-radius:10px;border:1.5px dashed rgba(255,244,222,.35);background:rgba(18,12,8,.25)}' +
+      '.st-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(18,12,8,0) 45%,rgba(18,12,8,.55) 78%,rgba(18,12,8,.8) 100%)}' +
+      '.st-amb{position:absolute;inset:0;pointer-events:none;overflow:hidden}' +
+      '.st-amb.memory{background:radial-gradient(ellipse at 50% 40%,rgba(0,0,0,0) 40%,rgba(10,6,2,.7) 100%);mix-blend-mode:normal}.st-amb.memory::after{content:"";position:absolute;inset:0;background:rgba(170,130,80,.18);animation:stFlick 3s steps(6) infinite}' +
+      '.st-amb.dark{background:radial-gradient(circle at 50% 30%,rgba(0,0,0,0) 20%,rgba(0,0,0,.7) 80%)}' +
+      '.st-amb.morning{background:linear-gradient(180deg,rgba(255,230,160,.25),rgba(255,230,160,0) 60%)}.st-amb.dusk{background:linear-gradient(180deg,rgba(255,150,80,.22),rgba(255,150,80,0) 60%)}' +
+      '.st-amb.moon{background:radial-gradient(circle at 50% 26%,rgba(255,250,220,.35),rgba(255,250,220,0) 40%)}' +
+      '.st-pt{position:absolute;border-radius:50%;pointer-events:none}' +
+      '.st-pt.dust{width:4px;height:4px;background:rgba(255,236,190,.8);box-shadow:0 0 6px rgba(255,236,190,.9);animation:stDust linear infinite}' +
+      '.st-pt.fog{width:260px;height:120px;background:radial-gradient(ellipse,rgba(220,235,240,.28),rgba(220,235,240,0) 70%);animation:stFog linear infinite}' +
+      '.st-pt.steam{width:46px;height:46px;background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 70%);animation:stSteam ease-out infinite}' +
+      '.st-pt.leaf{width:10px;height:7px;border-radius:7px 0;background:#C9853A;animation:stLeaf linear infinite}' +
+      '.st-pt.spark{width:6px;height:6px;background:#FFE7A8;box-shadow:0 0 10px #FFD66B;animation:stSpark ease-in-out infinite}' +
+      '.st-flash{position:absolute;inset:0;background:#FFF4DE;pointer-events:none;animation:stFlash .5s both}' +
+      // 흉상 · 대사 상자 위에 붙여서 누가 말하는지 바로 보이게
+      '.st-bust{position:absolute;bottom:176px;width:150px;height:178px;border-radius:70px 70px 14px 14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.45);border:3px solid rgba(255,244,222,.85);transition:opacity .2s}' +
+      '.st-bust.l{left:18px}.st-bust.r{right:18px}.st-bust.in{animation:stBustIn .32s both}.st-bust.talk{animation:stTalk .3s}' +
+      '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover}' +
+      '.st-bust u{position:absolute;left:0;right:0;top:6px;text-decoration:none;text-align:center;font-size:10px;color:rgba(255,244,222,.7)}' +
+      '.st-dlg{position:absolute;left:14px;right:14px;bottom:24px;min-height:144px;box-sizing:border-box;padding:20px 18px 30px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 20px rgba(0,0,0,.4);color:#2B1A0F}' +
+      '.st-dlg.narr{background:rgba(30,20,12,.88);border-color:rgba(255,231,168,.55);box-shadow:0 8px 20px rgba(0,0,0,.4);color:#FFF4DE}' +
+      '.st-who{position:absolute;top:-19px;padding:4px 16px;border-radius:12px;background:#5B3A24;color:#FFE7A8;font-size:16px;border:2px solid #FFF4DE}.st-who.l{left:16px}.st-who.r{right:16px}' +
+      '.st-txt{font-family:"Noto Sans KR",sans-serif;font-size:16.5px;line-height:1.7;word-break:keep-all;white-space:pre-line;min-height:56px}.st-dlg.narr .st-txt{font-style:italic;color:#FFF4DE;text-align:center}' +
+      '.st-txt .ch{animation:stCh .18s both}' +
+      '.st-next{position:absolute;right:16px;bottom:9px;font-size:12px;color:#8A6440;animation:stBlink 1.2s infinite}.st-dlg.narr .st-next{color:#FFE7A8}' +
+      '.st-skip{all:unset;cursor:pointer;position:absolute;right:14px;top:14px;z-index:5;padding:8px 14px;border-radius:14px;background:rgba(18,12,8,.45);border:2px solid rgba(255,244,222,.5);color:#FFF4DE;font-size:13px}' +
+      '.st-ttl{position:absolute;left:16px;top:20px;z-index:5;color:rgba(255,244,222,.85);font-size:13px;text-shadow:0 1px 3px rgba(0,0,0,.6)}' +
       '.st-in{width:100%;box-sizing:border-box;margin:12px 0 10px;padding:12px 14px;border-radius:14px;border:3px solid #8A6440;background:#FFFDF5;font-family:"Noto Sans KR",sans-serif;font-size:18px;color:#2B1A0F;outline:none}' +
-      '.st-ok{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;text-align:center;padding:12px 0;border-radius:16px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;font-size:18px}' +
+      '.st-ok{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;text-align:center;padding:12px 0;border-radius:16px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;font-size:18px}' +
       '@keyframes stIn{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}@keyframes stBlink{0%,100%{opacity:.4}50%{opacity:1}}' +
+      '@keyframes stFade{0%{opacity:0}100%{opacity:1}}@keyframes stKB{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.07) translate(-1.5%,-1%)}}' +
+      '@keyframes stFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}' +
+      '@keyframes stCh{0%{opacity:0;transform:translateY(4px)}100%{opacity:1;transform:none}}' +
+      '@keyframes stBustIn{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}@keyframes stTalk{0%,100%{transform:none}40%{transform:translateY(-6px)}}' +
+      '@keyframes stShake{0%,100%{transform:none}15%{transform:translate(-9px,3px)}30%{transform:translate(8px,-4px)}45%{transform:translate(-6px,2px)}60%{transform:translate(5px,-2px)}80%{transform:translate(-2px,1px)}}' +
+      '@keyframes stKnock{0%,100%{transform:none}10%{transform:translateX(-4px)}20%{transform:none}45%{transform:translateX(-4px)}55%{transform:none}}' +
+      '@keyframes stFlash{0%{opacity:.85}100%{opacity:0}}@keyframes stFlick{0%,100%{opacity:.9}50%{opacity:.6}}' +
+      '@keyframes stDust{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translate(30px,-260px);opacity:0}}' +
+      '@keyframes stFog{0%{transform:translateX(-300px)}100%{transform:translateX(520px)}}' +
+      '@keyframes stSteam{0%{transform:translateY(0) scale(.5);opacity:0}25%{opacity:.9}100%{transform:translateY(-170px) scale(2.2);opacity:0}}' +
+      '@keyframes stLeaf{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:1}100%{transform:translate(-160px,700px) rotate(540deg);opacity:.6}}' +
+      '@keyframes stSpark{0%,100%{transform:scale(.3);opacity:0}50%{transform:scale(1.3);opacity:1}}' +
+      '@media (prefers-reduced-motion:reduce){.st-cg,.st-cg b,.st-pt,.st-txt .ch{animation:none!important}}' +
       '.uf-ov,.uf-ov.tut-ov{position:fixed;inset:0;z-index:10055;background:rgba(18,12,8,.72);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif}' +
       '.uf-box{width:min(320px,86vw);box-sizing:border-box;padding:24px 18px 18px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 0 40px rgba(255,214,107,.6);text-align:center;color:#2B1A0F;animation:stIn .45s both}' +
       '.uf-box .ic{font-size:56px;line-height:1}.uf-box h3{margin:8px 0 4px;font-weight:400;font-size:22px}.uf-box .sub{font-size:13px;color:#8A6440}.uf-box p{margin:10px 0 14px;font-family:"Noto Sans KR",sans-serif;font-size:13.5px;line-height:1.6;color:#5B3A24;white-space:pre-line;word-break:keep-all}';
     (document.head || document.documentElement).appendChild(css);
+
+    // 분위기 입자 · 장면마다 다른 움직임
+    function ambient(layer, kind) {
+      var R = Math.random, cfg = { dust: ['dust', 18], fog: ['fog', 5], steam: ['steam', 7], leaves: ['leaf', 7], sparkle: ['spark', 16], moon: ['spark', 8], morning: ['dust', 10] }[kind];
+      if (!cfg) { return; }
+      for (var i = 0; i < cfg[1]; i++) {
+        var p = document.createElement('i'); p.className = 'st-pt ' + cfg[0];
+        var d = cfg[0] === 'fog' ? 14 + R() * 10 : (cfg[0] === 'leaf' ? 7 + R() * 5 : (cfg[0] === 'steam' ? 2.6 + R() * 1.6 : 3 + R() * 5));
+        p.style.animationDuration = d.toFixed(2) + 's'; p.style.animationDelay = (-R() * d).toFixed(2) + 's';
+        if (cfg[0] === 'fog') { p.style.top = (35 + R() * 35).toFixed(0) + '%'; p.style.left = '0'; }
+        else if (cfg[0] === 'steam') { p.style.left = (44 + R() * 10).toFixed(0) + '%'; p.style.top = '30%'; }
+        else if (cfg[0] === 'leaf') { p.style.left = (40 + R() * 70).toFixed(0) + '%'; p.style.top = '-3%'; }
+        else { p.style.left = (R() * 100).toFixed(0) + '%'; p.style.top = (20 + R() * 60).toFixed(0) + '%'; }
+        layer.appendChild(p);
+      }
+    }
 
     // 컷신 재생 · opt.replay 면 이름 입력은 건너뛴다
     S.storyPlay = function (id, done, opt) {
@@ -1572,17 +1636,59 @@
       var ov = document.createElement('div'); ov.className = 'st-ov tut-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', sc.title);
       var box = document.createElement('div'); box.className = 'st-box'; ov.appendChild(box);
       var steps = sc.steps.filter(function (s) { return !(opt.replay && s.input); }), si = 0, li = 0;
-      function finish() { ov.remove(); var g = load(), seen = {}; for (var k in (g.scenes || {})) { seen[k] = 1; } seen[id] = 1; patch({ scenes: seen }); if (done) { done(); } }
+      var dlg = null, bust = null, typing = null, lastWho = null;
+      function finish() { stopType(); ov.remove(); var g = load(), seen = {}; for (var k in (g.scenes || {})) { seen[k] = 1; } seen[id] = 1; patch({ scenes: seen }); if (done) { done(); } }
+      function stopType(full) { if (typing) { clearInterval(typing.t); if (full) { typing.el.innerHTML = ''; typing.el.textContent = typing.s; } typing = null; if (dlg) { var nx = dlg.querySelector('.st-next'); if (nx) { nx.style.visibility = 'visible'; } } } }
+      function fx(kind) {
+        if (kind === 'shake' || kind === 'knock') { box.classList.remove('fx-shake', 'fx-knock'); void box.offsetWidth; box.classList.add('fx-' + kind); try { window.__sfx && window.__sfx(kind === 'shake' ? 'shake' : 'thud'); } catch (e) {} if (kind === 'knock') { setTimeout(function () { try { window.__sfx && window.__sfx('thud'); } catch (e) {} }, 260); } }
+        if (kind === 'flash') { var f = document.createElement('div'); f.className = 'st-flash'; box.appendChild(f); setTimeout(function () { f.remove(); }, 520); try { window.__sfx && window.__sfx('reveal'); } catch (e) {} }
+      }
+      function scene(st) {
+        box.innerHTML = '';
+        var scn = document.createElement('div'); scn.className = 'st-scene'; scn.style.background = 'radial-gradient(circle at 50% 32%,' + (st.bg || '#2B1A0F') + ',#120C08 82%)';
+        var cg = document.createElement('div'); cg.className = 'st-cg';
+        if (st.img) { cg.innerHTML = '<img alt="" src="' + st.img + '">'; }
+        else if (st.pic) { cg.innerHTML = '<b aria-hidden="true">' + st.pic + '</b><i>' + (st.cap || '') + ' · 그림 자리</i>'; }
+        scn.appendChild(cg);
+        var amb = document.createElement('div'); amb.className = 'st-amb ' + (st.amb || ''); ambient(amb, st.amb); scn.appendChild(amb);
+        var sh = document.createElement('div'); sh.className = 'st-shade'; scn.appendChild(sh);
+        box.appendChild(scn);
+        var ttl = document.createElement('div'); ttl.className = 'st-ttl'; ttl.textContent = sc.title; box.appendChild(ttl);
+        if (!st.input) { var sk = document.createElement('button'); sk.type = 'button'; sk.className = 'st-skip'; sk.textContent = '건너뛰기 ▶▶'; sk.addEventListener('click', function (e) { e.stopPropagation(); stopType(); var rest = steps.slice(si).filter(function (s) { return s.input; }); if (rest.length) { si = steps.indexOf(rest[0]); li = 0; render(); } else { finish(); } }); box.appendChild(sk); }
+        bust = null; lastWho = null;
+        dlg = document.createElement('div'); dlg.className = 'st-dlg'; box.appendChild(dlg);
+      }
+      function setBust(who) {
+        var a = who ? ART[who] : null;
+        if (!a) { if (bust) { bust.remove(); bust = null; } lastWho = who; return; }
+        if (bust && lastWho === who) { bust.classList.remove('talk'); void bust.offsetWidth; bust.classList.add('talk'); return; }
+        if (bust) { bust.remove(); }
+        bust = document.createElement('div'); bust.className = 'st-bust in ' + a.side + (a.shadow ? ' shadow' : '');
+        bust.style.background = 'linear-gradient(180deg,' + a.tone + ',#1E140C)';
+        bust.innerHTML = a.img ? '<img alt="" src="' + a.img + '">' : '<u>그림 자리</u><b aria-hidden="true">' + a.emo + '</b>';
+        box.insertBefore(bust, dlg); lastWho = who;
+      }
+      function line() {
+        var st = steps[si], ln = st.lines[li] || ['', ''], who = ln[0], a = ART[who], text = tx(ln[1]);
+        setBust(who);
+        dlg.className = 'st-dlg' + (who ? '' : ' narr');
+        var side = a ? a.side : 'l';
+        dlg.innerHTML = (who ? '<span class="st-who ' + side + '">' + tx(who === '나' ? PN() : who) + '</span>' : '') + '<div class="st-txt" aria-live="polite"></div><span class="st-next" style="visibility:hidden">눌러서 계속 ▼</span>';
+        var el = dlg.querySelector('.st-txt'), chars = Array.from(text), n = 0, sp = who ? 34 : 42;
+        stopType(); typing = { el: el, s: text };
+        typing.t = setInterval(function () {
+          if (n >= chars.length) { stopType(); return; }
+          var c = document.createElement('span'); c.className = 'ch'; c.textContent = chars[n++]; el.appendChild(c);
+        }, sp);
+        if (ln[2] && ln[2].fx) { fx(ln[2].fx); }
+      }
       function render() {
         var st = steps[si]; if (!st) { finish(); return; }
-        box.innerHTML = '';
-        var ttl = document.createElement('div'); ttl.className = 'st-ttl'; ttl.textContent = sc.title; box.appendChild(ttl);
-        if (!st.input) { var sk = document.createElement('button'); sk.type = 'button'; sk.className = 'st-skip'; sk.textContent = '건너뛰기 ▶▶'; sk.addEventListener('click', function (e) { e.stopPropagation(); var rest = steps.slice(si).filter(function (s) { return s.input; }); if (rest.length) { si = steps.indexOf(rest[0]); li = 0; render(); } else { finish(); } }); box.appendChild(sk); }
-        var pic = document.createElement('div'); pic.className = 'st-pic'; pic.style.background = 'radial-gradient(circle at 50% 40%,' + (st.bg || '#2B1A0F') + ',#120C08 75%)';
-        pic.innerHTML = st.pic ? '<b aria-hidden="true">' + st.pic + '</b><i>' + (st.cap || '') + ' · 그림 자리</i>' : ''; box.appendChild(pic);
-        var dlg = document.createElement('div'); dlg.className = 'st-dlg'; box.appendChild(dlg);
+        if (li === 0) { scene(st); }
         if (st.input) {
           var dv = st.defFn ? st.defFn() : (st.def || '');
+          if (bust) { bust.remove(); bust = null; }
+          dlg.className = 'st-dlg';
           dlg.innerHTML = '<div class="st-txt">' + st.q + '</div>';
           var inp = document.createElement('input'); inp.className = 'st-in'; inp.maxLength = st.input === 'pname' ? 6 : 10; inp.placeholder = tx(st.ph); inp.value = load()[st.input] || dv; inp.setAttribute('aria-label', st.q); dlg.appendChild(inp);
           var ok = document.createElement('button'); ok.type = 'button'; ok.className = 'st-ok'; ok.textContent = '정했어요'; dlg.appendChild(ok);
@@ -1590,12 +1696,12 @@
           setTimeout(function () { try { inp.focus(); inp.select(); } catch (e2) {} }, 60);
           return;
         }
-        if (st.note) { dlg.innerHTML = '<div class="st-txt">' + tx(st.note) + '</div><span class="st-next">눌러서 계속 ▼</span>'; return; }
-        var ln = st.lines[li] || ['', ''];
-        dlg.innerHTML = (ln[0] ? '<span class="st-who">' + tx(ln[0] === '나' ? PN() : ln[0]) + '</span>' : '') + '<div class="st-txt' + (ln[0] ? '' : ' narr') + '">' + tx(ln[1]) + '</div><span class="st-next">눌러서 계속 ▼</span>';
+        if (st.note) { dlg.className = 'st-dlg'; dlg.innerHTML = '<div class="st-txt">' + tx(st.note) + '</div><span class="st-next">눌러서 계속 ▼</span>'; return; }
+        line();
       }
       ov.addEventListener('click', function (e) {
         var st = steps[si]; if (!st || st.input) { return; }
+        if (typing) { stopType(true); return; }   // 글자가 나오는 중이면 먼저 다 보여 준다
         if (st.lines && li < st.lines.length - 1) { li++; } else { si++; li = 0; }
         try { window.__sfx && window.__sfx('tap'); } catch (e2) {}
         render();
@@ -1619,7 +1725,7 @@
       if (md.unlock) { q.push(function (nx) { card('🏺', '새 모양 「' + (SHN[md.unlock] || md.unlockNote || md.unlock) + '」', '물레에서 고를 수 있어요', md.who + '의 부탁 덕분에 새 모양을 익혔어요.', '물레에서 써 볼게요', nx); }); }
       if (md.chEnd) {
         var C = L.chapterOf(md), E = L.EPIS[md.kind];
-        if (C) { q.push(function (nx) { card(md.kind === 'dok' ? '👹' : '📖', C.title, (md.kind === 'dok' ? '도깨비 이야기 ' : '에피소드 ') + E.n + ' · ' + md.chNo + '챕터 완료', md.who + '의 이야기가 단골 수첩에 모두 채워졌어요.' + (C.town ? '\n마을 지도에 「' + TOWN[C.town] + '」이(가) 열렸어요.' : ''), '다음으로', nx); }); }
+        if (C) { q.push(function (nx) { card(md.kind === 'dok' ? '👹' : '📖', C.title, (md.kind === 'dok' ? '도깨비 이야기 ' : '에피소드 ') + E.n + ' · ' + md.chNo + '챕터 완료', md.who + '의 이야기가 단골 수첩에 모두 채워졌어요.' + (C.town ? '\n마을 지도에 새 구역이 열렸어요 · ' + TOWN[C.town] : ''), '다음으로', nx); }); }
       }
       if (md.id === 'm20') { q.push(function (nx) { S.storyPlay('ep1_end', nx); }); }
       if (md.id === 'd15') { q.push(function (nx) { card('🏺', '도깨비 이야기 1 · 끝', '이야기는 다음 에피소드로 이어져요', '마을 한가운데 큰 독은 왜 금이 갔을까요?\n강 할매는 도깨비 마을에 무엇을 남겼을까요?', '계속', nx); }); }
