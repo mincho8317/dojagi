@@ -64,15 +64,22 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">소성</div>
   </div>
 
-  <div style="position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-    <sc-for list="{{heats}}" as="opt" hint-placeholder-count="3">
-      <button type="button" aria-pressed="{{opt.on}}" onClick="{{opt.pick}}" style="{{opt.style}}">
-        <img dc-src="{{opt.img}}" alt="" aria-hidden="true" draggable="false" style="{{opt.iconStyle}}">
-        <span style="font-family:'Jua',sans-serif;font-size:15px">{{opt.label}} <span style="font-size:12px">{{opt.hours}}시간</span></span>
-        <span style="font-size:11px;font-weight:700;opacity:.95">{{opt.base}}℃</span>
-        <span style="{{opt.riskStyle}}">{{opt.risk}}</span>
-      </button>
-    </sc-for>
+  <div style="position:relative;box-sizing:border-box;padding:6px 12px 6px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;display:flex;flex-direction:column;gap:2px">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">🔥 최고 온도</span>
+      <span style="font-family:'Jua',sans-serif;font-size:19px;color:#C8601E">{{heat.temp}}℃</span>
+      <span style="margin-left:auto;padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:#5B3A24">{{heat.hours}}시간</span>
+      <span style="{{heat.riskStyle}}">{{heat.riskText}}</span>
+      <sc-if value="{{heat.yohen}}" hint-placeholder-val="{{false}}"><span style="padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:#7A5A93">요변</span></sc-if>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="flex:0 0 auto;font-size:11px;font-weight:700;color:#7A5434;line-height:1.15;text-align:center">낮게<br>안전</span>
+      <div onPointerDown="{{heatDown}}" role="slider" aria-label="최고 온도 · 낮으면 오래 걸리지만 안전, 높으면 빨리 굽지만 잘 깨져요" aria-valuemin="1160" aria-valuemax="1320" aria-valuenow="{{heat.temp}}" style="position:relative;flex:1 1 auto;height:32px;touch-action:none;cursor:pointer">
+        <span style="position:absolute;left:0;right:0;top:50%;height:12px;margin-top:-6px;border-radius:6px;border:2.5px solid #3E2616;background:linear-gradient(90deg,#E8B640,#E07A2E 55%,#C8381E)"></span>
+        <span style="{{heat.knob}}"></span>
+      </div>
+      <span style="flex:0 0 auto;font-size:11px;font-weight:700;color:#7A5434;line-height:1.15;text-align:center">높게<br>빨리</span>
+    </div>
   </div>
 
   <sc-if value="{{hasWait}}" hint-placeholder-val="{{true}}">
@@ -443,12 +450,25 @@ class Component extends DCLogic {
   }
   matchOf(temp, opt) { return this.qlib().kMatch(temp, opt, this.state.g); }
   tutSafe() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'), t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return typeof t === 'number' && t < 9; } catch (e) { return false; } }
+  heatB(g) { var v = (g && g.heatT) || ({ low: 1180, mid: 1240, high: 1300 })[g && g.heat] || 1240; return Math.max(1160, Math.min(1320, Math.round(v / 10) * 10)); }
+  heatHours(b) { return Math.round((10 - 4 * (b - 1160) / 160) * 2) / 2; } // 1160℃ 10시간 ~ 1320℃ 6시간
+  heatRisk(b) { return Math.round(0.12 * Math.max(0, b - 1160) / 160 * 100) / 100; } // 1160℃ +0% ~ 1320℃ +12%
+  heatDrag(e) {
+    if ((this.state.g || {}).kiln === 'firing') { this.say('소성 중에는 온도를 바꿀 수 없어요'); return; }
+    var self = this, el = e.currentTarget, r = el.getBoundingClientRect();
+    if (e.preventDefault) { e.preventDefault(); }
+    function set(x) { var v = 1160 + Math.round(Math.max(0, Math.min(1, (x - r.left) / r.width)) * 16) * 10; if (v !== self.heatB(self.state.g)) { self.setG({ heatT: v, heat: v >= 1280 ? 'high' : (v >= 1210 ? 'mid' : 'low') }); try { window.__sfx && window.__sfx('tap'); } catch (e2) {} } }
+    function mv(ev) { set(ev.clientX); }
+    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); }
+    set(e.clientX);
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
   riskOf(item, heat) {
     var why = [], p = Math.max(0, 0.04 - (this.qlib().fx(this.state.g).breakCut || 0));
     if (item.dry === 'early') { p += Math.max(0, 0.1 - (this.qlib().fx(this.state.g).bqSafe || 0)); why.push('덜 마름'); }
     if (item.thick === 'drip') { p += 0.25; why.push('유약 흘러내림'); }
     if ((item.tmin || 5) < 3.5) { p += 0.15; why.push('벽이 얇음'); }
-    if (heat === 'high') { p += 0.08; why.push('고화도'); }
+    var hr = this.heatRisk(this.heatB(this.state.g)); p += hr; if (hr >= 0.04) { why.push('고온'); }
     if (this.tutSafe()) { p = 0; why = ['튜토리얼 중엔 깨지지 않아요']; }
     var lv = p < 0.1 ? '낮음' : (p < 0.25 ? '보통' : '높음');
     var col = { '낮음': '#4A9440', '보통': '#C8901E', '높음': '#C8381E' }[lv];
@@ -546,26 +566,20 @@ class Component extends DCLogic {
     var self = this;
     var g = this.state.g;
     var T = this.tables(), QL0 = this.qlib();
-    var defs = [
-      { id: 'low', label: '저화도', base: QL0.TUNE.kilnBase.low, hours: 6, icon: 'FLAME_LOW', img: '_blob/a9cf5a7b8a185263b5311a334289a737.webp' },
-      { id: 'mid', label: '중화도', base: QL0.TUNE.kilnBase.mid, hours: 8, icon: 'FLAME_MID', img: '_blob/fef78a09e327957d290e2bc20b94e493.webp' },
-      { id: 'high', label: '고화도', base: QL0.TUNE.kilnBase.high, hours: 10, icon: 'FLAME_HIGH', img: '_blob/8383a52abc52e17b5f5ff73ba181725d.webp' }
-    ];
-    var cur = defs[1];
-    defs.forEach(function (d) { if (d.id === g.heat) { cur = d; } });
-
-    var btnBase = 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;border-radius:16px;';
-    var iconBase = 'width:34px;height:30px;box-sizing:border-box;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;text-align:center;line-height:1.1;';
-    var heats = defs.map(function (d) {
-      var on = d.id === cur.id;
+    // 화도 : 게이지로 최고 온도를 직접 정한다 · 높을수록 빨리 굽지만 잘 깨지고, 낮을수록 오래 걸리지만 안전
+    var HB = self.heatB(g), cur = { id: HB >= 1280 ? 'high' : (HB >= 1210 ? 'mid' : 'low'), base: HB, hours: self.heatHours(HB) };
+    var heat = (function () {
+      var ws = g.kilnList || [], tp = QL0.TUNE.kilnOff.slice(0, self.slotCap()).map(function (o) { return HB + o; });
+      var ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length;
+      var rp = Math.round(self.heatRisk(HB) * 100), pc = (HB - 1160) / 160 * 100;
       return {
-        risk: (function () { var tp = QL0.kTemps(d.id).slice(0, self.slotCap()), ws = g.kilnList || [], ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length; return ws.length ? '대기 ' + ws.length + '점 중 ' + ok + '점 맞음' + (d.id === 'high' ? ' · 요변' : '') : (d.id === 'high' ? (self.tutSafe() ? '요변 가능' : '깨질 위험 · 요변') : ''); })(), riskStyle: (g.kilnList || []).length || d.id === 'high' ? 'font-size:11.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
-        label: d.label, base: (d.base - 80) + '~' + d.base, hours: d.hours, icon: d.icon, img: d.img, on: on,
-        style: btnBase + (on ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;'),
-        iconStyle: 'width:26px;height:22px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),
-        pick: function () { if (g.kiln === 'firing') { self.say('소성 중에는 화도를 바꿀 수 없어요'); return; } self.setG({ heat: d.id }); }
+        temp: HB.toLocaleString(), low: (HB - 80).toLocaleString(), hours: cur.hours, risk: rp, pct: pc.toFixed(1),
+        riskText: rp ? '깨짐 +' + rp + '%' : '깨짐 걱정 없음', yohen: cur.id === 'high',
+        fit: ws.length ? '대기 ' + ws.length + '점 중 ' + ok + '점이 맞는 칸 있음' : '가마 칸 온도 ' + (HB - 80).toLocaleString() + '~' + HB.toLocaleString() + '℃',
+        knob: 'position:absolute;top:50%;left:' + pc.toFixed(1) + '%;width:30px;height:30px;margin:-15px 0 0 -15px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFF4DE,#FFB24A);border:3px solid #5B3A24;box-shadow:0 2px 0 #2B1A0F;pointer-events:none',
+        riskStyle: 'padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:' + (rp >= 8 ? '#C8381E' : (rp >= 4 ? '#C8901E' : '#4A9440'))
       };
-    });
+    })();
 
     var offsets = QL0.TUNE.kilnOff;
     function glowOf(off) { var a = 0.2 + 0.52 * (off + 80) / 80; return 'rgba(' + Math.round(232 + 23 * (off + 80) / 80) + ',' + Math.round(120 + 30 * (off + 80) / 80) + ',50,' + a.toFixed(2) + ')'; }
@@ -666,7 +680,8 @@ class Component extends DCLogic {
     for (var i = 0; i < 9; i++) { var it2 = itemAt(i); if (it2) { placed.push({ it: it2, temp: cur.base + offsets[i] }); } }
 
     return {
-      heats: heats,
+      heat: heat,
+      heatDown: function (e) { self.heatDrag(e); },
       wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: waiting.length > 0 && !firingNow,
       capText: capWarn.join(' · '), capStyle: capWarn.length ? 'position:relative;margin:-4px 0 -4px;padding:3px 9px;border-radius:9px;background:#FCE9D6;border:2px solid #C8601E;font-size:11.5px;font-weight:700;color:#8A3D10' : 'display:none',
       autoPlace: function () { self.autoPlace(cur, offsets); },
@@ -748,7 +763,7 @@ class Component extends DCLogic {
       return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1);
     }
     var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
-    var _raw = ['#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#b98a7e', '#f0d3c7', '#ccc', '#cccccc'];
+    var _raw = ['#4e4540', '#8e837a', '#9a5a40', '#b48a58', '#c9c2b4', '#d49a7e', '#e2c79e', '#f2eee6', '#e8dccb', '#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#b98a7e', '#f0d3c7', '#ccc', '#cccccc'];
     var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
@@ -766,7 +781,7 @@ class Component extends DCLogic {
     var c = CL[it && it.clay] || CL.basic;
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
-    if (stage === 'bisque') { return '#EAD8C4'; }
+    if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
