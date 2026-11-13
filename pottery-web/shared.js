@@ -1545,25 +1545,25 @@
     // 줄 = [말하는 사람('' = 내레이션), 대사, {fx: 'shake' | 'knock' | 'flash'}]
     var SCENES = {
       prologue: { title: '프롤로그 · 빈 공방', steps: [
-        { pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
-        { pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
-        { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33' },
-        { pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
+        { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…손이 왜 이리 차. 흙 손이여, 이건.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
+        { img: 'cg/p2.webp', pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
+        { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33', img: 'cg/p2.webp' },
+        { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
       after_min: { title: '마지막 납품', steps: [
-        { pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
-        { pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
+        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
+        { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
-        { pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?', { face: 'surprise' }]] },
-        { pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
-        { pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.', { face: 'muk' }], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
-        { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 원료 5개로 재료 1~3개를 만들어요', bg: '#3A3022' }
+        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?', { face: 'surprise' }]] },
+        { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
+        { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.', { face: 'muk' }], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
+        { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 모아 둔 원료를 한 번에 재료로 만들어요', bg: '#3A3022', img: 'cg/d3.webp' }
       ] },
       ep1_end: { title: '에피소드 1 · 새 간판', outfit: 'ws', steps: [
-        { pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
-        { input: 'wsName', q: '공방 이름을 지어 주세요', ph: '공방 이름 (최대 10자)', defFn: function () { return PN() + '네 공방'; }, bg: '#2A2A44' },
-        { pic: '🪧', cap: '새로 걸린 간판', bg: '#4A3422', amb: 'sparkle', lines: [['', '새 간판이 걸렸다. 「{공방}」', { fx: 'flash' }], ['', '강 할매네 공방은, 이제 {이름}의 공방이 되었다.'], ['', '— 에피소드 1 「강 할매네 공방」 끝 —']] }
+        { img: 'cg/e1.webp', pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
+        { input: 'wsName', q: '공방 이름을 지어 주세요', ph: '공방 이름 (최대 10자)', defFn: function () { return PN() + '네 공방'; }, bg: '#2A2A44', img: 'cg/e1.webp' },
+        { img: 'cg/e2.webp', sign: [53.2, 20.8, 46], pic: '🪧', cap: '새로 걸린 간판', bg: '#4A3422', amb: 'sparkle', lines: [['', '새 간판이 걸렸다. 「{공방}」', { fx: 'flash' }], ['', '강 할매네 공방은, 이제 {이름}의 공방이 되었다.'], ['', '— 에피소드 1 「강 할매네 공방」 끝 —']] }
       ] }
     };
     var css = document.createElement('style');
@@ -1572,7 +1572,7 @@
       '.st-box.fx-shake{animation:stShake .5s}.st-box.fx-knock{animation:stKnock .6s}' +
       '.st-scene{position:absolute;inset:0;overflow:hidden;animation:stFade .6s both}' +
       '.st-cg{position:absolute;inset:-4%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:46%;box-sizing:border-box;gap:16px;animation:stKB 16s ease-in-out infinite alternate}' +
-      '.st-cg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}' +
+      '.st-cg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.st-cg .st-sign{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;font-family:Jua,sans-serif;color:#3E2616;text-shadow:0 1px 0 rgba(255,230,180,.55),0 -1px 0 rgba(0,0,0,.35);letter-spacing:1px;animation:stSign 1.2s .4s both}@keyframes stSign{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}100%{opacity:1;transform:translate(-50%,-50%)}}' +
       '.st-cg b{font-size:150px;line-height:1;font-weight:400;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));animation:stFloat 4s ease-in-out infinite}' +
       '.st-cg i{font-style:normal;font-size:13px;color:rgba(255,244,222,.75);padding:3px 12px;border-radius:10px;border:1.5px dashed rgba(255,244,222,.35);background:rgba(18,12,8,.25)}' +
       '.st-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(18,12,8,0) 45%,rgba(18,12,8,.55) 78%,rgba(18,12,8,.8) 100%)}' +
@@ -1657,7 +1657,7 @@
         box.innerHTML = '';
         var scn = document.createElement('div'); scn.className = 'st-scene'; scn.style.background = 'radial-gradient(circle at 50% 32%,' + (st.bg || '#2B1A0F') + ',#120C08 82%)';
         var cg = document.createElement('div'); cg.className = 'st-cg';
-        if (st.img) { cg.innerHTML = '<img alt="" src="' + st.img + '">'; }
+        if (st.img) { cg.innerHTML = '<img alt="" src="' + st.img + '">'; if (st.sign) { var sg = document.createElement('span'), nm = tx('{공방}'); sg.className = 'st-sign'; sg.textContent = nm; sg.style.cssText = 'left:' + st.sign[0] + '%;top:' + st.sign[1] + '%;width:' + st.sign[2] + '%;font-size:' + Math.max(15, Math.min(30, Math.round(176 / Math.max(5, Array.from(nm).length) * 1.15))) + 'px'; cg.appendChild(sg); } }
         else if (st.pic) { cg.innerHTML = '<b aria-hidden="true">' + st.pic + '</b><i>' + (st.cap || '') + ' · 그림 자리</i>'; }
         scn.appendChild(cg);
         var amb = document.createElement('div'); amb.className = 'st-amb ' + (st.amb || ''); ambient(amb, st.amb); scn.appendChild(amb);
