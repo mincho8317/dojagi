@@ -436,13 +436,12 @@ class Component extends DCLogic {
     this.setState({ lift: { zone: zone, ms: ms, cov: this.maxCov || 0, k: Date.now() } });
     this.lt = setTimeout(function () { self.setState({ lift: null }); }, 1100);
   }
-  // 유약 원료 : 등급(보통·상급·특급)별 보유 · 고른 등급(없으면 가진 것 중 가장 높은 등급) · 튜토리얼은 보통 무한
+  // 유약 원료 : 종류별 보유 수 · 튜토리얼은 무한
   matInfo(g, id) {
     var QL = this.qlib(), M = g.mats || {}, tut = QL.isTut(g), pref = ((this.state && this.state.mg) || {})[id];
     if (id === 'sakura') { var np = M.petal || 0; return { gs: [], key: 'petal', gd: 2, n: np, total: np, tut: false }; }
-    var gs = [1, 2, 3].map(function (gd) { return { gd: gd, key: QL.glazeMatKey(id, gd), n: tut && gd === 1 ? Infinity : (M[QL.glazeMatKey(id, gd)] || 0) }; });
-    var pick = gs.filter(function (x) { return x.gd === pref && x.n > 0; })[0] || gs.slice().reverse().filter(function (x) { return x.n > 0; })[0] || gs[0];
-    return { gs: gs, key: pick.key, gd: pick.gd, n: pick.n, total: gs.reduce(function (a, x) { return a + x.n; }, 0), tut: tut };
+    var key = QL.glazeMatKey(id), n = tut ? Infinity : (M[key] || 0); // 등급 없음 · 발색 보너스는 연구 「유약 정제」 단계
+    return { gs: [{ gd: 1, key: key, n: n }], key: key, gd: 1, n: n, total: n, tut: tut, pts: QL.glazePts(g) };
   }
   matLbl(g, id) { var I = this.matInfo(g, id); return id === 'sakura' ? '벚꽃 재 ' + I.n : (I.tut ? '원료 무한' : '원료 ' + I.total); }
   noMat(g, id) { return !(this.matInfo(g, id).n > 0); }
@@ -484,10 +483,10 @@ class Component extends DCLogic {
     var patch = { glazeList: rest, kilnList: (g.kilnList || []).concat([item]) };
     // 유약 1회 = 원료 1개 (백자유 장석 · 청자유 철분 · 흑유 철광 · 진사유 진사)
     var MI = this.matInfo(g, item.glaze);
-    item.gg = MI.gd;
+    item.gg = MI.gd; item.ggp = MI.pts; // 이 그릇을 바를 때의 유약 정제 단계 (발색 점수)
     if (!(MI.tut && MI.gd === 1)) {
       var m = {}; for (var a in (g.mats || {})) { m[a] = g.mats[a]; }
-      m[MI.key] = Math.max(0, (m[MI.key] || 0) - 1);
+      if (Math.random() >= (this.qlib().fx(g).matKeep || 0)) { m[MI.key] = Math.max(0, (m[MI.key] || 0) - 1); } // 연구 「재료 아끼기」
       patch.mats = m;
     }
     this.setG(patch);
@@ -509,7 +508,7 @@ class Component extends DCLogic {
       cup: { p: 'M14 8h20c0 26-4 40-10 40s-10-14-10-40z', y: 8, x: 10, n: '찻잔' },
       bowl: { p: 'M8 18h32c0 16-7 26-16 26s-16-10-16-26z', y: 18, x: 16, n: '사발' }
     };
-    var CLAY = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
+    var CLAY = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var DRY = { early: { t: '반건조', c: '#8A6410' }, ok: { t: '완전 건조', c: '#2F6328' }, over: { t: '과건조', c: '#5E5547' } };
     var defs = [
       { id: 'white', name: '백자유', res: 'GLZ\nWHITE', img: '_blob/29256b39b342c74e19efca8372e50e32.webp', fired: '#F7F4EC', raw: '#E3DED2', price: self.matLbl(g, 'white') },
@@ -522,20 +521,19 @@ class Component extends DCLogic {
     var selG = defs[1];
     var cur0 = this.current();
     // 유약 고르기 카드 : 흙처럼 종류 × 등급(가진 것만)으로 펼친다
-    var GN3 = ['', '보통', '상급', '특급'], CB = [0, 0, 4, 8], QLg = this.qlib(), curGd = EG === 'sakura' ? 2 : self.matInfo(g, EG).gd;
+    var QLg = this.qlib(), curGd = 1, GP2 = QLg.glazePts(g) * 2;
     var opts = [];
     defs.forEach(function (d) {
       if (d.id === 'sakura') { opts.push({ d: d, gd: 2, n: (g.mats || {}).petal || 0, none: !((g.mats || {}).petal > 0) }); return; }
-      var I = self.matInfo(g, d.id), own = I.gs.filter(function (x) { return x.n > 0; });
-      if (!own.length) { opts.push({ d: d, gd: 0, n: 0, none: true }); return; }
-      own.slice().reverse().forEach(function (x) { opts.push({ d: d, gd: x.gd, n: x.n, none: false }); });
+      var I = self.matInfo(g, d.id);
+      opts.push({ d: d, gd: 1, n: I.n, none: !(I.n > 0) });
     });
     var glazes = opts.map(function (o) {
-      var d = o.d, on = d.id === EG && (o.gd === curGd || o.none), zt = self.zoneT(d.id), known = d.fired !== '';
+      var d = o.d, on = d.id === EG, zt = self.zoneT(d.id), known = d.fired !== '';
       if (d.id === EG) { selG = d; }
-      var gname = d.id === 'sakura' ? d.name : (o.none ? d.name : GN3[o.gd] + ' ' + d.name);
+      var gname = d.name;
       var matTxt = d.id === 'sakura' ? '벚꽃 재 ' + o.n + '개' : (o.none ? '원료 없음' : (o.n === Infinity ? '원료 무한' : QLg.GMATN[d.id] + ' ' + o.n + '개'));
-      var price = d.id === goalG ? '📋 의뢰' : matTxt + (o.none ? '' : ' · 발색 +' + (d.id === 'sakura' ? 4 : CB[o.gd]) + '%');
+      var price = d.id === goalG ? '📋 의뢰' : matTxt + (o.none ? '' : ' · 발색 +' + GP2 + '%');
       var gl = self.goalChip(self.goalList(g).filter(function (x) { return !x.stage && x.glaze === d.id && (!cur0 || !x.shape || x.shape === cur0.shape); }));
       return {
         on: on, name: gname, res: d.res, img: d.img, price: price,
@@ -606,17 +604,10 @@ class Component extends DCLogic {
       trayBox: 'position:absolute;left:12px;right:12px;top:106px;z-index:4;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35)',
       selGz: (function () { var z0 = glazes.filter(function (z) { return z.on; })[0] || glazes[1]; return z0; })(),
       gsOpen: function () { if (!s.holding) { self.setState({ gsOpen: true }); } },
-      gradeLbl: (function () { var I = self.matInfo(g, EG); return EG === 'sakura' ? '상급' : ['', '보통', '상급', '특급'][I.gd] + ' ' + (I.n === Infinity ? '∞' : I.n); })(),
-      gradeSub: (function () { var I = self.matInfo(g, EG); return '발색 +' + (EG === 'sakura' ? 4 : [0, 0, 4, 8][I.gd]) + '%'; })(),
+      gradeLbl: (function () { var I = self.matInfo(g, EG); return I.n === Infinity ? '∞' : String(I.n); })(),
+      gradeSub: '발색 +' + GP2 + '%',
       gradeBtn: 'all:unset;cursor:pointer;flex:0 0 76px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 2px;border-radius:14px;background:#FFFDF5;border:3px solid #8A6440;box-shadow:0 3px 0 #8A6440;text-align:center',
-      gradeCycle: function () {
-        if (s.holding || EG === 'sakura') { return; }
-        var I = self.matInfo(g, EG), own = I.gs.filter(function (x) { return x.n > 0; });
-        if (own.length < 2) { self.say(own.length ? '다른 등급 원료가 없어요' : '원료가 없어요', 'fail'); return; }
-        var i = own.map(function (x) { return x.gd; }).indexOf(I.gd), nx = own[(i + 1) % own.length];
-        var mg = {}; for (var k in (s.mg || {})) { mg[k] = s.mg[k]; } mg[EG] = nx.gd; self.setState({ mg: mg });
-        self.say(['', '보통', '상급', '특급'][nx.gd] + ' ' + self.qlib().GMATN[EG] + '을(를) 써요 · 발색 +' + [0, 0, 4, 8][nx.gd] + '%');
-      },
+      gradeCycle: function () {},
       gsClose: function () { self.setState({ gsOpen: false }); },
       gsShow: !!s.gsOpen,
       gg: (function () { var T = self.zoneT(EG), W = 2400; function w(x) { return 'flex:0 0 ' + (x / W * 100).toFixed(2) + '%;'; } return { s1: w(T[0]), s2: w(T[1] - T[0]), s3: w(T[2] - T[1]) }; })(),
@@ -713,7 +704,7 @@ class Component extends DCLogic {
   }
   pickRow(it, o) {
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
-    var CLN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
+    var CLN = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
     var on = !!o.on;
     return {

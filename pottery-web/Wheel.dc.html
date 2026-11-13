@@ -479,7 +479,7 @@ class Component extends DCLogic {
     var nf = this.fresh(); nf.g = g; nf.target = 'goal'; nf.clay = own ? gl.clay : this.pickClay(g);
     this.setState(nf);
     var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
-    var CN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
+    var CN = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본', refined: '정제', kaolin: '고령토', porcelain: '자기토', premium: '특선', spring: '봄빛' };
     var self = this;
     setTimeout(function () {
       self.setG({ goalJump: false });
@@ -488,10 +488,10 @@ class Component extends DCLogic {
   }
   // 흙 그림 (색별 1장 · 등급은 이름·배지로 구분)
   clayImg(id) { var c = this.qlib().clayOf(id).c; return { w: '_blob/9e3e4c8390c3773d101ac4a9a46316b2.png', y: '_blob/4ebb5d790158e0d3c0bd483e0096b4d1.png', r: '_blob/199bcb09cdc205a4b6a682f55c91aa6b.png', k: '_blob/c50d8bf89ca523229240a41e7b90ce8f.png', s: '_blob/1bde360d20267d7a6c3eba1652dd1f18.png' }[c]; }
-  hasClay(g, id) { if (!id) { return false; } if (this.qlib().isTut(g)) { return id === 'cy2'; } return ((g.mats || {})[id] || 0) > 0; }
+  hasClay(g, id) { if (!id) { return false; } if (this.qlib().isTut(g)) { return id === 'cy1'; } return ((g.mats || {})[id] || 0) > 0; }
   // 쓸 흙 고르기 : 원하는 흙이 있으면 그것, 없으면 가장 많이 가진 흙. 하나도 없으면 ''
   pickClay(g, want) {
-    if (this.qlib().isTut(g)) { return 'cy2'; }
+    if (this.qlib().isTut(g)) { return 'cy1'; }
     if (want && this.hasClay(g, want)) { return want; }
     var M = g.mats || {}, best = '', n = 0;
     this.qlib().CLAYKEYS.concat(['spring']).forEach(function (k) { if ((M[k] || 0) > n) { n = M[k]; best = k; } });
@@ -499,7 +499,7 @@ class Component extends DCLogic {
   }
   claysDef() {
     var QL = this.qlib(), g = this.state && this.state.g ? this.state.g : this.loadG(), self = this, M = g.mats || {};
-    var ids = QL.isTut(g) ? ['cy2'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; });
+    var ids = QL.isTut(g) ? ['cy1'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; });
     var out = ids.map(function (k) { var c = QL.clayOf(k); return { id: k, img: self.clayImg(k), n: c.name, res: 'CLAY', c: c.col, limit: c.thin, event: k === 'spring', grade: c.grade, note: c.note }; });
     if (!out.length) { out.push({ id: '', img: self.clayImg('cy1'), n: '흙 없음', res: 'CLAY', c: '#A89880', limit: 3, none: true }); }
     return out;
@@ -513,7 +513,7 @@ class Component extends DCLogic {
     if (!c || this.qlib().isTut(g)) { this._mq = {}; this._cq = 1; return g.mats || {}; } // 튜토리얼 흙은 줄지 않는다
     var QL = this.qlib();
     this._mq = g.matsQ || {}; this._cq = QL.topQ(g, c);
-    if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 고급 흙을 아꼈어요'); return g.mats || {}; }
+    if (Math.random() < (QL.fx(g).clayKeep || 0)) { this.say && this.say('흙 절약 · 흙을 아꼈어요'); return g.mats || {}; }
     var t = QL.takeClay(g, c); this._mq = t.matsQ; this._cq = t.q;
     return t.mats;
   }
@@ -957,7 +957,7 @@ class Component extends DCLogic {
         var QLc = self.qlib();
         var rec = g.goal && clays[i].id === g.goal.clay;
         return {
-          name: clays[i].n, meta: clays[i].none ? '채집에서 캐서 다듬거나 상점에서 사요' : (QLc.clayOf(clays[i].id).gradeN + ' · 보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
+          name: clays[i].n, meta: clays[i].none ? '채집에서 캐서 다듬거나 상점에서 사요' : ('보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
           goal: '', goalStyle: 'display:none',
           tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),

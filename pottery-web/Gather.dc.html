@@ -68,7 +68,7 @@ button{font-family:inherit;cursor:pointer}
     </div>
 
     <div aria-label="캐 온 원료" style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:3px;padding:5px 6px;border-radius:14px;background:rgba(255,250,240,.93);border:2.5px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
-      <span style="font-size:10.5px;font-weight:700;color:#8A6440">캐 온 원료 · 「다듬기」에서 등급이 정해져요</span>
+      <span style="font-size:10.5px;font-weight:700;color:#8A6440">캐 온 원료 · 「다듬기」에서 재료로 만들어요</span>
       <div style="display:flex;gap:3px">
         <sc-for list="{{invRawC}}" as="iv" hint-placeholder-count="4">
           <span aria-label="{{iv.aria}}" style="flex:1 1 0;min-width:0;display:flex;align-items:center;gap:2px;font-family:'Jua',sans-serif">
@@ -107,7 +107,7 @@ button{font-family:inherit;cursor:pointer}
 
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
       <div aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:7px 9px 9px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
-        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2846">🌸 축제 채집지 · 벚꽃 언덕 <span style="font-size:11.5px;color:#6E2443">축제 재료는 항상 상급</span></span>
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2846">🌸 축제 채집지 · 벚꽃 언덕</span>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
           <sc-for list="{{evModes}}" as="em" hint-placeholder-count="2">
             <div style="box-sizing:border-box;padding:7px 8px;border-radius:14px;background:rgba(255,250,252,.95);border:2.5px solid #B05876;display:flex;flex-direction:column;gap:5px">
@@ -125,7 +125,7 @@ button{font-family:inherit;cursor:pointer}
 
   <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
-      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개로 한 판 · 5번 해서 성적에 따라 재료 1개 (평균이 높으면 특급!)</span>
+      <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개로 한 판 · 5번 해서 성적이 좋을수록 재료를 더 많이 (최대 3개)</span>
       <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
         <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
           <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{rs.title}} <span style="font-size:11.5px;color:#8A6440">{{rs.sub}}</span></span>
@@ -184,7 +184,7 @@ button{font-family:inherit;cursor:pointer}
       </div>
       <div aria-label="{{gaugeAria}}" style="{{gaugeBox}}">
         <span aria-hidden="true" style="{{gaugeZones}}"></span>
-        <span aria-hidden="true" style="{{gaugeTop}}">특급</span>
+        <span aria-hidden="true" style="{{gaugeTop}}">완벽</span>
         <span aria-hidden="true" style="{{needle}}"></span>
       </div>
       <span style="position:absolute;left:0;right:0;top:{{refFlashTop}}px;text-align:center;font-family:'Jua',sans-serif;font-size:30px;color:{{refFlashC}};text-shadow:0 3px 0 rgba(0,0,0,.45)">{{refFlash}}</span>
@@ -477,9 +477,10 @@ class Component extends DCLogic {
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
     mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - 5);
-    // 5번 성적의 평균으로 재료 1개의 등급을 정한다 : 평균 2.6↑ 특급 · 1.8↑ 상급 · 그 아래 보통
+    // 5번 성적의 평균으로 얻는 개수를 정한다 : 평균 2.6↑ 3개 · 1.8↑ 2개 · 그 아래 1개 (+연구 「다듬기」 확률로 1개 더)
     var sum = 0; R.res.forEach(function (gd) { sum += gd; }); var avg = sum / R.res.length; R.fg = avg >= 2.6 ? 3 : (avg >= 1.8 ? 2 : 1);
-    mats[D.out + R.fg] = (mats[D.out + R.fg] || 0) + 1;
+    R.got = R.fg + (Math.random() < (this.qlib().fx(g).refineUp || 0) ? 1 : 0); R.bonus = R.got > R.fg;
+    mats[D.out + '1'] = (mats[D.out + '1'] || 0) + R.got;
     this.setG({ mats: mats }); R.done = true; R.doneAt = Date.now(); this.sfx('reveal'); this.setState({ tick: Date.now() });
     var self = this; setTimeout(function () { self.setState({ tick: Date.now() }); }, 1300);
   }
@@ -520,9 +521,9 @@ class Component extends DCLogic {
       return { label: t.label, on: on ? 'true' : 'false', pick: function () { self.setState({ tab: t.id }); self.sfx('tap'); },
         style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:16px;' + (on ? 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #3E2616;color:#5B3A24' : 'background:#C9B08C;border:3px solid #8A6440;color:#5B3A24;opacity:.85') };
     });
-    var GN = ['', '보통', '상급', '특급'];
+    
     var refRow = function (rk) {
-      var d = D[rk], raw = mats[rk] || 0, have = [1, 2, 3].map(function (gd) { return GN[gd] + ' ' + (mats[d.out + gd] || 0); }).join(' · ');
+      var d = D[rk], raw = mats[rk] || 0, have = String(mats[d.out + '1'] || 0) + '개';
       return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기' : raw + '/5',
         btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (raw >= 5 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
@@ -539,8 +540,8 @@ class Component extends DCLogic {
       siteName: S.name, siteIc: S.ic, siteDesc: S.desc, siteBg: S.bg, modes: modes,
       invRawC: ['ry', 'rr', 'rw', 'rk'].concat(ev ? ['spring'] : []).map(inv), invRawG: ['ow', 'oc', 'ob', 'oj'].concat(ev ? ['petal'] : []).map(inv),
       refSecs: [
-        { title: '손 토련', sub: '흙 원료 → 보통·상급·특급 흙', rows: ['ry', 'rr', 'rw', 'rk'].map(refRow) },
-        { title: '절구질', sub: '유약 원석 → 보통·상급·특급 원료', rows: ['ow', 'oc', 'ob', 'oj'].map(refRow) }
+        { title: '손 토련', sub: '흙 원료 5개 → 흙 1~3개', rows: ['ry', 'rr', 'rw', 'rk'].map(refRow) },
+        { title: '절구질', sub: '유약 원석 5개 → 원료 1~3개', rows: ['ow', 'oc', 'ob', 'oj'].map(refRow) }
       ],
       playing: !!G, ended: !!G && G.phase === 'end', gameName: G ? (G.mode === 'dig' ? '흙 파기' : '돌 부수기') : '',
       resTitle: '', resSub: '', newBest: '', rewards: [], resHint: '', closeGame: function () {}, again: function () {}, againBtn: '', againText: '',
@@ -549,13 +550,13 @@ class Component extends DCLogic {
     if (G && G.phase === 'end') {
       var R = G.R || [];
       out.rewards = R.map(function (x) {
-        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat', name: D[x.k].name + (D[x.k].ev ? '' : ' 원료'), n: x.n, nS: 'font-size:16px;color:#2F6328', q: D[x.k].ev ? '상급 · 바로 사용' : '다듬기 전',
+        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat', name: D[x.k].name + (D[x.k].ev ? '' : ' 원료'), n: x.n, nS: 'font-size:16px;color:#2F6328', q: D[x.k].ev ? '바로 사용' : '다듬기 전',
           newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#4A9440;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
       });
       var TT = this.tixState(g, G.ev);
       out.resTitle = R.length ? (G.mode === 'dig' ? '흙을 캤어요!' : '원석을 모았어요!') : '아쉽다…';
       out.resSub = '점수 ' + G.score; out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
-      out.resHint = R.length ? '「다듬기」 탭에서 다듬으면 보통·상급·특급이 정해져요' : '다음엔 조금 더 깊이 파 봐요';
+      out.resHint = R.length ? '「다듬기」 탭에서 다듬으면 잘할수록 더 많이 나와요' : '다음엔 조금 더 깊이 파 봐요';
       out.closeGame = function () { self.closeGame(); };
       out.again = function () { var m0 = G.mode, e0 = G.ev; self.closeGame(); setTimeout(function () { self.start(m0, e0); }, 50); };
       out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (TT.tix > 0 ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
@@ -567,7 +568,7 @@ class Component extends DCLogic {
     if (Rf) {
       var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째 · 5번 성적으로 ' + dd.name + ' 1개의 등급이 정해져요';
+      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째 · 5번 성적으로 ' + dd.name + ' 개수가 정해져요';
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
       out.refBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;overflow:hidden;background:linear-gradient(rgba(30,18,10,.88) 0,rgba(30,18,10,.6) 165px,rgba(30,18,10,.12) 270px,rgba(30,18,10,.05) 100%),#3E2616 url(' + (clay ? '_blob/e41f40f93735cbd82c4bab97fd696e6c.webp' : '_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp') + ') center top/cover no-repeat';
       out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
@@ -621,7 +622,7 @@ class Component extends DCLogic {
       // 끝 : 같은 등급끼리 묶어서 보여주고, 다듬은 재료가 보관함으로 날아간다
       if (Rf.done) {
         var c = { 1: 0, 2: 0, 3: 0 }; Rf.res.forEach(function (x) { c[x]++; });
-        var GC = { 1: ['#A89880', '#6E6250'], 2: ['#5C9BD1', '#2E5E8A'], 3: ['#FFD66B', '#B07A1E'] }, GT = { 1: '보통', 2: '상급', 3: '특급' };
+        var GC = { 1: ['#A89880', '#6E6250'], 2: ['#5C9BD1', '#2E5E8A'], 3: ['#FFD66B', '#B07A1E'] }, GT = { 1: '좋음', 2: '훌륭', 3: '완벽' };
         var flying = now - Rf.doneAt < 1200, oimg = this.outImg(Rf.rk);
         out.boxS = 'position:absolute;left:22px;top:128px;width:72px;height:72px;object-fit:contain;z-index:5;filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));animation:rBox 1.2s ease-out both';
         if (flying) {
@@ -630,11 +631,11 @@ class Component extends DCLogic {
         out.refDone = !flying;
         out.refSum = [Rf.fg].map(function (gd) {
           var GFL = { 1: 'none', 2: 'sepia(1) hue-rotate(175deg) saturate(2.2) brightness(.95)', 3: 'sepia(1) saturate(3) hue-rotate(-8deg) brightness(1.08)' }[gd];
-          return { img: oimg, grade: GT[gd] + ' ' + dd.name, n: 1, fr: 'position:absolute;inset:0;background:url(' + AS.grade_frame + ') center/100% 100% no-repeat;filter:' + GFL, bg: 'position:absolute;inset:0;background:url(' + AS.grade_badge + ') center/100% 100% no-repeat;filter:' + GFL, box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:126px;padding:14px 6px 12px;box-sizing:border-box;animation:rPop .35s both',
+          return { img: oimg, grade: dd.name + ' ×' + (Rf.got || gd), n: Rf.got || gd, fr: 'position:absolute;inset:0;background:url(' + AS.grade_frame + ') center/100% 100% no-repeat;filter:' + GFL, bg: 'position:absolute;inset:0;background:url(' + AS.grade_badge + ') center/100% 100% no-repeat;filter:' + GFL, box: 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:126px;padding:14px 6px 12px;box-sizing:border-box;animation:rPop .35s both',
             badge: "position:relative;font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:" + (gd === 3 ? '#5A3A00' : (gd === 2 ? '#1E3F5E' : '#3E3428')) };
         });
         var lf = mats[Rf.rk] || 0;
-        out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 5개 → ' + GT[Rf.fg] + ' ' + dd.name + ' 1개 · 남은 원료 ' + lf + '개';
+        out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 5개 → ' + dd.name + ' ' + (Rf.got || Rf.fg) + '개' + (Rf.bonus ? ' (다듬기 요령 +1)' : '') + ' · 남은 원료 ' + lf + '개';
         out.refAgain = function () { self.refOpen(Rf.rk); };
         out.refAgainText = lf >= 5 ? '한 번 더' : '원료 부족 (' + lf + '/5)';
         out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');

@@ -235,12 +235,12 @@ class Component extends DCLogic {
       };
     });
 
-    // 상점 : 보통·상급 흙(4색)과 보통·상급 유약 원료. 특급은 채집 → 다듬기로만 얻는다
+    // 상점 : 흙(4색)과 유약 원료(4종) · 등급 없음 (품질은 연구 「재료」)
     var IMGC = { w: '_blob/9e3e4c8390c3773d101ac4a9a46316b2.png', y: '_blob/4ebb5d790158e0d3c0bd483e0096b4d1.png', r: '_blob/199bcb09cdc205a4b6a682f55c91aa6b.png', k: '_blob/c50d8bf89ca523229240a41e7b90ce8f.png' };
     var IMGG = { white: '_blob/08b6a79d3b9ff9d57c0ddc34391cee7a.png', celadon: '_blob/5b746d476ebf15d61c6cab2d76a6c4bf.png', black: '_blob/1ed3263af13291f7bd979b9e5439ca2b.png', jinsa: '_blob/6323d4e5875bf72d91119cf124d924a4.png' };
     var QLs = this.qlib(), matDefs = [];
-    [1, 2].forEach(function (gd) { ['y', 'w', 'r', 'k'].forEach(function (c) { var k = 'c' + c + gd, d = QLs.clayOf(k); matDefs.push({ id: k, img: IMGC[c], res: 'CLAY', name: d.name, desc: d.gradeN + ' · 판매 ×' + d.sell + ' · 최소 ' + d.thin + 'mm · ' + d.note.split(' · ')[0], price: gd === 1 ? 50 : 160 }); }); });
-    [1, 2].forEach(function (gd) { ['white', 'celadon', 'black', 'jinsa'].forEach(function (z) { matDefs.push({ id: QLs.glazeMatKey(z, gd), img: IMGG[z], res: 'GLZ', name: QLs.glazeMatName(z, gd), desc: QLs.GNM[z] + ' 1회분 · 발색 +' + (gd === 1 ? 0 : 4) + '%', price: (z === 'jinsa' ? 300 : 40) * (gd === 1 ? 1 : 3) }); }); });
+    ['y', 'w', 'r', 'k'].forEach(function (c) { var k = 'c' + c + '1', d = QLs.clayOf(k); matDefs.push({ id: k, img: IMGC[c], res: 'CLAY', name: d.name, desc: '판매 ×' + d.sell + ' · 최소 ' + d.thin + 'mm · ' + d.note.split(' · ')[0], price: 100 }); });
+    ['white', 'celadon', 'black', 'jinsa'].forEach(function (z) { matDefs.push({ id: QLs.glazeMatKey(z), img: IMGG[z], res: 'GLZ', name: QLs.glazeMatName(z), desc: QLs.GNM[z] + ' 1회분', price: z === 'jinsa' ? 500 : 80 }); });
     matDefs.push({ id: 'plaster', img: '_blob/c2b64043b840ab3539af5fd284ab04aa.webp', res: 'MAT\nPLASTER', name: '석고', desc: '몰드 1개 제작용', price: 1200 });
     var mats = matDefs.map(function (m) {
       return {

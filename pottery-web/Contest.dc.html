@@ -331,7 +331,7 @@ class Component extends DCLogic {
   }
   pickRow(it, o) {
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
-    var CLN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
+    var CLN = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var st = ''; for (var i = 0; i < 5; i++) { st += i < (it.form || 0) ? '★' : '☆'; }
     var on = !!o.on;
     return {
@@ -532,7 +532,7 @@ class Component extends DCLogic {
         tap: function () { self.setState({ det: st.id, pkSel: '' }); }
       };
     });
-    var CLN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
+    var CLN = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     var cands = (g.order || []).filter(function (id) { var p = g.pieces && g.pieces[id]; return p && (p.where === 'store' || p.where === 'shelf'); });
     var Q = (g.goalQ || []).slice(), inQ = function (sid) { return Q.some(function (q) { return q.sid === sid; }); };
     var gOf = function (st) { return { sid: st.id, num: st.idx + 1, name: st.name, shapeN: st.shapeN, prof: st.prof, H: st.H, glaze: st.glaze, clay: st.clay, wshape: st.wshape }; };

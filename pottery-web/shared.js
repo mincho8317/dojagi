@@ -3,6 +3,8 @@
   var S = window.PotteryShared = {};
   // 한글은 단어 단위로 줄바꿈 (「요」 한 글자만 다음 줄로 넘어가는 것 방지)
   try { var _wb = document.createElement('style'); _wb.textContent = 'body{word-break:keep-all;overflow-wrap:break-word}'; (document.head || document.documentElement).appendChild(_wb); } catch (e) {}
+  // 등급 삭제(2026-11) : 보통·상급·특급으로 나뉘어 있던 흙·유약 원료를 한 가지로 합친다
+  try { var _k2 = 'pottery-proto-v1', _g2 = JSON.parse(localStorage.getItem(_k2) || 'null'), _ch = false; if (_g2 && _g2.mats) { Object.keys(_g2.mats).forEach(function (k) { var m = /^([cg][wyrkcbj])([23])$/.exec(k); if (m && _g2.mats[k]) { _g2.mats[m[1] + '1'] = (_g2.mats[m[1] + '1'] || 0) + _g2.mats[k]; delete _g2.mats[k]; _ch = true; } else if (m) { delete _g2.mats[k]; _ch = true; } }); if (_ch) { localStorage.setItem(_k2, JSON.stringify(_g2)); } } } catch (e) {}
   // 초벌 공정 삭제(2026-11) : 초벌 대기·초벌 중이던 기물은 유약 대기로 옮긴다 · 화면이 저장 상태를 읽기 전에 실행
   try { var _k = 'pottery-proto-v1', _g = JSON.parse(localStorage.getItem(_k) || 'null'); if (_g && ((_g.bisqueList || []).length || ((_g.bisque || {}).items || []).length || _g.mainFocus === 'bisque')) { _g.glazeList = (_g.glazeList || []).concat(_g.bisqueList || [], (_g.bisque || {}).items || []); _g.bisqueList = []; _g.bisque = { state: 'idle', start: 0, items: [] }; if (_g.mainFocus === 'bisque') { _g.mainFocus = 'glaze'; } localStorage.setItem(_k, JSON.stringify(_g)); } } catch (e) {}
   // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
@@ -47,7 +49,11 @@
       snapRate: { t: '성형', l: '보정 속도', b: 100, m: 100, u: '%' },
       doneTol: { t: '성형', l: '구간 완료 오차', b: 3.5, m: 100, u: '%' },
       fitBonus: { t: '성형', l: '성형 점수 보너스', b: 0, m: 1, u: '점' },
-      clayKeep: { t: '성형', l: '고급 흙 아끼기 확률', b: 0, m: 100, u: '%' },
+      clayKeep: { t: '성형', l: '흙 아끼기 확률', b: 0, m: 100, u: '%' },
+      clayLv: { t: '재료', l: '흙 정제 단계', b: 0, m: 1, u: '단계' },
+      glazeLv: { t: '재료', l: '유약 발색 보너스', b: 4, m: 2, u: '%' },
+      refineUp: { t: '재료', l: '다듬기 1개 더 얻을 확률', b: 0, m: 100, u: '%' },
+      matKeep: { t: '재료', l: '유약 원료 아끼기 확률', b: 0, m: 100, u: '%' },
       dryRack: { t: '건조', l: '건조대 칸', b: 3, m: 1, u: '칸' },
       kilnSlot: { t: '소성', l: '소성가마 칸', b: 6, m: 1, u: '칸' },
       dryCut: { t: '건조', l: '건조 시간', b: 30, m: -30, u: '분' },
@@ -73,9 +79,15 @@
       rareUp: { t: '채집', l: '희귀 흙·진사 확률', b: 0, m: 100, u: '%p' },
       digWide: { t: '채집', l: '삽 한 번 파는 범위', b: 100, m: 100, u: '%' }
     };
-    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·풀무' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
+    var RCAT = [{ id: 'mat', n: '재료' }, { id: 'form', n: '성형' }, { id: 'dry', n: '건조·풀무' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
     // 연구 트리 · 계열마다 9개 (1 · 3 · 3 · 2) · [id, 줄, 칸, 이름, 선행, 효과, 파편, 골드, 조건]
     var RROW = {
+      mat: [
+        ['r00', 0, 1, '재료 감각', [], { refineUp: 0.1 }, 20, 0],
+        ['r10', 1, 0, '흙 정제 I', ['r00'], { clayLv: 1 }, 40, 400], ['r11', 1, 1, '다듬기 요령', ['r00'], { refineUp: 0.15 }, 40, 300], ['r12', 1, 2, '유약 정제 I', ['r00'], { glazeLv: 1 }, 40, 400],
+        ['r20', 2, 0, '흙 정제 II', ['r10'], { clayLv: 1 }, 90, 1500], ['r21', 2, 1, '재료 아끼기', ['r11'], { clayKeep: 0.15, matKeep: 0.15 }, 70, 800], ['r22', 2, 2, '유약 정제 II', ['r12'], { glazeLv: 1 }, 90, 1500],
+        ['r30', 3, 0, '흙 장인', ['r20', 'r21'], { refineUp: 0.2, clayKeep: 0.15 }, 150, 3000], ['r32', 3, 2, '유약 장인', ['r21', 'r22'], { refineUp: 0.15, matKeep: 0.15 }, 150, 3000]
+      ],
       form: [
         ['f00', 0, 1, '물레 감각', [], { snapTol: 0.01 }, 20, 0],
         ['f10', 1, 0, '손끝 보정 I', ['f00'], { snapTol: 0.015 }, 30, 0], ['f11', 1, 1, '보정 속도 I', ['f00'], { snapRate: 0.2 }, 30, 0], ['f12', 1, 2, '형태 감각 I', ['f00'], { fitBonus: 2 }, 35, 0],
@@ -160,7 +172,7 @@
     }
     function colorRoll(it, match, heat, g) {
       var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], qb = qualBonus(it), R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0) + qb), R0[1]];
-      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0) + (clayOf(it.clay, it.glaze).color + (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0))) * 2);
+      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0) + (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2);
       pct = Math.max(5, Math.min(100, pct));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }
@@ -184,8 +196,8 @@
     // 원토(채집, 등급 없음) : rw ry rr rk → 다듬기(손 토련)로 등급이 정해진다
     var CGRADE = {
       1: { n: '', sell: 0.7, thin: 3.0, carve: 1.4, feel: 1.3, snap: 0.7, color: 0 },
-      2: { n: '상급 ', sell: 1.0, thin: 2.7, carve: 1.2, feel: 1.15, snap: 0.85, color: 1 },
-      3: { n: '특급 ', sell: 1.3, thin: 2.4, carve: 1.0, feel: 1.0, snap: 1.0, color: 2 }
+      2: { n: '', sell: 1.0, thin: 2.7, carve: 1.2, feel: 1.15, snap: 0.85, color: 1 },
+      3: { n: '', sell: 1.3, thin: 2.4, carve: 1.0, feel: 1.0, snap: 1.0, color: 2 }
     };
     var CCOLOR = {
       w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +4% · 잘 갈라져요', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
@@ -194,13 +206,19 @@
       k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 발색 +4% · 단단해 두께 변화 -10%', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
       s: { n: '봄빛 흙', aff: { sakura: 2 }, sell: 0.05, thin: -0.2, note: '축제 흙 · 벚꽃유 발색 +4%', col: '#E2B4A6', wet: '#B98A7E', dry: '#F0D3C7' }
     };
-    var CLAYKEYS = []; ['w', 'y', 'r', 'k'].forEach(function (c) { [1, 2, 3].forEach(function (gd) { CLAYKEYS.push('c' + c + gd); }); });
+    // 등급 없음 : 흙·유약 원료는 색·종류별 한 가지(키 끝자리 1). 품질은 연구 「재료」 계열의 정제 단계로 오른다
+    var CLAYKEYS = ['cy1', 'cw1', 'cr1', 'ck1'];
+    var _gC = null, _gT = 0;
+    function curG() { var now = Date.now(); if (_gC && now - _gT < 400) { return _gC; } try { _gC = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { _gC = {}; } _gT = now; return _gC; }
+    function clayLv(g) { return Math.min(2, fx(g || curG()).clayLv || 0); }
+    function glazePts(g) { return 2 + Math.min(2, fx(g || curG()).glazeLv || 0); } // 발색 점수 2·3·4 = +4·6·8%
+    function lerpG(a, b, t) { var o = {}; for (var k in a) { o[k] = typeof a[k] === 'number' ? a[k] + (b[k] - a[k]) * t : a[k]; } return o; }
     var CLEGACY = { basic: 'cy1', refined: 'cy2', kaolin: 'cw2', porcelain: 'cw3', premium: 'cw3' };
     function clayOf(id, glaze) {
       id = CLEGACY[id] || id;
-      var c = id === 'spring' ? 's' : (id && id.charAt(1)) || 'y', gd = id === 'spring' ? 2 : (+(id && id.charAt(2)) || 1);
-      var C = CCOLOR[c] || CCOLOR.y, b = CGRADE[gd] || CGRADE[1];
-      return { id: id, c: c, grade: gd, gradeN: ['', '보통', '상급', '특급'][gd], name: id === 'spring' ? '봄빛 흙' : b.n + C.n,
+      var c = id === 'spring' ? 's' : (id && id.charAt(1)) || 'y', lv = clayLv(), gd = 2 + lv / 2;
+      var C = CCOLOR[c] || CCOLOR.y, b = lerpG(CGRADE[2], CGRADE[3], lv / 2);
+      return { id: id, c: c, grade: gd, gradeN: '', lv: lv, name: C.n,
         sell: Math.round((b.sell + (C.sell || 0)) * 100) / 100, thin: Math.round((b.thin + (C.thin || 0)) * 10) / 10,
         color: Math.max(0, b.color + ((C.aff || {})[glaze] || 0)), aff: C.aff, feel: b.feel * (1 + (C.feel || 0)), carve: b.carve * (1 + (C.carve || 0)), snap: b.snap * (1 + (C.snap || 0)),
         note: C.note, col: C.col, wet: C.wet, dry: C.dry };
@@ -210,8 +228,8 @@
     var GMAT = { white: 'gw', celadon: 'gc', black: 'gb', jinsa: 'gj', sakura: 'petal' };
     var GMATN = { white: '장석', celadon: '철분', black: '철광', jinsa: '진사', sakura: '벚꽃 재' };
     var GGRADE = { 1: 0, 2: 2, 3: 4 }; // 원료 등급 → 발색 점수
-    function glazeMatKey(glaze, gd) { var b = GMAT[glaze]; return !b ? '' : (glaze === 'sakura' ? 'petal' : b + gd); }
-    function glazeMatName(glaze, gd) { return glaze === 'sakura' ? '벚꽃 재' : ['', '', '상급 ', '특급 '][gd] + GMATN[glaze]; }
+    function glazeMatKey(glaze) { var b = GMAT[glaze]; return !b ? '' : (glaze === 'sakura' ? 'petal' : b + '1'); }
+    function glazeMatName(glaze) { return GMATN[glaze] || ''; }
     function isTut(g) { var t = g && g.tut; try { var p = localStorage.getItem('tutProg'); if (typeof t === 'number' && p !== null && +p > t) { t = +p; } } catch (e) {} return typeof t === 'number' && t < 9; }
     function colorPctOf(p) { return typeof p.colorPct === 'number' ? p.colorPct : Math.min(100, (p.color || 1) * 20); }
     // ── 등장인물 · 대사 (기획 예시 · 자유롭게 수정) ─────────────
@@ -248,7 +266,7 @@
     var GP = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' };
     var GNM = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
     var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
-    var CLN = { cw1: '백토', cw2: '상급 백토', cw3: '특급 백토', cy1: '황토', cy2: '상급 황토', cy3: '특급 황토', cr1: '적토', cr2: '상급 적토', cr3: '특급 적토', ck1: '흑토', ck2: '상급 흑토', ck3: '특급 흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
+    var CLN = { cw1: '백토', cw2: '백토', cw3: '백토', cy1: '황토', cy2: '황토', cy3: '황토', cr1: '적토', cr2: '적토', cr3: '적토', ck1: '흑토', ck2: '흑토', ck3: '흑토', basic: '기본 점토', refined: '정제 점토', kaolin: '고령토', porcelain: '자기토', premium: '특선 소지', spring: '봄빛 흙' };
     // ── 기존 스테이지 데이터 (Contest.genStages와 동일 규칙 · 시즌 제외) ──
     function stages() {
       var P = {
@@ -276,7 +294,7 @@
       C.forEach(function (c) {
         for (var i = 0; i < c.n; i++) {
           var last = i === c.n - 1, key = last ? c.un : c.pool[i % c.pool.length];
-          var b = P[key], sz = last ? SZ[0] : SZ[Math.floor(i / c.pool.length) % 3], gz = GL[i % GL.length];
+          var b = P[key]; c.cl = c.cl.map(function (k) { return k.slice(0, 2) + '1'; }); var sz = last ? SZ[0] : SZ[Math.floor(i / c.pool.length) % 3], gz = GL[i % GL.length];
           out[c.pre + (i + 1)] = { id: c.pre + (i + 1), ch: c.id, name: GP[gz] + ' ' + sz.n + b.n, shapeN: sz.n + b.n, prof: b.p.map(function (v) { return Math.round(v * sz.k * 10) / 10; }), H: Math.round(b.H * sz.k), glaze: gz, clay: last ? c.cl[c.cl.length - 1] : c.cl[Math.min(c.cl.length - 1, Math.floor(i / 5))], wshape: WS[key] || 'bowl', newShape: last ? c.un : '' };
         }
       });
@@ -444,7 +462,7 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>
@@ -486,15 +504,15 @@
     }
     // 1-1b) 흙·유약 개편 3 : 흙 = 색 × 등급, 유약 원료 = 종류 × 등급, 무한 제공 없앰 (한 번만)
     if (!load().gv3) {
-      var g3 = load(), M3 = {}, LG = { refined: 'cy2', kaolin: 'cw3', porcelain: 'cw3', premium: 'cw3', gz_white: 'gw1', gz_celadon: 'gc1', gz_black: 'gb1', jinsa: 'gj1' };
+      var g3 = load(), M3 = {}, LG = { refined: 'cy1', kaolin: 'cw1', porcelain: 'cw1', premium: 'cw1', gz_white: 'gw1', gz_celadon: 'gc1', gz_black: 'gb1', jinsa: 'gj1' };
       for (var k3 in (g3.mats || {})) { var nk = LG[k3] || k3; if (k3 === 'basic') { continue; } M3[nk] = (M3[nk] || 0) + (g3.mats[k3] || 0); }
       var p3 = { gv3: 1, mats: M3 }; if (g3.pieces && !L.isTut(g3)) { M3.cy1 = (M3.cy1 || 0) + 10; } // 기본 흙(무한)을 쓰던 저장 데이터 : 보통 황토 10개
       patch(p3);
     }
-    // 1-1c) 튜토리얼이 끝나면 시작 꾸러미 (상급 황토 10 · 보통 장석·철분·철광 5) — 한 번만
+    // 1-1c) 튜토리얼이 끝나면 시작 꾸러미 (황토 10 · 장석·철분·철광 5) — 한 번만
     if (!load().starter3 && !L.isTut(load()) && typeof load().tut === 'number') {
       var g4 = load(), M4 = {}; for (var k4 in (g4.mats || {})) { M4[k4] = g4.mats[k4]; }
-      M4.cy2 = (M4.cy2 || 0) + 10; ['gw1', 'gc1', 'gb1'].forEach(function (k) { M4[k] = (M4[k] || 0) + 5; });
+      M4.cy1 = (M4.cy1 || 0) + 10; ['gw1', 'gc1', 'gb1'].forEach(function (k) { M4[k] = (M4[k] || 0) + 5; });
       patch({ starter3: 1, mats: M4 });
     }
     // 1-2) 연구 구조 이관: 옛 연구(파편 지불분) 환급 · 기존 9칸 건조대 유지
@@ -812,7 +830,7 @@
       if (PAGE === 'Wheel' && t === 1 && !(g.formedList || []).length && !(g.dryList || []).length) {
         var W = function (k) { try { return localStorage.getItem('tutWh_' + k); } catch (e) { return null; } }, Wset = function (k) { try { localStorage.setItem('tutWh_' + k, '1'); } catch (e) {} };
         var clayDlg = qsel('[role=dialog][aria-label="흙 고르기"]')(), tgtDlg = qsel('[role=dialog][aria-label="목표 모양 고르기"]')();
-        if (clayDlg) { Wset('clayOpen'); act('whClayPick', true, qsel('button[aria-label^="상급 황토"]'), '흙마다 등급과 특징이 달라요 · 튜토리얼 동안은 상급 황토를 마음껏 써요 · 고르거나 닫아요'); return; }
+        if (clayDlg) { Wset('clayOpen'); act('whClayPick', true, qsel('button[aria-label^="황토"]'), '흙마다 특징이 달라요 · 튜토리얼 동안은 황토를 마음껏 써요 · 고르거나 닫아요'); return; }
         if (tgtDlg) { Wset('tgtOpen'); act('whTgtPick', true, qsel('button[aria-label^="찻잔"]'), '「의뢰」 배지가 붙은 찻잔이 민 씨가 원한 모양이에요 · 골라요'); return; }
         if (!W('clayOpen')) { act('whClay', true, qsel('button[aria-label^="흙 바꾸기"]'), '먼저 흙을 골라요 · 눌러서 흙 종류를 확인해요'); return; }
         if (!W('tgtOpen')) { act('whTgt', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '이번엔 만들 모양을 골라요'); return; }
@@ -971,7 +989,7 @@
       if (st === 'done') { return; }
       if (!st) {
         if (clayN(g) > 0 || !g.starter3) { return; } // 튜토리얼 끝 선물 흙(starter3)을 받은 뒤부터 센다
-        overlay('<div class="ic">🪨</div><h3>흙이 다 떨어졌어요</h3><p style="text-align:left;word-break:keep-all">이제 흙은 직접 캐서 만들어요.\n\n⛏️ 채집 · 「흙 파기」로 땅을 파서 흙 원료를 모아요.\n✋ 다듬기 · 원료 5개로 한 판! 손 토련 5번의 성적에 따라 보통·상급·특급 흙 1개가 나와요.</p>', [
+        overlay('<div class="ic">🪨</div><h3>흙이 다 떨어졌어요</h3><p style="text-align:left;word-break:keep-all">이제 흙은 직접 캐서 만들어요.\n\n⛏️ 채집 · 「흙 파기」로 땅을 파서 흙 원료를 모아요.\n✋ 다듬기 · 원료 5개로 한 판! 손 토련 5번을 잘할수록 흙이 더 많이 나와요 (1~3개).</p>', [
           { label: '채집하러 가기', run: function () { gW(1); if (PAGE !== 'Gather') { goPage('Gather'); } } },
           { label: '나중에', cls: 'sub', run: function () { gW(1); } }
         ]);

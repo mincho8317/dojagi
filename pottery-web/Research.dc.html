@@ -31,7 +31,7 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </div>
 
-  <div role="tablist" aria-label="연구 계열" style="position:absolute;left:12px;right:12px;top:60px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px">
+  <div role="tablist" aria-label="연구 계열" style="position:absolute;left:12px;right:12px;top:60px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px">
     <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
       <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}"><span>{{tb.label}}</span><span style="{{tb.subStyle}}">{{tb.sub}}</span></button>
     </sc-for>
@@ -87,7 +87,7 @@ button{font-family:inherit;cursor:pointer}
     <div aria-hidden="true" style="{{fxStyle}}">✦ 연구 완료 ✦</div>
   </sc-if>
 
-  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end">
     <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
@@ -185,8 +185,8 @@ class Component extends DCLogic {
   }
   renderVals() {
     var self = this, s = this.state, g = s.g, QL = this.qlib(), R = g.res || {}, F = QL.fx(g);
-    var SHORT = { tixMax: '채집권', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
-    var ICON = { form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪' };
+    var SHORT = { clayLv: '흙 정제', glazeLv: '유약 발색', refineUp: '추가 획득', matKeep: '원료 절약', tixMax: '채집권', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
+    var ICON = { mat: '🪨', form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪', gather: '⛏' };
     var cat = s.tab, rows = QL.RROW[cat].map(function (r) { return QL.RNODE[r[0]]; });
     var X = [62, 181, 300], W = 108, H = 74, P = 96, T0 = 12;
     function pos(n) { return { x: X[n.col], y: T0 + n.row * P }; }
