@@ -58,7 +58,7 @@ button{font-family:inherit;cursor:pointer}
 
         <sc-for list="{{items}}" as="it" hint-placeholder-count="7">
           <sc-if value="{{it.isLink}}" hint-placeholder-val="{{true}}">
-          <a href="{{it.href}}" aria-label="{{it.aria}}" style="{{it.box}}">
+          <a href="{{it.href}}" data-fac="1" aria-label="{{it.aria}}" style="{{it.box}}">
             <sc-if value="{{it.imgOn}}" hint-placeholder-val="{{false}}">
               <img dc-src="{{it.img}}" alt="" aria-hidden="true" draggable="false" style="{{it.imgStyle}}">
             </sc-if>
