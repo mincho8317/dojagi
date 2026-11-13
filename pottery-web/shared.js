@@ -1590,8 +1590,8 @@
       '.st-flash{position:absolute;inset:0;background:#FFF4DE;pointer-events:none;animation:stFlash .5s both}' +
       // 흉상 · 대사 상자 위에 붙여서 누가 말하는지 바로 보이게
       '.st-bust{position:absolute;bottom:176px;width:150px;height:178px;border-radius:70px 70px 14px 14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.45);border:3px solid rgba(255,244,222,.85);transition:opacity .2s}' +
-      '.st-bust.l{left:18px}.st-bust.r{right:18px}.st-bust.in{animation:stBustIn .32s both}.st-bust.talk{animation:stTalk .3s}' +
-      '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b,.st-bust.shadow img{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover;object-position:50% 0}' +
+      '.st-bust.l{left:18px}.st-bust.r{right:18px}.st-bust.art{background:none!important;border:0;border-radius:0;box-shadow:none;overflow:visible;width:220px;height:261px;bottom:138px}.st-bust.art.l{left:4px}.st-bust.art.r{right:4px}.st-bust.art img{object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 6px 10px rgba(0,0,0,.55))}.st-bust.in{animation:stBustIn .32s both}.st-bust.talk{animation:stTalk .3s}' +
+      '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b,.st-bust.shadow img,.st-bust.art.shadow img{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover;object-position:50% 0}' +
       '.st-bust u{position:absolute;left:0;right:0;top:6px;text-decoration:none;text-align:center;font-size:10px;color:rgba(255,244,222,.7)}' +
       '.st-dlg{position:absolute;left:14px;right:14px;bottom:24px;min-height:144px;box-sizing:border-box;padding:20px 18px 30px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 20px rgba(0,0,0,.4);color:#2B1A0F}' +
       '.st-dlg.narr{background:rgba(30,20,12,.88);border-color:rgba(255,231,168,.55);box-shadow:0 8px 20px rgba(0,0,0,.4);color:#FFF4DE}' +
@@ -1678,7 +1678,7 @@
         }
         if (bust) { bust.remove(); }
         bust = document.createElement('div'); bust.className = 'st-bust in ' + a.side + (a.shadow ? ' shadow' : '') + (src ? ' art' : '');
-        bust.style.background = 'linear-gradient(180deg,' + a.tone + ',#1E140C)';
+        if (!src) { bust.style.background = 'linear-gradient(180deg,' + a.tone + ',#1E140C)'; }
         bust.innerHTML = src ? '<img alt="" src="' + src + '">' : '<u>그림 자리</u><b aria-hidden="true">' + a.emo + '</b>';
         box.insertBefore(bust, dlg); lastWho = who;
       }
