@@ -180,9 +180,9 @@ class Component extends DCLogic {
     function add(list, o) { list.forEach(function (it) { var r = o(it); r.it = it; all.push(r); }); }
     var fresh = []; (g.order || []).forEach(function (id) { var p = (g.pieces || {})[id]; if (p && p.where === 'store' && p.fresh) { fresh.push(p); } });
     add(fresh, function () { return { rank: 8, tag: '완성', tone: 'ready', href: 'Display.dc.html', fill: 'glazed', next: '진열·판매' }; });
-    add(batch, function (x) { var kl = g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0; return { rank: 7, tag: kl ? '재벌 ' + (kl >= 3600 ? Math.floor(kl / 3600) + '시간 ' + Math.floor(kl % 3600 / 60) + '분' : Math.ceil(kl / 60) + '분') : '재벌 완료', tone: kl ? 'busy' : 'ready', href: 'KilnOpen.dc.html', fill: 'glazed', next: kl ? '굽는 중' : '꺼내기' }; });
+    add(batch, function (x) { var kl = g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0; return { rank: 7, tag: kl ? '소성 ' + (kl >= 3600 ? Math.floor(kl / 3600) + '시간 ' + Math.floor(kl % 3600 / 60) + '분' : Math.ceil(kl / 60) + '분') : '소성 완료', tone: kl ? 'busy' : 'ready', href: 'KilnOpen.dc.html', fill: 'glazed', next: kl ? '굽는 중' : '꺼내기' }; });
     add(placed, function () { return { rank: 6, tag: '가마 칸에', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '불 지피기' }; });
-    add(g.kilnList || [], function () { return { rank: 5, tag: '재벌 대기', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '가마에 넣기' }; });
+    add(g.kilnList || [], function () { return { rank: 5, tag: '소성 대기', tone: 'ready', href: firingK ? 'KilnOpen.dc.html' : 'Kiln.dc.html', fill: 'glazed', next: '가마에 넣기' }; });
     add(g.glazeList || [], function () { return { rank: 4, tag: '유약 대기', tone: 'ready', href: 'Glaze.dc.html', fill: 'bisque', next: '유약 바르기' }; });
     add(g.dryList || [], function (x) { var p = Math.round((now - x.start) / 18000); return { rank: 1, tag: '건조 ' + p + '%', tone: p >= 100 && p <= 120 ? 'ready' : (p > 120 ? 'warn' : 'busy'), href: 'Dry.dc.html', fill: p >= 100 ? 'dry' : 'wet', next: '건조대 확인' }; });
     add(g.formedList || [], function () { return { rank: 0, tag: '건조 대기', tone: 'ready', href: 'Dry.dc.html', fill: 'wet', next: '건조대에 올리기' }; });
@@ -209,7 +209,7 @@ class Component extends DCLogic {
     }
     var cnt = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     all.forEach(function (r) { cnt[r.rank]++; });
-    var LG = [['건조 대기', 0], ['건조 중', 1], ['유약 대기', 4], ['재벌 대기', 5], ['가마 칸', 6], ['재벌 중', 7], ['완성', 8]];
+    var LG = [['건조 대기', 0], ['건조 중', 1], ['유약 대기', 4], ['소성 대기', 5], ['가마 칸', 6], ['소성 중', 7], ['완성', 8]];
     return {
       goDone: function () { try { var gg = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); gg.commTab = 'done'; localStorage.setItem('pottery-proto-v1', JSON.stringify(gg)); } catch (e) {} },
       total: all.length, empty: all.length === 0,

@@ -498,7 +498,7 @@ class Component extends DCLogic {
           return function () {
             if (p < 50) { self.say('아직 질어서 들면 형태가 무너져요'); return; }
             self.pull([id]);
-            self.say(zz === 'early' ? '반건조로 뺐어요 · 재벌 때 깨질 위험이 올라요' : '완전 건조 · 유약 대기로 옮겼어요');
+            self.say(zz === 'early' ? '반건조로 뺐어요 · 소성 때 깨질 위험이 올라요' : '완전 건조 · 유약 대기로 옮겼어요');
           };
         })(it.id, pct, z)
       });
@@ -726,7 +726,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });

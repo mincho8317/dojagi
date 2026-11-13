@@ -185,7 +185,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     var self = this, s = this.state, g = s.g, QL = this.qlib(), R = g.res || {}, F = QL.fx(g);
-    var SHORT = { tixMax: '채집권', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '재벌 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
+    var SHORT = { tixMax: '채집권', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
     var ICON = { form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪' };
     var cat = s.tab, rows = QL.RROW[cat].map(function (r) { return QL.RNODE[r[0]]; });
     var X = [62, 181, 300], W = 108, H = 74, P = 96, T0 = 12;

@@ -52,11 +52,11 @@
       dryCut: { t: '건조', l: '건조 시간', b: 30, m: -30, u: '분' },
       fanZone: { t: '건조', l: '부채질 판정 폭', b: 22, m: 100, u: '%' },
       fanGain: { t: '건조', l: '부채질 1회 건조량', b: 45, m: 45, u: '초' },
-      bqCut: { t: '재벌', l: '풀무질 단축 한도', b: 25, m: 100, u: '%' },
-      bqSafe: { t: '재벌', l: '반건조 재벌 파손', b: 10, m: -100, u: '%' },
+      bqCut: { t: '소성', l: '풀무질 단축 한도', b: 25, m: 100, u: '%' },
+      bqSafe: { t: '소성', l: '반건조 소성 파손', b: 10, m: -100, u: '%' },
       glazeZone: { t: '유약', l: '적정 담금 폭(백자유)', b: 0.4, m: 0.002, u: '초' },
       kilnTol: { t: '가마', l: '정합 허용 온도', b: 20, m: 1, u: '℃' },
-      kilnCut: { t: '가마', l: '재벌 시간(중화도)', b: 8, m: -8, u: '시간' },
+      kilnCut: { t: '가마', l: '소성 시간(중화도)', b: 8, m: -8, u: '시간' },
       breakCut: { t: '가마', l: '소성 기본 파손', b: 4, m: -100, u: '%' },
       colorMin: { t: '발색', l: '정합 발색 하한', b: 70, m: 1, u: '%' },
       yohen: { t: '발색', l: '요변 확률(고화도·발색 92%+)', b: 50, m: 100, u: '%' },
@@ -616,7 +616,7 @@
     if (window.__tutBooted) { return; }
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
-    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Glaze: '유약 바르기', Kiln: '재벌', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Glaze: '유약 바르기', Kiln: '소성', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
     var UNL = [['Wheel'], ['Dry', 'Queue'], [], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town', 'Gather']];
     var DONE1 = 9; // 기초 튜토리얼 완료 값 (화면 코드의 tut < 9 판정과 맞춤)
     var STEPS = [
@@ -731,7 +731,7 @@
       if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return true; } // 가마를 여는 연출 중에는 끌고 가지 않는다
       var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return true; } } catch (e) {}
       // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
-      var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
+      var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '소성가마', KilnOpen: '소성가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
       var ok = PAGE === 'Main' ? spotlight(linkTo(nx), '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
       if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
       return ok;
