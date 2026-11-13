@@ -326,7 +326,7 @@
     };
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데. 또 그릇을 맡아도 되나.)', '나: (민 씨 찻잔은, 할머니 말대로 딱 한 번이었는데.)', '나: (…그래도 할머니 그릇을 아직 기다리는 사람이 있었구나.)'], accLabel: '한 번만 더 할게요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데.)', '나/smile: (민 씨 아주머니도 그렇고… 할머니를 기다리는 사람이 이렇게 많았구나.)', '나: (남은 흙이 떨어질 때까지만, 좀 만들어 드려야겠다.)'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
       { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['우리 집 단골들은 그릇 바뀐 걸 귀신같이 알아.', '강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '단골상에 올릴 걸로 넉넉히 부탁해. 종지는 두 개!'], done: ['상이 환해졌어.', '…자네 어릴 적엔 할매 속 꽤나 썩였지. 그래도 할매는 한 번을 안 다그치더라.'] },
       { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 서울 사는 손주 녀석이 내려와.', '손님도 배로 오고. 잔칫상엔 자잘한 그릇이 많이 들어.', '작은 걸로 한 벌 부탁해.'], done: ['이걸로 대목은 걱정 없겠어. 손주 녀석이 그릇 예쁘다고 난리여.'] },
       { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
@@ -335,7 +335,7 @@
       { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], title: '강 선생님의 제자', intro: ['윤 할매께 소식 들었습니다. …강 선생님께 흙을 배웠던 사람입니다.', '저는 결국 그릇 대신 차를 택했지요.', '다도 수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 선생님 잔을 처음 쥐었을 때가 떠오릅니다.'] },
       { id: 'm07', npc: 'cha', ch: 'tea', st: ['c4', 'c5', 'c6'], n: { c4: 2 }, minGrade: '수작', title: '수업 견본 잔', intro: ['학생이 줄고 있습니다. 좋은 잔을 보여 주면 마음이 동하지 않을까 해서요.', '견본으로 쓸 잔이니, 수작 이상으로 부탁드립니다.'], done: ['잔이 가지런하니 찻자리가 정갈해졌습니다. 학생 한 명이 다시 오겠다고 하더군요.'] },
       { id: 'm08', npc: 'cha', ch: 'tea', st: ['c7', 'c8', 'c9'], title: '계절의 찻잔', intro: ['다시 온다던 그 학생 말입니다. 고등학생인데, 차 맛을 안다고 우기더군요.', '이번 계절에 어울리는 잔으로, 그 아이 몫까지 부탁합니다.'], done: ['그 아이가 잔을 들고 한참 웃더군요. 계절이 잔 안에 들어온 것 같다고.', '…제가 하려던 말을 빼앗겼습니다.'] },
-      { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병원 앞까지 갔다가 돌아왔습니다. 세 번이나요.', '약해진 모습을 볼 자신이 없었습니다. {이름} 님은 1년을 곁에 있었다지요.', '나: (…나도, 할머니한테 끝내 못 한 말이 있는데.)', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
+      { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병원 앞까지 갔다가 돌아왔습니다. 세 번이나요.', '약해진 모습을 볼 자신이 없었습니다. {이름} 님은 1년을 곁에 있었다지요.', '나/sad: (…나도, 할머니한테 끝내 못 한 말이 있는데.)', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
       { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], unlockNote: '다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다.', '다회 날, 첫 잔은 선생님 자리에 두겠습니다.'] },
       // ── 3챕터 · 정윤의 화실 ──
       { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '(사정을 들은 정윤이, 들고 온 꽃다발을 말없이 작업대에 내려놓는다)', '…늦었네요, 제가.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병 하나랑, 가게에 둘 것도 몇 개요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
@@ -473,7 +473,7 @@
     function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
     function lineState(g, line) {
       // 시즌(이벤트) 의뢰는 첫 메인 의뢰 납품을 마친 뒤부터 찾아온다 (이미 시작한 시즌 의뢰는 그대로)
-      if (line === 'season') { var mq0 = g.mq || {}, mainOk = (mq0.i || 0) >= 1 || !!mq0.thanks || (mq0.log || []).length > 0; var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && (mainOk || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      if (line === 'season') { var mq0 = g.mq || {}, mainOk = (mq0.i || 0) >= 1 || !!mq0.thanks || (mq0.log || []).length > 0; var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
       if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (tg === '1' || tg === '2' || tg === 'done' || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
       var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
     }
@@ -800,16 +800,29 @@
       var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
       return [took, formed, glazed, glazed, kilnIn, made, gave];
     }
+    function gR() { try { return localStorage.getItem('tutG') || ''; } catch (e) { return ''; } }
     function locked(g) {
       var t = g.tut, L = {};
-      if (typeof t !== 'number' || t >= UNL.length) { return L; }
+      if (typeof t !== 'number') { return L; }
+      if (t >= UNL.length) { // 기초 튜토리얼 뒤 : 메뉴마다 해당 안내가 열릴 때까지 잠근다
+        if (t !== DONE1) { return L; }
+        var o3 = t2R(), k3 = o3 && typeof o3.k === 'number' ? o3.k : 99;
+        if (!gR()) { L.Gather = true; L.Shop = true; }
+        if (k3 < 3) { L.Display = true; }
+        if (k3 < 5) { L.Research = true; }
+        if (!g.shopOpen) { L.Season = true; L.Contest = true; }
+        return L;
+      }
       for (var i = t; i < UNL.length; i++) { UNL[i].forEach(function (p) { L[p] = true; }); }
       return L;
     }
     function pageOf(href) { var m = /([A-Za-z]+)\.dc\.html/.exec(href || ''); return m ? m[1] : ''; }
     var css = document.createElement('style');
     var sel = Object.keys(NAMES).map(function (p) { return 'html[data-tl~="' + p + '"] a[href*="' + p + '.dc.html"]'; });
-    css.textContent = sel.join(',') + '{filter:grayscale(1) brightness(.8)!important;opacity:.45!important}' +
+    // 잠긴 메뉴는 아이콘·이름을 가리고 「??」만 보인다
+    css.textContent = sel.join(',') + '{position:relative!important;filter:grayscale(1)!important;color:transparent!important;text-shadow:none!important}' +
+      sel.map(function (q) { return q + ' > *'; }).join(',') + '{visibility:hidden!important}' +
+      sel.map(function (q) { return q + '::after'; }).join(',') + '{content:"??";visibility:visible;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:20px;color:#8A7A63;text-shadow:none;pointer-events:none}' +
       Object.keys(NAMES).concat(['Wheel']).map(function (p) { return 'html[data-tn="' + p + '"] a[href="' + p + '.dc.html"]'; }).join(',') + '{animation:tutPulse 1.2s ease-in-out infinite!important;border-radius:14px}' +
       '@keyframes tutPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,214,107,.9),0 0 10px 2px rgba(255,214,107,.7)}50%{box-shadow:0 0 0 5px rgba(255,214,107,.5),0 0 24px 8px rgba(255,214,107,.9)}}' +
       '@keyframes tutIn{0%{transform:translate(-50%,-14px);opacity:0}100%{transform:translate(-50%,0);opacity:1}}@keyframes tutPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}' +
@@ -1023,19 +1036,24 @@
     }
     // 2차 튜토리얼 · 의뢰 종류와 받기 → 제작 중 의뢰 확인 → 이벤트 → 연구 (설명 위주)
     var CRAFT = ['Wheel', 'Dry', 'Glaze', 'Kiln', 'KilnOpen'];
+    // 2차 튜토리얼 · 이야기 흐름에 맞춰 순서대로 열린다
+    // 0 의뢰 받기(카운터) → 1 제작 중 체크리스트 → 2 (채집·「공방에 불을 켜다」 컷신까지 대기) → 3 진열과 와장창 → 4 의뢰의 종류 → 5 연구
     var T2 = [
-      { goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 줘요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 다음에 볼 연구에 써요.' },
-      { goal: '의뢰의 종류와 받는 방법', go: 'Counter', pages: ['Counter'], ic: '📜', body: '의뢰는 네 갈래예요.\n\n📖 공방 이야기 · 단골 손님의 사연을 따라 순서대로 열려요. 챕터를 마치면 새 모양과 마을 구역이 열려요.\n👹 도깨비 이야기 · 지하실 너머 도깨비들의 부탁이에요. 채집을 시작하면 찾아와요.\n🌸 시즌 의뢰 · 이벤트 기간에만 오는 한정 의뢰예요.\n☕ 손님 의뢰 · 일간·주간·주문 손님이 수시로 찾아와요.\n\n의뢰는 카운터에서 손님 이야기를 듣고 「맡을게요」로 받아요. 윤 할매의 첫 이야기 의뢰를 받아 보세요.' },
-      { goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: ['Wheel', 'Glaze'], passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 물레·유약 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
-      { goal: '이야기 의뢰 3점 납품하기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
-      { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·풀무 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
+      { id: 'quest', goal: '이야기 의뢰 받기', go: 'Counter', pages: ['Counter'], ic: '📜', body: '할머니를 찾아온 손님들이 그릇을 부탁해요.\n\n📖 공방 이야기 · 단골 손님의 사연을 따라 순서대로 열려요.\n카운터에서 이야기를 듣고 의뢰를 받으면 의뢰 내역서에 적혀요.' },
+      { id: 'track', goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: ['Wheel', 'Glaze'], passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 물레·유약 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
+      { id: 'wait', goal: '남은 흙으로 의뢰 만들기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
+      { id: 'display', goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '창고에서 찾은 할머니의 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 주고, 손님이 사 가기도 해요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 연구에 써요.' },
+      { id: 'kinds', goal: '새로 오는 손님들', go: 'Counter', pages: ['Counter'], ic: '🔔', body: '공방 문을 열자 새 손님들이 찾아와요.\n\n📖 공방 이야기 · 단골 손님의 사연\n👹 도깨비 이야기 · 지하실 너머 도깨비들의 부탁\n📅 일간·주간 의뢰 · 동네 손님의 짧은 부탁\n🌸 시즌 의뢰 · 기간 한정 이벤트\n🛒 취향 손님 · 진열대를 보고 찾아오는 손님' },
+      { id: 'research', goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·풀무 · 유약·소성 · 재료 · 경영·공방 계열에서 실력 보정과 설비를 키워요.' }
     ];
+    var T2LAST = T2.length - 1;
     // 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번
     var T3 = { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' };
     // 2차 진행 상태는 별도 키에 둔다 (화면 코드가 게임 상태를 통째로 저장해도 지워지지 않게)
     function t2W(o) { try { localStorage.setItem('tut2', JSON.stringify(o)); } catch (e) {} }
-    function t2R() { try { var o = JSON.parse(localStorage.getItem('tut2') || 'null'); if (o && typeof o.k === 'number' && o.v !== 2) { var M = { 0: 1, 1: 2, 2: 3, 3: 0, 4: 4, 5: 4 }; if (M[o.k] !== undefined) { o.k = M[o.k]; o.seen = -1; } o.v = 2; t2W(o); } return o; } catch (e) { return null; } }
-    function t2Set(k, extra) { var o = t2R() || { k: 0, seen: -1, v: 2 }; o.k = k; o.v = 2; if (extra && extra.tut2Seen !== undefined) { o.seen = extra.tut2Seen; } t2W(o); }
+    // v3 : 이야기 흐름 순서 · 예전 v2 단계(0 진열 1 의뢰 종류 2 체크리스트 3 납품 대기 4 연구)는 가까운 단계로 옮긴다
+    function t2R() { try { var o = JSON.parse(localStorage.getItem('tut2') || 'null'); if (o && typeof o.k === 'number' && o.v !== 3) { var M = { 0: 0, 1: 0, 2: 1, 3: 2, 4: 5, 5: 5 }; if (M[o.k] !== undefined) { o.k = M[o.k]; o.seen = -1; } o.v = 3; t2W(o); } return o; } catch (e) { return null; } }
+    function t2Set(k, extra) { var o = t2R() || { k: 0, seen: -1, v: 3 }; o.k = k; o.v = 3; if (extra && extra.tut2Seen !== undefined) { o.seen = extra.tut2Seen; } t2W(o); }
     function tourOn(g) { var o = t2R(); return g.tut === DONE1 && !!o && typeof o.k === 'number' && o.k < T2.length; }
     function tourCard(k, run) {
       var st = T2[k];
@@ -1071,19 +1089,19 @@
       tourMini(k);
       if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
       // 진행 조건
-      var mqDone = g.mq && ((g.mq.i || 0) >= 1 || (g.mq.log || []).length > 0);
-      if (k >= 1 && k <= 3 && mqDone) { t2Set(4); return; }
-      if (k === 1 && g.mq && g.mq.acc) { t2Set(2); return; }
-      if (k === 0) {
+      if (k === 0 && g.mq && (g.mq.acc || (g.mq.i || 0) >= 1)) { t2Set(1); return; }
+      if (k <= 2 && g.shopOpen) { t2Set(3); return; }
+      if (k === 3) {
         if (tutGift(g)) { save(g); notify(); return; }
         var gi = giftIn(g), shelfN = pieceN(g, ['shelf']);
-        if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(1); return; }
+        if (g.tutGift && !gi.badLive && (gi.store === 0 || shelfN >= 6)) { t2Set(4); return; }
       }
+      if (k === 4 && o2.seen === 4) { t2Set(5); return; }
       // 직접 제작·납품하는 동안에는 끌고 가지 않는다 · 단, 의뢰를 막 받은 뒤(1단계)에는 물레까지 안내한다
-      if (st.passive && k !== 2 && st.pages.indexOf(PAGE) < 0) { return; }
+      if (st.passive && k !== 1 && st.pages.indexOf(PAGE) < 0) { return; }
       if (st.pages.indexOf(PAGE) < 0) {
         if (spotEl) { return; }
-        if (k === 2) { // 의뢰를 받은 뒤 : 공방으로 → 물레
+        if (k === 1) { // 의뢰를 받은 뒤 : 공방으로 → 물레
           if (PAGE === 'Main') { act('t2go1m', true, linkTo('Wheel'), '「물레」를 눌러 의뢰 기물을 빚으러 가요'); }
           else { act('t2go1', true, function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「물레」를 눌러요'); }
           return;
@@ -1091,27 +1109,26 @@
         act('t2go' + k, true, function () { return linkTo(st.go)() || (st.go === 'Counter' ? null : linkTo('Main')()) || qsel('a[aria-label="공방으로"],a[aria-label="공방으로 돌아가기"]')(); }, (PAGE === 'Main' ? '「' + ({ Counter: '카운터', Display: '진열대' }[st.go] || NAMES[st.go] || st.go) + '」를 눌러 이동해요' : '여기를 눌러 「' + (NAMES[st.go] || st.go) + '」 화면으로 가요'));
         return;
       }
-      if (o2.seen !== k && !st.passive) { spotOff(); tourCard(k, k === 4 ? function () { setTimeout(tourDone, 200); } : null); return; }
-      if (k === 1 && PAGE === 'Counter') {
+      if (o2.seen !== k && !st.passive) { spotOff(); tourCard(k, k === T2LAST ? function () { setTimeout(tourDone, 200); } : null); return; }
+      if (k === 0 && PAGE === 'Counter') {
         var rqT = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return (b.textContent || '').indexOf('의뢰 손님') >= 0 && vis(b); })[0];
         if (rqT && rqT.getAttribute('aria-selected') !== 'true') { act('t2tab', true, function () { return rqT; }, '「의뢰 손님」 탭에서 새 의뢰를 받아요'); }
-        else if (btnWith('맡을게요')()) { act('t2acc', true, btnWith('맡을게요'), '「맡을게요」로 의뢰를 받아요'); }
+        else if (btnWith('남은 흙만큼만요')() || btnWith('맡을게요')()) { act('t2acc', true, function () { return btnWith('남은 흙만큼만요')() || btnWith('맡을게요')(); }, '버튼을 눌러 의뢰를 받아요'); }
         else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
       }
-      if (k === 0 && PAGE === 'Display') {
+      if (k === 3 && PAGE === 'Display') {
         var gj = giftIn(g), shN = pieceN(g, ['shelf']), P2 = g.pieces || {};
         var byName = function (ids) { return function () { var nm = ids.map(function (i) { return P2[i] && (P2[i].where === 'store' || P2[i].where === 'shelf') ? P2[i].name : null; }).filter(Boolean); var c = [].slice.call(document.querySelectorAll('#dstore button[aria-label], #dshelf button[aria-label]')).filter(function (b) { return nm.indexOf(b.getAttribute('aria-label')) >= 0 && vis(b); }); return c[0] || null; }; };
         var stIds = ['tg1', 'tg2', 'tg3', 'tg4', 'tg5', 'tg6'].filter(function (i) { return P2[i] && P2[i].where === 'store'; });
         if (stIds.length && shN < 6) { act('t2ds' + shN, true, byName(stIds), '명작을 꾹 잡고 위 진열대로 끌어서 놓아요 (' + shN + '/6)'); }
         else if (gj.badLive) { act('t2sm', true, byName(['tg7']), '망작을 꾹 잡고 끌면 💥 와장창 칸이 나타나요 · 거기에 놓아 깨요'); }
       }
-      if (k === 2 && (PAGE === 'Wheel' || PAGE === 'Glaze')) {
-        act('t2trk', true, function () { return qsel('.trk .trk-h')() || qsel('.trk-pill')(); }, '제작 중엔 이 체크리스트로 요구 기물과 완성 수를 확인해요 · 눌러서 펼치고 접어요', function () { t2Set(3); });
+      if (k === 1 && (PAGE === 'Wheel' || PAGE === 'Glaze')) {
+        act('t2trk', true, function () { return qsel('.trk .trk-h')() || qsel('.trk-pill')(); }, '제작 중엔 이 체크리스트로 요구 기물과 완성 수를 확인해요 · 눌러서 펼치고 접어요', function () { t2Set(2); });
       }
     }
     // ── 채집 안내 : 기초 튜토리얼 뒤 처음으로 흙이 다 떨어지면 한 번 ──
     // tutG : 없음 → 1(흙 원료 캐기) → 2(다듬기) → 'done'
-    function gR() { try { return localStorage.getItem('tutG') || ''; } catch (e) { return ''; } }
     function gW(v) { try { localStorage.setItem('tutG', String(v)); } catch (e) {} }
     var CLAYK = ['cw1', 'cw2', 'cw3', 'cy1', 'cy2', 'cy3', 'cr1', 'cr2', 'cr3', 'ck1', 'ck2', 'ck3', 'spring'];
     function clayN(g) { var M = g.mats || {}, n = 0; CLAYK.forEach(function (k) { n += M[k] || 0; }); return n; }
@@ -1120,7 +1137,10 @@
     function gatherTour(g) {
       if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
       var st = gR();
-      if (st === 'done') { return; }
+      if (st === 'done') { // 첫 흙을 만든 뒤 · 「공방에 불을 켜다」 → 진열·새 손님이 열린다
+        if (!g.shopOpen && PAGE !== 'Gather') { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); }); }
+        return;
+      }
       if (!st) {
         if (clayN(g) > 0 || !g.starter3) { return; } // 튜토리얼 끝 선물 흙(starter3)을 받은 뒤부터 센다
         window.PotteryShared.storyPlay('dok_intro', function () { gW(1); if (PAGE !== 'Gather') { goPage('Gather'); } });
@@ -1174,7 +1194,7 @@
       }
       var L = apply(load());
       if (first && L[PAGE]) {
-        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
+        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 ' + ((load().tut || 0) < STEPS.length ? '튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal : '이야기를 조금 더 진행하면 열려요.') + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
       }
     }
     document.addEventListener('click', function (e) {
@@ -1183,6 +1203,7 @@
       var p = pageOf(a.getAttribute('href')), g = load(), L = locked(g);
       if (p && L[p]) {
         e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
+        if ((g.tut || 0) >= STEPS.length) { toast('🔒 아직 열리지 않았어요 · 이야기를 진행하면 열려요'); return; }
         var need = 0; for (var i = 0; i < UNL.length; i++) { if (UNL[i].indexOf(p) >= 0) { need = i; break; } }
         toast('🔒 ' + (NAMES[p] || p) + ' · 「' + STEPS[need].goal + '」를 마치면 열려요');
       }
@@ -1545,13 +1566,13 @@
     // 줄 = [말하는 사람('' = 내레이션), 대사, {fx: 'shake' | 'knock' | 'flash'}]
     var SCENES = {
       prologue: { title: '프롤로그 · 빈 공방', steps: [
-        { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…아가. 공방은 네 맘대로 혀. 팔아도 괜찮어.', { face: 'sick' }], ['할머니', '근디… 가마에 불은, 딱 한 번만 더 넣어 봐.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
+        { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…우리 아가. 울지 말어.', { face: 'sick' }], ['할머니', '이 할미가 평생 그릇을 빚었는디…', { face: 'sick' }], ['할머니', '…네가, 이 할미가 빚은 것 중에 제일 이쁜 도자기여.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
         { img: 'cg/p2.webp', pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
         { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33', img: 'cg/p2.webp' },
         { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
       after_min: { title: '마지막 납품', steps: [
-        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '…할머니, 가마에 불 한 번 넣었어요.', { face: 'sad' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
+        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '…할머니, 오랜만에 가마에 불 넣었어요.', { face: 'sad' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
         { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
@@ -1559,6 +1580,10 @@
         { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
         { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.', { face: 'muk' }], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
         { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 모아 둔 원료를 한 번에 재료로 만들어요', bg: '#3A3022', img: 'cg/d3.webp' }
+      ] },
+      open_shop: { title: '공방에 불을 켜다', outfit: 'ws', steps: [
+        { img: 'cg/p3.webp', pic: '🫙', cap: '공방 안', bg: '#4A3422', amb: 'dust', lines: [['', '흙이 다시 쌓였다. 묵 한 그릇에, 흙 한 짐.'], ['나', '…도깨비라니. 할머니, 대체 뭘 하고 사신 거예요.', { face: 'smile' }], ['', '창고를 정리하다, 할머니가 아끼던 그릇들을 찾았다.'], ['나', '이대로 창고에 두긴 아깝잖아.'], ['나', '…흙이 있는 동안만이라도, 공방 문을 열어 두자.', { face: 'proud' }]] },
+        { img: 'cg/a2.webp', pic: '🚶', cap: '영업 중', bg: '#5A4A30', amb: 'morning', lines: [['', '그날부터 공방 앞에 「영업 중」 팻말이 걸렸다.'], ['', '할머니를 찾는 손님만이 아니라, 그릇을 보러 오는 손님도 하나둘 늘었다.']] }
       ] },
       ep1_end: { title: '에피소드 1 · 새 간판', outfit: 'ws', steps: [
         { img: 'cg/e1.webp', pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
