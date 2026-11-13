@@ -25,7 +25,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
     <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
     <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">시즌 이벤트</div>
-    <span style="flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;background:#B04A68;border:2px solid #A94767;font-family:'Jua',sans-serif;font-size:15px;color:#FFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;font-size:5px;display:flex;align-items:center;justify-content:center"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>{{petals}}</span>
+    <button type="button" id="petalBadge" onClick="{{petalOpen}}" aria-label="꽃잎 {{petals}}장 · 눌러서 사기" style="all:unset;cursor:pointer;position:relative;flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;background:#B04A68;border:2px solid #A94767;font-family:'Jua',sans-serif;font-size:15px;color:#FFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;font-size:5px;display:flex;align-items:center;justify-content:center"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>{{petals}}<span aria-hidden="true" style="position:absolute;right:-7px;top:-7px;width:18px;height:18px;border-radius:50%;background:#2F9A75;border:2px solid #FFF4DE;font-size:13px;line-height:15px;text-align:center;color:#FFF">+</span></button>
   </div>
 
   <div style="position:absolute;left:12px;right:12px;top:64px;height:118px;box-sizing:border-box;border:3px solid #A94767;border-radius:18px;overflow:hidden;isolation:isolate;background:#FCEBD8;box-shadow:0 3px 0 rgba(122,47,68,.35);display:flex;flex-direction:column;justify-content:flex-end;padding:10px 14px;gap:2px">
@@ -48,18 +48,6 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <button type="button" onClick="{{ms.claim}}" style="{{ms.btn}}">{{ms.btnLabel}}</button>
         </div>
       </sc-for>
-    </div>
-
-    <div style="box-sizing:border-box;padding:10px 12px;border-radius:16px;background:#FFF8F5;border:3px solid #A94767;display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">꽃잎 사기</span><span style="font-size:11.5px;font-weight:700;color:#7A2F44">보유 💎 {{jade}}</span></div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
-        <sc-for list="{{packs}}" as="pk" hint-placeholder-count="3">
-          <button type="button" onClick="{{pk.ask}}" aria-label="{{pk.aria}}" style="all:unset;cursor:pointer;box-sizing:border-box;min-height:58px;padding:6px 4px;border-radius:14px;background:#FFF;border:2.5px solid #B04A68;box-shadow:0 3px 0 #A94767;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
-            <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">🌸 {{pk.n}}</span>
-            <span style="font-size:12px;font-weight:700;color:#1E5E48">💎 {{pk.price}}</span>
-          </button>
-        </sc-for>
-      </div>
     </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2F44">시즌 한정 상점</span><span style="font-size:11px;color:#7A2F44">시즌 종료 후 판매 종료 · 내년 복각 예정</span></div>
@@ -99,6 +87,22 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
     </a>
   </nav>
+  <sc-if value="{{packOn}}" hint-placeholder-val="{{false}}">
+    <div onClick="{{packBg}}" style="position:absolute;inset:0;z-index:79;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center">
+      <div role="dialog" aria-label="꽃잎 사기" style="width:320px;box-sizing:border-box;padding:18px 16px 14px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;display:flex;flex-direction:column;gap:10px;color:#2B1A0F">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:19px;color:#7A2F44">🌸 꽃잎 사기</span><span style="font-size:12px;font-weight:700;color:#1E5E48">보유 💎 {{jade}}</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <sc-for list="{{packs}}" as="pk" hint-placeholder-count="3">
+            <button type="button" onClick="{{pk.ask}}" aria-label="{{pk.aria}}" style="all:unset;cursor:pointer;box-sizing:border-box;min-height:64px;padding:6px 4px;border-radius:14px;background:#FFF;border:2.5px solid #B04A68;box-shadow:0 3px 0 #A94767;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2F44">🌸 {{pk.n}}</span>
+              <span style="font-size:12px;font-weight:700;color:#1E5E48">💎 {{pk.price}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <button type="button" onClick="{{packClose}}" style="all:unset;cursor:pointer;padding:10px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-family:'Jua',sans-serif;font-size:15px;text-align:center">닫기</button>
+      </div>
+    </div>
+  </sc-if>
   <sc-if value="{{askOn}}" hint-placeholder-val="{{false}}">
     <div onClick="{{askBg}}" style="position:absolute;inset:0;z-index:80;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center">
       <div role="dialog" aria-label="옥으로 꽃잎 사기" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F">
@@ -150,6 +154,23 @@ class Component extends DCLogic {
   jadeOf(g) { return g.jadeV === 2 && g.jade != null ? g.jade : 1000000; }
   say(m) { var self = this; clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2000); }
 
+  // 꽃잎이 받은 자리에서 오른쪽 위 꽃잎 칸으로 날아 들어간다
+  flyPetals(n, done, fromCenter) {
+    var to = document.getElementById('petalBadge'), fr = fromCenter ? null : (document.activeElement && document.activeElement.tagName === 'BUTTON' ? document.activeElement : null);
+    if (!to) { if (done) { done(); } return; }
+    var tr = to.getBoundingClientRect(), r0 = fr ? fr.getBoundingClientRect() : { left: innerWidth / 2 - 20, top: innerHeight / 2 - 20, width: 40, height: 40 };
+    var N = Math.max(4, Math.min(10, n)), tx = tr.left + tr.width * 0.3, ty = tr.top + tr.height / 2, landed = 0;
+    for (var i = 0; i < N; i++) {
+      (function (i) {
+        var e = document.createElement('img'); e.src = '_blob/2065af250719e73024f4b0b65d23915e.webp'; e.alt = '';
+        var sx = r0.left + r0.width / 2 + (Math.random() - 0.5) * 40, sy = r0.top + r0.height / 2 + (Math.random() - 0.5) * 20;
+        e.style.cssText = 'position:fixed;z-index:9999;left:' + sx + 'px;top:' + sy + 'px;width:22px;height:22px;pointer-events:none;transition:left .7s cubic-bezier(.5,-0.4,.7,1),top .7s cubic-bezier(.3,.6,.4,1),transform .7s,opacity .2s;transform:scale(.6)';
+        document.body.appendChild(e);
+        setTimeout(function () { e.style.left = tx + 'px'; e.style.top = ty + 'px'; e.style.transform = 'scale(1) rotate(' + (200 + i * 40) + 'deg)'; }, 30 + i * 70);
+        setTimeout(function () { e.remove(); landed++; try { window.__sfx && window.__sfx('dot', landed); } catch (e2) {} to.style.transform = 'scale(1.18)'; setTimeout(function () { to.style.transform = ''; }, 120); if (landed === N && done) { done(); } }, 760 + i * 70);
+      })(i);
+    }
+  }
   renderVals() {
     var self = this, s = this.state, g = s.g;
     var sea = g.season || { petals: 25, claimed: {}, bought: {} };
@@ -164,7 +185,7 @@ class Component extends DCLogic {
       { id: 'm3', name: '진열대 6칸 가득 채우기', cur: shelf, max: 6, reward: 10 }
     ];
     var jade = this.jadeOf(g);
-    var packs = [{ n: 10, price: 30 }, { n: 30, price: 80 }, { n: 60, price: 150 }].map(function (pk) { return { n: pk.n, price: pk.price, aria: '꽃잎 ' + pk.n + '장 · 옥 ' + pk.price, ask: function () { self.setState({ ask: pk }); } }; });
+    var packs = [{ n: 10, price: 30 }, { n: 30, price: 80 }, { n: 60, price: 150 }].map(function (pk) { return { n: pk.n, price: pk.price, aria: '꽃잎 ' + pk.n + '장 · 옥 ' + pk.price, ask: function () { self.setState({ ask: pk, packOn: false }); } }; });
     var missions = M.map(function (m) {
       var done = m.cur >= m.max, got = !!(sea.claimed || {})[m.id];
       return {
@@ -176,8 +197,7 @@ class Component extends DCLogic {
           if (got) { return; }
           if (!done) { self.say('아직 조건을 채우지 못했어요 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
           var c = {}; for (var x in (sea.claimed || {})) { c[x] = sea.claimed[x]; } c[m.id] = true;
-          self.setG({ season: save({ petals: sea.petals + m.reward, claimed: c }) });
-          self.say('꽃잎 +' + m.reward);
+          self.flyPetals(m.reward, function () { self.setG({ season: save({ petals: (self.loadG().season || sea).petals + m.reward, claimed: c }) }); self.say('꽃잎 +' + m.reward); });
         }
       };
     });
@@ -216,6 +236,7 @@ class Component extends DCLogic {
       jade: jade.toLocaleString(), packs: packs,
       askOn: !!s.ask, ask: s.ask ? { n: s.ask.n, price: s.ask.price, after: (jade - s.ask.price).toLocaleString() } : { n: 0, price: 0, after: '' },
       askNo: function () { self.setState({ ask: null }); },
+      packOn: !!s.packOn, petalOpen: function () { self.setState({ packOn: true }); }, packClose: function () { self.setState({ packOn: false }); }, packBg: function (e) { if (e && e.target === e.currentTarget) { self.setState({ packOn: false }); } },
       askBg: function (e) { if (e && e.target === e.currentTarget) { self.setState({ ask: null }); } },
       askYes: function () {
         var a = self.state.ask; if (!a) { return; }
@@ -223,7 +244,7 @@ class Component extends DCLogic {
         if (j0 < a.price) { self.setState({ ask: null }); self.say('옥이 ' + (a.price - j0) + '개 부족해요 · 상점에서 충전'); return; }
         var sea0 = self.loadG().season || sea;
         self.setG({ jadeV: 2, jade: j0 - a.price, season: { petals: (sea0.petals || 0) + a.n, claimed: sea0.claimed || {}, bought: sea0.bought || {} } });
-        self.setState({ ask: null }); self.say('꽃잎 +' + a.n);
+        self.setState({ ask: null }); self.say('꽃잎 +' + a.n); self.flyPetals(Math.min(12, a.n), null, true);
       }
     };
   }

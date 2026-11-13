@@ -299,6 +299,7 @@ class Component extends DCLogic {
     f.target = q0.min && !q0.minDone ? 'chatjan' : 'dish';
     var qk = this.questTargets(f.g);
     if (f.g.wheelPick && qk[f.g.wheelPick]) { f.target = f.g.wheelPick; } else { var ks = Object.keys(qk).filter(function (k) { return !qk[k].full; }); if (ks.length) { f.target = ks[0]; } }
+    if (qk[f.target] && qk[f.target].req.clay) { f.clay = this.pickClay(f.g, qk[f.target].req.clay); } // 제작 안내 의뢰의 추천 흙
     f.speed = 'std';
     f.toast = '';
     f.toastKind = 'ok';
@@ -566,7 +567,7 @@ class Component extends DCLogic {
       var k = Date.now(), sp = (s.segFx || []).filter(function (x) { return k - x.k < 700; });
       newly.forEach(function (j) { sp.push({ i: j, k: k + j }); });
       out.segFx = sp;
-      try { window.__sfx && window.__sfx(done.every(Boolean) && hOk ? 'ok' : 'reveal'); } catch (e) {}
+      try { window.__sfx && window.__sfx('dot', Math.min(12, done.filter(Boolean).length)); } catch (e) {} // 구간이 맞을 때는 작은 소리 (높이·좌우·두께는 따로)
       if (done.every(Boolean) && hOk && !this.perfectSaid) { this.perfectSaid = true; this.say('완벽! 모든 구간이 목표 선에 맞았어요 · 완성을 눌러요', 'ok'); }
     }
     return out;
@@ -805,6 +806,8 @@ class Component extends DCLogic {
     marks = marks.slice(0, 6).map(function (m) { var d = { '▲': [0, -4], '▼': [0, 4], '◀': [-4, 0], '▶': [4, 0] }[m.t] || [0, 0]; return { x: m.x, y: m.y, ty: (+m.y + 4.5).toFixed(1), t: m.t, c: m.c, anim: '--mx:' + d[0] + 'px;--my:' + d[1] + 'px;animation:mkBob .9s ease-in-out infinite' }; });
     // 튜토리얼이 단계(높이 → 좌우 → 두께)를 판단할 수 있게 현재 상태를 알려 둔다
     try { window.__wheelTut = { shaping: shaping, fit: an.fit, hOk: !an.issues.some(function (x) { return x.kind === 'up' || x.kind === 'down'; }), sOk: !an.issues.some(function (x) { return x.kind === 'in' || x.kind === 'out'; }), tOk: !an.issues.some(function (x) { return x.kind === 'thin' || x.kind === 'thick'; }) && tmin >= lim + 1 }; } catch (e) {}
+    // 높이·좌우·두께가 맞는 순간마다 서로 다른 소리
+    try { var wt = window.__wheelTut || {}, pv = this._wtPrev || {}; if (shaping && pv.on) { if (wt.hOk && !pv.hOk) { window.__sfx && window.__sfx('hOk'); } else if (wt.sOk && !pv.sOk) { window.__sfx && window.__sfx('sOk'); } else if (wt.tOk && !pv.tOk) { window.__sfx && window.__sfx('tOk'); } } this._wtPrev = { on: !!shaping, hOk: wt.hOk, sOk: wt.sOk, tOk: wt.tOk }; } catch (e) {}
     var grabOn = !!s.grab && !!this.drag && shaping;
     var grab = { y1: 0, h: 0, y: 0, hx: 0, ax: 0, ay: 0, arrow: '', label: '', ly: 0, op: 0.35 };
     if (grabOn) {

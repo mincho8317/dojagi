@@ -24,7 +24,8 @@
         glaze: { ok: 100, thick: 70, thin: 60, drip: 30 },
         fire: { '정합': 100, '근접': 65, '불일치': 25 }
       },
-      gradeCut: { '명작': 90, '수작': 70 }, // 미만은 양작
+      gradeCut: { '명작': 180, '수작': 140 }, // 실력 점수 200점 만점 · 미만은 양작
+      colorTemp: { '정합': 30, '근접': 15, '불일치': 0 }, // 발색 · 온도 정합 몫(%)
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
       // 발색 % = 무작위 · 등급과 무관 · 평가액에만 반영
       colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
@@ -158,10 +159,11 @@
         glaze: P.glaze[it.thick] != null ? P.glaze[it.thick] : 60,
         fire: P.fire[match] != null ? P.fire[match] : 25
       };
-      var sc = 0; for (var k in W) { sc += W[k] * parts[k]; }
-      sc = Math.round(sc);
+      // 실력 점수 = 성형(100) + 건조(50) + 시유(50) · 200점 만점 (소성 온도는 발색에 들어간다)
+      var pts = { form: Math.round(parts.form), dry: Math.round(parts.dry / 2), glaze: Math.round(parts.glaze / 2) };
+      var sc = pts.form + pts.dry + pts.glaze;
       var gr = sc >= TUNE.gradeCut['명작'] ? '명작' : (sc >= TUNE.gradeCut['수작'] ? '수작' : '양작');
-      return { score: sc, grade: gr, parts: parts };
+      return { score: sc, max: 200, grade: gr, parts: parts, pts: pts };
     }
     function mixHex(a, b, t) { function h(x) { var n = parseInt(x.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; } var A = h(a), B = h(b); var c = A.map(function (v, i) { return Math.max(0, Math.min(255, Math.round(v + (B[i] - v) * t))); }); return '#' + ((1 << 24) + (c[0] << 16) + (c[1] << 8) + c[2]).toString(16).slice(1); }
     function tintOf(glaze, pct, rnd) {
@@ -171,12 +173,13 @@
       return br >= 0 ? mixHex(c, '#FFFFFF', br) : mixHex(c, '#000000', -br);
     }
     function colorRoll(it, match, heat, g) {
-      var F = g ? fx(g) : {}, R0 = TUNE.colorRange[match] || TUNE.colorRange['불일치'], qb = qualBonus(it), R = [Math.min(R0[1], R0[0] + (match === '정합' ? (F.colorMin || 0) : 0) + qb), R0[1]];
-      var pct = Math.round(R[0] + Math.random() * (R[1] - R[0]) + (TUNE.colorThick[it.thick] || 0) + (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2);
-      pct = Math.max(5, Math.min(100, pct));
+      // 발색 = 무작위 0~70% + 온도 정합 30% + 유약 보너스 + 흙과 유약 시너지
+      var F = g ? fx(g) : {};
+      var cp = { rnd: Math.round(Math.random() * 70), temp: TUNE.colorTemp[match] != null ? TUNE.colorTemp[match] : 0, glaze: (TUNE.colorThick[it.thick] || 0) + (match === '정합' ? Math.round((F.colorMin || 0) / 2) : 0), syn: (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2 };
+      var pct = Math.max(5, Math.min(100, cp.rnd + cp.temp + cp.glaze + cp.syn));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }
-      return { pct: pct, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
+      return { pct: pct, parts: cp, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
     }
     // 채집 원료 품질(★)·고운 원료 시스템은 없앴다 (채집 개편 2). 예전 호출부가 깨지지 않게 이름만 남긴다
     function qualBonus(it) { return 0; }
@@ -433,7 +436,10 @@
     try { if (typeof window !== 'undefined') { window.__shN = shapeN; } } catch (e) {}
     // ── 시즌 의뢰 (기존 시즌 스테이지 s1~s10 이관 · 인물·대사는 기획 예시) ──
     var SEASON_UNTIL = new Date('2026-11-17T23:59:59+09:00').getTime();
+    // 벚꽃 축제 여는 의뢰 : 도깨비 1챕터 · 에피소드 1의 1챕터를 끝낸 뒤 찾아온다 · 받으면 두두리가 벚꽃 채집터를 알려 준다
+    ST.s0 = { id: 's0', ch: 'season', name: '벚꽃 찻잔', shapeN: '찻잔', sk: 'chatjan', prof: SHP.chatjan.p.slice(), H: SHP.chatjan.H, glaze: 'sakura', clay: 'cy1', wshape: 'cup', newShape: '' };
     var SSTORY = [
+      { id: 'e00', npc: 'festa', ch: 'season', st: ['s0'], title: '벚꽃 빛 그릇', intro: ['안녕하세요! 봄 다회 준비위원 하람이에요.', '올해 다회 주제가 「벚꽃」이거든요. 찻잔도 벚꽃 빛이었으면 해서요.', '혹시… 벚꽃 색 그릇을 만들어 주실 수 있을까요?', '나: (벚꽃 색…? 그런 유약은 써 본 적이 없는데.)'], accLabel: '한번 알아볼게요', done: ['와… 정말 벚꽃 빛이에요!', '다회 준비, 이제 같이 해 주실 거죠? 공방에 축제 안내를 붙여 둘게요!'] },
       { id: 'e01', npc: 'festa', ch: 'season', st: ['s1', 's2', 's3'], title: '봄 다회 첫 상차림', intro: ['봄 다회 준비위원 하람이에요! 올해 다회 그릇을 공방에 맡기고 싶어서요.', '잔이랑 종지, 사발부터 하나씩 부탁드려요.'], done: ['와, 다회 분위기가 벌써 나요!', '축제 동안 다른 부탁도 드릴게요.'] },
       { id: 'e02', npc: 'festa', ch: 'season', st: ['s4', 's5', 's6'], title: '손님맞이 그릇', intro: ['다회 손님이 생각보다 많대요.', '같은 그릇으로 한 벌 더 부탁해요.'], done: ['이 정도면 손님이 몰려와도 걱정 없겠어요.'] },
       { id: 'e03', npc: 'festa', ch: 'season', st: ['s7', 's8', 's9'], title: '꽃잎 다과상', intro: ['다과상에 올릴 작은 그릇이 필요해요.', '빛깔이 고운 걸로요!'], done: ['꽃잎이 그릇 위에서 더 예뻐 보여요.'] },
@@ -458,7 +464,7 @@
       });
     }
     var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
-    var SEASON = buildLine(SSTORY, 'season', function () { return 2; });
+    var SEASON = buildLine(SSTORY, 'season', function (q) { return q.id === 'e00' ? 1 : 2; });
     var DOK = buildLine(DSTORY, 'dok', function (q) { return CHLV[q.ch] || 1; });
     function profileOf(it) {
       if (it && it.prof && it.prof.length >= 3) { return { r: it.prof, H: it.H || 110 }; }
@@ -495,8 +501,8 @@
     function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
     function lineState(g, line) {
       // 시즌(이벤트) 의뢰는 첫 메인 의뢰 납품을 마친 뒤부터 찾아온다 (이미 시작한 시즌 의뢰는 그대로)
-      if (line === 'season') { var mq0 = g.mq || {}, mainOk = (mq0.i || 0) >= 1 || !!mq0.thanks || (mq0.log || []).length > 0; var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
-      if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (tg === '1' || tg === '2' || tg === 'done' || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
+      if (line === 'season') { var mq0 = g.mq || {}, dq0 = g.dq || {}, mainOk = (mq0.i || 0) >= 5 && (dq0.i || 0) >= 5; /* 에피소드 1의 1챕터 · 도깨비 1챕터를 끝낸 뒤 */ var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (!!tg || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
       var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
     }
     // 단골별 진행 : 만났는지 · 끝낸 의뢰 수 · 챕터 완료
@@ -845,8 +851,9 @@
         var o3 = t2R(), k3 = o3 && typeof o3.k === 'number' ? o3.k : 99;
         if (!gR()) { L.Gather = true; L.Shop = true; }
         if (k3 < 3) { L.Display = true; }
-        if (k3 < 5) { L.Research = true; }
-        if (!g.shopOpen) { L.Season = true; L.Contest = true; }
+        if (!g.resUnl && !(k3 >= 99 && Object.keys(g.res || {}).some(function (k) { return /^r\d/.test(k); }))) { L.Research = true; } // 파편 100개 · 할머니 일지 컷신 뒤 열림
+        if (!g.shopOpen) { L.Contest = true; }
+        if (!((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) || g.evDone)) { L.Season = true; } // 벚꽃 의뢰를 납품하면 이벤트 버튼이 열림
         return L;
       }
       for (var i = t; i < UNL.length; i++) { UNL[i].forEach(function (p) { L[p] = true; }); }
@@ -1002,7 +1009,11 @@
         });
       });
     }
-    setInterval(function () { try { lockNames(locked(load())); } catch (e) {} }, 700);
+    // 화면이 다시 그려져 원래 이름이 돌아오면 그리기 전에 바로 ??로 되돌린다 (깜빡임 방지)
+    var lnL = null, lnBusy = false;
+    function lnRun() { if (lnBusy) { return; } lnBusy = true; try { lockNames(lnL || (lnL = locked(load()))); } catch (e) {} lnBusy = false; }
+    setInterval(function () { lnL = locked(load()); lnRun(); }, 700);
+    try { new MutationObserver(function (ms) { if (lnBusy) { return; } for (var i = 0; i < ms.length; i++) { var t = ms[i].target, el = t.nodeType === 3 ? t.parentElement : t; if (el && el.closest && el.closest('a[href]')) { lnRun(); return; } } }).observe(document.documentElement, { subtree: true, childList: true, characterData: true }); } catch (e) {}
     function freshStart(keep) {
       var g = { tut: 0, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout', 'pname', 'scenes'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
@@ -1097,15 +1108,14 @@
     // 0 의뢰 받기(카운터) → 1 제작 중 체크리스트 → 2 (채집·「공방에 불을 켜다」 컷신까지 대기) → 3 진열과 와장창 → 4 의뢰의 종류 → 5 연구
     var T2 = [
       { id: 'quest', goal: '이야기 의뢰 받기', go: 'Counter', pages: ['Counter'], ic: '📜', body: '할머니를 찾아온 손님들이 그릇을 부탁해요.\n\n📖 공방 이야기 · 단골 손님의 사연을 따라 순서대로 열려요.\n카운터에서 이야기를 듣고 의뢰를 받으면 의뢰 내역서에 적혀요.' },
-      { id: 'track', goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: ['Wheel', 'Glaze'], passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 물레·유약 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
+      { id: 'track', goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: ['Wheel', 'Glaze'], passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 물레·유약 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에 들어가면 제작 안내를 켠 의뢰에 맞는 흙과 모양이 자동으로 골라져요.\n다른 걸 빚고 싶으면 흙·목표 버튼으로 바꾸면 돼요.' },
       { id: 'wait', goal: '남은 흙으로 의뢰 만들기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
       { id: 'display', goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '창고에서 찾은 할머니의 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 주고, 손님이 사 가기도 해요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 연구에 써요.' },
-      { id: 'kinds', goal: '새로 오는 손님들', go: 'Counter', pages: ['Counter'], ic: '🔔', body: '공방 문을 열자 새 손님들이 찾아와요.\n\n📖 공방 이야기 · 단골 손님의 사연\n👹 도깨비 이야기 · 지하실 너머 도깨비들의 부탁\n📅 일간·주간 의뢰 · 동네 손님의 짧은 부탁\n🌸 시즌 의뢰 · 기간 한정 이벤트\n🛒 취향 손님 · 진열대를 보고 찾아오는 손님' },
-      { id: 'research', goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·풀무 · 유약·소성 · 재료 · 경영·공방 계열에서 실력 보정과 설비를 키워요.' }
-    ];
+      { id: 'kinds', goal: '새로 오는 손님들', go: 'Counter', pages: ['Counter'], ic: '🔔', body: '공방 문을 열자 새 손님들이 찾아와요.\n\n📖 공방 이야기 · 단골 손님의 사연\n👹 도깨비 이야기 · 지하실 너머 도깨비들의 부탁\n📅 일간·주간 의뢰 · 동네 손님의 짧은 부탁\n🌸 시즌 의뢰 · 기간 한정 이벤트\n🛒 취향 손님 · 진열대를 보고 찾아오는 손님' }
+    ]; // 연구는 파편이 100개 모이면 「할머니의 일지」 컷신과 함께 따로 열린다 (resTour)
     var T2LAST = T2.length - 1;
     // 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번
-    var T3 = { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' };
+    var T3 = { goal: '벚꽃 축제가 열렸어요', go: 'Season', pages: ['Season'], ic: '🌸', body: '벚꽃 축제는 기간 한정 이벤트예요.\n\n🌸 축제 미션을 채우면 꽃잎을 받아요.\n오른쪽 위 꽃잎을 누르면 옥으로 꽃잎을 살 수 있어요.\n꽃잎으로 한정 문양·가구·꽃묵을 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' };
     // 2차 진행 상태는 별도 키에 둔다 (화면 코드가 게임 상태를 통째로 저장해도 지워지지 않게)
     function t2W(o) { try { localStorage.setItem('tut2', JSON.stringify(o)); } catch (e) {} }
     // v3 : 이야기 흐름 순서 · 예전 v2 단계(0 진열 1 의뢰 종류 2 체크리스트 3 납품 대기 4 연구)는 가까운 단계로 옮긴다
@@ -1181,20 +1191,22 @@
         else if (gj.badLive) { act('t2sm', true, byName(['tg7']), '망작을 꾹 잡고 끌면 💥 와장창 칸이 나타나요 · 거기에 놓아 깨요'); }
       }
       if (k === 1 && (PAGE === 'Wheel' || PAGE === 'Glaze')) {
+        var t2a = null; try { t2a = localStorage.getItem('t2auto'); } catch (e) {}
+        if (PAGE === 'Wheel' && !t2a) { act('t2auto', true, qsel('button[aria-label^="목표 모양 바꾸기"]'), '📌 제작 안내가 켜져 있으면 의뢰에 맞는 흙과 모양이 자동으로 골라져요 · 지금도 의뢰 기물이 골라져 있어요', function () { try { localStorage.setItem('t2auto', '1'); } catch (e) {} }); return; }
         act('t2trk', true, function () { return qsel('.trk .trk-h')() || qsel('.trk-pill')(); }, '제작 중엔 이 체크리스트로 요구 기물과 완성 수를 확인해요 · 눌러서 펼치고 접어요', function () { t2Set(2); });
       }
     }
     // ── 채집 안내 : 기초 튜토리얼 뒤 처음으로 흙이 다 떨어지면 한 번 ──
-    // tutG : 없음 → 1(흙 원료 캐기) → 2(다듬기) → 'done'
+    // tutG : 없음 → 1(흙 파기) → r(돌 부수기) → 2(손 토련) → g(절구질) → m(메밀묵 안내) → bye(배웅 컷신) → 'done'
     function gW(v) { try { localStorage.setItem('tutG', String(v)); } catch (e) {} }
     var CLAYK = ['cw1', 'cw2', 'cw3', 'cy1', 'cy2', 'cy3', 'cr1', 'cr2', 'cr3', 'ck1', 'ck2', 'ck3', 'spring'];
     function clayN(g) { var M = g.mats || {}, n = 0; CLAYK.forEach(function (k) { n += M[k] || 0; }); return n; }
     function rawMax(g) { var M = g.mats || {}, b = 0; ['ry', 'rr', 'rw', 'rk'].forEach(function (k) { b = Math.max(b, M[k] || 0); }); return b; }
     function goPage(p) { if (window.__potGo) { window.__potGo(p + '.dc.html'); } else { location.href = p + '.dc.html'; } }
     function gatherTour(g) {
-      if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
+      if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
       var st = gR();
-      if (st === 'done') { // 첫 흙을 만든 뒤 · 「공방에 불을 켜다」 → 진열·새 손님이 열린다
+      if (st === 'done') { // 예전 저장 : 채집은 끝났는데 아직 공방을 안 열었으면
         if (!g.shopOpen && PAGE !== 'Gather') { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); }); }
         return;
       }
@@ -1203,32 +1215,93 @@
         window.PotteryShared.storyPlay('dok_intro', function () { gW(1); if (PAGE !== 'Gather') { goPage('Gather'); } });
         return;
       }
-      if (clayN(g) > 0) { gW('done'); if (st === '2') { toast('흙을 만들었어요! 물레에서 바로 써 보세요'); } return; }
+      // 채집 튜토리얼 : 1 흙 파기 → r 돌 부수기 → 2 손 토련 → g 절구질 → m 메밀묵 안내 → 두두리 배웅 → 공방에 불을 켜다
       if (PAGE === 'Gather' && (document.getElementById('gframe') || [].slice.call(document.querySelectorAll('[role=dialog]')).some(function (d) { return vis(d); }))) { return; } // 미니게임·다듬기 중엔 가리지 않는다
-      if (PAGE !== 'Gather') { act('tgGo', true, function () { return qsel('nav a[href="Gather.dc.html"]')() || linkTo('Gather')(); }, '「채집」을 눌러 도깨비 골짜기로 흙 원료를 캐러 가요'); return; }
+      if (PAGE !== 'Gather') { act('tgGo', true, function () { return qsel('nav a[href="Gather.dc.html"]')() || linkTo('Gather')(); }, '「채집」을 눌러 도깨비 골짜기로 가요'); return; }
+      var M = g.mats || {}, mx = function (ks) { var b = 0; ks.forEach(function (k) { b = Math.max(b, M[k] || 0); }); return b; };
+      var rawC = mx(['ry', 'rr', 'rw', 'rk']), rawG = mx(['ow', 'oc', 'ob', 'oj']), glN = (M.gw1 || 0) + (M.gc1 || 0) + (M.gb1 || 0) + (M.gj1 || 0);
       var tabs = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return vis(b); });
       var tabOf = function (t) { return tabs.filter(function (b) { return (b.textContent || '').indexOf(t) >= 0; })[0] || null; };
+      var gotoTab = function (t, key, msg) { var tb = tabOf(t); if (tb && tb.getAttribute('aria-selected') !== 'true') { act(key, true, function () { return tb; }, msg); return true; } return false; };
+      var mukEl = qsel('[aria-label^="메밀묵 "]');
+      var seen = function (k) { try { return !!localStorage.getItem('tutGs_' + k); } catch (e) { return false; } }, mark = function (k) { try { localStorage.setItem('tutGs_' + k, '1'); } catch (e) {} };
       if (st === '1') {
-        if (rawMax(g) >= 5) { gW(2); return; }
-        var tg = tabOf('채집'); if (tg && tg.getAttribute('aria-selected') !== 'true') { act('tgTab1', true, function () { return tg; }, '「채집」 탭으로 가요'); return; }
-        act('tgDig', true, qsel('button[aria-label="흙 파기 시작"]'), rawMax(g) > 0 ? '원료가 5개 모일 때까지 한 번 더! 「흙 파기」를 눌러요 (지금 ' + rawMax(g) + '개)' : '「흙 파기」를 눌러 땅을 파고 흙 원료를 모아요');
+        if (rawC >= 5) { gW('r'); return; }
+        if (gotoTab('채집', 'tgTab1', '「채집」 탭으로 가요')) { return; }
+        if (!seen('muk0')) { act('tgMuk0', true, mukEl, '🥣 메밀묵은 도깨비 골짜기에 들어가는 값이에요 · 채집 한 판에 한 그릇 · 오늘은 두두리가 그냥 들여보내 줬어요', function () { mark('muk0'); }); return; }
+        act('tgDig', true, qsel('button[aria-label="흙 파기 시작"]'), '「흙 파기」로 땅을 파서 흙 원료를 캐요');
         return;
       }
-      if (st === '2') {
-        var tr = tabOf('다듬기'); if (tr && tr.getAttribute('aria-selected') !== 'true') { act('tgTab2', true, function () { return tr; }, '원료가 5개 모였어요 · 「다듬기」에서 흙으로 만들어요'); return; }
-        act('tgRef', true, function () { var c = [].slice.call(document.querySelectorAll('button[aria-label$=" 다듬기"]')).filter(function (b) { return vis(b) && (b.textContent || '').indexOf('다듬기') >= 0; }); return c[0] || null; }, '모아 둔 원료를 한 판에 모두 다듬어요! 점선을 따라 반죽을 밀어 흙을 만들어요');
+      if (st === 'r') {
+        if (rawG >= 5) { gW(2); return; }
+        if (gotoTab('채집', 'tgTabR', '「채집」 탭으로 가요')) { return; }
+        act('tgRock', true, qsel('button[aria-label="돌 부수기 시작"]'), '이번엔 「돌 부수기」! 돌을 쓸어 부수면 유약 원석이 나와요');
+        return;
+      }
+      if (st === '2' || st === 'g') {
+        var clay = st === '2';
+        if (clay && clayN(g) > 0) { gW('g'); return; }
+        if (!clay && glN > 0) { gW('m'); return; }
+        if (gotoTab('다듬기', 'tgTab' + st, clay ? '원료가 모였어요 · 「다듬기」 탭에서 흙으로 만들어요' : '이번엔 「다듬기」 탭에서 유약 원석을 빻아요')) { return; }
+        act('tgRef' + st, true, function () { var c = [].slice.call(document.querySelectorAll('button[aria-label$=" 다듬기"]')).filter(function (b) { var nm = (b.getAttribute('aria-label') || '').replace(' 다듬기', ''); return vis(b) && (clay ? ['황토', '적토', '백토', '흑토'] : ['장석', '철분', '철광', '진사']).indexOf(nm) >= 0 && !/\/5$/.test(b.textContent || ''); }); return c[0] || null; }, clay ? '「손 토련」 · 반죽을 점선 따라 밀어 흙을 만들어요' : '「절구질」 · 바늘이 금색 칸에 올 때 절구를 톡! 유약 원료가 돼요');
+        return;
+      }
+      if (st === 'm') {
+        if (gotoTab('채집', 'tgTabM', '「채집」 탭으로 돌아가요')) { return; }
+        act('tgMuk1', true, mukEl, '🥣 재료가 부족할 때마다 메밀묵을 두두리에게 주면 채집할 수 있어요 · 묵은 20분마다 한 그릇씩 쑤어져요', function () {
+          gW('bye');
+          setTimeout(function () {
+            window.PotteryShared.storyPlay('dok_bye', function () {
+              window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); });
+            });
+          }, 300);
+        });
+        return;
+      }
+      if (st === 'bye' && !document.querySelector('.st-ov')) { // 배웅 컷신 중에 닫혔으면 이어서
+        window.PotteryShared.storyPlay('dok_bye', function () { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); }); });
       }
     }
     // ── 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번 ──
     function seasonTour(g) {
-      if (g.tut !== DONE1 || !(g.sq && g.sq.acc)) { return; }
-      try { if (localStorage.getItem('tut3')) { return; } } catch (e) { return; }
-      if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
-      try { localStorage.setItem('tut3', '1'); } catch (e) {}
-      overlay('<div class="ic">' + T3.ic + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', PAGE === 'Season' ? [{ label: '확인' }] : [
-        { label: '시즌 화면 보기', run: function () { goPage('Season'); } },
-        { label: '확인', cls: 'sub' }
-      ]);
+      if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
+      var ev = ''; try { ev = localStorage.getItem('tutEv') || ''; } catch (e) {}
+      var evW = function (v) { try { localStorage.setItem('tutEv', v); } catch (e) {} };
+      // 벚꽃 의뢰를 받고 두두리 컷신을 본 뒤 : 축제 채집지에서 벚꽃 재 캐기
+      if (g.evUnl && !ev) {
+        if (PAGE !== 'Gather') { act('evGo', true, function () { return qsel('nav a[href="Gather.dc.html"]')() || linkTo('Gather')(); }, '🌸 「채집」에서 벚꽃 언덕으로 가요'); return; }
+        if (document.getElementById('gframe') || [].slice.call(document.querySelectorAll('[role=dialog]')).some(function (d) { return vis(d); })) { return; }
+        var tg = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return vis(b) && (b.textContent || '').indexOf('채집') >= 0; })[0];
+        if (tg && tg.getAttribute('aria-selected') !== 'true') { act('evTab', true, function () { return tg; }, '「채집」 탭으로 가요'); return; }
+        act('evSite', true, function () { var box = qsel('[aria-label="축제 채집지"]')(); if (!box) { return null; } var b2 = [].slice.call(box.querySelectorAll('button')).filter(function (b) { return vis(b); }); return b2[1] || b2[0] || box; }, '🌸 벚꽃 언덕 「돌 부수기」에서 벚꽃 재를 모아요 · 꽃묵 🌸 한 그릇이 들어요 · 벚꽃 재로 벚꽃유를 발라요', function () { evW('1'); });
+        return;
+      }
+      // 벚꽃 의뢰를 납품한 뒤 : 공방의 이벤트 버튼이 열린다
+      if ((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) && ev !== '2') {
+        if (PAGE === 'Season') { evW('2'); overlay('<div class="ic">' + T3.ic + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', [{ label: '확인' }]); return; }
+        if (PAGE === 'Main') { act('evBtn', true, linkTo('Season'), '🌸 벚꽃 축제가 열렸어요! 「이벤트」를 눌러 봐요'); }
+        return;
+      }
+    }
+    // ── 연구 이벤트 : 파편이 100개 모이면 할머니의 일지 → 연구 열림 → 연구 안내 ──
+    function resTour(g) {
+      if (g.tut !== DONE1 || !g.shopOpen || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
+      var rs = ''; try { rs = localStorage.getItem('tutR') || ''; } catch (e) {}
+      var rW = function (v) { try { localStorage.setItem('tutR', v); } catch (e) {} };
+      if (!g.resUnl) {
+        if (locked(g).Research && (g.shards || 0) >= 100 && PAGE !== 'Gather' && CRAFT.indexOf(PAGE) < 0) { window.PotteryShared.storyPlay('research_open', function () { var g2 = load(); g2.resUnl = true; save(g2); rW('1'); notify(); }); }
+        return;
+      }
+      if (rs === 'done' || !rs) { return; }
+      if (PAGE !== 'Research') { if (PAGE === 'Main') { act('rsGo', true, function () { return qsel('a[href="Research.dc.html"][aria-label="연구"]')() || linkTo('Research')(); }, '🔬 「연구」를 눌러 파편으로 연구해요'); } else { act('rsGo2', true, function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「연구」를 눌러요'); } return; }
+      var node = function () { return [].slice.call(document.querySelectorAll('button[aria-label^="재료 감각"]')).filter(function (b) { return vis(b); })[0] || null; };
+      if (!node() && (rs === '1' || rs === '2')) { var mt = [].slice.call(document.querySelectorAll('[role=tab]')).filter(function (b) { return vis(b) && (b.textContent || '').indexOf('재료') === 0; })[0]; if (mt) { act('rsTab', true, function () { return mt; }, '「재료」 계열을 눌러요'); } return; }
+      if (rs === '1') { act('rsNode', true, node, '「재료 감각」 연구를 눌러 봐요 · 다듬기에서 흙이 더 잘 나와요', function () { rW('2'); }); return; }
+      if (rs === '2') {
+        var n0 = node(); if (n0 && n0.getAttribute('aria-pressed') !== 'true') { act('rsNode2', true, node, '「재료 감각」을 눌러요', function () {}); return; }
+        if ((g.res || {}).r00) { rW('done'); toast('연구 완료! 깨진 그릇에서도 배울 게 있었어요'); return; }
+        act('rsBuy', true, btnWith('연구하기'), '파편을 써서 「연구하기」! 파편은 와장창이나 의뢰 보상으로 모여요', function () { setTimeout(function () { if ((load().res || {}).r00) { rW('done'); } }, 800); });
+      }
     }
     function check(first) {
       if (document.querySelector('.sm-ov')) { return; }
@@ -1326,7 +1399,7 @@
       // 화면이 늦게 그려지면 밝힐 곳이 아직 없을 수 있어 몇 번 더 찾아본다
       if (!showCard(gS, false)) { guideRetry(1200, 8); }
     }
-    setInterval(function () { check(false); guideJade(load()); guideAct(load()); tour(load()); seasonTour(load()); gatherTour(load()); }, 1000);
+    setInterval(function () { check(false); guideJade(load()); guideAct(load()); tour(load()); seasonTour(load()); gatherTour(load()); resTour(load()); }, 1000);
   };
   S.sndBoot = function () {
     if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
@@ -1423,6 +1496,10 @@
       rare: function (t) { FX.unlock(t); noise(t, 1.2, 'highpass', 7000, 0.5, 0.08); },
       meow: function (t) { var o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), p = 0.9 + Math.random() * 0.25; o.type = 'sawtooth'; o.frequency.setValueAtTime(480 * p, t); o.frequency.linearRampToValueAtTime(820 * p, t + 0.16); o.frequency.exponentialRampToValueAtTime(430 * p, t + 0.55); f.type = 'bandpass'; f.Q.value = 2.2; f.frequency.setValueAtTime(800, t); f.frequency.linearRampToValueAtTime(1700, t + 0.18); f.frequency.linearRampToValueAtTime(900, t + 0.55); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.05); g.gain.setValueAtTime(0.22, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6); o.connect(f); f.connect(g); g.connect(mS); o.start(t); o.stop(t + 0.65); },
       dot: function (t, k) { var st = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31], m = 72 + st[Math.min(st.length - 1, k || 0)]; tone('sine', mf(m), t, 0.002, 0.07, 0.12); tone('triangle', mf(m) * 2, t, 0.002, 0.02, 0.06); },
+      type: function (t) { tone('triangle', 820 + Math.random() * 160, t, 0.001, 0.025, 0.035, null, 600); }, // 글자가 나올 때 톡톡
+      hOk: function (t) { tone('sine', mf(72), t, 0.003, 0.12, 0.5); tone('sine', mf(79), t + 0.09, 0.003, 0.14, 0.6); }, // 성형 · 높이 맞음 (낮은 2음)
+      sOk: function (t) { [76, 81, 84].forEach(function (m, i) { tone('triangle', mf(m), t + i * 0.07, 0.003, 0.09, 0.45); }); }, // 성형 · 좌우 맞음 (밝은 3음)
+      tOk: function (t) { tone('sine', mf(88), t, 0.002, 0.08, 0.9); tone('sine', mf(95), t + 0.05, 0.002, 0.06, 1.1); noise(t, 0.3, 'highpass', 6500, 0.6, 0.05); }, // 성형 · 두께 맞음 (맑은 종소리)
       pop: function (t) { tone('triangle', 380, t, 0.003, 0.16, 0.12, null, 900); noise(t, 0.08, 'bandpass', 1200, 1.5, 0.12); },
       thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
     };
@@ -1487,9 +1564,31 @@
   S.ptIn = function (el, x, y) {
     if (!el) { return false; } var r = el.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
   };
+  // 유약 경계를 타원(앞쪽이 아래로 휜 곡선)으로 · 경계 바로 위는 흘러내려 고인 진한 띠
+  // geo = { H, r(윤곽 반지름 배열 · 굽→입구), cov(입구에서부터 담근 비율), drip(진한 유약 빛) }
+  S.covFillE = function (top, bot, geo) {
+    try {
+      var c0 = Math.max(0.02, Math.min(1, geo.cov)), H = geo.H, r = geo.r, n = r.length, u = (1 - c0) * (n - 1), lo = Math.floor(u), hi = Math.min(n - 1, lo + 1);
+      var rh = r[lo] + (r[hi] - r[lo]) * (u - lo), yb = -H * (1 - c0), e = Math.max(3, rh * 0.24), K = H * 3, B = K + e, A = rh / Math.sqrt(1 - (K / B) * (K / B)), cy = yb - K;
+      var band = Math.min(H * 0.09, 3 + H * 0.03 + c0 * H * 0.03), drip = geo.drip || top;
+      var id = 'cve_' + String(top).replace('#', '') + '_' + String(bot).replace('#', '') + '_' + Math.round(c0 * 100) + '_' + Math.round(H) + '_' + Math.round(rh);
+      if (!document.getElementById(id)) {
+        var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
+        if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
+        var rg = document.createElementNS(NS, 'radialGradient'); rg.setAttribute('id', id); rg.setAttribute('gradientUnits', 'userSpaceOnUse');
+        rg.setAttribute('cx', '0'); rg.setAttribute('cy', cy.toFixed(2)); rg.setAttribute('r', B.toFixed(2)); rg.setAttribute('fx', '0'); rg.setAttribute('fy', cy.toFixed(2));
+        rg.setAttribute('gradientTransform', 'scale(' + (A / B).toFixed(4) + ' 1)');
+        var o1 = 1 - band / B, o2 = 1 - band * 0.35 / B;
+        [[0, top], [o1, top], [o2, drip], [0.9985, drip], [1, bot]].forEach(function (p) { var st = document.createElementNS(NS, 'stop'); st.setAttribute('offset', Math.max(0, Math.min(1, p[0])).toFixed(4)); st.setAttribute('stop-color', p[1]); rg.appendChild(st); });
+        host.firstChild.appendChild(rg);
+      }
+      return 'url(#' + id + ')';
+    } catch (e) { return null; }
+  };
   // 세로 두 색 채색 · 위(0~1-cov)는 top 빛, 아래 cov 비율은 bot 빛 · 유약 담근 만큼만 칠할 때 쓴다
   // 같은 문서 어디서나 url(#id)로 쓰도록 숨은 svg 하나에 그라데이션을 모아 둔다
-  S.covFill = function (top, bot, cov) {
+  S.covFill = function (top, bot, cov, geo) {
+    if (geo && geo.r && geo.H) { var ef = this.covFillE ? this.covFillE(top, bot, geo) : null; if (ef) { return ef; } }
     try {
       var c = Math.max(0, Math.min(1, cov)), stop = (1 - c), id = 'cvf_' + String(top).replace('#', '') + '_' + String(bot).replace('#', '') + '_' + Math.round(c * 100);
       if (!document.getElementById(id)) {
@@ -1615,6 +1714,13 @@
       }, hud ? 250 : 0);
     }
   })();
+  // 끌어 옮기는 기물은 브라우저 가로 스크롤이 가로채지 않게 (가로로 끌면 놓치던 문제)
+  (function () {
+    if (typeof document === 'undefined' || window.__dragCss) { return; } window.__dragCss = 1;
+    var st = document.createElement('style');
+    st.textContent = '[data-tray],[data-kwait],[data-kcell]{touch-action:none!important;-webkit-user-select:none;user-select:none}';
+    (document.head || document.documentElement).appendChild(st);
+  })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
   // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다
   (function () {
@@ -1655,14 +1761,27 @@
         { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
-        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '흙이 다 떨어졌다.'], ['나', '…이제 정말 정리할 때가 됐나.'], ['', '덜컹— 공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.', { fx: 'shake' }], ['나', '…누구 있어요?', { face: 'surprise' }]] },
-        { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['나', '…할머니는, 이제 안 계세요.'], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
-        { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 한 그릇이면 이 골짜기 흙이고 돌이고 맘껏 가져가게 해 줬지.', { face: 'muk' }], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] },
-        { note: '🥣 메밀묵 = 도깨비 골짜기에 들어가는 값이에요\n하루에 조금씩 다시 쑤어져요\n\n⛏️ 채집 · 골짜기에서 흙 원료와 원석을 캐요\n✋ 다듬기 · 모아 둔 원료를 한 번에 재료로 만들어요', bg: '#3A3022', img: 'cg/d3.webp' }
+        { img: 'cg/p3.webp', dim: 'brightness(.5) saturate(.7) sepia(.35) hue-rotate(-12deg)', pic: '🫙', cap: '텅 빈 흙통', bg: '#2A2018', amb: 'dark', lines: [['', '저녁 무렵, 흙통 바닥이 드러났다.'], ['나', '…흙이 다 떨어졌네.'], ['나', '아직 받은 의뢰도 다 못 끝냈는데… 어떡하지.', { face: 'surprise' }], ['', '빈 흙통 앞에 한참을 서 있었다.']] },
+        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '덜컹—!', { fx: 'shake' }], ['', '공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?', { face: 'surprise' }], ['', '문틈으로 푸른 빛이 새어 나온다. 조심스레 고리를 당겼다.', { fx: 'enter' }]] },
+        { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['', '…쉽게 대답이 나오지 않았다.'], ['나', '…할머니는요.', { face: 'sad' }], ['나', '작년에… 돌아가셨어요. 이제, 안 계세요.', { face: 'sad' }], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다. 한동안 둘 다 아무 말이 없었다.']] },
+        { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 할멈은 묵을 가져올 때마다 좋은 흙 나는 자리를 물어 갔지. 내가 제일 좋은 데만 알려 줬어!', { face: 'muk' }], ['나', '(흙 나는 자리…)'], ['나', '(아직 의뢰를 다 못 끝냈는데… 여기서 흙이랑 유약 재료를 조금 더 얻어 갈 수 있지 않을까?)'], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] }
+      ] },
+      dok_bye: { title: '지하실 너머', outfit: 'ws', steps: [
+        { img: 'cg/d2.webp', pic: '🌫️', cap: '골짜기 입구', bg: '#20343A', amb: 'fog', lines: [['두두리', '크하하! 김 서방, 손이 제법인걸? 묵 할멈 손녀 맞네!'], ['두두리', '오늘은 여기까지! 어두우니까 조심히 올라가.'], ['두두리', '묵 잊지 말고! 흙이 모자라면 언제든 와!', { face: 'muk' }], ['나', '고마워요, 두두리. 또 올게요.', { face: 'smile' }]] }
       ] },
       open_shop: { title: '공방에 불을 켜다', outfit: 'ws', steps: [
         { img: 'cg/p3.webp', pic: '🫙', cap: '공방 안', bg: '#4A3422', amb: 'dust', lines: [['', '흙이 다시 쌓였다. 묵 한 그릇에, 흙 한 짐.'], ['나', '…도깨비라니. 할머니, 대체 뭘 하고 사신 거예요.', { face: 'smile' }], ['', '창고를 정리하다, 할머니가 아끼던 그릇들을 찾았다.'], ['나', '이대로 창고에 두긴 아깝잖아.'], ['나', '…흙이 있는 동안만이라도, 공방 문을 열어 두자.', { face: 'proud' }]] },
         { img: 'cg/a2.webp', pic: '🚶', cap: '영업 중', bg: '#5A4A30', amb: 'morning', lines: [['', '그날부터 공방 앞에 「영업 중」 팻말이 걸렸다.'], ['', '할머니를 찾는 손님만이 아니라, 그릇을 보러 오는 손님도 하나둘 늘었다.']] }
+      ] },
+      sakura_ask: { title: '벚꽃 빛', outfit: 'ws', steps: [
+        { img: 'cg/p3.webp', pic: '🌸', cap: '공방 작업대 앞', bg: '#4A3422', amb: 'dust', lines: [['', '하람 위원이 돌아간 뒤, 유약 통을 하나씩 열어 보았다.'], ['나', '백자유, 청자유, 흑유… 벚꽃 빛은 어디에도 없네.'], ['나', '할머니 일지에도 벚꽃 유약 얘기는 없었는데… 덜컥 맡아 버렸어.', { face: 'surprise' }], ['', '그때, 지하실 문이 빼꼼 열렸다.', { fx: 'knock' }]] },
+        { img: 'cg/p3.webp', pic: '👹', cap: '놀러 온 두두리', bg: '#4A3422', amb: 'dust', lines: [['두두리', '김 서방! 묵 냄새 따라 놀러 왔지! …어라, 얼굴이 왜 그래?'], ['나', '벚꽃 색 그릇을 부탁받았는데, 그런 유약을 만들 방법을 모르겠어요.'], ['두두리', '크하하! 그거라면 마침 잘됐다!', { fx: 'shake' }], ['두두리', '지금 도깨비 마을에 벚꽃이 한가득 폈거든! 벚꽃 언덕 돌을 부수면 벚꽃 재가 나와.', { face: 'laugh' }], ['두두리', '벚꽃 재로 유약을 만들면 딱 벚꽃 빛이 난다고, 묵 할멈이 그랬어!'], ['나', '정말요? 고마워요, 두두리!', { face: 'smile' }]] },
+        { note: '🌸 벚꽃 축제 채집지가 열렸어요\n\n채집 화면 아래 「축제 채집지 · 벚꽃 언덕」에서\n꽃묵 🌸으로 채집해요\n\n⛏️ 흙 파기 · 봄빛 흙\n🪨 돌 부수기 · 벚꽃 재 (벚꽃유 재료)', bg: '#4A3422', img: 'cg/p3.webp' }
+      ] },
+      research_open: { title: '할머니의 일지', outfit: 'ws', steps: [
+        { img: 'cg/p3.webp', dim: 'brightness(.75) saturate(.85)', pic: '🧺', cap: '파편 바구니', bg: '#3A2A1E', amb: 'dust', lines: [['', '와장창 깨고, 가마에서 깨지고… 파편 바구니가 넘칠 지경이 됐다.'], ['나', '파편이 너무 많이 모였는데… 이걸 다 어떡하지?', { face: 'surprise' }], ['', '버리려고 바구니를 들다, 선반 위 낡은 공책이 눈에 띄었다.'], ['나', '…할머니 일지?']] },
+        { img: 'cg/p3.webp', dim: 'sepia(.6) brightness(.8)', pic: '📔', cap: '할머니의 일지', bg: '#3A2A1E', amb: 'memory', lines: [['할머니', '망치고 깨진 그릇도 자세히 들여다보면 다 보인다.', { face: 'smile' }], ['할머니', '손에 밴 나쁜 버릇이 어디서 났는지, 뭐가 모자랐는지.'], ['할머니', '쓸모없다 싶은 것에도, 늘 배울 게 있고 뜻이 있는 법이여.']] },
+        { img: 'cg/p3.webp', pic: '🔬', cap: '작업대', bg: '#4A3422', amb: 'morning', lines: [['나', '…쓸모없는 게 아니었구나.'], ['나', '이 파편들로 연구해 보자. 내가 뭘 놓치고 있었는지.', { face: 'proud' }], ['', '공방에 「연구」가 열렸다.', { fx: 'flash' }]] }
       ] },
       ep1_end: { title: '에피소드 1 · 새 간판', outfit: 'ws', steps: [
         { img: 'cg/e1.webp', pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
@@ -1691,6 +1810,7 @@
       '.st-pt.steam{width:46px;height:46px;background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 70%);animation:stSteam ease-out infinite}' +
       '.st-pt.leaf{width:10px;height:7px;border-radius:7px 0;background:#C9853A;animation:stLeaf linear infinite}' +
       '.st-pt.spark{width:6px;height:6px;background:#FFE7A8;box-shadow:0 0 10px #FFD66B;animation:stSpark ease-in-out infinite}' +
+      '.st-enter{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 56% 34%,rgba(170,215,255,.95) 0,rgba(110,170,240,.55) 25%,rgba(18,12,8,0) 60%);animation:stEnterL 1.4s ease-in both}@keyframes stEnterL{0%{opacity:0}60%{opacity:.8}85%{opacity:1;background-color:rgba(200,230,255,.6)}100%{opacity:1;background-color:rgba(220,240,255,.9)}}@keyframes stEnter{0%{transform:scale(1);transform-origin:56% 34%}100%{transform:scale(2.3);transform-origin:56% 34%}}' +
       '.st-flash{position:absolute;inset:0;background:#FFF4DE;pointer-events:none;animation:stFlash .5s both}' +
       // 흉상 · 대사 상자 위에 붙여서 누가 말하는지 바로 보이게
       '.st-bust{position:absolute;bottom:176px;width:150px;height:178px;border-radius:70px 70px 14px 14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.45);border:3px solid rgba(255,244,222,.85);transition:opacity .2s}' +
@@ -1755,13 +1875,14 @@
       function stopType(full) { if (typing) { clearInterval(typing.t); if (full) { typing.el.innerHTML = ''; typing.el.textContent = typing.s; } typing = null; if (dlg) { var nx = dlg.querySelector('.st-next'); if (nx) { nx.style.visibility = 'visible'; } } } }
       function fx(kind) {
         if (kind === 'shake' || kind === 'knock') { box.classList.remove('fx-shake', 'fx-knock'); void box.offsetWidth; box.classList.add('fx-' + kind); try { window.__sfx && window.__sfx(kind === 'shake' ? 'shake' : 'thud'); } catch (e) {} if (kind === 'knock') { setTimeout(function () { try { window.__sfx && window.__sfx('thud'); } catch (e) {} }, 260); } }
+        if (kind === 'enter') { var cg0 = box.querySelector('.st-cg'); if (cg0) { cg0.style.animation = 'none'; void cg0.offsetWidth; cg0.style.animation = 'stEnter 1.3s ease-in forwards'; } var lt = document.createElement('div'); lt.className = 'st-enter'; box.appendChild(lt); setTimeout(function () { lt.remove(); }, 1500); try { window.__sfx && window.__sfx('whoosh'); } catch (e) {} }
         if (kind === 'flash') { var f = document.createElement('div'); f.className = 'st-flash'; box.appendChild(f); setTimeout(function () { f.remove(); }, 520); try { window.__sfx && window.__sfx('reveal'); } catch (e) {} }
       }
       function scene(st) {
         box.innerHTML = '';
         var scn = document.createElement('div'); scn.className = 'st-scene'; scn.style.background = 'radial-gradient(circle at 50% 32%,' + (st.bg || '#2B1A0F') + ',#120C08 82%)';
         var cg = document.createElement('div'); cg.className = 'st-cg';
-        if (st.img) { cg.innerHTML = '<img alt="" src="' + st.img + '">'; if (st.sign) { var sg = document.createElement('span'), nm = tx('{공방}'); sg.className = 'st-sign'; sg.textContent = nm; sg.style.cssText = 'left:' + st.sign[0] + '%;top:' + st.sign[1] + '%;width:' + st.sign[2] + '%;font-size:' + Math.max(15, Math.min(30, Math.round(176 / Math.max(5, Array.from(nm).length) * 1.15))) + 'px'; cg.appendChild(sg); } }
+        if (st.img) { cg.innerHTML = '<img alt="" src="' + st.img + '"' + (st.dim ? ' style="filter:' + st.dim + '"' : '') + '>'; if (st.sign) { var sg = document.createElement('span'), nm = tx('{공방}'); sg.className = 'st-sign'; sg.textContent = nm; sg.style.cssText = 'left:' + st.sign[0] + '%;top:' + st.sign[1] + '%;width:' + st.sign[2] + '%;font-size:' + Math.max(15, Math.min(30, Math.round(176 / Math.max(5, Array.from(nm).length) * 1.15))) + 'px'; cg.appendChild(sg); } }
         else if (st.pic) { cg.innerHTML = '<b aria-hidden="true">' + st.pic + '</b><i>' + (st.cap || '') + ' · 그림 자리</i>'; }
         scn.appendChild(cg);
         var amb = document.createElement('div'); amb.className = 'st-amb ' + (st.amb || ''); ambient(amb, st.amb); scn.appendChild(amb);
@@ -1796,7 +1917,7 @@
         stopType(); typing = { el: el, s: text };
         typing.t = setInterval(function () {
           if (n >= chars.length) { stopType(); return; }
-          var c = document.createElement('span'); c.className = 'ch'; c.textContent = chars[n++]; el.appendChild(c);
+          var c = document.createElement('span'); c.className = 'ch'; c.textContent = chars[n++]; el.appendChild(c); if (n % 2 === 1 && /\S/.test(chars[n - 1])) { try { window.__sfx && window.__sfx('type'); } catch (e) {} }
         }, sp);
         if (ln[2] && ln[2].fx) { fx(ln[2].fx); }
       }

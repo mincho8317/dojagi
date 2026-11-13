@@ -104,7 +104,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <svg style="position:absolute;left:105px;top:300px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
     <div style="position:absolute;left:95px;top:88px;width:200px;height:236px;transform-origin:50% 90%;animation:emerge .95s cubic-bezier(.25,.9,.3,1) both">
     <svg style="position:absolute;left:0;top:0" width="200" height="236" viewBox="{{it.pot.vb}}" role="img" aria-label="{{it.name}}, 빚은 모양 그대로">
-      <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.body}}"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
+      <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.pot.fill}}"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
       <ellipse cx="0" cy="{{it.pot.rimY}}" rx="{{it.pot.rimRx}}" ry="{{it.pot.rimRy}}" fill="{{it.inner}}" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}"></ellipse>
     </svg>
     </div>
@@ -120,26 +120,31 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <span style="animation:fadeUp .4s .9s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
     </div>
 
-    <div style="animation:fadeUp .45s 1s both;position:absolute;left:28px;right:28px;top:408px;box-sizing:border-box;padding:10px 16px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:8px">
+    <div style="animation:fadeUp .45s 1s both;position:absolute;left:28px;right:28px;top:400px;box-sizing:border-box;padding:9px 14px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:6px">
       <sc-if value="{{it.whole}}" hint-placeholder-val="{{true}}">
         <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5">실력 점수 <span style="font-size:11px;color:#B9A88E">→ 등급</span></span>
-          <span style="font-family:'Jua',sans-serif;font-size:19px;color:#FFD66B">{{it.skill}}</span>
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5">실력 점수</span>
+          <span style="{{sc.totStyle}}">총 {{sc.tot}}점 <span style="font-size:12px;color:#B9A88E">/ {{sc.max}}</span></span>
         </div>
-        <span style="margin-top:-5px;font-size:11px;line-height:1.3;color:#CDBDA2;text-align:right">{{it.skillWhy}}</span>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:3px;margin-top:-4px;flex-wrap:wrap">
+          <sc-for list="{{sc.chips}}" as="c" hint-placeholder-count="3"><span style="{{c.st}}">{{c.t}}</span></sc-for>
+        </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5;white-space:nowrap">발색 <span style="font-size:11px;color:#B9A88E">→ 값어치</span></span>
-          <span style="flex:1 1 auto;height:10px;border-radius:5px;background:#2B1A0F;overflow:hidden;border:1px solid #6B4429"><span style="{{it.colorBar}}"></span></span>
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5;white-space:nowrap">발색</span>
+          <span style="flex:1 1 auto;height:10px;border-radius:5px;background:#2B1A0F;overflow:hidden;border:1px solid #6B4429"><span style="{{sc.cbar}}"></span></span>
           <span style="width:16px;height:16px;border-radius:50%;border:2px solid #FFF4DE;background:{{it.tint}}"></span>
-          <span style="font-family:'Jua',sans-serif;font-size:19px;color:#9FD4C6;white-space:nowrap">{{it.colorPct}}</span>
+          <span style="{{sc.cStyle}}">{{sc.cpct}}</span>
         </div>
-        <span style="margin-top:-5px;font-size:11px;line-height:1.3;color:#CDBDA2;text-align:right">{{it.colorWhy}}</span>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:3px;margin-top:-4px;flex-wrap:wrap">
+          <sc-for list="{{sc.cchips}}" as="c" hint-placeholder-count="4"><span style="{{c.st}}">{{c.t}}</span></sc-for>
+        </div>
         <div style="height:2px;background:#2B1A0F"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">예상 평가액</span>
+        <div style="position:relative;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#E8D3B5">평가액</span>
           <span style="display:flex;align-items:center;gap:6px">
-            <span style="width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5.5px;font-weight:900;color:#FFE7A8"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
-            <span style="font-family:'Jua',sans-serif;font-size:22px;color:#FFD66B">{{it.value}}</span>
+            <span style="{{sc.mulStyle}}">{{sc.mul}}</span>
+            <span style="width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
+            <span style="{{sc.valStyle}}">{{sc.val}}</span>
           </span>
         </div>
         <sc-if value="{{questHit}}" hint-placeholder-val="{{false}}">
@@ -188,7 +193,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <sc-if value="{{bk.fan.off}}" hint-placeholder-val="{{false}}">
         <span style="font-size:12px;font-weight:700;color:#7A5434">이번 소성은 풀무로 줄일 만큼 다 줄였어요</span>
       </sc-if>
+      <sc-if value="{{bk.skipOn}}" hint-placeholder-val="{{true}}">
       <button type="button" onClick="{{bk.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;padding:11px 0;background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #1E5E48"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg><span>바로 완료 · {{bk.cost}}</span></button>
+      </sc-if>
     </div>
   </sc-if>
 
@@ -487,6 +494,9 @@ class Component extends DCLogic {
   showIt(i, it, fast) {
     try { window.__sfx && window.__sfx(it.broken ? 'thud' : ((it.grade === '명작' || it.grade === '요변') ? 'rare' : 'reveal')); } catch (e) {}
     this.shownAt = Date.now(); this.setState({ ph: '', shownIdx: i, skipI: fast ? i : -1 });
+    // 점수 합산 연출 타이머 (약 7초) · 단계마다 효과음
+    var self = this; clearInterval(this.scT); this.scSnd = {};
+    this.scT = setInterval(function () { var t = Date.now() - self.shownAt; if (t > 7200 || self.state.shownIdx !== i) { clearInterval(self.scT); } self.setState({ scTick: Date.now() }); }, 50);
   }
   readyIdle(g) { return g.kiln === 'firing' && (!g.kilnStart || Date.now() >= g.kilnStart + (g.kilnDur || 14400000)) && (g.openIdx || 0) === 0; }
   confirmAll() {
@@ -567,6 +577,51 @@ class Component extends DCLogic {
 
     var log = g.openLog || [];
     var QLk = this.qlib(), cPct = QLk.colorPctOf(it);
+    // ── 점수 합산 연출 : 세부 점수가 총점으로 · 총점 → 평가액 · 발색 배율이 평가액에 들어간다 ──
+    var sc = (function () {
+      var t = (st.skipI === idx || !shownNow) ? 1e9 : Date.now() - (self.shownAt || 0), snd = self.scSnd || (self.scSnd = {});
+      function cl(x) { return Math.max(0, Math.min(1, x)); }
+      function ding(k, name) { if (t < 1e8 && !snd[k + ':' + idx]) { snd[k + ':' + idx] = 1; try { window.__sfx && window.__sfx(name); } catch (e) {} } }
+      var P = it.skillPts, CP = it.colorParts, CH = 'flex:0 0 auto;padding:1px 6px;border-radius:7px;font-family:Jua,sans-serif;font-size:11.5px;white-space:nowrap;';
+      function chips(list, a0, f0, gap, col) {
+        var tot = 0;
+        var out = list.map(function (x, i) {
+          var ap = a0 + i * 150, fl = f0 + i * gap, p = cl((t - fl) / 280), st2;
+          if (t < ap) { st2 = 'opacity:0;transform:translateY(8px)'; }
+          else if (t < fl) { st2 = 'opacity:1;transform:none;transition:opacity .2s,transform .2s'; }
+          else if (p < 1) { st2 = 'opacity:' + (1 - p * 0.7).toFixed(2) + ';transform:translateY(' + (-16 * p).toFixed(1) + 'px) scale(' + (1 + 0.15 * Math.sin(p * Math.PI)).toFixed(2) + ')'; }
+          else { st2 = 'opacity:.6'; }
+          if (t >= fl + 200) { ding('c' + col + i, 'tap'); }
+          tot += x.v * cl((t - fl - 200) / 220);
+          return { t: x.t, st: CH + 'background:' + col + ';color:#FFFDF5;' + st2 };
+        });
+        return { list: out, tot: tot, end: f0 + (list.length - 1) * gap + 420 };
+      }
+      if (!P) { // 예전 방식 작품
+        return { chips: [], cchips: [], tot: it.skill != null ? it.skill : '-', max: 100, totStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#FFD66B', cpct: cPct + '%', cStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#9FD4C6', cbar: 'display:block;height:100%;width:' + cPct + '%;background:' + (it.tint || '#9FD4C6'), val: (it.value || 0).toLocaleString(), valStyle: 'font-family:Jua,sans-serif;font-size:22px;color:#FFD66B', mul: '', mulStyle: 'display:none' };
+      }
+      var A = chips([{ t: '성형 ' + P.form + '/100', v: P.form }, { t: '+ 건조 ' + P.dry + '/50', v: P.dry }, { t: '+ 시유 ' + P.glaze + '/50', v: P.glaze }], 1100, 1800, 300, '#8A6440');
+      var cl4 = CP ? [{ t: '무작위 ' + CP.rnd + '%', v: CP.rnd }, { t: '+ 온도 정합 ' + CP.temp + '%', v: CP.temp }, { t: '+ 유약 보너스 ' + CP.glaze + '%', v: CP.glaze }, { t: '+ 시너지 ' + CP.syn + '%', v: CP.syn }] : [];
+      var B = chips(cl4, A.end + 200, A.end + 700, 260, '#3E6B60');
+      var cNow = t >= B.end ? cPct : Math.max(0, Math.min(100, Math.round(B.tot)));
+      if (t >= B.end && t < 1e8) { ding('cdone', 'ok'); }
+      var v0 = it.valueBase || it.value || 0, v1 = it.value || 0, c0 = B.end + 250, mA = c0 + 800, mF = mA + 650, vEnd = mF + 450;
+      var vp = cl((t - c0) / 600), val = t < mF + 150 ? Math.round(v0 * vp / 100) * 100 : Math.round((v0 + (v1 - v0) * cl((t - mF - 150) / 300)) / 100) * 100;
+      if (t >= c0 + 600) { ding('v0', 'reveal'); }
+      if (t >= mF + 300) { ding('v1', 'coin'); }
+      var mp = cl((t - mF) / 300), mul = '×' + (it.colorMul || 1).toFixed(2) + ' 발색';
+      var mulSt = t < mA ? 'display:none' : (mp >= 1 ? 'display:none' : 'flex:0 0 auto;padding:1px 7px;border-radius:8px;background:#3E6B60;font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;white-space:nowrap;' + (t < mF ? 'animation:popIn .35s both' : 'transform:translateX(' + (40 * mp).toFixed(1) + 'px) scale(' + (1 - 0.5 * mp).toFixed(2) + ');opacity:' + (1 - mp).toFixed(2)));
+      var flash = t >= mF + 150 && t < vEnd + 300;
+      return {
+        chips: A.list, tot: Math.round(A.tot), max: it.skillMax || 200,
+        totStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#FFD66B;display:inline-block;' + (t >= A.end - 100 && t < A.end + 300 ? 'transform:scale(1.18)' : ''),
+        cchips: B.list, cpct: cNow + '%' + (it.yohen && t >= B.end ? ' 요변' : ''),
+        cStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#9FD4C6;white-space:nowrap;display:inline-block;' + (t >= B.end - 100 && t < B.end + 300 ? 'transform:scale(1.18)' : ''),
+        cbar: 'display:block;height:100%;width:' + cNow + '%;background:linear-gradient(90deg,' + (it.tint || '#9FD4C6') + ',#FFE7A8)',
+        val: val.toLocaleString(), mul: mul, mulStyle: mulSt,
+        valStyle: 'font-family:Jua,sans-serif;font-size:22px;display:inline-block;color:' + (flash ? '#FFFDF5' : '#FFD66B') + ';' + (flash ? 'transform:scale(1.2);text-shadow:0 0 10px #FFD66B' : '')
+      };
+    })();
     return {
       dots: dots,
       progress: baking ? '굽는 중' : (opening ? (idx + 1) + ' / ' + items.length : (results ? '결과 확인' : '완료')),
@@ -585,6 +640,7 @@ class Component extends DCLogic {
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:linear-gradient(90deg,#E07A2E,#FFB24A)',
           note: items.length + '점이 굽는 중 · 끝나면 하나씩 꺼내요', fan: self.fanVals(g, kLeft),
           glow: 'radial-gradient(circle,rgba(255,150,60,' + pu.toFixed(2) + ') 0%,rgba(0,0,0,0) 66%)',
+          skipOn: Date.now() - (ks || 0) > 2500, // 불 지핀 직후(문 닫히는 연출)에는 바로 완료 버튼을 숨긴다
           skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jadeV: 2, jade: nj, kilnStart: Date.now() - KD }); setTimeout(function () { self.startDoor(); }, 30); }); }
         };
       })(),
@@ -646,6 +702,7 @@ class Component extends DCLogic {
         clearTimeout(self.revT);
         self.revT = setTimeout(function () { self.showIt(my, myIt); }, 700);
       },
+      sc: sc,
       it: {
         name: it.name, grade: it.grade, value: (it.value || 0).toLocaleString(),
         form: stars(it.form || 0, '★', '☆'), color: stars(it.color || 0, '◆', '◇'),
@@ -685,11 +742,11 @@ class Component extends DCLogic {
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
     var _part = _gl && it && it.cov != null && it.cov < 0.97, _clay = _CLF[it && it.clay] || _CLF.basic;
-    var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? window.PotteryShared.covFill(fill, _clay, 1 - it.cov) : (fill || '#C9A68C');
+    var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl ? 1 : 0, dripOp: _gl ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
+    return { inner: _dk(_f, 0.5), rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };

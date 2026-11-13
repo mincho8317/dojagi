@@ -33,6 +33,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes rFold{0%{transform:translate(-50%,0) scale(1,1)}25%{transform:translate(-50%,0) scale(1.25,.7)}55%{transform:translate(-50%,0) scale(.88,1.12)}100%{transform:translate(-50%,0) scale(1,1)}}
 @keyframes rSquash{0%{transform:scale(1,1)}30%{transform:scale(1.18,.78)}100%{transform:scale(1,1)}}
 @keyframes rPound{0%{transform:translateY(-34px) rotate(-8deg)}40%{transform:translateY(6px) rotate(0)}100%{transform:translateY(-34px) rotate(-8deg)}}
+button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[data-evlock="1"]{filter:grayscale(1);pointer-events:none}div[data-evlock="1"]>*{opacity:.35}div[data-evlock="1"]::after{content:'🔒 축제 의뢰를 받으면 열려요';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(43,26,15,.72);font-family:Jua,sans-serif;font-size:17px;color:#FFF4DE}
 @keyframes gPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,214,107,.0)}50%{box-shadow:0 0 0 4px rgba(255,214,107,.85)}}
 </style>
 </helmet>
@@ -44,7 +45,7 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-size:10px;color:#FFE7A8">{{tixNext}}</span>
     </div>
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
-      <button type="button" onClick="{{evAsk}}" aria-label="꽃묵 {{etix}}그릇 · 눌러서 더 사기" style="all:unset;cursor:pointer;flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;padding:3px 16px 3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
+      <button type="button" data-evlock="{{evLock}}" onClick="{{evAsk}}" aria-label="꽃묵 {{etix}}그릇 · 눌러서 더 사기" style="all:unset;cursor:pointer;flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;padding:3px 16px 3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
         <span style="font-size:15px">🌸 {{etix}}/{{etixMax}}</span>
         <span style="font-size:10px;color:#FFD3E0">{{etixNext}}</span>
         <span aria-hidden="true" style="position:absolute;right:-9px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;background:#B04A68;border:2px solid #FFF4DE;box-shadow:0 2px 0 #7A2846;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;color:#FFFDF5">+</span>
@@ -87,7 +88,7 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </div>
 
-    <div style="position:absolute;left:12px;right:12px;top:240px;display:flex;flex-direction:column;gap:7px">
+    <div style="position:absolute;left:12px;right:12px;top:240px;display:flex;flex-direction:column;gap:14px">
       <sc-for list="{{modes}}" as="md" hint-placeholder-count="2">
         <div style="{{md.box}}">
           <div style="display:flex;align-items:center;gap:10px">
@@ -106,9 +107,9 @@ button{font-family:inherit;cursor:pointer}
     </div>
 
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
-      <div aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:7px 9px 9px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
+      <div data-evlock="{{evLock}}" aria-label="축제 채집지" style="position:absolute;left:12px;right:12px;top:520px;box-sizing:border-box;padding:7px 9px 9px;border-radius:18px;background:linear-gradient(135deg,#FFE6EE,#F7C9D6);border:3px solid #B05876;box-shadow:0 4px 0 rgba(122,40,70,.45);display:flex;flex-direction:column;gap:6px">
         <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2846">🌸 축제 채집지 · 벚꽃 언덕</span>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <sc-for list="{{evModes}}" as="em" hint-placeholder-count="2">
             <div style="box-sizing:border-box;padding:7px 8px;border-radius:14px;background:rgba(255,250,252,.95);border:2.5px solid #B05876;display:flex;flex-direction:column;gap:5px">
               <div style="display:flex;align-items:center;gap:6px">
@@ -124,7 +125,7 @@ button{font-family:inherit;cursor:pointer}
   </sc-if>
 
   <sc-if value="{{tabRefine}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:8px">
+    <div style="position:absolute;left:12px;right:12px;top:100px;display:flex;flex-direction:column;gap:14px">
       <span style="font-size:12px;font-weight:700;line-height:1.4;color:#2B1A0F;background:rgba(255,250,240,.9);border-radius:12px;padding:6px 10px;border:2px solid #C9A27A">원료 5개로 한 판 · 5번 해서 성적이 좋을수록 재료를 더 많이 (최대 3개)</span>
       <sc-for list="{{refSecs}}" as="rs" hint-placeholder-count="2">
         <div style="box-sizing:border-box;padding:8px 10px;border-radius:18px;background:rgba(255,250,240,.96);border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:5px">
@@ -318,7 +319,9 @@ class Component extends DCLogic {
   }
   evOpen() { try { return !!(this.qlib().seasonOpen && this.qlib().seasonOpen()); } catch (e) { return false; } }
   // 메밀묵(채집권) : 일반(🥣, 최대 5+연구) · 꽃묵(🌸, 축제 · 최대 3) — 둘 다 20분마다 1그릇
+  tutStep() { try { var v = localStorage.getItem('tutG') || ''; return v && v !== 'done' ? v : ''; } catch (e) { return ''; } }
   tixState(g, ev) {
+    if (!ev && this.tutStep()) { return { tix: 0, at: Date.now(), next: 0, max: 5 + (this.qlib().fx(g).tixMax || 0), tut: true }; } // 채집 튜토리얼 동안은 묵 0개 · 충전 없음 (두두리가 그냥 들여보내 줌)
     var MAX = ev ? 3 : 5 + (this.qlib().fx(g).tixMax || 0), REG = 1200000, ga = g.gather || {}, now = Date.now();
     var tix = ev ? ga.etix : ga.tix, at = (ev ? ga.etAt : ga.at) || now; if (tix == null) { tix = MAX; }
     if (tix >= MAX) { return { tix: Math.max(tix, 0), at: now, next: 0, max: MAX }; }
@@ -343,10 +346,11 @@ class Component extends DCLogic {
   }
   start0(mode, ev) {
     this.sfx('tap');
-    var g = this.loadG(), T = this.tixState(g, ev);
-    if (T.tix <= 0) { this.say((ev ? '꽃묵' : '메밀묵') + '이 없어요 · ' + this.fmt(T.next) + ' 뒤 1그릇 쑤어져요'); this.sfx('fail'); return; }
+    var g = this.loadG(), T = this.tixState(g, ev), ts = this.tutStep();
+    if (!ev && ts) { var want = { '1': 'dig', r: 'rock' }[ts]; if (want !== mode) { this.say(want ? '지금은 「' + (want === 'dig' ? '흙 파기' : '돌 부수기') + '」를 해 봐요' : '지금은 「다듬기」를 해 봐요'); this.sfx('fail'); return; } }
+    else if (T.tix <= 0) { this.say((ev ? '꽃묵' : '메밀묵') + '이 없어요 · ' + this.fmt(T.next) + ' 뒤 1그릇 쑤어져요'); this.sfx('fail'); return; }
     var ga = {}; for (var k in (g.gather || {})) { ga[k] = g.gather[k]; }
-    if (ev) { ga.etix = T.tix - 1; ga.etAt = T.tix >= T.max ? Date.now() : T.at; } else { ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at; }
+    if (ev) { ga.etix = T.tix - 1; ga.etAt = T.tix >= T.max ? Date.now() : T.at; } else if (!T.tut) { ga.tix = T.tix - 1; ga.at = T.tix >= T.max ? Date.now() : T.at; }
     this.setG({ gather: ga });
     var F = this.qlib().fx(g), S = this.site();
     this.G = { mode: mode, ev: !!ev, phase: 'play', cfg: { gTime: F.gTime || 0, comboUp: F.comboUp || 0, goldUp: F.goldUp || 0, rareUp: F.rareUp || 0, digWide: F.digWide || 0, site: ev ? 'event' : S.id, event: !!ev } };
@@ -380,6 +384,7 @@ class Component extends DCLogic {
     keys.forEach(function (k) { var n = got[D[k].from] || 0; if (n) { R.push({ k: k, n: n }); } });
     var g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
     R.forEach(function (x) { mats[x.k] = (mats[x.k] || 0) + x.n; });
+    if (!G.ev && this.tutStep()) { var tk = G.mode === 'dig' ? ['ry', 'rr', 'rw', 'rk'] : ['ow', 'oc', 'ob', 'oj'], bk0 = tk[0], mx = 0; tk.forEach(function (k) { if ((mats[k] || 0) > mx) { mx = mats[k]; bk0 = k; } }); if (mx < 5) { var add = 5 - mx; mats[bk0] = 5; var hit0 = R.filter(function (x) { return x.k === bk0; })[0]; if (hit0) { hit0.n += add; } else { R.push({ k: bk0, n: add }); } G.tutGift = add; } }
     var ga = {}; for (var a in (g.gather || {})) { ga[a] = g.gather[a]; }
     var best = {}; for (var b in (ga.best || {})) { best[b] = ga.best[b]; }
     var found = {}; for (var f in (ga.found || {})) { found[f] = ga.found[f]; }
@@ -397,7 +402,14 @@ class Component extends DCLogic {
   // ── 다듬기 : 한 판에 가진 원료를 모두 다듬는다 (5개 단위 · 판 성적이 5개당 얻는 개수를 정함) ──
   // 손 토련 : 반죽을 꾹 누르고 있으면 압력 게이지가 차오른다 → 금색 칸에서 손을 떼면 특급 (넘치면 보통)
   // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
-  refOpen(rk) {
+  refOpen(rk, again) {
+    var ts = this.tutStep(), D0 = this.D();
+    if (ts) { // 채집 튜토리얼 : 흙 파기 → 돌 부수기 → 토련 → 절구질 순서 · 한 번 더는 없음
+      if (again) { this.say('튜토리얼 중에는 한 번 더 할 수 없어요'); return; }
+      var wantK = { '2': 'clay', g: 'glaze' }[ts];
+      if (!wantK) { this.say('먼저 「채집」 탭에서 원료를 캐 와요'); this.sfx('fail'); return; }
+      if (D0[rk].kind !== wantK) { this.say(wantK === 'clay' ? '지금은 「손 토련」으로 흙을 다듬어요' : '지금은 「절구질」로 유약 원료를 다듬어요'); this.sfx('fail'); return; }
+    }
     var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있어요 · 지금 ' + have + '개'); this.sfx('fail'); return; }
     this.R = { rk: rk, n: 5, batch: Math.floor(have / 5), res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
     this.setState({ tick: Date.now() }); this.sfx('tap');
@@ -513,7 +525,7 @@ class Component extends DCLogic {
       { id: 'rock', name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', desc: '손가락으로 돌을 쓸고 지나가면 부서지며 유약 원석이 나와요. 반짝이는 황금 돌은 진사 2개!', rule: '큰 돌일수록 많이', best: (best.rock || 0) + '점', c: '#2E6B5F' }
     ].map(function (m) {
       var hot = S.mode === m.id;
-      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c, can), btnText: '시작 · 🥣1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
+      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c, can || !!T.tut), btnText: T.tut ? '시작 · 무료' : '시작 · 🥣1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
         siteTag: hot ? 'padding:1px 7px;border-radius:8px;background:#E8B640;font-family:Jua,sans-serif;font-size:11px;color:#2B1A0F' : 'display:none', siteTagText: S.ic + ' 오늘 보너스' };
     });
     var tab = s.tab === 'refine' ? 'refine' : 'gather';
@@ -530,7 +542,8 @@ class Component extends DCLogic {
     };
     var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#B04A68;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
     var out = {
-      tix: T.tix, tixMax: T.max, tixNext: T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1', toastOn: !!s.toast, toast: s.toast,
+      tix: T.tix, tixMax: T.max, tixNext: T.tut ? '튜토리얼 · 무료' : (T.tix >= T.max ? '가득' : this.fmt(T.next) + ' 뒤 +1'),
+      evLock: ev && !g.evUnl ? '1' : '0', toastOn: !!s.toast, toast: s.toast,
       evOn: ev, etix: ET.tix, etixMax: ET.max, etixNext: ET.tix >= ET.max ? '가득' : this.fmt(ET.next) + ' 뒤 +1', evPrice: 50,
       evAsk: function () { self.setState({ ask: true }); self.sfx('tap'); }, askOn: !!s.ask, jadeNow: this.jadeOf(g).toLocaleString(), askNo: function () { self.setState({ ask: false }); }, askYes: function () { self.setState({ ask: false }); self.buyEvTix(); },
       evModes: [
@@ -562,6 +575,8 @@ class Component extends DCLogic {
       out.again = function () { var m0 = G.mode, e0 = G.ev; self.closeGame(); setTimeout(function () { self.start(m0, e0); }, 50); };
       out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (TT.tix > 0 ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
       out.againText = TT.tix > 0 ? '한 번 더 · ' + (G.ev ? '🌸' : '🥣') + '1' : '메밀묵 없음';
+      if (TT.tut) { out.againText = '튜토리얼 중'; out.again = function () { self.say('튜토리얼 중에는 한 번 더 할 수 없어요'); }; out.againBtn = out.againBtn.replace(/background:[^;]*;border:[^;]*;box-shadow:[^;]*;color:[^;]*/, 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55'); }
+      if (G.tutGift) { out.resHint = '두두리가 원료를 조금 보태 줬어요 (+' + G.tutGift + ') · 이제 「다듬기」로!'; }
     }
     var Rf = this.R;
     var AS = this.A(); out.boxImg = AS.storage_box; out.doughImg = AS.wedge_dough; out.boardS = out.bowlS = out.powderS = out.bowlFront = out.pestleS = out.hintS = out.handsS = out.refX = out.boxS = out.doughS = 'display:none'; out.hintT = ''; out.puffs = []; out.flyIn = []; out.trail = []; out.pathDots = []; out.refSum = []; out.refDone = false; out.refDown = function () {};
@@ -637,8 +652,9 @@ class Component extends DCLogic {
         });
         var lf = mats[Rf.rk] || 0;
         out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 ' + (5 * (Rf.batch || 1)) + '개 → ' + dd.name + ' ' + (Rf.got || Rf.fg) + '개' + (Rf.bonus ? ' (다듬기 요령 +' + Rf.extra + ')' : '') + ' · 남은 원료 ' + lf + '개';
-        out.refAgain = function () { self.refOpen(Rf.rk); };
+        out.refAgain = function () { self.refOpen(Rf.rk, true); };
         out.refAgainText = lf >= 5 ? '한 번 더' : '원료 부족 (' + lf + '/5)';
+        if (this.tutStep()) { out.refAgainText = '튜토리얼 중'; }
         out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');
         out.gaugeBox = 'display:none'; out.needle = 'display:none';
       }
