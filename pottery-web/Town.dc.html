@@ -138,11 +138,11 @@ class Component extends DCLogic {
 
   data() {
     return [
-      { id: 'home', name: '공방 골목', res: 'OBJ_TOWN_HOME', x: 35, y: 135, lv: 1, cost: 0, base: true, bg: '#EADBC0', desc: '할머니의 공방이 있는 오래된 골목. 모든 이야기가 여기서 시작돼요.', likes: ['찻잔', '사발', '종지'], guests: [['CHAR_MIN', '민 씨'], ['CHAR_WALK_D', '동네 할머니'], ['CHAR_CAFE', '카페 사장']], storyTitle: '1장 · 할머니의 물레', story: '물려받은 공방을 다시 여는 이야기', perks: ['기본 손님 방문', '의뢰 내역서'] },
-      { id: 'market', name: '오일장 매점', res: 'OBJ_TOWN_MARKET', x: 245, y: 205, lv: 3, cost: 5000, soon: true, bg: '#F2D7A6', desc: '닷새마다 장이 서는 마을 장터. 튼튼하고 값싼 생활 그릇이 잘 팔려요.', likes: ['사발', '백자', '양작 이상'], guests: [['CHAR_MKT_A', '국밥집 사장'], ['CHAR_MKT_B', '새댁'], ['CHAR_MKT_C', '장돌뱅이']], storyTitle: '2장 · 장날의 그릇', story: '장터 국밥집 사장이 가게 그릇을 통째로 바꾸고 싶어 해요', perks: ['매점 진열 3칸 추가', '선호 스타일 판매가 +30%', '장날(5일마다) 손님 2배'] },
-      { id: 'temple', name: '산사 다실', res: 'OBJ_TOWN_TEMPLE', x: 50, y: 345, lv: 5, cost: 15000, soon: true, bg: '#D9E4CF', desc: '산 중턱 절의 작은 다실. 스님과 다인들이 고요한 찻그릇을 찾아요.', likes: ['다완', '청자', '흑유'], guests: [['CHAR_TMP_A', '주지 스님'], ['CHAR_TMP_B', '다인'], ['CHAR_TMP_C', '순례자']], storyTitle: '3장 · 고요한 찻자리', story: '오래 비어 있던 다실을 다시 채울 찻사발을 부탁받아요', perks: ['매점 진열 3칸 추가', '다완·청자 판매가 +40%', '스테이지 「산사」 분류 해금'] },
-      { id: 'harbor', name: '항구 매점', res: 'OBJ_TOWN_HARBOR', x: 95, y: 612, lv: 5, cost: 20000, soon: true, bg: '#CFDCE8', desc: '바다 건너 손님이 드나드는 항구. 크고 튼튼한 항아리가 배에 실려요.', likes: ['항아리', '흑유', '대형'], guests: [['CHAR_HBR_A', '무역상'], ['CHAR_HBR_B', '선장'], ['CHAR_HBR_C', '외국 수집가']], storyTitle: '4장 · 바다를 건너는 항아리', story: '외국 수집가가 공방 이름을 듣고 찾아와요', perks: ['대량 납품 해금', '항아리 판매가 +40%', '스테이지 「항구」 분류 해금'] },
-      { id: 'gallery', name: '미술관 거리', res: 'OBJ_TOWN_GALLERY', x: 210, y: 465, lv: 9, cost: 0, soon: true, bg: '#EDE3F3', desc: '도시의 갤러리와 미술관이 모인 거리. 명작 이상만 다뤄요.', likes: ['명작 이상', '요변'], guests: [['CHAR_CURATOR', '큐레이터'], ['CHAR_GAL_A', '평론가'], ['CHAR_GAL_B', '컬렉터']], storyTitle: '5장 · 이름을 남기다', story: '도시의 갤러리에서 첫 개인전을 열어요', perks: ['경매 해금 (예정)', '개인전 개최 (예정)'] }
+      { id: 'home', name: '공방 골목', res: 'OBJ_TOWN_HOME', x: 35, y: 135, lv: 1, cost: 0, base: true, bg: '#EADBC0', desc: '할머니의 공방이 있는 오래된 골목. 모든 이야기가 여기서 시작돼요.', likes: ['찻잔', '사발', '종지'], guests: [['CHAR_MIN', '민 씨'], ['CHAR_WALK_D', '동네 할머니'], ['CHAR_CAFE', '카페 사장']], storyTitle: '에피소드 1 · 강 할매네 공방', story: '정리하러 왔던 공방에 손님이 다시 찾아와요', perks: ['기본 손님 방문', '의뢰 내역서'] },
+      { id: 'market', name: '오일장 매점', res: 'OBJ_TOWN_MARKET', x: 245, y: 205, lv: 3, cost: 5000, soon: true, bg: '#F2D7A6', desc: '닷새마다 장이 서는 마을 장터. 튼튼하고 값싼 생활 그릇이 잘 팔려요.', likes: ['사발', '백자', '양작 이상'], guests: [['CHAR_MKT_A', '국밥집 사장'], ['CHAR_MKT_B', '새댁'], ['CHAR_MKT_C', '장돌뱅이']], storyTitle: '윤 할매 챕터 뒤 · 장날의 그릇', story: '가게를 이어받은 윤 할매 손주가 장터에도 국밥 자리를 내요', perks: ['매점 진열 3칸 추가', '선호 스타일 판매가 +30%', '장날(5일마다) 손님 2배'] },
+      { id: 'temple', name: '산사 다실', res: 'OBJ_TOWN_TEMPLE', x: 50, y: 345, lv: 5, cost: 15000, soon: true, bg: '#D9E4CF', desc: '산 중턱 절의 작은 다실. 스님과 다인들이 고요한 찻그릇을 찾아요.', likes: ['다완', '청자', '흑유'], guests: [['CHAR_TMP_A', '주지 스님'], ['CHAR_TMP_B', '다인'], ['CHAR_TMP_C', '순례자']], storyTitle: '차 선생 챕터 뒤 · 고요한 찻자리', story: '차 선생이 강 선생님과 다니던 산사 다실을 소개해 줘요', perks: ['매점 진열 3칸 추가', '다완·청자 판매가 +40%', '스테이지 「산사」 분류 해금'] },
+      { id: 'harbor', name: '항구 매점', res: 'OBJ_TOWN_HARBOR', x: 95, y: 612, lv: 5, cost: 20000, soon: true, bg: '#CFDCE8', desc: '바다 건너 손님이 드나드는 항구. 크고 튼튼한 항아리가 배에 실려요.', likes: ['항아리', '흑유', '대형'], guests: [['CHAR_HBR_A', '무역상'], ['CHAR_HBR_B', '선장'], ['CHAR_HBR_C', '외국 수집가']], storyTitle: '정윤 챕터 뒤 · 바다를 건너는 그릇', story: '정윤의 전시를 본 외국 수집가가 공방을 찾아와요', perks: ['대량 납품 해금', '항아리 판매가 +40%', '스테이지 「항구」 분류 해금'] },
+      { id: 'gallery', name: '미술관 거리', res: 'OBJ_TOWN_GALLERY', x: 210, y: 465, lv: 9, cost: 0, soon: true, bg: '#EDE3F3', desc: '도시의 갤러리와 미술관이 모인 거리. 명작 이상만 다뤄요.', likes: ['명작 이상', '요변'], guests: [['CHAR_CURATOR', '큐레이터'], ['CHAR_GAL_A', '평론가'], ['CHAR_GAL_B', '컬렉터']], storyTitle: '에피소드 1 이후 · 이름을 남기다', story: '새 간판을 단 공방의 이름이 도시까지 알려져요', perks: ['경매 해금 (예정)', '개인전 개최 (예정)'] }
     ];
   }
   renderVals() {
@@ -184,7 +184,7 @@ class Component extends DCLogic {
             self.setG({ gold: g.gold - d.cost, townOpen: o });
             self.say(d.name + ' 개점 · ' + d.storyTitle + ' 시작');
           } else if (st[1] === 'open' && d.base) { self.say('공방 골목은 지금 있는 곳이에요'); }
-          else { self.say(st[1] === 'soon' ? '다음 업데이트에서 열려요' : (st[1] === 'open' ? '매점 관리는 곧 열려요' : '명성 Lv.' + d.lv + '부터 열 수 있어요')); }
+          else { self.say(st[1] === 'soon' ? '다음 업데이트에서 열려요' : (st[1] === 'open' ? '매점 관리는 곧 열려요' : st[0])); }
         },
         close: function () { self.setState({ det: '' }); }
       };
