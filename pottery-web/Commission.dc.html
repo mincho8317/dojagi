@@ -33,16 +33,16 @@ button{font-family:inherit;cursor:pointer}
     <div style="display:flex;align-items:center;gap:8px">
       <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
       <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">의뢰 내역서</div>
-      <a href="Shop.dc.html" aria-label="골드, 상점 열기" style="position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;margin-left:8px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px;text-decoration:none">
+      <a href="Shop.dc.html" aria-label="골드, 상점 열기" style="position:relative;display:flex;align-items:center;height:36px;box-sizing:border-box;padding:0 12px 0 34px;margin-left:8px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px;text-decoration:none">
         <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#7A5A12"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
         <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{gold}}</span>
       </a>
     </div>
 
     <sc-if value="{{resume.on}}" hint-placeholder-val="{{true}}">
-      <a href="{{resume.href}}" style="display:flex;align-items:center;gap:8px;min-height:46px;box-sizing:border-box;padding:6px 12px;border-radius:14px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;text-decoration:none;color:#FFFDF5">
+      <a href="{{resume.href}}" style="display:flex;align-items:center;gap:8px;min-height:46px;box-sizing:border-box;padding:6px 12px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;text-decoration:none;color:#FFFDF5">
         <span style="font-size:20px">↩</span>
-        <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:16px">{{resume.label}}</span><span style="font-size:11.5px;font-weight:700;color:#E2F3D9">{{resume.sub}}</span></span>
+        <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:16px">{{resume.label}}</span><span style="font-size:11.5px;font-weight:700;color:#F2FAEC">{{resume.sub}}</span></span>
         <span style="font-family:'Jua',sans-serif;font-size:15px">›</span>
       </a>
     </sc-if>
@@ -97,7 +97,7 @@ button{font-family:inherit;cursor:pointer}
       <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
         <div style="margin:30px 10px;padding:18px 14px;transform:rotate(-1.5deg);background:#FFF8DC;box-shadow:0 4px 8px rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">{{emptyText}}</span>
-          <a href="Counter.dc.html" style="padding:7px 16px;border-radius:12px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-decoration:none">카운터 가보기</a>
+          <a href="Counter.dc.html" style="padding:7px 16px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-decoration:none">카운터 가보기</a>
         </div>
       </sc-if>
       </div>
@@ -176,14 +176,14 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
     </a>
     <a href="Commission.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
       <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFD66B">의뢰</span>
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">의뢰</span>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
@@ -301,9 +301,9 @@ class Component extends DCLogic {
       var urgent = lim && left < 6 * 3600000;
       var allOk = A.items.every(function (r) { return r.ok; }), need = 0;
       A.items.forEach(function (r) { need += Math.max(0, r.n - r.dl - r.readyN); });
-      var tagCol = { '메인': '#7A3E8E', '사연': '#B9533A', '일간': '#4A9440', '주간': '#5E7DA8', '주문': '#C8601E' }[q.tag] || '#5B3A24';
+      var tagCol = { '도깨비': '#3E6B8A', '시즌': '#C2577A', '메인': '#7A3E8E', '사연': '#B9533A', '일간': '#3B7A32', '주간': '#5E7DA8', '주문': '#C8601E' }[q.tag] || '#5B3A24';
       var first = A.items.filter(function (r) { return !r.ok; })[0];
-      var rw = (q.kind === 'main' || q.kind === 'season') ? (function () { var LS0 = QL.lineState(g, q.kind), pay = QL.payout(LS0.def, LS0); return pay.gold.toLocaleString() + 'G · 파편 ' + pay.shards + ' · 명성 +' + pay.fame + (q.unlockNote ? ' · 「' + q.unlockNote + '」 모양 해금' : '') + ' · 수작↑ 납품 시 보너스'; })() : q.reward.text;
+      var rw = (q.kind === 'main' || q.kind === 'season' || q.kind === 'dok') ? (function () { var LS0 = QL.lineState(g, q.kind), pay = QL.payout(LS0.def, LS0); return pay.gold.toLocaleString() + 'G · 파편 ' + pay.shards + ' · 명성 +' + pay.fame + (q.unlockNote ? ' · 「' + q.unlockNote + '」 모양 해금' : '') + ' · 수작↑ 납품 시 보너스'; })() : q.reward.text;
       return {
         who: q.who, role: q.role, title: q.title, tag: q.tag,
         hasP: !!(PIMG[q.res] || PIMG['PW_' + q.res]), pimg: PIMG[q.res] || PIMG['PW_' + q.res] || '',
@@ -334,17 +334,17 @@ class Component extends DCLogic {
           if (allOk || A.deliverable) { self.setG({ deliverCall: { id: q.id, at: Date.now() } }); try { localStorage.setItem('ctab', 'req'); } catch (e) {} return; }
           var cur = QL.tracked(self.loadG(), act), nx = cur.indexOf(q.id) >= 0 ? cur : cur.concat([q.id]); var pt = { tracks: nx, track: nx[0] }; if (first) { pt.wheelPick = first.tag; } self.setG(pt);
         },
-        goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;white-space:nowrap;' + (allOk || A.deliverable ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
-        cls: 'memo-' + ({ '메인': 'peach', '사연': 'peach', '일간': 'green', '주간': 'blue', '주문': 'yellow' }[q.tag] || 'yellow'),
+        goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;white-space:nowrap;' + (allOk || A.deliverable ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
+        cls: 'memo-' + ({ '도깨비': 'blue', '메인': 'peach', '사연': 'peach', '일간': 'green', '주간': 'blue', '주문': 'yellow' }[q.tag] || 'yellow'),
         wrap: 'position:relative;box-sizing:border-box;padding:2px 2px 4px;filter:drop-shadow(0 5px 5px rgba(40,20,5,.38));margin:0;' + (tracked ? 'outline:3px solid #FFD66B;outline-offset:3px;' : ''),
         pin: ci % 3 === 1 ? 'display:none' : 'position:absolute;left:50%;top:-26px;width:26px;height:30px;margin-left:-13px;z-index:2',
         tape: ci % 3 === 1 ? 'position:absolute;left:50%;top:-28px;width:84px;height:24px;margin-left:-42px;z-index:2;transform:rotate(-3deg);opacity:.95' : 'display:none'
       };
     });
-    [QL.lineState(g, 'season'), MS].forEach(function (MS) {
+    [QL.lineState(g, 'season'), QL.lineState(g, 'dok'), MS].forEach(function (MS) {
     if (!MS.open) { return; }
     if (s.tab !== 'done' && MS.def && !MS.allDone && !MS.acc && !MS.thanks) {
-      cards.unshift({ who: MS.def.who, role: MS.def.role, title: MS.def.title, tag: MS.line === 'season' ? '시즌' : '메인', hasP: !!PIMG[MS.def.res], pimg: PIMG[MS.def.res] || '', tagStyle: 'flex:0 0 auto;padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + (MS.line === 'season' ? '#C2577A' : '#7A3E8E'),
+      cards.unshift({ who: MS.def.who, role: MS.def.role, title: MS.def.title, tag: MS.line === 'season' ? '시즌' : (MS.line === 'dok' ? '도깨비' : '메인'), hasP: !!PIMG[MS.def.res], pimg: PIMG[MS.def.res] || '', tagStyle: 'flex:0 0 auto;padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + (MS.line === 'season' ? '#C2577A' : (MS.line === 'dok' ? '#3E6B8A' : '#7A3E8E')),
         stat: MS.lvOk ? '카운터에서 기다리는 중 · 이야기를 듣고 수락해요' : '명성 Lv.' + MS.def.needLv + ' 필요 (지금 Lv.' + (g.fameLv || 1) + ')', statStyle: 'font-size:12.5px;font-weight:700;color:#7A3E8E', time: '', timeStyle: 'display:none',
         items: [], reward: QL.payout(MS.def, MS).gold.toLocaleString() + 'G · 파편 ' + QL.payout(MS.def, MS).shards, trackOn: 'false', trackLabel: '아직 수락 전', trackStyle: 'all:unset;flex:1 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;background:#E9DCC3;color:#6B5C47', trackTap: function () {},
         href: 'Counter.dc.html', goLabel: '카운터로 →', go: function () { try { localStorage.setItem('ctab', 'req'); } catch (e) {} }, goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;background:#7A3E8E;border:3px solid #4E2660;color:#FFFDF5',
@@ -377,7 +377,7 @@ class Component extends DCLogic {
       } : { no: '', label: '확인서 없음', rows: [], note: '', date: '', paper: '', stamp: 'display:none', stampText: '', stampImg: '' },
       listOpen: !!s.listOpen, listOpenAttr: s.listOpen ? 'true' : 'false', listChev: s.listOpen ? '▴' : '▾',
       toggleList: function () { self.setState({ listOpen: !s.listOpen }); },
-      rlist: rec.map(function (r, i) { var on = i === ri; return { no: r.no, label: r.who + ' · ' + r.item, on: on ? 'true' : 'false', st: r.ok ? '완료' : '초과', stStyle: 'padding:0 6px;border-radius:6px;font-size:10px;font-weight:700;color:#FFF;background:' + (r.ok ? '#4A9440' : '#8A8A8A'), style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:9px;font-size:12.5px;color:#2B1A0F;' + (on ? 'background:#FFD66B' : 'background:#FFFDF5'), pick: function () { self.setState({ ri: i, listOpen: false }); } }; }),
+      rlist: rec.map(function (r, i) { var on = i === ri; return { no: r.no, label: r.who + ' · ' + r.item, on: on ? 'true' : 'false', st: r.ok ? '완료' : '초과', stStyle: 'padding:0 6px;border-radius:6px;font-size:10px;font-weight:700;color:#FFF;background:' + (r.ok ? '#3B7A32' : '#8A8A8A'), style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:6px;padding:7px 8px;border-radius:9px;font-size:12.5px;color:#2B1A0F;' + (on ? 'background:#FFD66B' : 'background:#FFFDF5'), pick: function () { self.setState({ ri: i, listOpen: false }); } }; }),
       prevR: function () { if (ri > 0) { self.setState({ ri: ri - 1, listOpen: false }); } },
       nextR: function () { if (ri < rec.length - 1) { self.setState({ ri: ri + 1, listOpen: false }); } },
       prevStyle: navB + (ri > 0 ? 'background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24' : 'background:rgba(255,244,222,.4);border:3px solid rgba(91,58,36,.3);color:rgba(91,58,36,.35)'),
@@ -412,7 +412,7 @@ class Component extends DCLogic {
         var sw = self.sweepDue(g2); var patch = { quests: q2, tasteOrders: to }; if (sw) { patch = sw; }
         self.setG(patch);
       },
-      streak: days.map(function (d, i) { var on = i < Math.min(7, dn); return { d: d, style: 'flex:1 1 0;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:11px;' + (on ? 'background:#4A9440;color:#FFFDF5' : 'background:#E9DCC3;color:#8A6440') }; }),
+      streak: days.map(function (d, i) { var on = i < Math.min(7, dn); return { d: d, style: 'flex:1 1 0;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:11px;' + (on ? 'background:#3B7A32;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') }; }),
       streakText: Math.min(7, dn) + '/7 · 7일 보너스'
     };
     for (var rk in receipts) { out[rk] = receipts[rk]; }

@@ -137,7 +137,7 @@ button{font-family:inherit;cursor:pointer}
             <span style="font-family:'Jua',sans-serif;font-size:22px;color:#2B1A0F">소중한 의견 고마워요!</span>
             <span style="font-size:13px;line-height:1.6;color:#5B3A24;white-space:pre-line">{{doneText}}</span>
           </div>
-          <button type="button" onClick="{{fbClose}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:14px 0;border-radius:16px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;font-family:'Jua',sans-serif;font-size:19px;color:#FFFDF5">확인</button>
+          <button type="button" onClick="{{fbClose}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:14px 0;border-radius:16px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;font-family:'Jua',sans-serif;font-size:19px;color:#FFFDF5">확인</button>
         </sc-if>
       </div>
     </div>
@@ -275,11 +275,11 @@ class Component extends DCLogic {
       fbClose: function () { self.setState({ fb: false, fbSent: false }); },
       fbShow: !!s.fb, fbForm: !!s.fb && !s.fbSent, fbDone: !!s.fb && !!s.fbSent,
       stars: stars, starText: STAR_T[s.star] || '별을 눌러 점수를 주세요',
-      goodChips: chips(GOOD, 'good', '#4A9440'), badChips: chips(BAD, 'bad', '#C8601E'),
+      goodChips: chips(GOOD, 'good', '#3B7A32'), badChips: chips(BAD, 'bad', '#C8601E'),
       fbDisabled: s.star ? 'false' : 'true',
       fbSubmit: function () { self.submit(); },
       fbSubmitLabel: s.sending ? '보내는 중…' : (s.star ? '피드백 보내기' : '별점을 먼저 골라주세요'),
-      fbSubmitStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:14px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:19px;' + (s.star ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#D9CDB8;border:3px solid #B5A486;color:#8A7A63'),
+      fbSubmitStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:block;text-align:center;padding:14px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:19px;' + (s.star ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#D9CDB8;border:3px solid #B5A486;color:#8A7A63'),
       doneText: (s.sentRemote ? '개발팀에 전달됐어요.' : '이 기기에 저장됐어요.') + '\n보내주신 의견은 다음 업데이트에 반영할게요.',
       resetLabel: armed ? '한 번 더 누르면 처음 상태로 돌아가요' : '진행 상황 초기화',
       resetStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (armed ? 'background:#B9533A;border:3px solid #7A2F1E;color:#FFFDF5;' : 'background:#FFFDF5;border:2px solid #B9533A;color:#B9533A;'),

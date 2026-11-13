@@ -50,7 +50,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <span style="font-family:'Jua',sans-serif;font-size:14px">이 동네가 좋아하는 스타일</span>
           <div style="display:flex;flex-wrap:wrap;gap:5px">
             <sc-for list="{{det.likes}}" as="lk" hint-placeholder-count="3">
-              <span style="padding:3px 10px;border-radius:10px;background:#EAF5E4;border:2px solid #4A9440;font-family:'Jua',sans-serif;font-size:12.5px;color:#2F6328">{{lk}}</span>
+              <span style="padding:3px 10px;border-radius:10px;background:#EAF5E4;border:2px solid #3B7A32;font-family:'Jua',sans-serif;font-size:12.5px;color:#2F6328">{{lk}}</span>
             </sc-for>
           </div>
         </div>
@@ -86,7 +86,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
@@ -149,19 +149,20 @@ class Component extends DCLogic {
     var self = this, s = this.state, g = s.g, D = this.data(), open = g.townOpen || {};
     function stat(d) {
       if (d.base || open[d.id]) { return ['영업 중', 'open']; }
-      if (d.soon) { return ['다음 업데이트 예정', 'soon']; }
-      if (g.fameLv < d.lv) { return ['명성 Lv.' + d.lv, 'lock']; }
-      return ['개설 가능', 'ready'];
+      // 구역은 단골 챕터를 마치면 열린다 (에피소드 1 · 윤 할매 → 오일장 · 차 선생 → 산사 다실 · 정윤 → 항구 · 장 씨 → 미술관 거리)
+      var CHN = { market: ['yoon', '윤 할매'], temple: ['cha', '차 선생'], harbor: ['jeong', '정윤'], gallery: ['jang', '장 씨 할아버지'] }[d.id];
+      if (CHN && !self.qlib().npcProg(g, CHN[0]).end) { return [CHN[1] + ' 챕터를 마치면 열려요', 'lock', CHN[1] + ' 챕터 후']; }
+      return ['구역 열림', 'open'];
     }
     var TIC = { home: '🏡', market: '🏪', temple: '🍵', harbor: '⚓', gallery: '🖼️' };
     var spots = D.map(function (d) {
       var st = stat(d);
       return {
-        name: d.name, res: d.res, ic: TIC[d.id] || '🏠', status: st[0], aria: d.name + ' · ' + st[0],
+        name: d.name, res: d.res, ic: TIC[d.id] || '🏠', status: st[2] || st[0], aria: d.name + ' · ' + st[0],
         box: 'all:unset;cursor:pointer;position:absolute;left:' + d.x + 'px;top:' + d.y + 'px;width:110px;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:2',
         bldg: 'width:100px;height:90px;box-sizing:border-box;border:3px dashed ' + (st[1] === 'lock' || st[1] === 'soon' ? '#7E7466' : '#3E2616') + ';border-radius:14px 14px 6px 6px;background:' + (st[1] === 'lock' || st[1] === 'soon' ? 'rgba(120,110,100,.45)' : d.bg) + ';display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3E2616;' + (st[1] === 'ready' ? 'animation:glowP 1.6s ease-in-out infinite;' : ''),
         plate: 'padding:2px 10px;border-radius:9px;background:#5B3A24;border:2px solid #3E2616;font-family:Jua,sans-serif;font-size:13px;color:#FFE7A8;white-space:nowrap',
-        chip: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11px;white-space:nowrap;' + (st[1] === 'open' ? 'background:#4A9440;color:#FFFDF5' : (st[1] === 'ready' ? 'background:#E3B23C;color:#2B1A0F' : (st[1] === 'soon' ? 'background:#7A5A93;color:#FFFDF5' : 'background:#3E2616;color:#E8D3B5'))),
+        chip: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11px;white-space:nowrap;' + (st[1] === 'open' ? 'background:#3B7A32;color:#FFFDF5' : (st[1] === 'ready' ? 'background:#E3B23C;color:#2B1A0F' : (st[1] === 'soon' ? 'background:#7A5A93;color:#FFFDF5' : 'background:#3E2616;color:#E8D3B5'))),
         tap: function () { self.setState({ det: d.id }); }
       };
     });
@@ -173,9 +174,9 @@ class Component extends DCLogic {
         on: true, name: d.name, status: st[0], desc: d.desc, likes: d.likes, bg: d.bg, ic: TIC[d.id] || '🏠',
         guests: d.guests.map(function (x) { return { res: x[0], name: x[1] }; }),
         storyTitle: d.storyTitle, story: d.story, perks: d.perks,
-        stStyle: 'padding:2px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (st[1] === 'open' ? 'background:#4A9440;color:#FFFDF5' : (st[1] === 'ready' ? 'background:#E3B23C;color:#2B1A0F' : 'background:#5B3A24;color:#FFE7A8')),
-        goLabel: st[1] === 'open' ? (d.base ? '공방으로 가기' : '매점 관리 · 준비 중') : (st[1] === 'ready' ? '매점 열기 · ' + d.cost.toLocaleString() + 'G' : (st[1] === 'soon' ? '다음 업데이트에서 열려요' : '명성 Lv.' + d.lv + '에 열려요')),
-        goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (st[1] === 'ready' || (st[1] === 'open' && d.base) ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+        stStyle: 'padding:2px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;' + (st[1] === 'open' ? 'background:#3B7A32;color:#FFFDF5' : (st[1] === 'ready' ? 'background:#E3B23C;color:#2B1A0F' : 'background:#5B3A24;color:#FFE7A8')),
+        goLabel: st[1] === 'open' ? (d.base ? '공방으로 가기' : '구역 열림 · 매점은 다음 업데이트') : (st[1] === 'ready' ? '매점 열기 · ' + d.cost.toLocaleString() + 'G' : (st[1] === 'soon' ? '다음 업데이트에서 열려요' : st[0])),
+        goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (st[1] === 'ready' || (st[1] === 'open' && d.base) ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
         go: function () {
           if (st[1] === 'ready') {
             if (g.gold < d.cost) { self.say('골드가 ' + (d.cost - g.gold).toLocaleString() + ' 부족해요'); return; }

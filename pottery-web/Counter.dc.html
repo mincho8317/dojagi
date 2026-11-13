@@ -81,7 +81,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div role="region" aria-label="납품 대기" style="position:absolute;left:12px;right:12px;top:126px;z-index:20;max-height:560px;overflow-y:auto;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
       <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">납품할 수 있는 의뢰 · 「부르기」로 손님을 불러 건네요</span>
       <sc-for list="{{delList}}" as="dl" hint-placeholder-count="2">
-        <button type="button" onClick="{{dl.call}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#F3E3C4;border:3px solid #4A9440">
+        <button type="button" onClick="{{dl.call}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#F3E3C4;border:3px solid #3B7A32">
           <sc-if value="{{dl.hasP}}" hint-placeholder-val="{{false}}"><img dc-src="{{dl.pimg}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:cover;object-position:50% 20%;border-radius:10px;border:2px solid #8A6440;box-sizing:border-box"></sc-if><sc-if value="{{dl.noP}}" hint-placeholder-val="{{true}}"><span style="flex:0 0 40px;height:40px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24">{{dl.res}}</span></sc-if>
           <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{dl.name}}</span><span style="font-size:11px;color:#5B3A24">{{dl.title}}</span></span>
           <span style="font-family:'Jua',sans-serif;font-size:13px;color:#2F6328">부르기 →</span>
@@ -110,7 +110,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="position:absolute;left:40px;right:40px;top:200px;box-sizing:border-box;padding:18px;border-radius:18px;background:rgba(255,244,222,.92);border:3px solid #5B3A24;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
       <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{emptyTitle}}</span>
       <span style="font-size:12px;color:#7A5434">{{nextGuest}}</span>
-      <a href="Wheel.dc.html" style="padding:9px 18px;border-radius:14px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5;text-decoration:none">물레로</a>
+      <a href="Wheel.dc.html" style="padding:9px 18px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5;text-decoration:none">물레로</a>
     </div>
   </sc-if>
 
@@ -176,7 +176,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-16px">
-      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
@@ -356,16 +356,17 @@ class Component extends DCLogic {
     var accept = { label: '', run: null };
 
     var QL = this.qlib(), tnow = this.tutNow();
-    ['main', 'season'].forEach(function (LN) {
-    var MS = QL.lineState(g, LN), KEY = MS.key, LBL = LN === 'season' ? '시즌 의뢰' : '메인 의뢰';
+    var PN = g.pname || '손녀'; function TX(a) { return (a || []).map(function (t) { return String(t).split('{이름}').join(PN); }); }
+    ['main', 'dok', 'season'].forEach(function (LN) {
+    var MS = QL.lineState(g, LN), KEY = MS.key, EP = QL.EPIS[LN], LBL = LN === 'season' ? '시즌 의뢰' : (LN === 'dok' ? '도깨비 이야기 ' + EP.n : '에피소드 ' + EP.n);
     if (!MS.open) { return; }
     if (MS.def && !MS.allDone && (typeof tnow !== 'number' || tnow >= 8)) {
       var md = MS.def;
-      var mn = { id: LN, cat: 'req', name: md.who, res: md.res, tone: md.tone, tag: LBL + ' ' + (md.idx + 1) + '/' + MS.defs.length + ' · ' + md.role, tagBg: LN === 'season' ? '#C2577A' : '#7A3E8E', qt: md.title };
-      var rewardTxt = QL.payout(md, MS).gold.toLocaleString() + 'G · 파편 ' + QL.payout(md, MS).shards + ' · 명성 +' + QL.TUNE.questFame + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
+      var mn = { id: LN, cat: 'req', name: md.who, res: md.res, tone: md.tone, tag: LBL + ' · ' + (md.idx + 1) + '/' + MS.defs.length + ' · ' + md.role, tagBg: LN === 'season' ? '#C2577A' : (LN === 'dok' ? '#3E6B8A' : '#7A3E8E'), qt: md.title };
+      var PO = QL.payout(md, MS), rewardTxt = PO.gold.toLocaleString() + 'G · 파편 ' + PO.shards + ' · 명성 +' + QL.TUNE.questFame + (PO.mats ? ' · ' + Object.keys(PO.mats).map(function (k) { return (QL.MATN[k] || k) + ' ' + PO.mats[k]; }).join(' · ') : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
       var itemConds = md.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : '') }; });
       if (MS.thanks) {
-        mn.kind = 'thanks'; mn.face = '기쁨'; mn.lines = md.done.concat(['(의뢰 완료 · ' + rewardTxt + ')']);
+        mn.kind = 'thanks'; mn.face = '기쁨'; mn.lines = TX((md.doneBy && MS.pick && md.doneBy[MS.pick]) || md.done).concat(['(의뢰 완료 · ' + rewardTxt + ')']);
         mn.choices = [{ label: MS.defs[md.idx + 1] ? '다음 이야기 듣기' : '고맙습니다', tone: 'go', run: function () {
           var m0 = self.state.g[KEY] || {};
           var pp = {}; pp[KEY] = { i: (m0.i || 0) + 1, acc: false, dl: {}, mig: {}, thanks: false, log: m0.log || [] }; self.setG(pp);
@@ -374,10 +375,17 @@ class Component extends DCLogic {
       } else if (!MS.acc) {
         mn.kind = 'offer'; mn.face = '부탁';
         if (!MS.lvOk) {
-          mn.lines = [md.intro[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같아요 · 지금 Lv.' + (g.fameLv || 1) + ')'];
+          mn.lines = [TX(md.intro)[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같아요 · 지금 Lv.' + (g.fameLv || 1) + ')'];
           mn.choices = [{ label: '명성을 쌓고 올게요', tone: '', run: function () { self.next(''); } }];
+        } else if (md.type === 'visit') {
+          mn.lines = TX(md.intro);
+          mn.card = { title: md.title + ' · 이야기', conds: [{ t: '만들 그릇 없음 · 이야기를 들어요' }], reward: rewardTxt };
+          mn.choices = [
+            { label: '이야기를 들었어요', tone: 'go', run: function () { self.finishVisit(LN); } },
+            { label: '다음에요', tone: '', run: function () { self.next('“언제든 다시 들를게.”'); } }
+          ];
         } else {
-          mn.lines = md.intro;
+          mn.lines = TX(md.intro);
           mn.card = { title: md.title, conds: itemConds, reward: rewardTxt };
           mn.choices = [
             { label: '맡을게요', tone: 'go', run: function () {
@@ -394,10 +402,10 @@ class Component extends DCLogic {
         var MA = QL.alloc(g)[LN];
         if (MA && MA.deliverable > 0) {
           mn.kind = 'deliver'; mn.face = '기대';
-          mn.lines = ['부탁한 그릇은 어떻게 되어가?', '(조건에 맞는 작품 ' + MA.deliverable + '점을 꺼내 보인다)'];
+          mn.lines = md.type === 'gather' ? ['부탁한 재료, 구했어?', '(모아 둔 재료를 꺼내 보인다)'] : ['부탁한 그릇은 어떻게 되어가?', '(조건에 맞는 작품 ' + MA.deliverable + '점을 꺼내 보인다)'];
           mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { t: r.it.name + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
           mn.choices = [
-            { label: MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } },
+            { label: md.type === 'gather' ? '재료 건네기' : MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } },
             { label: '조금 더 다듬을게요', tone: '', run: function () { self.next('“천천히 해도 괜찮아.”'); } }
           ];
         } else {
@@ -415,10 +423,10 @@ class Component extends DCLogic {
       m.kind = !q.min ? 'offer' : (!q.minDone ? (cups.length ? 'deliver' : 'wait') : 'thanks');
       m.qt = '할머님 잔을 닮은 찻잔';
       if (!q.min) {
-        m.face = '부탁'; m.lines = ['어서 오세요… 아, 여기가 그 할머님 공방 맞죠?', '할머님께 늘 받아 쓰던 찻잔이 깨졌어요. 매일 아침 그 잔으로 차를 마셨거든요.', '비슷한 걸 하나만 부탁드려도 될까요? 청자빛이면 좋겠어요.'];
-        m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }, { t: '선호: 수작 이상' }], reward: '400G · 명성 +2 · 신뢰 +1' };
+        m.face = '부탁'; m.lines = ['실례합니다… 공방 문이 열려 있길래요. 강 선생님 계세요?', '…아. 그러셨구나. 손녀분이시군요. 저는 골목 찻집 하는 민이에요.', '사실 강 선생님께 찻잔을 하나 부탁드렸었어요. 쓰러지시기 바로 전에요. 돌아가신 저희 할머니가 쓰던 청자 잔을 닮게요.', '완벽하지 않아도 괜찮아요. 마지막으로… 이 공방에서 그 잔을 받아 보고 싶어요.'];
+        m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }], reward: '400G · 명성 +20' };
         m.choices = [
-          { label: '맡을게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
+          { label: '이것만… 해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
           { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
         ];
         if (self.tutNow() === 0) { m.choices = [m.choices[0]]; }
@@ -426,7 +434,7 @@ class Component extends DCLogic {
         if (cups.length) {
           var best = g.pieces[cups[0]];
           var pay = Math.round(400 * (gradeMul[best.grade] || 1) / 10) * 10;
-          m.face = '기대'; m.lines = ['잔은 어떻게 되어가나요?', '(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 이 빛깔, 할머님 잔이랑 꼭 닮았어요.', '이 잔으로 차를 마시면 할머님이 곁에 계신 것 같을 거예요. 가게에도 소문을 내둘게요.'];
+          m.face = '기대'; m.lines = ['잔은 어떻게 되어가나요?', '(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 이 빛깔, 할머님 잔이랑 꼭 닮았어요.', '강 선생님이 빚으셨어도 이렇게 하셨을 거예요. 공방이 다시 열렸다고 소문을 내 둘게요.'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
               var f = fame(20);
@@ -438,14 +446,14 @@ class Component extends DCLogic {
           ];
           if (typeof self.tutNow() === 'number' && self.tutNow() < 9) { m.choices = [m.choices[0]]; }
         } else {
-          m.face = '평온'; m.lines = ['잔은 어떻게 되어가나요?', '천천히 하셔도 괜찮아요. 저는 기다리는 것도 좋아해서요.'];
+          m.face = '평온'; m.lines = ['잔은 어떻게 되어 가나요?', '천천히 하셔도 괜찮아요. 1년도 기다렸는걸요.'];
           m.choices = [
             { label: '물레로 가기', tone: 'go', href: 'Wheel.dc.html' },
             { label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }
           ];
         }
       } else {
-        m.face = '기쁨'; m.lines = ['이 잔으로 차를 마시니 할머님이 곁에 계신 것 같아요.', '가게에도 소문을 내둘게요. 고맙습니다.'];
+        m.face = '기쁨'; m.lines = ['이 잔으로 차를 마시니 할머님이 곁에 계신 것 같아요.', '공방 다시 열었다고 동네에 소문 다 났어요. 고맙습니다.'];
         m.choices = [{ label: '또 오세요', tone: 'go', run: function () { self.setQ({ minThanks: true }); self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 }); } }];
       }
       list.push(m);
@@ -628,26 +636,47 @@ class Component extends DCLogic {
     var A = QL.alloc(g)[LN]; if (!A || !A.deliverable) { return; }
     var ids = [], dl = {}, grades = ((g[KEY] || {}).grades || []).slice();
     for (var k in MS.dl) { dl[k] = MS.dl[k]; }
-    A.items.forEach(function (r) { r.ready.forEach(function (id) { ids.push(id); dl[r.key] = (dl[r.key] || 0) + 1; grades.push((g.pieces[id] || {}).grade); }); });
+    var mats = null, pick = (g[KEY] || {}).pick || '';
+    A.items.forEach(function (r) {
+      if (r.mat) { var left = r.n - (dl[r.key] || 0); if (left > 0 && r.ok) { mats = mats || (function () { var o = {}; for (var mk in (g.mats || {})) { o[mk] = g.mats[mk]; } return o; })(); mats[r.it.mat] = Math.max(0, (mats[r.it.mat] || 0) - left); dl[r.key] = r.n; } return; }
+      r.ready.forEach(function (id) { ids.push(id); dl[r.key] = (dl[r.key] || 0) + 1; grades.push((g.pieces[id] || {}).grade); if (r.it.glazeAny) { pick = (g.pieces[id] || {}).glaze || pick; } });
+    });
     var pieces = {}; for (var p in g.pieces) { pieces[p] = g.pieces[p]; }
     ids.forEach(function (id) { var o = {}; for (var a in pieces[id]) { o[a] = pieces[id][a]; } o.where = 'sold'; o.deliveredTo = md.id; pieces[id] = o; });
     var all = md.items.every(function (it) { return (dl[it.key] || 0) >= it.n; });
-    var m0 = g[KEY] || {}, patch = { pieces: pieces }; patch[KEY] = { i: m0.i || 0, acc: true, dl: dl, mig: m0.mig || {}, thanks: all, grades: grades, log: m0.log || [] };
+    var m0 = g[KEY] || {}, patch = { pieces: pieces }; if (mats) { patch.mats = mats; } patch[KEY] = { i: m0.i || 0, acc: true, dl: dl, mig: m0.mig || {}, thanks: all, grades: grades, log: m0.log || [], pick: pick };
     if (all) {
       var pay = QL.payout(md, MS, grades);
       var lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
       patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards; patch.fameLv = lv; patch.fameXp = x;
+      if (pay.mats) { var mm = patch.mats || (function () { var o = {}; for (var mk in (g.mats || {})) { o[mk] = g.mats[mk]; } return o; })(); for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
       if (md.unlock) { var sf = {}; for (var s0 in (g.shapesFound || {})) { sf[s0] = g.shapesFound[s0]; } sf[md.unlock] = true; patch.shapesFound = sf; }
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
       patch[KEY].grades = [];
       try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
-      this.say((LN === 'season' ? '시즌' : '메인') + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + ' · 파편 +' + pay.shards + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
+      this.say((LN === 'season' ? '시즌' : (LN === 'dok' ? '도깨비' : '메인')) + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + ' · 파편 +' + pay.shards + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
     } else {
       this.say(ids.length + '점 납품 · 남은 기물은 완성되면 다시 건네요');
     }
     this.setG(patch);
     this.setState({ line: 0, enterN: this.state.enterN + 1, deliver: all ? LN : '' });
+    if (all) { this.storyFx(md); }
   }
+  // 이야기 의뢰(방문) : 그릇 없이 이야기를 듣고 선물을 받는다
+  finishVisit(LN) {
+    var g = this.loadG(), QL = this.qlib(), MS = QL.lineState(g, LN), md = MS.def, KEY = MS.key; if (!md || md.type !== 'visit') { return; }
+    var pay = QL.payout(md, MS), lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
+    var m0 = g[KEY] || {}, patch = { gold: (g.gold || 0) + pay.gold, shards: (g.shards || 0) + pay.shards, fameLv: lv, fameXp: x };
+    if (pay.mats) { var mm = {}; for (var mk in (g.mats || {})) { mm[mk] = g.mats[mk]; } for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
+    patch[KEY] = { i: m0.i || 0, acc: true, dl: {}, mig: {}, thanks: true, grades: [], log: [{ id: md.id, who: md.who, title: md.title, items: '이야기', gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30) };
+    this.setG(patch);
+    try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
+    this.say('이야기를 들었어요 · 골드 +' + pay.gold.toLocaleString() + ' · 파편 +' + pay.shards + (pay.mats ? ' · 재료 선물' : ''));
+    this.setState({ line: 0, enterN: this.state.enterN + 1 });
+    this.storyFx(md);
+  }
+  // 챕터 끝 · 새 모양 해금 · 에피소드 끝 연출 (공용 story 모듈)
+  storyFx(md) { try { var S = window.PotteryShared; if (S && S.storyAfter) { S.storyAfter(md); } } catch (e) {} }
   autoDel() {
     var s = this.state, g = s.g;
     if (s.deliver) { return; }
@@ -688,7 +717,7 @@ class Component extends DCLogic {
     var li = Math.min(s.line, lines.length - 1);
     var atEnd = li >= lines.length - 1;
     var choices = (cur && atEnd ? cur.choices : []).map(function (c) {
-      var st = 'all:unset;cursor:pointer;flex:1 1 40%;box-sizing:border-box;display:block;text-align:center;padding:10px 6px;border-radius:14px;font-family:Jua,sans-serif;font-size:15.5px;text-decoration:none;' + (c.tone === 'go' ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
+      var st = 'all:unset;cursor:pointer;flex:1 1 40%;box-sizing:border-box;display:block;text-align:center;padding:10px 6px;border-radius:14px;font-family:Jua,sans-serif;font-size:15.5px;text-decoration:none;' + (c.tone === 'go' ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
       return { label: c.label, style: st, isLink: !!c.href, isBtn: !c.href, href: c.href || '', run: c.run || function () {} };
     });
     var ordered = list.slice(gi).concat(list.slice(0, gi));
@@ -712,7 +741,7 @@ class Component extends DCLogic {
       queueRow: 'position:absolute;left:12px;right:12px;top:122px;align-items:center;gap:6px;display:' + (ctab === 'del' ? 'none' : 'flex'),
       emptyTitle: ctab === 'req' ? '지금은 의뢰 손님이 없어요' : '지금은 구매 손님이 없어요',
       delN: delL.length,
-      delBtn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (delL.length ? 'background:#4A9440;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;' : 'background:#FFF4DE;color:#8A6440;border:3px solid #C9B08A;'),
+      delBtn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (delL.length ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;' : 'background:#FFF4DE;color:#8A6440;border:3px solid #C9B08A;'),
       delOpen: ctab === 'del' && !inDel,
       delEmpty: delL.length === 0,
       delList: delL.map(function (x) { var PT = { CHAR_WALK_A: '_blob/912e9ec77c6b6ee597e4be541992b73d.webp', CHAR_WALK_B: '_blob/1c635efceb3eed2458ef159692fef35a.webp', CHAR_WALK_C: '_blob/e9395a3a3269153e3fac785a1ba68703.webp', CHAR_WALK_D: '_blob/6c4c9b9d74dd453ef4bb14f386bc3696.webp', CHAR_WALK_E: '_blob/0b20d0a46bf5e6f974caef1040035776.webp', CHAR_WALK_F: '_blob/c5e1a7a95902cf6bc26693fd44bc035c.webp', CHAR_GUEST: '_blob/7feb87572bb027f08ca0e812931ec0f7.webp', CHAR_MIN: '_blob/f4bba7f421b345a6ec6cbcb624274932.webp', CHAR_CAFE: '_blob/24a7c373b7472b0759480f3a740e3c2f.webp' }; return { name: x.name, res: x.res, pimg: PT[x.res] || '', hasP: !!PT[x.res], noP: !PT[x.res], title: x.qt || '', call: function () { self.setState({ deliver: x.id, delOpen: false, line: 0, enterN: s.enterN + 1 }); } }; }),

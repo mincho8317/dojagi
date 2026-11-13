@@ -24,7 +24,7 @@ button{font-family:inherit;cursor:pointer}
 <div style="position:relative;width:390px;height:844px;overflow:hidden;background:#8C7A62;color:#2B1A0F">
 
   <div style="position:absolute;left:12px;right:12px;top:10px;display:flex;align-items:center;gap:8px">
-    <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">연구 · 기술 나무</div>
+    <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">연구 · 기술 나무</div>
     <div style="display:flex;flex-direction:column;gap:3px">
       <span aria-label="파편 {{shards}}" style="display:flex;align-items:center;gap:4px;height:20px;padding:0 9px 0 4px;border-radius:10px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;color:#BFF0DE"><img src="_blob/42ba2694aff99a86b951a80fe9936a43.webp" alt="" aria-hidden="true" style="width:18px;height:18px;object-fit:contain">{{shards}}</span>
       <span aria-label="골드 {{goldTxt}}" style="display:flex;align-items:center;gap:4px;height:20px;padding:0 9px 0 4px;border-radius:10px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;color:#FFD66B"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:18px;height:18px;object-fit:contain">{{goldTxt}}</span>
@@ -56,7 +56,7 @@ button{font-family:inherit;cursor:pointer}
 
   <div style="position:absolute;left:12px;right:12px;top:514px;height:232px;box-sizing:border-box;padding:10px 12px 10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:20px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:5px">
     <div style="display:flex;align-items:center;gap:6px">
-      <span style="font-family:'Jua',sans-serif;font-size:19px;color:#B9533A">{{sel.name}}</span>
+      <span style="font-family:'Jua',sans-serif;font-size:19px;color:#A3442C">{{sel.name}}</span>
       <span style="{{sel.stStyle}}">{{sel.stText}}</span>
       <span style="margin-left:auto;font-size:12px;font-weight:700;color:#5B3A24">대상 · {{sel.target}}</span>
     </div>
@@ -97,7 +97,7 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
@@ -185,7 +185,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     var self = this, s = this.state, g = s.g, QL = this.qlib(), R = g.res || {}, F = QL.fx(g);
-    var SHORT = { clayLv: '흙 정제', glazeLv: '유약 발색', refineUp: '추가 획득', matKeep: '원료 절약', tixMax: '채집권', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
+    var SHORT = { clayLv: '흙 정제', glazeLv: '유약 발색', refineUp: '추가 획득', matKeep: '원료 절약', tixMax: '메밀묵', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
     var ICON = { mat: '🪨', form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪', gather: '⛏' };
     var cat = s.tab, rows = QL.RROW[cat].map(function (r) { return QL.RNODE[r[0]]; });
     var X = [62, 181, 300], W = 108, H = 74, P = 96, T0 = 12;
@@ -207,7 +207,7 @@ class Component extends DCLogic {
     var nodes = rows.map(function (n) {
       var st = QL.resState(g, n.id), p = pos(n), on = n.id === selId, ok = st === 'ready' && afford(n);
       var k0 = Object.keys(n.fx)[0];
-      var bg = { done: '#DDEFD5', ready: '#FFF9EC', cond: '#EDE3F3', locked: '#CFC3AE' }[st], bd = { done: '#2F6328', ready: ok ? '#C8601E' : '#8A6440', cond: '#7A5A93', locked: '#8E8473' }[st];
+      var bg = { done: '#DDEFD5', ready: '#FFF9EC', cond: '#EDE3F3', locked: '#CFC3AE' }[st], bd = { done: '#2F6328', ready: ok ? '#9C4810' : '#8A6440', cond: '#7A5A93', locked: '#8E8473' }[st];
       return {
         aria: n.name + ' · ' + { done: '완료', ready: ok ? '연구 가능' : '비용 부족', cond: '조건 필요', locked: '잠김' }[st],
         on: on ? 'true' : 'false',
@@ -235,7 +235,7 @@ class Component extends DCLogic {
       return {
         label: c.n, on: on ? 'true' : 'false', sub: dn + '/' + all + (rd ? ' · 가능 ' + rd : ''),
         subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:10.5px;font-weight:700;' + (rd ? 'color:#1F4A1A' : 'color:#4A2E1B'),
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:46px;text-align:center;padding:5px 0 4px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;word-break:keep-all;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#B9533A' : 'background:#C9B08A;color:#3E2616'),
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:46px;text-align:center;padding:5px 0 4px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;word-break:keep-all;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#A3442C' : 'background:#C9B08A;color:#3E2616'),
         pick: function () { self.setState({ tab: c.id, sel: '' }); try { var t = document.getElementById('rtree'); if (t) { t.scrollTop = 0; } } catch (e) {} }
       };
     });
@@ -247,7 +247,7 @@ class Component extends DCLogic {
       sel: {
         name: cur.name, target: targets.join(' · '), fx: fxRows,
         stText: { done: '완료', ready: '연구 가능', cond: '조건 필요', locked: '잠김' }[cst],
-        stStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + { done: '#2F6328', ready: '#C8601E', cond: '#7A5A93', locked: '#5E5547' }[cst],
+        stStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + { done: '#2F6328', ready: '#9C4810', cond: '#7A5A93', locked: '#5E5547' }[cst],
         req: cur.req.length ? cur.req.map(function (q) { return (R[q] ? '✓ ' : '✗ ') + QL.RNODE[q].name; }).join(', ') : '없음 (시작 연구)',
         next: kids.length ? kids.join(', ') : '마지막 연구',
         cond: condTxt, condStyle: condTxt ? 'font-size:12px;font-weight:700;color:' + (QL.RCOND[cur.cond].ok(g) ? '#2F6328' : '#7A5A93') : 'display:none',
@@ -255,7 +255,7 @@ class Component extends DCLogic {
         shCol: 'color:' + ((g.shards || 0) >= cur.shards || cst === 'done' ? '#2E6B5F' : '#A33B22'),
         goCol: 'color:' + ((g.gold || 0) >= cur.gold || cst === 'done' ? '#8A6410' : '#A33B22'),
         btn: btn,
-        btnStyle: 'all:unset;cursor:pointer;flex:1 1 auto;box-sizing:border-box;min-height:48px;text-align:center;padding:10px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;' + (act ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547')
+        btnStyle: 'all:unset;cursor:pointer;flex:1 1 auto;box-sizing:border-box;min-height:48px;text-align:center;padding:10px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;' + (act ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547')
       },
       doResearch: function () {
         if (cst === 'done') { self.say('이미 끝낸 연구예요'); return; }

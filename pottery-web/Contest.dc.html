@@ -33,7 +33,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <img src="_blob/ac38a7b60a0c994110e0982ccc2e3cf2.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:390px;height:844px;object-fit:cover;pointer-events:none;user-select:none">
   <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
     <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
-    <button type="button" onClick="{{openCat}}" aria-label="스테이지 분류 변경" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;height:42px;display:flex;align-items:center;justify-content:center;gap:6px;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">“{{ch.label}}” 스테이지</span><span aria-hidden="true" style="flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#FFF4DE;color:#B9533A;text-shadow:none;font-size:11px;display:flex;align-items:center;justify-content:center">▼</span></button>
+    <button type="button" onClick="{{openCat}}" aria-label="스테이지 분류 변경" style="all:unset;cursor:pointer;flex:1 1 auto;min-width:0;height:42px;display:flex;align-items:center;justify-content:center;gap:6px;background:#A3442C;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">“{{ch.label}}” 스테이지</span><span aria-hidden="true" style="flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#FFF4DE;color:#A3442C;text-shadow:none;font-size:11px;display:flex;align-items:center;justify-content:center">▼</span></button>
     <div role="img" aria-label="획득한 별 {{starTotal}}개" style="flex:0 0 auto;height:48px;box-sizing:border-box;padding:0 12px 0 7px;border-radius:16px;background:#3E2616;border:3px solid #E3B23C;box-shadow:0 3px 0 #2B1A0F;display:flex;align-items:center;gap:5px">
       <span aria-hidden="true" style="font-size:32px;line-height:1;color:#FFD66B;text-shadow:0 2px 0 #8A6410">★</span>
       <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;gap:1px"><span style="font-size:10.5px;font-weight:700;color:#E9CF94">획득한 별</span><span style="font-family:'Jua',sans-serif;font-size:25px;color:#FFE7A8">{{starTotal}}</span></span>
@@ -86,7 +86,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <div style="display:flex;gap:7px">
         <sc-if value="{{qb.subOn}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{qb.submitAll}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#C9962E;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">📤 한 번에 출품 {{qb.subN}}</button></sc-if>
         <sc-if value="{{qb.addOn}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{qb.addAll}}" style="all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{qb.addLabel}}</button></sc-if>
-        <sc-if value="{{qb.goOn}}" hint-placeholder-val="{{true}}"><a href="Wheel.dc.html" onClick="{{qb.go}}" style="all:unset;cursor:pointer;flex:1.3 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">한꺼번에 만들기 →</a></sc-if>
+        <sc-if value="{{qb.goOn}}" hint-placeholder-val="{{true}}"><a href="Wheel.dc.html" onClick="{{qb.go}}" style="all:unset;cursor:pointer;flex:1.3 1 0;box-sizing:border-box;padding:8px 0;text-align:center;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">한꺼번에 만들기 →</a></sc-if>
       </div>
     </div>
   </sc-if>
@@ -227,7 +227,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
           <div style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:12px;background:#7A5A93;color:#FFFDF5;text-align:center;font-family:'Jua',sans-serif;font-size:15px;animation:glowP 1.4s ease-in-out infinite">신규 모양 해금 · {{res.newName}} 도감 등록</div>
         </sc-if>
         <span style="font-size:12px;font-weight:700;color:#2E6B5F">{{res.reward}}</span>
-        <button type="button" onClick="{{res.close}}" style="all:unset;cursor:pointer;width:100%;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5">확인</button>
+        <button type="button" onClick="{{res.close}}" style="all:unset;cursor:pointer;width:100%;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5">확인</button>
       </div>
     </div>
   </sc-if>
@@ -242,7 +242,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
@@ -339,8 +339,8 @@ class Component extends DCLogic {
       name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',
-      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
-      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #3B7A32;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
       tap: o.tap
     };
   }
@@ -352,7 +352,7 @@ class Component extends DCLogic {
       emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
-      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
       confirm: o.confirm || function () {},
       close: function () { self.setState({ pkOpen: false }); }
     };
@@ -526,9 +526,9 @@ class Component extends DCLogic {
         rib: isUn ? '신규 모양 · ' + st.newName : '',
         ribStyle: isUn ? 'padding:2px 10px;border-radius:9px;background:#7A5A93;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;white-space:nowrap;margin-bottom:-6px;position:relative;z-index:1' : 'display:none',
         circle: 'position:relative;width:' + C + 'px;height:' + C + 'px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;' + bd + ';' + (isCur ? 'animation:glowP 1.6s ease-in-out infinite;' : ''),
-        numStyle: 'position:absolute;left:-4px;top:-4px;min-width:26px;height:26px;padding:0 4px;box-sizing:border-box;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:13px;' + (lock ? 'background:#7A6A52;color:#FFF4DE' : (isUn ? 'background:#7A5A93;color:#FFF4DE;border:2px solid #FFF4DE' : 'background:#B9533A;color:#FFF4DE;border:2px solid #FFF4DE')),
+        numStyle: 'position:absolute;left:-4px;top:-4px;min-width:26px;height:26px;padding:0 4px;box-sizing:border-box;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:13px;' + (lock ? 'background:#7A6A52;color:#FFF4DE' : (isUn ? 'background:#7A5A93;color:#FFF4DE;border:2px solid #FFF4DE' : 'background:#A3442C;color:#FFF4DE;border:2px solid #FFF4DE')),
         starStyle: 'font-size:16px;letter-spacing:1px;line-height:1.1;color:' + (best ? '#E3A82B' : '#B9A68A'),
-        lockStyle: isCur ? 'padding:1px 9px;border-radius:8px;background:#B9533A;font-family:Jua,sans-serif;font-size:11.5px;color:#FFF4DE' : 'display:none',
+        lockStyle: isCur ? 'padding:1px 9px;border-radius:8px;background:#A3442C;font-family:Jua,sans-serif;font-size:11.5px;color:#FFF4DE' : 'display:none',
         tap: function () { self.setState({ det: st.id, pkSel: '' }); }
       };
     });
@@ -575,13 +575,13 @@ class Component extends DCLogic {
         goDis: dis ? 'true' : 'false',
         goSub: lk ? '잠김' : (fitN ? '조건 충족 ' + fitN + '점' : '조건에 맞는 작품 없음'),
         goSubStyle: 'font-size:10.5px;' + (dis ? 'color:#6E6557' : 'color:#E2F3D9'),
-        goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;font-family:Jua,sans-serif;' + (dis ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5'),
+        goStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:9px 0;border-radius:18px;font-family:Jua,sans-serif;' + (dis ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default' : 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5'),
         go: function () { if (lk) { self.say(lk); return; } if (!fitN) { self.say('조건에 맞는 작품이 없어요 · 먼저 작품을 만들어 봐요'); return; } self.setState({ pkOpen: true, pkSel: '' }); },
         make: function () { self.setG({ goal: { sid: cur.id, num: cur.idx + 1, name: cur.name, shapeN: cur.shapeN, prof: cur.prof, H: cur.H, glaze: cur.glaze, clay: cur.clay, wshape: cur.wshape }, goalJump: true }); },
         close: function () { self.setState({ det: '' }); },
         qPressed: inQ(cur.id) ? 'true' : 'false',
         qLabel: inQ(cur.id) ? '✓ 목표에 담음 · 눌러서 빼기' : (lk && chLock(cch) ? '잠긴 챕터' : '＋ 목표에 담기 (여러 개 담아 한꺼번에 만들기)'),
-        qStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:13.5px;' + (inQ(cur.id) ? 'background:#E2F0DA;border:2px solid #4A9440;color:#2F6328' : 'background:#FFFDF5;border:2px dashed #8A6440;color:#5B3A24'),
+        qStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:13.5px;' + (inQ(cur.id) ? 'background:#E2F0DA;border:2px solid #3B7A32;color:#2F6328' : 'background:#FFFDF5;border:2px dashed #8A6440;color:#5B3A24'),
         qTap: function () { if (chLock(cch)) { self.say(chLock(cch) + '이 필요해요'); return; } if (inQ(cur.id)) { self.setG({ goalQ: Q.filter(function (q) { return q.sid !== cur.id; }) }); return; } if (Q.length >= 6) { self.say('목표는 성형 선반 크기인 6개까지 담을 수 있어요'); return; } self.setG({ goalQ: Q.concat([gOf(cur)]) }); self.say((cur.idx + 1) + ' 스테이지를 목표로 담았어요 · ' + (Q.length + 1) + '개'); }
       };
     }
@@ -595,7 +595,7 @@ class Component extends DCLogic {
         checks: [ck(c.gOk, '유약 ' + (GN[p.glaze] || '없음')), ck(c.sOk, '모양'), ck(c.hOk, '높이 ' + Math.round(ph) + 'mm')],
         fitStyle: c.fit ? 'flex:0 0 auto;padding:1px 8px;border-radius:8px;background:#FFD66B;border:2px solid #C9962E;font-size:10.5px;font-weight:800;color:#5B3A10;white-space:nowrap' : 'display:none',
         starStyle: c.fit ? 'position:absolute;right:-8px;top:-8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding-top:3px;box-sizing:border-box;background:#E3B23C;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5' : 'display:none',
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : (c.fit ? 'background:#FFFDF5;border:3px solid #E3B23C;box-shadow:0 3px 0 #C9962E' : 'background:#F1EADC;border:2px solid #D6C6A8;opacity:.72')),
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #3B7A32;box-shadow:0 0 0 3px #A9D69E' : (c.fit ? 'background:#FFFDF5;border:3px solid #E3B23C;box-shadow:0 3px 0 #C9962E' : 'background:#F1EADC;border:2px solid #D6C6A8;opacity:.72')),
         tap: function () {
           if (!c.fit) { self.say('조건 미충족 · ' + [c.gOk ? '' : '유약', c.sOk ? '' : '모양', c.hOk ? '' : '높이'].filter(Boolean).join('·') + '이(가) 맞지 않아요'); return; }
           self.setState({ pkSel: on ? '' : id });
@@ -609,7 +609,7 @@ class Component extends DCLogic {
       sub: '보관·진열 중 ' + cands.length + '점 · 조건 충족 ' + fitN + '점',
       goals: cur ? [GN[cur.glaze], '높이 ' + Math.round(cur.H) + 'mm 안팎', '모양 일치 60%↑'] : [],
       confirmLabel: selOk ? '이 작품으로 출품하기' : '조건 충족 작품을 골라 주세요',
-      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (selOk ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default'),
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (selOk ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;cursor:default'),
       confirm: function () { if (selOk) { self.submit(cur, s.pkSel); } },
       close: function () { self.setState({ pkOpen: false }); }
     };

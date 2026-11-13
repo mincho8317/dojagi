@@ -54,13 +54,13 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
       <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
     </a>
-    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{targetName}} 빚기</div>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{targetName}} 빚기</div>
   </div>
 
   <div style="position:absolute;left:12px;right:12px;top:64px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{openClay}}" aria-label="흙 바꾸기 · 지금 {{clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
-      <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#B9533A">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} ▾</span></span>
+      <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} ▾</span></span>
     </button>
     <button type="button" onClick="{{openTarget}}" aria-label="목표 모양 바꾸기 · 지금 {{targetName}}" style="all:unset;cursor:pointer;flex:0 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <svg width="28" height="28" viewBox="{{tgIcon.vb}}" aria-hidden="true" style="flex:0 0 auto"><path d="{{tgIcon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{tgIcon.sw}}" stroke-linejoin="round"></path></svg>
@@ -271,7 +271,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-16px">
-      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
@@ -946,7 +946,7 @@ class Component extends DCLogic {
       clayName: cur.n, clayImg: cur.img,
       tgIcon: self.iconOf(tg),
       tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
-      tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#B9533A')),
+      tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
       openClay: function () { self.setState({ sheet: 'clay' }); },
       openTarget: function () { self.setState({ sheet: 'target' }); },
       closeSheet: function () { self.setState({ sheet: '' }); },
@@ -986,7 +986,7 @@ class Component extends DCLogic {
       tips: tips,
       marks: marks,
       potPath: prof.path,
-      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#4A9440' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
+      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
       foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1) },
       rim: { cx: (150 + wob).toFixed(1), cy: prof.R[11][1].toFixed(1), rx: topR.toFixed(1), ry: (topR * 0.17 + 2).toFixed(1), irx: Math.max(3, topR - topT * 2.2).toFixed(1), iry: Math.max(1, (topR - topT * 2.2) * 0.17).toFixed(1) },
@@ -1041,7 +1041,7 @@ class Component extends DCLogic {
         });
       })(),
       hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
-      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
       toast: s.toast,
       toastOn: s.toast !== '',
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),

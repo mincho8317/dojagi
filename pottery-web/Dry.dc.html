@@ -125,7 +125,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
         <span style="font-size:11.5px;font-weight:700;color:#2F7A5E">{{fanSub}}</span>
       </button>
-      <button type="button" onClick="{{pullAll}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px">
+      <button type="button" onClick="{{pullAll}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px">
         <span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5">다 마른 것 빼기</span>
         <span style="font-size:11.5px;font-weight:700;color:#E4F5D8">완전 건조 {{doneCount}}점</span>
       </button>
@@ -223,7 +223,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-16px">
-      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
@@ -492,7 +492,7 @@ class Component extends DCLogic {
         stateStyle: 'font-family:Jua,sans-serif;font-size:13px;color:' + STATE[z].c,
         marker: 'position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:#2B1A0F;border:1px solid #FFF4DE;left:' + Math.min(100, pct) + '%',
         btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 유약 대기로') : '아직 질어요',
-        btnStyle: btnOn + (canPull ? (z === 'early' ? 'background:#D9A93A;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;color:#2B1A0F;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;') : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+        btnStyle: btnOn + (canPull ? (z === 'early' ? 'background:#D9A93A;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;color:#2B1A0F;' : 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;') : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
         card: 'box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:#FFF4DE;border:3px solid ' + (z === 'ok' ? '#2F6328' : '#5B3A24') + ';box-shadow:0 4px 0 rgba(43,26,15,.4)' + (z === 'ok' ? ',0 0 0 3px #A9D69E' : '') + ';display:flex;flex-direction:column;gap:8px',
         pull: (function (id, p, zz) {
           return function () {
@@ -512,7 +512,7 @@ class Component extends DCLogic {
       if (ci >= CAP) { cells.push({ filled: false, empty: false, locked: true }); continue; }
       if (!it2) { cells.push({ id: 'dslot-' + ci, filled: false, empty: true, locked: false, add: sl.add }); continue; }
       var on2 = it2.id === selId;
-      var zc = { '질음': '#9A4A34', '반건조': '#E0A92C', '완전 건조': '#4A9440' }[sl.state] || '#7A7062';
+      var zc = { '질음': '#9A4A34', '반건조': '#E0A92C', '완전 건조': '#3B7A32' }[sl.state] || '#7A7062';
       var cell = {
         id: 'dslot-' + ci, filled: true, empty: false, locked: false, on: on2 ? 'true' : 'false', pot: sl.pot, pct: sl.pct,
         state: sl.state.replace(' · 굽깎이 불가', ''), aria: sl.name + ' · ' + sl.state + ' ' + sl.pct + '%',
@@ -577,7 +577,7 @@ class Component extends DCLogic {
       openPick: function () { self.openPick(); },
       formedPeek: formedL.slice(0, 3).map(function (x) { return self.potOf(x, self.fillOf(x, 'wet')); }),
       pickBtnSub: !formedL.length ? '물레에서 빚으면 여기 쌓여요' : (free ? '눌러서 골라 올리기 · 빈 칸 ' + free : '건조대가 가득 찼어요'),
-      pickBtn: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:18px;' + (formedL.length && free ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 4px 0 #8A6440;color:#5B3A24'),
+      pickBtn: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:18px;' + (formedL.length && free ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 4px 0 #8A6440;color:#5B3A24'),
       formed: formed, formedN: formedL.length, noFormed: formedL.length === 0,
       slots: slots, tiers: tiers, cap: CAP,
       selOn: !!selV, selNone: !selV, sel: selV || { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, name: '', clay: '', stars: '', state: '', pct: 0, stateStyle: '', btn: '', btnStyle: '', pull: function () {} },
@@ -668,8 +668,8 @@ class Component extends DCLogic {
       name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',
-      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#4A9440;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
-      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #4A9440;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
+      checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
+      style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px 12px;border-radius:16px;' + (on ? 'background:#EAF5E4;border:3px solid #3B7A32;box-shadow:0 0 0 3px #A9D69E' : 'background:#FFFDF5;border:3px solid #C9A27A;box-shadow:0 3px 0 #C9A27A'),
       tap: o.tap
     };
   }
@@ -681,7 +681,7 @@ class Component extends DCLogic {
       emptyText: o.emptyText || '고를 기물이 없어요', emptyHref: o.emptyHref || 'Main.dc.html', emptyLink: o.emptyLink || '',
       multi: !!o.multi,
       confirmLabel: o.confirmLabel || '확인',
-      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
+      confirmStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:13px 0;border-radius:18px;font-family:Jua,sans-serif;font-size:18px;' + (n ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547'),
       confirm: o.confirm || function () {},
       close: function () { self.setState({ pkOpen: false }); }
     };

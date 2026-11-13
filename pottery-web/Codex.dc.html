@@ -40,13 +40,45 @@ button{font-family:inherit;cursor:pointer}
     </div>
   </div>
 
-  <div role="tablist" aria-label="도감 분류" style="position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 10px">
+  <div role="tablist" aria-label="도감 분류" style="position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;padding:0 4px">
     <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
       <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
     </sc-for>
   </div>
 
   <div style="position:relative;flex:1 1 auto;min-height:0;box-sizing:border-box;padding:12px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:20px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.45);overflow-y:auto">
+
+    <sc-if value="{{isNpc}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12px;font-weight:700;color:#7A5434">의뢰를 하나 끝낼 때마다 단골의 이야기가 한 칸씩 채워져요</span>
+        <sc-for list="{{npcs}}" as="np" hint-placeholder-count="4">
+          <div style="{{np.card}}">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="{{np.av}}">{{np.ic}}</span>
+              <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
+                <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{np.name}} <span style="font-size:12px;color:#7A5434">{{np.role}}</span></span>
+                <span style="font-size:11.5px;font-weight:700;color:#5B3A24">할머니를 「{{np.call}}」라고 불러요 · {{np.prog}}</span>
+              </span>
+            </div>
+            <sc-for list="{{np.rows}}" as="rw" hint-placeholder-count="3">
+              <div style="display:flex;gap:8px;align-items:flex-start;padding-top:6px;border-top:1.5px dashed #D9C2A0">
+                <span style="flex:0 0 74px;font-family:'Jua',sans-serif;font-size:12.5px;color:#8A3D10">{{rw.k}}</span>
+                <span style="{{rw.vs}}">{{rw.v}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isStory}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;color:#7A5434">본 장면은 다시 볼 수 있어요</span>
+        <sc-for list="{{scenes}}" as="sc" hint-placeholder-count="3">
+          <button type="button" onClick="{{sc.play}}" aria-label="{{sc.title}} 다시 보기" style="{{sc.style}}"><span>{{sc.title}}</span><span style="font-size:12px">{{sc.state}}</span></button>
+        </sc-for>
+      </div>
+    </sc-if>
 
     <sc-if value="{{isWorks}}" hint-placeholder-val="{{true}}">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
@@ -105,7 +137,7 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), tab: 'works', armed: false, toast: '' };
+    this.state = { g: this.loadG(), tab: 'npc', armed: false, toast: '' };
   }
   gdef() {
     return {
@@ -183,7 +215,7 @@ class Component extends DCLogic {
       buncheong: { c: '#C9BBA2', n: '분청 화장토', d: '유약 조합 연구' },
       ash: { c: '#9A9B6E', n: '재유', d: '장작가마 전용' }
     };
-    var GRADE = { '범작': '#8A7A63', '양작': '#8A7A63', '수작': '#4E7D74', '명작': '#9A6E12', '요변': '#7A5A93' };
+    var GRADE = { '범작': '#6A5D4A', '양작': '#6A5D4A', '수작': '#4E7D74', '명작': '#9A6E12', '요변': '#7A5A93' };
     var WHERE = { shelf: '진열 중', store: '보관 중', sold: '납품함', museum: '미술관 소장' };
 
     var seen = {}, works = [];
@@ -222,7 +254,7 @@ class Component extends DCLogic {
         state: found ? '발견' : '미발견',
         row: 'box-sizing:border-box;padding:9px 10px;border-radius:14px;display:flex;align-items:center;gap:10px;' + (found ? 'background:#F3E3C4;border:3px solid #8A6440;' : 'background:#EADBC0;border:3px dashed #A8987C;'),
         swatch: 'flex:0 0 40px;height:40px;box-sizing:border-box;border-radius:50%;border:3px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:16px;color:#5B3A24;background:' + (found ? z.c : '#D8C6A6'),
-        tag: 'padding:2px 9px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;' + (found ? 'background:#4A9440;color:#FFFDF5' : 'background:#CFC5B4;color:#5E5547')
+        tag: 'padding:2px 9px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;' + (found ? 'background:#3B7A32;color:#FFFDF5' : 'background:#CFC5B4;color:#5E5547')
       };
     });
     var glazesFound = glazes.filter(function (z) { return z.state === '발견'; }).length;
@@ -246,12 +278,12 @@ class Component extends DCLogic {
     var allCount = WORK_SLOTS + glazes.length + shapes.length;
     var foundCount = worksFound + glazesFound + shapesFound;
 
-    var tabDefs = [{ id: 'works', label: '작품' }, { id: 'glazes', label: '유약' }, { id: 'shapes', label: '형태' }];
+    var tabDefs = [{ id: 'npc', label: '단골' }, { id: 'story', label: '이야기' }, { id: 'works', label: '작품' }, { id: 'glazes', label: '유약' }, { id: 'shapes', label: '형태' }];
     var tabs = tabDefs.map(function (d) {
       var on = d.id === self.state.tab;
       return {
         label: d.label, on: on,
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:9px 0 7px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:15px;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#5B3A24;' : 'background:#C9B08C;color:#4A2E1A;'),
+        style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:9px 0 7px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#5B3A24;' : 'background:#C9B08C;color:#4A2E1A;'),
         pick: function () { self.setState({ tab: d.id }); }
       };
     });
@@ -259,6 +291,22 @@ class Component extends DCLogic {
     var armed = this.state.armed;
     return {
       tabs: tabs,
+      isNpc: this.state.tab === 'npc', isStory: this.state.tab === 'story',
+      npcs: (function () {
+        var QLn = self.qlib(), PN = g.pname || '손녀', IC = { min: '🍵', yoon: '🍲', cha: '🫖', jeong: '🎨', jang: '🏺', dudu: '👹', bulmok: '🔨', kids: '🎈' };
+        return Object.keys(QLn.PROF).map(function (id) {
+          var P = QLn.PROF[id], pr = QLn.npcProg(g, id);
+          if (!pr.met && !pr.done) { return null; }
+          return { name: P.name, role: P.role, call: P.call, ic: IC[id] || '🙂', prog: pr.end ? '이야기 완료' : '의뢰 ' + pr.done + '/' + pr.total,
+            av: 'flex:0 0 40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:' + (P.dok ? '#DCE8EE' : '#F8E3CC') + ';border:2.5px solid #5B3A24',
+            card: 'box-sizing:border-box;padding:10px 12px;border-radius:16px;display:flex;flex-direction:column;gap:6px;background:' + (P.dok ? '#EEF3F2' : '#F3E3C4') + ';border:3px solid ' + (pr.end ? '#C9962E' : '#8A6440'),
+            rows: P.rows.map(function (r) { var open = r[0] === 'end' ? pr.end : pr.done >= r[0]; return { k: r[1], v: open ? String(r[2]).split('{이름}').join(PN) : '??? · 의뢰를 더 들어주면 알 수 있어요', vs: 'flex:1 1 auto;font-size:12.5px;line-height:1.5;word-break:keep-all;color:' + (open ? '#2B1A0F' : '#6A5D4A') }; }) };
+        }).filter(Boolean);
+      })(),
+      scenes: (function () {
+        var Sh = window.PotteryShared, seen = g.scenes || {};
+        return (Sh && Sh.storyScenes ? Sh.storyScenes() : []).map(function (sc) { var on = !!seen[sc.id]; return { title: on ? sc.title : '??? · 아직 보지 못한 장면', state: on ? '▶ 다시 보기' : '', style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (on ? 'background:#F3E3C4;border:3px solid #8A6440;color:#2B1A0F' : 'background:#EADBC0;border:3px dashed #A8987C;color:#7A6A52'), play: function () { if (on && Sh.storyPlay) { Sh.storyPlay(sc.id, null, { replay: true }); } } }; });
+      })(),
       isWorks: this.state.tab === 'works',
       isGlazes: this.state.tab === 'glazes',
       isShapes: this.state.tab === 'shapes',

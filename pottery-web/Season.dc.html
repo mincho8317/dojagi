@@ -25,7 +25,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
     <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
     <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">시즌 이벤트</div>
-    <span style="flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;background:#D46A86;border:2px solid #A94767;font-family:'Jua',sans-serif;font-size:15px;color:#FFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;font-size:5px;display:flex;align-items:center;justify-content:center"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>{{petals}}</span>
+    <span style="flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:14px;background:#B04A68;border:2px solid #A94767;font-family:'Jua',sans-serif;font-size:15px;color:#FFF"><span style="width:18px;height:18px;box-sizing:border-box;border-radius:50%;font-size:5px;display:flex;align-items:center;justify-content:center"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>{{petals}}</span>
   </div>
 
   <div style="position:absolute;left:12px;right:12px;top:64px;height:118px;box-sizing:border-box;border:3px solid #A94767;border-radius:18px;overflow:hidden;isolation:isolate;background:#FCEBD8;box-shadow:0 3px 0 rgba(122,47,68,.35);display:flex;flex-direction:column;justify-content:flex-end;padding:10px 14px;gap:2px">
@@ -54,7 +54,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">꽃잎 사기</span><span style="font-size:11.5px;font-weight:700;color:#7A2F44">보유 💎 {{jade}}</span></div>
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
         <sc-for list="{{packs}}" as="pk" hint-placeholder-count="3">
-          <button type="button" onClick="{{pk.ask}}" aria-label="{{pk.aria}}" style="all:unset;cursor:pointer;box-sizing:border-box;min-height:58px;padding:6px 4px;border-radius:14px;background:#FFF;border:2.5px solid #D46A86;box-shadow:0 3px 0 #A94767;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
+          <button type="button" onClick="{{pk.ask}}" aria-label="{{pk.aria}}" style="all:unset;cursor:pointer;box-sizing:border-box;min-height:58px;padding:6px 4px;border-radius:14px;background:#FFF;border:2.5px solid #B04A68;box-shadow:0 3px 0 #A94767;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
             <span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F44">🌸 {{pk.n}}</span>
             <span style="font-size:12px;font-weight:700;color:#1E5E48">💎 {{pk.price}}</span>
           </button>
@@ -85,7 +85,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Wheel.dc.html" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-28px">
-      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#4A9440;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+      <span style="width:70px;height:70px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #2F6328;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
         <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
       <span style="font-family:'Jua',sans-serif;font-size:13px;color:#F6E7CC">제작</span>
@@ -169,9 +169,9 @@ class Component extends DCLogic {
       var done = m.cur >= m.max, got = !!(sea.claimed || {})[m.id];
       return {
         name: m.name, prog: Math.min(m.cur, m.max) + '/' + m.max,
-        bar: 'height:100%;border-radius:4px;background:#D46A86;width:' + Math.min(100, m.cur / m.max * 100) + '%',
+        bar: 'height:100%;border-radius:4px;background:#B04A68;width:' + Math.min(100, m.cur / m.max * 100) + '%',
         btnLabel: got ? '받음' : '+' + m.reward,
-        btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;min-height:40px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#7E6670;border:2px solid #D8C3C8' : (done ? 'background:#D46A86;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#9A6170;border:2px solid #E6C3CC')),
+        btn: 'all:unset;cursor:pointer;flex:0 0 56px;box-sizing:border-box;min-height:40px;display:flex;align-items:center;justify-content:center;padding:0;border-radius:11px;font-family:Jua,sans-serif;font-size:13px;' + (got ? 'background:#EBDDE0;color:#7E6670;border:2px solid #D8C3C8' : (done ? 'background:#B04A68;color:#FFF;border:2px solid #A94767;box-shadow:0 2px 0 #A94767' : 'background:#FFF8F5;color:#9A6170;border:2px solid #E6C3CC')),
         claim: function () {
           if (got) { return; }
           if (!done) { self.say('아직 조건을 채우지 못했어요 · ' + Math.min(m.cur, m.max) + '/' + m.max); return; }
@@ -182,8 +182,8 @@ class Component extends DCLogic {
       };
     });
     var I = [
-      { id: 'etix', name: '축제 채집권', kind: '채집권', res: 'ITEM_ETIX', emoji: '🌸', price: 10, col: '#F7D3DD', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.etix = (ga.etix == null ? 3 : ga.etix) + 1; p.gather = ga; } },
-      { id: 'tix', name: '채집권', kind: '채집권', res: 'ITEM_TIX', emoji: '🎫', price: 6, col: '#FFE7A8', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.tix = (ga.tix == null ? 5 : ga.tix) + 1; p.gather = ga; } },
+      { id: 'etix', name: '꽃묵', kind: '채집', res: 'ITEM_ETIX', emoji: '🌸', price: 10, col: '#F7D3DD', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.etix = (ga.etix == null ? 3 : ga.etix) + 1; p.gather = ga; } },
+      { id: 'tix', name: '메밀묵', kind: '채집', res: 'ITEM_TIX', emoji: '🥣', price: 6, col: '#FFE7A8', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.tix = (ga.tix == null ? 5 : ga.tix) + 1; p.gather = ga; } },
       { id: 'plum', name: '매화 문양', kind: '한정 문양', res: 'PTN_PLUM', img: '_blob/b570ded58d448dba37db6e748cf57424.webp', price: 20, col: '#FCEBD8', apply: function (p) { var pt = {}; for (var x in (g.patterns || {})) { pt[x] = g.patterns[x]; } pt.plum = true; p.patterns = pt; } },
       { id: 'teabed', name: '다회 평상', kind: '한정 가구', res: 'DECO_TEABED', img: '_blob/7480af1a2e3666be0fe08ab90f2616f2.webp', price: 40, col: '#E8D5B7', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.teabed = true; p.deco = d; } },
       { id: 'lantern', name: '꽃 등롱', kind: '한정 가구', res: 'DECO_FLOWER_LAMP', img: '_blob/0ddf322aaf48ab6e1f34af33fbd75920.webp', price: 15, col: '#FFE7A8', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.flowerlamp = true; p.deco = d; } },
@@ -194,10 +194,10 @@ class Component extends DCLogic {
       return {
         name: it.name, kind: it.kind, res: it.res, img: it.img || '', imgOn: !!it.img, emoji: it.emoji || '', emojiOn: !it.img, aria: it.name + ' · 꽃잎 ' + it.price + (got ? ' · 구매 완료' : ''),
         price: got ? '구매 완료' : '꽃잎 ' + it.price,
-        card: 'all:unset;cursor:pointer;position:relative;aspect-ratio:1 / 1.25;box-sizing:border-box;padding:8px 4px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;' + (got ? 'background:#EFE6E8;border:3px solid #D8C3C8;opacity:.75' : 'background:#FFF8F5;border:3px solid #D46A86;box-shadow:0 3px 0 #A94767'),
+        card: 'all:unset;cursor:pointer;position:relative;aspect-ratio:1 / 1.25;box-sizing:border-box;padding:8px 4px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;' + (got ? 'background:#EFE6E8;border:3px solid #D8C3C8;opacity:.75' : 'background:#FFF8F5;border:3px solid #B04A68;box-shadow:0 3px 0 #A94767'),
         kindStyle: 'position:absolute;left:5px;top:5px;padding:0 5px;border-radius:6px;background:#7A2F44;font-size:10.5px;font-weight:700;color:#FFE7EE',
         icon: 'margin-top:8px;width:54px;height:54px;box-sizing:border-box;border:2px solid rgba(91,58,36,.25);border-radius:12px;background:' + it.col + ';display:flex;align-items:center;justify-content:center;text-align:center;color:#7A2F44',
-        priceStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (got ? 'background:#D8C3C8;color:#FFF' : (afford ? 'background:#D46A86;color:#FFF' : 'background:#F1D5DC;color:#A94767')),
+        priceStyle: 'padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (got ? 'background:#D8C3C8;color:#FFF' : (afford ? 'background:#B04A68;color:#FFF' : 'background:#F1D5DC;color:#8E3556')),
         buy: function () {
           if (got) { self.say('이미 가지고 있어요'); return; }
           if (!afford) { self.say('꽃잎이 ' + (it.price - sea.petals) + '장 부족해요 · 축제 미션으로 모아요'); return; }
