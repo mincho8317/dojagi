@@ -1800,5 +1800,55 @@
       el.style.display = 'flex'; el.style.left = (R.l + 12 * R.k).toFixed(1) + 'px'; el.style.top = (R.t + 74 * R.k).toFixed(1) + 'px'; el.style.transform = 'scale(' + R.k.toFixed(3) + ')';
     }
     setInterval(draw, 700); setTimeout(draw, 300);
+
+    // ── 공용 작은 팝업 ──
+    function popup(ic, title, body, btns) {
+      var ov = document.createElement('div'); ov.className = 'uf-ov tut-ov'; ov.style.zIndex = '10080'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', title);
+      var bx = document.createElement('div'); bx.className = 'uf-box';
+      bx.innerHTML = '<div class="ic">' + ic + '</div><h3>' + title + '</h3><p>' + body + '</p>';
+      btns.forEach(function (b, i) {
+        var el = document.createElement('button'); el.type = 'button'; el.className = 'st-ok'; el.textContent = b.label;
+        if (i > 0) { el.style.cssText = 'margin-top:8px;background:#FFFDF5;border-color:#8A6440;box-shadow:0 4px 0 #8A6440;color:#5B3A24'; }
+        el.addEventListener('click', function (e) { e.stopPropagation(); if (!b.keep) { ov.remove(); } if (b.run) { b.run(ov, bx); } });
+        bx.appendChild(el);
+      });
+      ov.appendChild(bx); document.body.appendChild(ov); return ov;
+    }
+    // ── 공방 메인의 옥 : 누르면 개발자에게 옥 받기 (테스트용) ──
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[aria-label^="옥 "]') : null;
+      if (!a || !/Main|\/$/.test(location.pathname || 'Main')) { return; }
+      e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) { e.stopImmediatePropagation(); }
+      function jadeNow() { var g = load(); return g.jadeV === 2 && g.jade != null ? g.jade : 0; }
+      popup('💎', '옥 ' + jadeNow().toLocaleString() + '개', '옥은 상점에서 쓰거나, 작업을 바로 끝낼 때 써요.', [
+        { label: '개발자한테 옥 달라고 하기 (+100)', keep: true, run: function (ov, bx) {
+          var g = load(); g.jade = (g.jadeV === 2 && g.jade != null ? g.jade : 0) + 100; g.jadeV = 2; save(g);
+          var h = bx.querySelector('h3'); if (h) { h.textContent = '옥 ' + g.jade.toLocaleString() + '개'; }
+          try { window.__sfx && window.__sfx('coin'); } catch (e2) {}
+        } },
+        { label: '상점 가기', run: function () { if (window.__potGo) { window.__potGo('Shop.dc.html'); } else { location.href = 'Shop.dc.html'; } } },
+        { label: '닫기' }
+      ]);
+    }, true);
+    // ── 새 버전 안내 : 진행 기록이 있는 저장 데이터에만 한 번 ──
+    var VER = '2026-11-13-story';
+    setTimeout(function () {
+      var cur = ''; try { cur = localStorage.getItem('potVer') || ''; } catch (e) { return; }
+      if (cur === VER || document.querySelector('[aria-label="새 버전 안내"]')) { return; }
+      var g = load(), tp = 0; try { tp = +(localStorage.getItem('tutProg') || 0); } catch (e) {}
+      var played = (typeof g.tut === 'number' && g.tut > 0) || tp > 0 || Object.keys(g.pieces || {}).length > 0;
+      function mark() { try { localStorage.setItem('potVer', VER); } catch (e) {} }
+      if (!played) { mark(); return; }
+      var ov = popup('✨', '새로운 버전이 나왔어요', '이야기와 튜토리얼 흐름이 바뀌었어요.\n초기화 후 처음부터 진행해 보시겠어요?', [
+        { label: '예 · 처음부터', run: function () {
+          var keep = { settings: g.settings, feedbacks: g.feedbacks };
+          try { localStorage.clear(); localStorage.setItem('pottery-proto-v1', JSON.stringify(keep)); } catch (e) {}
+          mark(); location.href = 'Main.dc.html';
+        } },
+        { label: '아니오 · 이어서 하기', run: function () { mark(); } }
+      ]);
+      ov.setAttribute('aria-label', '새 버전 안내');
+    }, 900);
+
   })();
 })();
