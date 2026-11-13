@@ -462,7 +462,7 @@ class Component extends DCLogic {
     var sf = {}; for (var a in g.shapesFound) { sf[a] = g.shapesFound[a]; }
     var gf = {}; for (var b in g.glazesFound) { gf[b] = g.glazesFound[b]; }
     if (!item.broken) {
-      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, cov: item.cov, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay, pattern: item.pattern || '', form: item.form, fit: item.fit, skill: item.skill, colorPct: item.colorPct, color: item.color, tint: item.tint, yohen: !!item.yohen, goalSid: item.goalSid || '' };
+      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, cov: item.cov, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay, pattern: item.pattern || '', form: item.form, fit: item.fit, skill: item.skill, colorPct: item.colorPct, color: item.color, tint: item.tint, yohen: !!item.yohen, goalSid: item.goalSid || '', sk: item.sk || '' };
       order.push(id);
       sf[item.shape] = true;
       gf[item.glaze] = true;
@@ -500,7 +500,7 @@ class Component extends DCLogic {
     items.forEach(function (x, i) {
       if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
       var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-      pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '' };
+      pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: x.sk || '' };
       order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
       log.push({ name: x.name, action: x.grade + ' · 대기함' });
       pots.push(self.potOf(x, LB[x.glaze] || LB.white)); froms.push(self.rootPt('kres-' + i) || self.stagePt(195, 300));
@@ -708,7 +708,7 @@ class Component extends DCLogic {
     var on = !!o.on;
     return {
       pot: this.potOf(it, this.fillOf(it, o.stage)),
-      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      name: (o.prefix || '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',
       checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),

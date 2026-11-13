@@ -319,8 +319,8 @@ class Component extends DCLogic {
     var seed = Math.floor(Math.random() * 1000);
     var nm = NAMES[seed % NAMES.length];
     var taste = true; // 구매(지나가는) 손님은 없앴다 · 찾는 그릇이 있는 취향 손님만
-    var shapes = ['cup', 'bowl', 'dish'], glazes = ['', '', 'white', 'celadon', 'black'];
-    return { id: 'wk' + t + '_' + seed, type: taste ? 'taste' : 'walk', name: nm[0], res: nm[1], seed: seed, at: t, want: taste ? { shape: shapes[seed % 3], glaze: glazes[Math.floor(seed / 3) % glazes.length] } : null };
+    var QLw = this.qlib(), shapes = QLw.knownShapes(g || {}), glazes = ['', '', 'white', 'celadon', 'black']; // 물레에서 고를 수 있는 모양만 주문
+    return { id: 'wk' + t + '_' + seed, type: taste ? 'taste' : 'walk', name: nm[0], res: nm[1], seed: seed, at: t, want: taste ? { shape: QLw.WSM[shapes[seed % shapes.length]], sk: shapes[seed % shapes.length], glaze: glazes[Math.floor(seed / 3) % glazes.length] } : null };
   }
   spawnWalk(g) {
     var now = Date.now(), w0 = g.walkins || [], w = w0.filter(function (x) { return x.type !== 'walk'; }), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = w.length !== w0.length;

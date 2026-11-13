@@ -485,16 +485,16 @@ class Component extends DCLogic {
     var cl = this.qlib().clayOf(item.clay, item.glaze);
     var match = this.matchOf(temp, gl.opt);
     var br = this.riskOf(item, heat).p;
-    var name = gl.pre + ' ' + sh.n;
+    var shn = QL.shapeN(item), name = gl.pre + ' ' + shn;
     if (Math.random() < br) {
-      return { name: name, grade: '파손', shape: item.shape, glaze: item.glaze, broken: true, form: 0, color: 0, value: 0, prof: item.prof, H: item.H, clay: item.clay, goalSid: item.goalSid, goalName: item.goalName };
+      return { name: name, grade: '파손', shape: item.shape, glaze: item.glaze, broken: true, form: 0, color: 0, value: 0, prof: item.prof, H: item.H, clay: item.clay, goalSid: item.goalSid, sk: item.sk || '', goalName: item.goalName };
     }
     // 등급 = 공정 실력 점수 (무작위 없음)
     var sk = QL.skillOf(item, match), grade = sk.grade;
     // 발색 = 무작위 · 등급과 무관
     var cr = QL.colorRoll(item, match, heat, this.state.g);
     var glaze = item.glaze;
-    if (cr.yohen && glaze === 'black') { glaze = 'cheonmok'; name = '천목 ' + sh.n; }
+    if (cr.yohen && glaze === 'black') { glaze = 'cheonmok'; name = '천목 ' + shn; }
     if (cr.yohen) { name = '요변 ' + name; }
     var cv = TU.colorValue, cm = cv[0] + (cv[1] - cv[0]) * cr.pct / 100;
     var mult = TU.gradeMul[grade] || 1;
@@ -502,7 +502,7 @@ class Component extends DCLogic {
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
     var why = Object.keys(sk.parts).map(function (k) { return PN[k] + ' ' + sk.parts[k]; }).join(' · ');
-    return { skill: sk.score, skillWhy: why, colorPct: cr.pct, tint: cr.tint, yohen: cr.yohen, colorWhy: '온도 ' + match + ' 범위 ' + (TU.colorRange[match] || []).join('~') + '% · 유약 ' + ({ thin: '얇음', ok: '고르게', thick: '두꺼움', drip: '흘러내림' }[item.thick] || '-') + (cr.yohen ? ' · 요변!' : ''), pattern: item.pattern || '', cov: item.cov, name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, fit: item.fit, color: Math.max(1, Math.ceil(cr.pct / 20)), value: value, prof: item.prof, H: item.H, clay: item.clay, goalSid: item.goalSid, goalName: item.goalName, goalGlaze: item.goalGlaze };
+    return { skill: sk.score, skillWhy: why, colorPct: cr.pct, tint: cr.tint, yohen: cr.yohen, colorWhy: '온도 ' + match + ' 범위 ' + (TU.colorRange[match] || []).join('~') + '% · 유약 ' + ({ thin: '얇음', ok: '고르게', thick: '두꺼움', drip: '흘러내림' }[item.thick] || '-') + (cr.yohen ? ' · 요변!' : ''), pattern: item.pattern || '', cov: item.cov, name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, fit: item.fit, color: Math.max(1, Math.ceil(cr.pct / 20)), value: value, prof: item.prof, H: item.H, clay: item.clay, goalSid: item.goalSid, sk: item.sk || '', goalName: item.goalName, goalGlaze: item.goalGlaze };
   }
   slotCap() { return 6 + (this.qlib().fx(this.state.g || {}).kilnSlot || 0); } // 기본 6칸 · 상점 「소성가마 증설」로 9칸
   putAt(idx, w) {
@@ -595,7 +595,7 @@ class Component extends DCLogic {
     var pwItem = waiting.filter(function (w) { return w.id === pw; })[0] || null, pwOpt = pwItem ? (T.GL[pwItem.glaze] || T.GL.white).opt : 0;
     var SNk = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' };
     var wait = waiting.map(function (w) {
-      var on = w.id === pw, gl = T.GL[w.glaze] || T.GL.white, nm = gl.pre + ' ' + (SNk[w.shape] || '그릇');
+      var on = w.id === pw, gl = T.GL[w.glaze] || T.GL.white, nm = gl.pre + ' ' + (window.__shN ? window.__shN(w) : (SNk[w.shape] || '그릇'));
       return {
         id: w.id, name: nm, on: on ? 'true' : 'false', aria: nm + (on ? ' · 고른 기물' : '') + ' · 끌어서 가마 칸에 놓기', pot: self.potOf(w, self.fillOf(w, 'glazed')),
         badge: on ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 5px;border-radius:8px;background:#C8601E;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none',
@@ -658,7 +658,7 @@ class Component extends DCLogic {
       var tone = m === '정합' ? '#2F6328' : (m === '근접' ? '#8A6410' : '#A33B22');
       info = {
         has: true, none: false,
-        name: sgl.pre + ' ' + ssh.n, path: ssh.p, fill: sgl.raw, pot: self.potOf(selItem, self.fillOf(selItem, 'glazed')),
+        name: sgl.pre + ' ' + (window.__shN ? window.__shN(selItem) : ssh.n), path: ssh.p, fill: sgl.raw, pot: self.potOf(selItem, self.fillOf(selItem, 'glazed')),
         match: m, badge: 'padding:1px 9px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + tone,
         opt: (sgl.opt - QL0.TUNE.kilnExact).toLocaleString() + '~' + (sgl.opt + QL0.TUNE.kilnExact).toLocaleString() + '℃', temp: temp.toLocaleString(),
         note: (function () { var sk = QL0.skillOf(selItem, m); return '예상 ' + sk.grade + ' · 발색 ' + (QL0.TUNE.colorRange[m] || []).join('~') + '%'; })(),
@@ -796,7 +796,7 @@ class Component extends DCLogic {
     var on = !!o.on;
     return {
       pot: this.potOf(it, this.fillOf(it, o.stage)),
-      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      name: (o.prefix || '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
       risk: o.risk ? '깨질 위험 ' + o.risk.lv + ' ' + o.risk.pct + '%' : '', riskStyle: o.risk ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;color:#FFFDF5;background:' + o.risk.col : 'display:none',
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',

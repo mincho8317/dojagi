@@ -260,15 +260,15 @@ class Component extends DCLogic {
       { id: 'guest', who: '이름 없는 손님', role: '동네 주민', portrait: 'PORTRAIT_GUEST', tag: '일간', title: '밥공기 하나', memo: '유약은 상관없고 튼튼하면 돼요.', reward: '350G · 명성 +8', conds: [{ t: '형태 · 사발/공기', ok: bowl > 0 }, { t: '보유 ' + Math.min(1, bowl) + '/1', ok: bowl > 0 }], ready: bowl > 0, acc: q.guest, done: q.guestDone, thanks: q.guestThanks },
       { id: 'week', who: '카페 사장', role: '골목 카페', portrait: 'PORTRAIT_CAFE', tag: '주간', title: '카페 잔 세트', memo: '하얀 잔 세 점. 모양이 비슷하면 좋아요.', reward: '3,600G · 파편 20', conds: [{ t: '형태 · 잔', ok: whCup >= 3 }, { t: '유약 · 백자', ok: whCup >= 3 }, { t: '보유 ' + Math.min(3, whCup) + '/3', ok: whCup >= 3 }], ready: whCup >= 3, acc: q.week, done: q.weekDone, thanks: q.weekThanks }
     ];
-    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' };
+    var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리', daejeop: '대접', sabal: '사발', chatjan: '찻잔', plate: '접시', dawan: '다완', hwabyeong: '화병', hangari: '항아리', moonjar: '달항아리', lotuscup: '연꽃잔' }, GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' };
     (g.tasteOrders || []).forEach(function (o) {
-      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
+      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.sk || o.want.shape] || '그릇');
       var n = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); });
       var left = Math.max(0, 3 - Math.floor((Date.now() - o.at) / 86400000));
-      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.sk || o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
     });
     (g.tasteDone || []).forEach(function (o) {
-      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || '그릇');
+      var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.sk || o.want.shape] || '그릇');
       defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했어요', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
     });
     var Lm = this.limits(), now = Date.now();
@@ -277,7 +277,7 @@ class Component extends DCLogic {
     defs[2].need = '백자 찻잔 ×3'; defs[2].req = 3; defs[2].hv = whCup; defs[2].at = q.weekAt; defs[2].lim = Lm.week;
     (g.tasteOrders || []).forEach(function (o) { defs.forEach(function (d) { if (d.id === o.id) { d.need = d.title + ' ×1'; d.req = 1; d.hv = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); }); d.at = o.at; d.lim = Lm.order; d.memo = '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요'; } }); });
     (g.failLog || []).forEach(function (f2) {
-      var t2 = f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.shape] || '그릇') : f2.title;
+      var t2 = f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.sk || f2.want.shape] || '그릇') : f2.title;
       defs.push({ id: 'f' + f2.id, who: f2.who, role: '기한 초과', portrait: 'PORTRAIT', tag: '실패', title: t2, need: t2, memo: '기한 안에 건네지 못했어요 · 사연·일간·주간 손님은 다시 의뢰하러 와요', reward: '없음', conds: [{ t: '기한 초과', ok: false }], ready: false, acc: true, done: true, thanks: true, failed: true, req: 1, hv: 0 });
     });
     function fmt(ms) {
@@ -309,7 +309,7 @@ class Component extends DCLogic {
         who: q.who, role: q.role, title: q.title, tag: q.tag,
         hasP: !!(PIMG[q.res] || PIMG['PW_' + q.res]), pimg: PIMG[q.res] || PIMG['PW_' + q.res] || '',
         tagStyle: 'flex:0 0 auto;padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:12px;color:#FFFDF5;background:' + tagCol,
-        stat: allOk ? '✓ 납품 가능 · 카운터에서 건네기' : '만들 것 ' + need + '점 남음' + (A.deliverable ? ' · 지금 납품 가능 ' + A.deliverable + '점' : ''),
+        stat: allOk ? '✓ 납품 가능 · 카운터에서 건네기' : '만들 것 ' + need + '점 남음 · 모두 완성해야 납품',
         statStyle: 'font-size:12.5px;font-weight:700;color:' + (allOk ? '#2F6328' : '#8A4A12'),
         time: lim ? (left > 0 ? fmt(left) : '기한 초과') : '', timeStyle: lim ? 'flex:0 0 auto;align-self:flex-start;padding:3px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;' + (urgent ? 'background:#D0452B;color:#FFF' : 'background:#3E2616;color:#FFE7A8') : 'display:none',
         items: A.items.map(function (r) {
@@ -317,7 +317,7 @@ class Component extends DCLogic {
           var wipTxt = Object.keys(r.wipAt).map(function (k) { return ({ formedList: '성형', dryList: '건조', bisqueList: '초벌 대기', bisque: '초벌', glazeList: '유약 대기', kilnList: '가마 대기', kiln: '가마', firing: '소성' })[k] + ' ' + r.wipAt[k]; }).join(', ');
           return {
             name: it.name + (it.n > 1 ? ' ×' + it.n : ''), cond: cond,
-            prog: r.done ? '✓ 납품 완료 ' + r.dl + '/' + r.n : '납품 ' + r.dl + '/' + r.n + ' · 완성 ' + r.readyN + (r.wip ? ' · 제작 중 ' + r.wip + (wipTxt ? ' (' + wipTxt + ')' : '') : ''),
+            prog: r.done ? '✓ 납품 완료 ' + r.dl + '/' + r.n : (r.steps ? (r.dl ? '납품 ' + r.dl + '/' + r.n + ' · ' : '') + [['formed', '성형'], ['dried', '건조'], ['glazed', '유약'], ['fired', '소성']].map(function (x) { return x[1] + ' 완료 ' + r.steps[x[0]] + '/' + r.n; }).join(' · ') : '납품 ' + r.dl + '/' + r.n + ' · 준비 ' + r.readyN),
             progStyle: 'font-size:12px;font-weight:700;color:' + (r.done ? '#6B6B6B' : (r.ok ? '#2F6328' : '#8A4A12')),
             icon: r.done ? '✓' : (r.ok ? '✓' : (r.wip ? '…' : '')),
             iconStyle: 'flex:0 0 26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#FFF;background:' + (r.done ? '#7A7A7A' : (r.ok ? '#3F8A35' : (r.wip ? '#C8901E' : '#C9B79C'))),
@@ -329,13 +329,13 @@ class Component extends DCLogic {
         trackLabel: tracked ? '📌 제작 안내 끄기' : '📌 제작 안내 켜기',
         trackStyle: 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (tracked ? 'background:#5B3A24;color:#FFE7A8;border:3px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:3px dashed #8A6440'),
         trackTap: function () { var cur = QL.tracked(self.loadG(), act), on = cur.indexOf(q.id) >= 0, nx = on ? cur.filter(function (x) { return x !== q.id; }) : cur.concat([q.id]); self.setG({ tracks: nx, track: nx[0] || '' }); self.say(on ? '「' + q.title + '」 제작 안내를 껐어요' : '「' + q.title + '」을(를) 제작 화면 체크리스트에 띄워요 · 여러 개 켤 수 있어요'); },
-        href: allOk || A.deliverable ? 'Counter.dc.html' : 'Wheel.dc.html',
-        goLabel: allOk || A.deliverable ? '납품하러 가기 →' : '제작하러 가기 →',
+        href: allOk ? 'Counter.dc.html' : 'Wheel.dc.html',
+        goLabel: allOk ? '납품하러 가기 →' : '제작하러 가기 →',
         go: function () {
-          if (allOk || A.deliverable) { self.setG({ deliverCall: { id: q.id, at: Date.now() } }); try { localStorage.setItem('ctab', 'req'); } catch (e) {} return; }
+          if (allOk) { self.setG({ deliverCall: { id: q.id, at: Date.now() } }); try { localStorage.setItem('ctab', 'req'); } catch (e) {} return; }
           var cur = QL.tracked(self.loadG(), act), nx = cur.indexOf(q.id) >= 0 ? cur : cur.concat([q.id]); var pt = { tracks: nx, track: nx[0] }; if (first) { pt.wheelPick = first.tag; } self.setG(pt);
         },
-        goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;white-space:nowrap;' + (allOk || A.deliverable ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
+        goStyle: 'flex:1.2 1 0;box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-family:Jua,sans-serif;font-size:14.5px;text-decoration:none;white-space:nowrap;' + (allOk ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
         cls: 'memo-' + ({ '도깨비': 'blue', '메인': 'peach', '사연': 'peach', '일간': 'green', '주간': 'blue', '주문': 'yellow' }[q.tag] || 'yellow'),
         wrap: 'position:relative;box-sizing:border-box;padding:2px 2px 4px;filter:drop-shadow(0 5px 5px rgba(40,20,5,.38));margin:0;' + (tracked ? 'outline:3px solid #FFD66B;outline-offset:3px;' : ''),
         pin: ci % 3 === 1 ? 'display:none' : 'position:absolute;left:50%;top:-26px;width:26px;height:30px;margin-left:-13px;z-index:2',
@@ -355,8 +355,8 @@ class Component extends DCLogic {
     var GR = { min: ['민 씨', '청자 찻잔', 1, '400G × 등급 · 명성 +20', '할머님 잔을 닮은 찻잔'], guest: ['이름 없는 손님', '사발', 1, '350G · 명성 +8', '둥근 밥공기'], week: ['카페 사장', '백자 찻잔', 3, '3,600G · 파편 20', '카페 잔 세트'] };
     var rec = [];
     ['min', 'guest', 'week'].forEach(function (k) { if (q[k + 'Done']) { var x = GR[k]; rec.push({ ok: true, who: x[0], item: x[1], qty: x[2], reward: x[3], title: x[4], at: q[k + 'DoneAt'] || 0 }); } });
-    (g.tasteDone || []).forEach(function (o) { rec.push({ ok: true, who: o.name, item: (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.shape] || ''), qty: 1, reward: (o.price || 0).toLocaleString() + 'G · 명성 +5', title: '취향 주문', at: o.at }); });
-    (g.failLog || []).forEach(function (f2) { rec.push({ ok: false, who: f2.who, item: f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.shape] || '') : f2.title, qty: 1, reward: '없음', title: f2.want ? '취향 주문' : f2.title, at: f2.at }); });
+    (g.tasteDone || []).forEach(function (o) { rec.push({ ok: true, who: o.name, item: (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.sk || o.want.shape] || ''), qty: 1, reward: (o.price || 0).toLocaleString() + 'G · 명성 +5', title: '취향 주문', at: o.at }); });
+    (g.failLog || []).forEach(function (f2) { rec.push({ ok: false, who: f2.who, item: f2.want ? (f2.want.glaze ? GN[f2.want.glaze] + ' ' : '') + (SN[f2.want.sk || f2.want.shape] || '') : f2.title, qty: 1, reward: '없음', title: f2.want ? '취향 주문' : f2.title, at: f2.at }); });
     (((g.mq || {}).log) || []).forEach(function (L0) { rec.push({ ok: true, who: L0.who, item: L0.items, qty: 1, reward: (L0.gold || 0).toLocaleString() + 'G · 파편 ' + (L0.shards || 0), title: '메인 · ' + L0.title, at: L0.at }); });
     rec.sort(function (x, y) { return (y.at || 0) - (x.at || 0); });
     rec.forEach(function (r, i) { r.no = 'No.' + String(rec.length - i).padStart(3, '0'); });

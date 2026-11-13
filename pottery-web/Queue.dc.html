@@ -189,7 +189,7 @@ class Component extends DCLogic {
     all.sort(function (a, b) { return b.rank - a.rank; });
     var slots = all.map(function (r, i) {
       var t = TONE[r.tone], it = r.it;
-      var name = (it.glaze && r.rank >= 5 ? (GN[it.glaze] || '') + ' ' : '') + (SN[it.shape] || it.shape || '');
+      var name = (it.glaze && r.rank >= 5 ? (GN[it.glaze] || '') + ' ' : '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape || '');
       return {
         filled: true, empty: false, num: i + 1, name: it.name || name, tag: r.tag, href: r.href,
         aria: (i + 1) + '번 ' + name + ' · ' + r.tag + ' · ' + r.next,

@@ -296,7 +296,7 @@ class Component extends DCLogic {
     f.g = this.loadG();
     f.clay = this.pickClay(f.g);
     var q0 = (f.g && f.g.quests) || {};
-    f.target = q0.min && !q0.minDone ? 'cup' : 'dish';
+    f.target = q0.min && !q0.minDone ? 'chatjan' : 'dish';
     var qk = this.questTargets(f.g);
     if (f.g.wheelPick && qk[f.g.wheelPick]) { f.target = f.g.wheelPick; } else { var ks = Object.keys(qk).filter(function (k) { return !qk[k].full; }); if (ks.length) { f.target = ks[0]; } }
     f.speed = 'std';
@@ -311,7 +311,7 @@ class Component extends DCLogic {
       if (wp && wp.r && wp.r.length === 12 && Date.now() - (wp.at || 0) < 7 * 86400000) {
         f.r = wp.r; f.t = wp.t || f.t; f.H = wp.H || f.H; f.segDone = wp.segDone || []; f.hDone = !!wp.hDone;
         if (wp.clay && this.hasClay(f.g, wp.clay)) { f.clay = wp.clay; } if (wp.speed) { f.speed = wp.speed; }
-        if (wp.target && (!f.g.wheelPick || f.g.wheelPick === wp.target)) { f.target = wp.target; }
+        if (wp.target && (!f.g.wheelPick || f.g.wheelPick === wp.target)) { f.target = ({ cup: 'chatjan', bowl: 'sabal' })[wp.target] || wp.target; } // 예전 저장값(분류 이름) → 모양 이름
         this.touched = wp.touched || []; this.touchedH = wp.touchedH || 0; f.resumed = true;
         var qf0 = this.questFor(f.target, qk); if (qf0 && !qk[f.target]) { f.target = qf0; }
         if (!f.g.wheelPick && (!qk[f.target] || qk[f.target].full)) { var ks2 = Object.keys(qk).filter(function (k) { return !qk[k].full; }); if (ks2.length) { f.target = ks2[0]; } }
@@ -376,10 +376,10 @@ class Component extends DCLogic {
   tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Wheel'); }
   goalList(g) {
     var q = g.quests || {}, out = [];
-    if (q.min && !q.minDone) { out.push({ tag: '의뢰', shape: 'cup', glaze: 'celadon', col: '#C8601E' }); }
-    if (q.guest && !q.guestDone) { out.push({ tag: '의뢰', shape: 'bowl', glaze: '', col: '#C8601E' }); }
-    if (q.week && !q.weekDone) { out.push({ tag: '의뢰', shape: 'cup', glaze: 'white', col: '#C8601E' }); }
-    (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '의뢰', shape: w.shape, glaze: w.glaze || '', col: '#C8601E' }); });
+    if (q.min && !q.minDone) { out.push({ tag: '의뢰', shape: 'cup', sk: 'chatjan', glaze: 'celadon', col: '#C8601E' }); }
+    if (q.guest && !q.guestDone) { out.push({ tag: '의뢰', shape: 'bowl', sk: 'sabal', glaze: '', col: '#C8601E' }); }
+    if (q.week && !q.weekDone) { out.push({ tag: '의뢰', shape: 'cup', sk: 'chatjan', glaze: 'white', col: '#C8601E' }); }
+    (g.tasteOrders || []).forEach(function (o) { var w = o.want || {}; out.push({ tag: '의뢰', shape: w.shape, sk: w.sk || ({ cup: 'chatjan', bowl: 'sabal', dish: 'dish' })[w.shape] || '', glaze: w.glaze || '', col: '#C8601E' }); });
     var gl = g.goal, st = ((g.contest || {}).stars || {});
     if (gl && gl.sid && !st[gl.sid]) { out.push({ tag: '스테이지', shape: gl.wshape || '', glaze: gl.glaze || '', col: '#7A5A93', stage: true }); }
     return out;
@@ -441,19 +441,19 @@ class Component extends DCLogic {
     return out;
   }
   baseShapes(QT) {
-    var used = {}; for (var k in (QT || {})) { used[QT[k].req.wshape] = k; }
-    return ['dish', 'cup', 'bowl'].filter(function (b) { return !used[b]; });
+    // 기본 모양(종지·대접·사발·찻잔) + 의뢰로 연 모양 · 의뢰 목표와 같은 모양은 숨김
+    var used = {}; for (var k in (QT || {})) { used[QT[k].req.sk || QT[k].req.wshape] = k; }
+    var g = (this.state && this.state.g) || this.loadG();
+    return this.qlib().knownShapes(g).filter(function (b) { return !used[b]; });
   }
-  questFor(base, QT) { for (var k in (QT || {})) { if (QT[k].req.wshape === base) { return k; } } return ''; }
+  questFor(base, QT) { for (var k in (QT || {})) { if ((QT[k].req.sk || QT[k].req.wshape) === base) { return k; } } return ''; }
   shapes() {
-    var qt = this.questTargets((this.state && this.state.g) || this.loadG()), o = {
-      dish: { n: '종지', H: 70, T: [5, 6.5], f: function (u) { return 40 + 50 * Math.sqrt(u); } },
-      cup: { n: '찻잔', H: 130, T: [3.5, 5], f: function (u) { return 34 + 14 * u; } },
-      bowl: { n: '사발', H: 95, T: [4, 5.5], f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } },
-      goal: this.goalShape()
-    };
+    var g0 = (this.state && this.state.g) || this.loadG(), QL = this.qlib(), qt = this.questTargets(g0), o = { goal: this.goalShape() };
+    var TT = { dish: [5, 6.5], bowl: [4, 5.5], cup: [3.5, 5], jar: [5, 7] };
+    QL.knownShapes(g0).forEach(function (k) { var d = QL.SHP[k], p = d.p, n = p.length; o[k] = { n: d.n, H: d.H, T: TT[QL.WSM[k]] || [4, 6], sk: k, f: function (u) { var x = u * (n - 1), lo = Math.floor(x), hi = Math.min(n - 1, lo + 1); return p[lo] + (p[hi] - p[lo]) * (x - lo); } }; });
     for (var k in qt) { o[k] = qt[k]; }
     if (!o[this.state && this.state.target] && this.state && /^q:/.test(this.state.target)) { o[this.state.target] = o.dish; }
+    if (this.state && this.state.target && !o[this.state.target]) { o[this.state.target] = o.dish; }
     return o;
   }
   goalShape() {
@@ -967,7 +967,7 @@ class Component extends DCLogic {
         };
       }) : targets.map(function (k) {
         var t = self.shapes()[k], on = s.target === k, isG = k === 'goal', isQ = /^q:/.test(k);
-        var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.shape === k); }));
+        var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.sk === k); }));
         return {
           name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: '', icon: self.iconOf(t),
           on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : (isQ ? ' · 의뢰 기물' : '')),
@@ -1147,7 +1147,7 @@ class Component extends DCLogic {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
         if (dryCount >= 6) { self.say('성형 대기 선반이 가득 찼어요 · 건조대에 먼저 올려요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
-        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
+        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
         var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
         if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }

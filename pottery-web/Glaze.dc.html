@@ -555,7 +555,7 @@ class Component extends DCLogic {
     var SNm = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }, curT = this.current(), gl0 = g.glazeList || [];
     var trayV = gl0.map(function (x) {
       var on = !!(curT && curT.id === x.id);
-      return { id: x.id, name: SNm[x.shape] || '그릇', aria: (SNm[x.shape] || '그릇') + (on ? ' · 지금 유약 바르는 중' : ' · 눌러서 고르기'), on: on ? 'true' : 'false', pot: self.potOf(x, self.fillOf(x, 'bisque')),
+      var xn = window.__shN ? window.__shN(x) : (SNm[x.shape] || '그릇'); return { id: x.id, name: xn, aria: xn + (on ? ' · 지금 유약 바르는 중' : ' · 눌러서 고르기'), on: on ? 'true' : 'false', pot: self.potOf(x, self.fillOf(x, 'bisque')),
         badge: on ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 5px;border-radius:8px;background:#2F6328;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : (x.goalGlaze ? 'position:absolute;right:-4px;top:-5px;z-index:1;padding:0 4px;border-radius:8px;background:#7A5A93;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none'),
         badgeText: on ? '선택' : (x.goalGlaze ? '의뢰' : ''),
         style: 'all:unset;cursor:pointer;position:relative;flex:0 0 52px;width:52px;height:52px;box-sizing:border-box;padding:2px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;' + (on ? 'background:#FFF9EC;border:2px solid #2F6328;box-shadow:0 0 0 2px #A9D69E;' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A;') + 'user-select:none;-webkit-user-select:none;touch-action:pan-x',
@@ -653,7 +653,7 @@ class Component extends DCLogic {
       condStyle: 'position:absolute;left:40px;right:40px;top:482px;display:' + (needQuest ? 'flex' : 'none') + ';align-items:center;justify-content:center;gap:7px;padding:7px 12px;border-radius:20px;border:3px solid #FFF4DE;box-shadow:0 3px 0 rgba(43,26,15,.4);font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + (condOk ? '#2F6328' : '#8A5A36'),
       condText: condOk ? '✓ 민 씨 의뢰 조건 · 찻잔 + 청자유' : '민 씨 의뢰: 찻잔에 청자유',
       holdLabel: s.holding ? '담그는 중…' : '꾹 눌러 담그기',
-      holdSub: s.holding ? (s.drag ? '원하는 만큼 담갔으면 위로 올려 꺼내요' : '손을 떼면 건져요') : (cur ? (cur.goalName || (SH[cur.shape] || SH.dish).n) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
+      holdSub: s.holding ? (s.drag ? '원하는 만큼 담갔으면 위로 올려 꺼내요' : '손을 떼면 건져요') : (cur ? (cur.goalName || (window.__shN ? window.__shN(cur) : (SH[cur.shape] || SH.dish).n)) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
       holdStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:11px 0;border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;' + (s.holding ? 'background:#2F6328;border:3px solid #1F4A1A;box-shadow:0 1px 0 #1F4A1A;transform:translateY(3px);color:#FFFDF5;' : 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;'),
       holdStart: function (e) { if (s.drag) { return; } if (e && e.preventDefault) { e.preventDefault(); } self.start(); },
       holdEnd: function () { if (!self.state.drag) { self.finish(); } },
@@ -709,7 +709,7 @@ class Component extends DCLogic {
     var on = !!o.on;
     return {
       pot: this.potOf(it, this.fillOf(it, o.stage)),
-      name: (o.prefix || '') + (SN[it.shape] || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
+      name: (o.prefix || '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape), meta: (CLN[it.clay] || '') + ' · ' + st,
       tag: o.tag || '', tagStyle: o.tag ? 'padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;' + (o.warn ? 'background:#C8601E;color:#FFFDF5' : 'background:#E9DCC3;color:#5B3A24') : 'display:none',
       check: on ? '✓' : '', on: on ? 'true' : 'false',
       checkStyle: o.single ? 'display:none' : 'position:absolute;right:8px;top:8px;width:24px;height:24px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;border:2px solid #C9B08A;color:transparent'),
