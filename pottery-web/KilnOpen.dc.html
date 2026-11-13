@@ -49,7 +49,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
 <linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
 <linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
-<pattern id="potPlum" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width=".5" height=".3"><g fill="#FFF4F6" fill-opacity=".85"><circle cx=".25" cy=".09" r=".035"></circle><circle cx=".31" cy=".135" r=".035"></circle><circle cx=".285" cy=".2" r=".035"></circle><circle cx=".215" cy=".2" r=".035"></circle><circle cx=".19" cy=".135" r=".035"></circle></g><circle cx=".25" cy=".145" r=".022" fill="#E2607E"></circle><path d="M.02 .27C.1 .24 .14 .2 .19 .16" stroke="#5B3A24" stroke-opacity=".55" stroke-width=".012" fill="none"></path></pattern>
+<pattern id="potPlum" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width=".5" height=".34"><image href="ui/plum.webp" x=".03" y=".02" width=".3" height=".3" opacity=".9"></image></pattern>
 <pattern id="potRings" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height=".19"><rect x="0" y=".15" width="1" height=".012" fill="#000" fill-opacity=".06"></rect><rect x="0" y=".162" width="1" height=".008" fill="#fff" fill-opacity=".08"></rect></pattern>
 <clipPath id="potFoot" clipPathUnits="objectBoundingBox"><path d="M0 .885C.07 .86 .11 .93 .19 .9C.26 .87 .3 .95 .38 .915C.46 .88 .51 .945 .6 .905C.68 .87 .72 .935 .8 .9C.88 .87 .93 .925 1 .885L1 1L0 1Z"></path></clipPath>
 <clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
@@ -95,7 +95,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <sc-if value="{{shownNow}}" hint-placeholder-val="{{true}}">
     <div style="{{shownWrap}}" data-skip="{{skipFlag}}" onPointerDown="{{skipAnim}}">
     <div style="animation:fadeIn .5s .1s both;position:absolute;left:35px;top:56px;width:320px;height:320px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle,{{it.rayFill}},rgba(0,0,0,0) 70%);pointer-events:none">
-      <img src="_blob/b39a9db17420ec563e1ac1bf6ca8c638.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:320px;height:320px;animation:raySpin 24s linear infinite;opacity:.9">
+      <img dc-src="{{it.rayImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:320px;height:320px;animation:raySpin 24s linear infinite;opacity:{{it.rayOp}}">
     </div>
     <sc-for list="{{it.sparks}}" as="sp" hint-placeholder-count="2">
       <img src="_blob/d110be735e3f291879ca8ecc1cbe3c90.webp" alt="" aria-hidden="true" draggable="false" style="{{sp}}">
@@ -104,19 +104,17 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <svg style="position:absolute;left:105px;top:300px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
     <div style="position:absolute;left:95px;top:88px;width:200px;height:236px;transform-origin:50% 90%;animation:emerge .95s cubic-bezier(.25,.9,.3,1) both">
     <svg style="position:absolute;left:0;top:0" width="200" height="236" viewBox="{{it.pot.vb}}" role="img" aria-label="{{it.name}}, 빚은 모양 그대로">
-      <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.pot.fill}}"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
+      <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.pot.fill}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.tex}}" opacity="{{it.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{it.pot.dX}}" y="{{it.pot.dY}}" width="{{it.pot.dW}}" height="{{it.pot.dH}}" fill="{{it.pot.dCol}}" mask="{{it.pot.dMask}}" opacity="{{it.pot.dOp}}"></rect><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
       <ellipse cx="0" cy="{{it.pot.rimY}}" rx="{{it.pot.rimRx}}" ry="{{it.pot.rimRy}}" fill="{{it.inner}}" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}"></ellipse>
     </svg>
     </div>
     <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
-      <svg style="position:absolute;left:115px;top:88px" width="160" height="230" viewBox="0 0 160 230" aria-hidden="true">
-        <path d="M86 40 L74 80 L92 108 L70 142 L84 186" fill="none" stroke="#120B07" stroke-width="4" stroke-linejoin="round"></path>
-        <path d="M74 80 L52 92" fill="none" stroke="#120B07" stroke-width="3"></path>
-      </svg>
+      <img src="ui/crack_branch.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:105px;top:96px;width:180px;height:200px;object-fit:contain;mix-blend-mode:multiply;animation:crackGlow .5s .2s both">
+      <img src="ui/shards.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:150px;top:262px;width:96px;height:96px;object-fit:contain;animation:fadeUp .4s .5s both">
     </sc-if>
 
     <div style="position:absolute;left:0;right:0;top:326px;display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div style="animation:slamIn .45s .75s both;height:50px;padding:0 54px;display:flex;align-items:center;justify-content:center;background:{{it.ribbon}};clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:#FFFDF5">{{it.grade}}</div>
+      <div style="animation:slamIn .45s .75s both;width:260px;height:56px;box-sizing:border-box;padding:0 0 4px 8px;display:flex;align-items:center;justify-content:center;background:url({{it.ribImg}}) center/100% 100% no-repeat;filter:{{it.ribFx}};font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:{{it.ribTx}};text-shadow:0 2px 0 rgba(43,26,15,.45)">{{it.grade}}</div>
       <span style="animation:fadeUp .4s .9s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
     </div>
 
@@ -187,7 +185,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
             <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
             <span style="{{bk.fan.bar}}"></span>
           </div>
-          <button type="button" onPointerDown="{{bk.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{bk.fan.btn}}"><span style="font-size:28px;line-height:1">🌬️</span><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.1"><span style="font-family:'Jua',sans-serif;font-size:19px">풀무질</span><span style="font-size:11.5px;font-weight:700;opacity:.9">초록 칸 유지</span></span></button>
+          <button type="button" onPointerDown="{{bk.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{bk.fan.btn}}"><img src="ui/kiln_bellows.webp" alt="" aria-hidden="true" style="width:46px;height:40px;object-fit:contain"><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.1"><span style="font-family:'Jua',sans-serif;font-size:19px">풀무질</span><span style="font-size:11.5px;font-weight:700;opacity:.9">초록 칸 유지</span></span></button>
         </div>
       </sc-if>
       <sc-if value="{{bk.fan.off}}" hint-placeholder-val="{{false}}">
@@ -211,7 +209,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <sc-for list="{{rs.cards}}" as="r" hint-placeholder-count="3">
           <div id="{{r.id}}" style="{{r.style}}">
             <span style="{{r.ribbon}}">{{r.grade}}</span>
-            <svg width="{{r.sz}}" height="{{r.sz}}" viewBox="{{r.pot.vb}}" aria-hidden="true" style="{{r.potStyle}}"><ellipse cx="0" cy="{{r.pot.shCy}}" rx="{{r.pot.shRx}}" ry="{{r.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{r.pot.d}}" fill="{{r.pot.fill}}"></path><path d="{{r.pot.d}}" fill="url(#potTopLight)"></path><path d="{{r.pot.d}}" fill="{{r.pot.rings}}"></path><path d="{{r.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{r.pot.grainOp}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.foot}}" fill-opacity="{{r.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{r.pot.d}}" fill="{{r.pot.drip}}" fill-opacity="{{r.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{r.pot.d}}" fill="url(#potShade)"></path><path d="{{r.pot.d}}" fill="none" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{r.pot.rimY}}" rx="{{r.pot.rimRx}}" ry="{{r.pot.rimRy}}" fill="rgba(43,26,15,.3)" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}"></ellipse></svg>
+            <svg width="{{r.sz}}" height="{{r.sz}}" viewBox="{{r.pot.vb}}" aria-hidden="true" style="{{r.potStyle}}"><ellipse cx="0" cy="{{r.pot.shCy}}" rx="{{r.pot.shRx}}" ry="{{r.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{r.pot.d}}" fill="{{r.pot.fill}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.tex}}" opacity="{{r.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{r.pot.d}}" fill="url(#potTopLight)"></path><path d="{{r.pot.d}}" fill="{{r.pot.rings}}"></path><path d="{{r.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{r.pot.grainOp}}"></path><path d="{{r.pot.d}}" fill="{{r.pot.foot}}" fill-opacity="{{r.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{r.pot.d}}" fill="{{r.pot.drip}}" fill-opacity="{{r.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{r.pot.dX}}" y="{{r.pot.dY}}" width="{{r.pot.dW}}" height="{{r.pot.dH}}" fill="{{r.pot.dCol}}" mask="{{r.pot.dMask}}" opacity="{{r.pot.dOp}}"></rect><path d="{{r.pot.d}}" fill="url(#potShade)"></path><path d="{{r.pot.d}}" fill="none" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{r.pot.rimY}}" rx="{{r.pot.rimRx}}" ry="{{r.pot.rimRy}}" fill="rgba(43,26,15,.3)" stroke="{{r.edge}}" stroke-width="{{r.pot.sw}}"></ellipse></svg>
             <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:13px;color:#2B1A0F">{{r.name}}</span>
             <span style="font-size:11px;font-weight:700;color:{{r.subColor}}">{{r.sub}}</span>
           </div>
@@ -399,14 +397,14 @@ class Component extends DCLogic {
     var self = this, have = this.jadeOf(this.state.g);
     if (have < cost) { this.say('옥이 ' + (cost - have).toLocaleString() + '개 부족해요 · 상점에서 충전'); return; }
     if (document.querySelector('.jade-ov')) { return; }
-    var gem = '<svg width="54" height="54" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.4" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width=".9" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.5" stroke-linecap="round"></path></svg>';
+    var gem = '<img src="ui/ui_jade.webp" alt="" aria-hidden="true" style="width:58px;height:58px;object-fit:contain">';
     var ov = document.createElement('div'); ov.className = 'jade-ov';
     ov.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center';
     var bx = document.createElement('div'); bx.setAttribute('role', 'dialog'); bx.setAttribute('aria-label', '옥 사용 확인');
     bx.style.cssText = 'width:min(310px,86vw);box-sizing:border-box;padding:20px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #1E5E48;box-shadow:inset 0 0 0 3px #CDEFE0,0 8px 0 rgba(20,60,45,.45);text-align:center;font-family:Noto Sans KR,sans-serif;color:#2B1A0F';
     bx.innerHTML = gem + '<div style="margin:6px 0 4px;font-family:Jua,sans-serif;font-size:21px">옥을 사용할까요?</div>' +
       '<div style="font-size:13px;line-height:1.6;color:#5B3A24">남은 대기 시간을 바로 완료합니다</div>' +
-      '<div style="margin:12px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:Jua,sans-serif;font-size:18px;color:#1E5E48">' + (cost ? '옥 ' + cost.toLocaleString() + '개 사용' : '🎁 튜토리얼 중엔 무료!') + '</div>' +
+      '<div style="margin:12px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:Jua,sans-serif;font-size:18px;color:#1E5E48">' + (cost ? '옥 ' + cost.toLocaleString() + '개 사용' : '<img src="ui/reward_box.webp" alt="" style="width:22px;height:22px;vertical-align:-5px"> 튜토리얼 중엔 무료!') + '</div>' +
       '<div style="font-size:11.5px;color:#7A5434;margin-bottom:12px">' + (cost ? '보유 ' + have.toLocaleString() + ' → ' + (have - cost).toLocaleString() : '옥이 줄어들지 않아요 · 보유 ' + have.toLocaleString()) + '</div>';
     var row = document.createElement('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
     function btn(label, css, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.style.cssText = 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;border-radius:16px;font-family:Jua,sans-serif;font-size:17px;' + css; b.addEventListener('click', fn); return b; }
@@ -561,10 +559,10 @@ class Component extends DCLogic {
     var tease = it.broken ? '#6E5A44' : gr.ray;
     var confetti = [];
     if (shownNow && big) {
-      var CC = it.grade === '요변' ? ['#C7A6E0', '#FFD66B', '#FFF4DE', '#9FD4C6'] : ['#FFD66B', '#E3B23C', '#FFF4DE', '#F4B6C4'];
+      var CC = it.grade === '요변' ? ['ui/fx_petal_ivory.webp', 'ui/fx_sparkle.webp', 'ui/fx_gold_leaf.webp'] : ['ui/fx_gold_leaf.webp', 'ui/fx_petal_pink.webp', 'ui/fx_gold_leaf.webp', 'ui/fx_sparkle.webp'];
       for (var ci = 0; ci < 28; ci++) {
         var lx = 10 + (ci * 53) % 370, dl = ((ci * 37) % 60) / 100, dx = ((ci * 29) % 120) - 60;
-        confetti.push('position:absolute;left:' + lx + 'px;top:' + (40 + (ci * 17) % 90) + 'px;width:' + (6 + ci % 4 * 2) + 'px;height:' + (10 + ci % 3 * 4) + 'px;border-radius:2px;background:' + CC[ci % CC.length] + ';--dx:' + dx + 'px;--r:' + (180 + ci * 47 % 540) + 'deg;pointer-events:none;animation:confetti ' + (1.6 + (ci % 5) * 0.15) + 's ' + (0.15 + dl) + 's ease-in both');
+        confetti.push('position:absolute;left:' + lx + 'px;top:' + (40 + (ci * 17) % 90) + 'px;width:' + (14 + ci % 4 * 4) + 'px;height:' + (14 + ci % 4 * 4) + 'px;background:url(' + CC[ci % CC.length] + ') center/contain no-repeat;--dx:' + dx + 'px;--r:' + (180 + ci * 47 % 540) + 'deg;pointer-events:none;animation:confetti ' + (1.6 + (ci % 5) * 0.15) + 's ' + (0.15 + dl) + 's ease-in both');
       }
     }
     var q = g.quests || {};
@@ -714,6 +712,8 @@ class Component extends DCLogic {
         sparks: it.broken ? [] : [[286, 88, 58, 0], [58, 238, 36, .8], [300, 238, 30, .4], [70, 98, 44, 1.1], [190, 54, 34, .2], [250, 298, 26, .6], [110, 308, 28, 1.3]].slice(0, cPct >= 95 ? 7 : (cPct >= 85 ? 5 : (cPct >= 70 ? 3 : (cPct >= 50 ? 1 : 0)))).map(function (a) { return 'position:absolute;left:' + a[0] + 'px;top:' + a[1] + 'px;width:' + a[2] + 'px;height:' + a[2] + 'px;pointer-events:none;animation:twinkle ' + (cPct >= 95 ? 1.1 : 1.6) + 's ease-in-out ' + a[3] + 's infinite'; }),
         body: it.tint || look.body, rim: look.rim, inner: look.inner, edge: look.edge, pot: self.potOf(it, it.tint || look.body),
         ribbon: gr.ribbon, rayColor: gr.ray, rayFill: gr.fill,
+        rayImg: 'ui/rays_' + ({ '양작': 'fine', '수작': 'good', '명작': 'masterpiece', '요변': 'yohen' }[it.grade] || 'fine') + '.webp', rayOp: it.broken ? 0 : ({ '양작': 0.55, '수작': 0.8, '명작': 0.95, '요변': 0.95 }[it.grade] || 0.6),
+        ribImg: 'ui/rib_' + ({ '양작': 'fine', '수작': 'good', '명작': 'masterpiece', '요변': 'yohen' }[it.grade] || 'good') + '.webp', ribFx: it.broken ? 'grayscale(1) brightness(.6)' : 'none', ribTx: it.grade === '수작' ? '#5B3A24' : '#FFFDF5',
         sparkle: gr.sparkle, broken: !!it.broken, whole: !it.broken
       },
       openAll: function () { clearTimeout(self.revT); self.endDoor(); self.setState({ shownIdx: -1, ph: '', skipI: -1 }); self.setG({ openIdx: items.length, kilnSeen: 1 }); },
@@ -746,7 +746,7 @@ class Component extends DCLogic {
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
+    return { inner: _dk(_f, 0.5), rings: it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)', edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };

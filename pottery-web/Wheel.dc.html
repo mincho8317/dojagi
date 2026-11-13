@@ -75,7 +75,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
     <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0">
       <div style="height:12px;border-radius:6px;background:rgba(255,244,222,.18);overflow:hidden"><div style="{{fitBar}}"></div></div>
-      <span style="font-family:'Jua',sans-serif;font-size:19px;letter-spacing:2px;color:#FFD66B;line-height:1">{{fitStars}}</span>
+      <span role="img" aria-label="{{fitStars}}" style="display:flex;gap:1px;align-items:center"><sc-for list="{{fitStarList}}" as="fs" hint-placeholder-count="5"><img dc-src="{{fs}}" alt="" aria-hidden="true" style="width:17px;height:17px;object-fit:contain"></sc-for></span>
     </div>
   </div>
 
@@ -96,11 +96,14 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <ellipse class="spin" cx="150" cy="290" rx="66" ry="22" fill="none" stroke="#C9B49A" stroke-width="3" stroke-dasharray="14 34" style="{{spinStyle}}"></ellipse>
       <ellipse class="spin" cx="150" cy="290" rx="40" ry="13" fill="none" stroke="#B19A80" stroke-width="2" stroke-dasharray="10 38" style="{{spinStyle}}"></ellipse>
       <g transform="{{dropTf}}" opacity="{{dropOp}}">
+      <image href="ui/wheel_mud.webp" x="{{foot.mx}}" y="{{foot.my}}" width="{{foot.mw}}" height="{{foot.mh}}" opacity="0.85" preserveAspectRatio="none" pointer-events="none"></image>
       <ellipse cx="{{foot.cx}}" cy="291" rx="{{foot.rx}}" ry="{{foot.ry}}" fill="#2B1A0F" opacity="0.28"></ellipse>
       <path d="{{potPath}}" fill="url(#clayShade)" stroke="{{clayEdge}}" stroke-width="2"></path>
       <sc-for list="{{rings}}" as="rg" hint-placeholder-count="10">
         <line class="spin" x1="{{rg.x1}}" x2="{{rg.x2}}" y1="{{rg.y}}" y2="{{rg.y}}" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.6" stroke-dasharray="8 16" style="{{spinStyle}}"></line>
       </sc-for>
+      <path d="{{potPath}}" fill="{{wTex}}" opacity="0.45" style="mix-blend-mode:soft-light" pointer-events="none"></path>
+      <image href="ui/wet_highlight.webp" clip-path="url(#potClip)" x="{{wet.x}}" y="{{wet.y}}" width="{{wet.w}}" height="{{wet.h}}" opacity="0.75" preserveAspectRatio="none" pointer-events="none"></image>
       <ellipse cx="{{rim.cx}}" cy="{{rim.cy}}" rx="{{rim.rx}}" ry="{{rim.ry}}" fill="{{clayColor}}" stroke="{{clayEdge}}" stroke-width="2"></ellipse>
       <ellipse cx="{{rim.cx}}" cy="{{rim.cy}}" rx="{{rim.irx}}" ry="{{rim.iry}}" fill="#3E2616" opacity="0.55"></ellipse>
       </g>
@@ -145,8 +148,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
       <sc-if value="{{hdl.on}}" hint-placeholder-val="{{true}}">
         <line x1="150" y1="{{hdl.ly1}}" x2="150" y2="{{hdl.ly2}}" stroke="#FFE7A8" stroke-width="2" stroke-dasharray="3 3"></line>
-        <rect id="wHdl" x="122" y="{{hdl.y}}" width="56" height="24" rx="12" fill="{{hdl.fill}}" stroke="#2B1A0F" stroke-width="2"></rect>
-        <text x="150" y="{{hdl.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="12" fill="#2B1A0F">▲ 높이 ▼</text>
+        <rect id="wHdl" x="112" y="{{hdl.y}}" width="76" height="24" rx="12" fill="{{hdl.fill}}" fill-opacity="{{hdl.op}}" stroke="none"></rect>
+        <g transform="{{hdl.tf}}" pointer-events="none"><image href="ui/height_handle.webp" x="-7" y="-36" width="14" height="72" preserveAspectRatio="none"></image></g>
+        <text x="150" y="{{hdl.ly}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="11" fill="#FFF4DE" stroke="#2B1A0F" stroke-width="3" paint-order="stroke" pointer-events="none">▲ 높이 ▼</text>
       </sc-if>
       <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
         <g pointer-events="none">
@@ -168,7 +172,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </sc-if>
     </svg>
 
-    <div style="position:absolute;left:8px;top:162px;width:40px;box-sizing:border-box;padding:6px 5px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;display:flex;flex-direction:column-reverse;align-items:center;gap:3px" role="img" aria-label="높이별 두께">
+    <div style="position:absolute;left:5px;top:150px;width:46px;box-sizing:border-box;padding:16px 9px;background:url(ui/thickness_gauge_frame.webp) center/100% 100% no-repeat,linear-gradient(rgba(43,26,15,.88),rgba(43,26,15,.88)) center/58% 94% no-repeat;display:flex;flex-direction:column-reverse;align-items:center;gap:3px" role="img" aria-label="높이별 두께">
       <span style="{{tminStyle}}">{{tmin}}</span>
       <sc-for list="{{segs}}" as="s" hint-placeholder-count="12">
         <span style="{{s.style}}"></span>
@@ -225,6 +229,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
               <span style="{{sr.tagStyle}}">{{sr.tag}}</span>
               <img dc-src="{{sr.img}}" alt="" aria-hidden="true" style="{{sr.imgStyle}}">
               <svg width="56" height="56" viewBox="{{sr.icon.vb}}" aria-hidden="true" style="{{sr.svgStyle}}"><path d="{{sr.icon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{sr.icon.sw}}" stroke-linejoin="round"></path></svg>
+              <img src="ui/shape_pedestal.webp" alt="" aria-hidden="true" style="{{sr.pedStyle}}">
               <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{sr.name}}</span>
               <span style="font-size:12px;color:#7A5434;text-align:center">{{sr.meta}}</span>
               <span style="{{sr.goalStyle}}">{{sr.goal}}</span>
@@ -961,7 +966,7 @@ class Component extends DCLogic {
         var rec = g.goal && clays[i].id === g.goal.clay;
         return {
           name: clays[i].n, meta: clays[i].none ? '채집에서 캐서 다듬거나 상점에서 사요' : ('보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
-          imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
+          imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', pedStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
           goal: '', goalStyle: 'display:none',
           tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),
           tagStyle: (c.on || rec || c.own === '없음' || clays[i].event) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : (clays[i].event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))) : 'display:none',
@@ -972,7 +977,7 @@ class Component extends DCLogic {
         var t = self.shapes()[k], on = s.target === k, isG = k === 'goal', isQ = /^q:/.test(k);
         var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.sk === k); }));
         return {
-          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: '', icon: self.iconOf(t),
+          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: 'position:relative;z-index:1', pedStyle: 'width:76px;height:22px;object-fit:contain;margin-top:-12px', icon: self.iconOf(t),
           on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : (isQ ? ' · 의뢰 기물' : '')),
           goal: isG ? '' : gc.text, goalStyle: isG ? 'display:none' : gc.style,
           tag: isQ ? (on ? '선택 중 · ' : '') + '📋 의뢰' + (t.full ? ' ✓' : ' ' + t.left + '점') : (isG ? (on ? '선택 중 · ' : '') + '★ ' + g.goal.num + '스테이지 목표' : (on ? '선택 중' : '')),
@@ -985,13 +990,15 @@ class Component extends DCLogic {
       fitPct: an.fit,
       fitCol: an.fit >= 88 ? '#9BE08A' : (an.fit >= 60 ? '#FFD66B' : '#FFB08A'),
       fitBar: 'height:100%;border-radius:6px;transition:width .2s;width:' + an.fit + '%;background:' + (an.fit >= 88 ? '#5FB052' : (an.fit >= 60 ? '#E3B23C' : '#D9773E')),
-      fitStars: stars,
+      fitStars: stars, fitStarList: stars.split('').map(function (c) { return c === '★' ? 'ui/rating_star_filled.webp' : 'ui/rating_star_empty.webp'; }),
       tips: tips,
       marks: marks,
       potPath: prof.path,
       ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
-      foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1) },
+      foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1), mx: (150 + wob - (s.r[0] + 7) * 1.45).toFixed(1), mw: ((s.r[0] + 7) * 2.9).toFixed(1), my: (291 - (s.r[0] * 0.24 + 4) * 1.5).toFixed(1), mh: ((s.r[0] * 0.24 + 4) * 3).toFixed(1) },
+      wet: (function () { var mr = Math.max.apply(null, s.r), top = prof.R[11][1]; return { x: (150 + wob - mr * 1.05).toFixed(1), w: (mr * 2.1).toFixed(1), y: (top - 6).toFixed(1), h: (291 - top + 8).toFixed(1) }; })(),
+      wTex: window.PotteryShared.potTex.call(window.PotteryShared, { clay: s.clay || 'cy1', id: 'wheel' }, 0, []).fill,
       rim: { cx: (150 + wob).toFixed(1), cy: prof.R[11][1].toFixed(1), rx: topR.toFixed(1), ry: (topR * 0.17 + 2).toFixed(1), irx: Math.max(3, topR - topT * 2.2).toFixed(1), iry: Math.max(1, (topR - topT * 2.2) * 0.17).toFixed(1) },
       clayColor: cur.c,
       clayLight: shade(cur.c, 1.15),
@@ -1000,7 +1007,7 @@ class Component extends DCLogic {
       spinStyle: 'animation-duration:' + dur,
       grabOn: grabOn,
       grab: grab,
-      hdl: { on: shaping && !s.wrapping, y: (base - s.H - 40).toFixed(1), ty: (base - s.H - 24).toFixed(1), ly1: (base - s.H - 16).toFixed(1), ly2: (base - s.H).toFixed(1), fill: s.grab && s.grab.mode === 'v' ? '#FFD66B' : '#FFF4DE' },
+      hdl: { on: shaping && !s.wrapping, y: (base - s.H - 40).toFixed(1), ty: (base - s.H - 24).toFixed(1), tf: 'translate(150 ' + (base - s.H - 28).toFixed(1) + ') rotate(90)', ly: (base - s.H - 44).toFixed(1), op: s.grab && s.grab.mode === 'v' ? 0.55 : 0.0, ly1: (base - s.H - 16).toFixed(1), ly2: (base - s.H).toFixed(1), fill: s.grab && s.grab.mode === 'v' ? '#FFD66B' : '#FFF4DE' },
       wrapping: s.wrapping,
       hands: hands,
       gd: (function () {

@@ -41,12 +41,12 @@ button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[
   <div style="position:absolute;left:12px;right:22px;top:10px;display:flex;align-items:center;gap:6px">
     <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">채집</div>
     <div aria-label="메밀묵 {{tix}}그릇" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;padding:3px 9px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #FFD66B;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
-      <span style="font-size:15px">🥣 {{tix}}/{{tixMax}}</span>
+      <span style="font-size:15px;display:flex;align-items:center;gap:3px"><img src="ui/muk.webp" alt="" aria-hidden="true" style="width:20px;height:20px;vertical-align:-0px">{{tix}}/{{tixMax}}</span>
       <span style="font-size:10px;color:#FFE7A8">{{tixNext}}</span>
     </div>
     <sc-if value="{{evOn}}" hint-placeholder-val="{{true}}">
       <button type="button" data-evlock="{{evLock}}" onClick="{{evAsk}}" aria-label="꽃묵 {{etix}}그릇 · 눌러서 더 사기" style="all:unset;cursor:pointer;flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;padding:3px 16px 3px 9px;border-radius:12px;background:rgba(122,40,70,.88);border:2px solid #F2B6C6;font-family:'Jua',sans-serif;color:#FFF4DE;line-height:1.1">
-        <span style="font-size:15px">🌸 {{etix}}/{{etixMax}}</span>
+        <span style="font-size:15px;display:flex;align-items:center;gap:3px"><img src="ui/flower_muk.webp" alt="" aria-hidden="true" style="width:20px;height:20px;vertical-align:-0px">{{etix}}/{{etixMax}}</span>
         <span style="font-size:10px;color:#FFD3E0">{{etixNext}}</span>
         <span aria-hidden="true" style="position:absolute;right:-9px;top:50%;margin-top:-11px;width:22px;height:22px;border-radius:50%;background:#B04A68;border:2px solid #FFF4DE;box-shadow:0 2px 0 #7A2846;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;color:#FFFDF5">+</span>
       </button>
@@ -55,13 +55,13 @@ button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[
 
   <div role="tablist" aria-label="채집 메뉴" style="position:absolute;left:12px;right:12px;top:58px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
     <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
-      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
+      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}"><img dc-src="{{tb.ic}}" alt="" aria-hidden="true" style="width:24px;height:24px;object-fit:contain;vertical-align:-6px;margin-right:5px">{{tb.label}}</button>
     </sc-for>
   </div>
 
   <sc-if value="{{tabGather}}" hint-placeholder-val="{{true}}">
     <div role="note" aria-label="오늘의 채집지" style="position:absolute;left:12px;right:12px;top:186px;display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:14px;background:{{siteBg}};border:2.5px solid #2B1A0F;box-shadow:0 3px 0 rgba(43,26,15,.35)">
-      <span style="font-size:22px">{{siteIc}}</span>
+      <img dc-src="{{siteIc}}" alt="" aria-hidden="true" style="flex:0 0 34px;width:34px;height:34px;object-fit:contain">
       <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column">
         <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">도깨비 골짜기 · 오늘은 {{siteName}}</span>
         <span style="font-size:11px;font-weight:700;color:#FFF4DE">{{siteDesc}}</span>
@@ -100,7 +100,7 @@ button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span style="flex:1 1 auto;font-size:11px;font-weight:700;line-height:1.35;color:#8A6440">{{md.rule}} · 최고 {{md.best}}</span>
-            <button type="button" onClick="{{md.start}}" aria-label="{{md.name}} 시작" style="{{md.btn}}">{{md.btnText}}</button>
+            <button type="button" onClick="{{md.start}}" aria-label="{{md.name}} 시작" style="{{md.btn}}">{{md.btnText}}<sc-if value="{{md.mukOn}}" hint-placeholder-val="{{true}}"><img src="ui/muk.webp" alt="" aria-hidden="true" style="width:20px;height:20px;vertical-align:-5px;margin-left:2px">1</sc-if></button>
           </div>
         </div>
       </sc-for>
@@ -116,7 +116,7 @@ button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[
                 <img dc-src="{{em.img}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:contain">
                 <span style="display:flex;flex-direction:column;min-width:0;line-height:1.2"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{em.name}}</span><span style="display:flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;color:#8A3A58"><img dc-src="{{em.get}}" alt="" aria-hidden="true" style="width:16px;height:16px;object-fit:contain">{{em.desc}}</span></span>
               </div>
-              <button type="button" onClick="{{em.start}}" style="{{em.btn}}">시작 · 🌸1</button>
+              <button type="button" onClick="{{em.start}}" style="{{em.btn}}">시작 · <img src="ui/flower_muk.webp" alt="" aria-hidden="true" style="width:18px;height:18px;vertical-align:-4px">1</button>
             </div>
           </sc-for>
         </div>
@@ -148,7 +148,7 @@ button[data-evlock="1"]{filter:grayscale(1);opacity:.55;pointer-events:none}div[
   <sc-if value="{{askOn}}" hint-placeholder-val="{{false}}">
     <div style="position:absolute;left:0;top:0;width:390px;height:844px;z-index:40;display:flex;align-items:center;justify-content:center;background:rgba(26,15,8,.55)">
       <div role="dialog" aria-label="꽃묵 사기" style="width:290px;box-sizing:border-box;padding:16px 16px 14px;border-radius:20px;background:#FFF4DE;border:4px solid #B05876;box-shadow:0 6px 0 rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
-        <span style="font-size:40px;line-height:1">🌸</span>
+        <img src="ui/flower_muk.webp" alt="" aria-hidden="true" style="width:58px;height:58px;object-fit:contain">
         <span style="font-family:'Jua',sans-serif;font-size:20px;color:#7A2846">꽃묵 1그릇</span>
         <span style="font-size:13px;font-weight:700;color:#5B3A24">옥 {{evPrice}}개로 살까요?<br>지금 옥 {{jadeNow}}개</span>
         <div style="display:flex;gap:8px;width:100%;margin-top:4px">
@@ -312,9 +312,9 @@ class Component extends DCLogic {
     var day = Math.floor((Date.now() + 9 * 3600000) / 86400000), L = ['river', 'mountain', 'mine'];
     var id = L[day % 3];
     return {
-      river: { id: 'river', name: '강가', ic: '🏞️', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 흙 파기에서 백토가 잘 나와요', mode: 'dig' },
-      mountain: { id: 'mountain', name: '산', ic: '⛰️', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '붉은 지층 · 흙 파기에서 황토·적토가 더 나와요', mode: 'dig' },
-      mine: { id: 'mine', name: '광산', ic: '⛏️', bg: 'linear-gradient(90deg,#5B4A6E,#8A3F3A)', desc: '광맥이 풍부 · 돌 부수기에서 황금 돌·진사가 더 나와요', mode: 'rock' }
+      river: { id: 'river', name: '강가', ic: 'ui/loc_river.webp', bg: 'linear-gradient(90deg,#4E8FA8,#6FAFA0)', desc: '물기 많은 흙 · 흙 파기에서 백토가 잘 나와요', mode: 'dig' },
+      mountain: { id: 'mountain', name: '산', ic: 'ui/loc_mountain.webp', bg: 'linear-gradient(90deg,#6E7D4A,#8A6440)', desc: '붉은 지층 · 흙 파기에서 황토·적토가 더 나와요', mode: 'dig' },
+      mine: { id: 'mine', name: '광산', ic: 'ui/loc_mine.webp', bg: 'linear-gradient(90deg,#5B4A6E,#8A3F3A)', desc: '광맥이 풍부 · 돌 부수기에서 황금 돌·진사가 더 나와요', mode: 'rock' }
     }[id];
   }
   evOpen() { try { return !!(this.qlib().seasonOpen && this.qlib().seasonOpen()); } catch (e) { return false; } }
@@ -525,13 +525,13 @@ class Component extends DCLogic {
       { id: 'rock', name: '돌 부수기', img: '_blob/2f48aeec8a3434b50b24b5e505a193ab.png', desc: '손가락으로 돌을 쓸고 지나가면 부서지며 유약 원석이 나와요. 반짝이는 황금 돌은 진사 2개!', rule: '큰 돌일수록 많이', best: (best.rock || 0) + '점', c: '#2E6B5F' }
     ].map(function (m) {
       var hot = S.mode === m.id;
-      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c, can || !!T.tut), btnText: T.tut ? '시작 · 무료' : '시작 · 🥣1', box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
-        siteTag: hot ? 'padding:1px 7px;border-radius:8px;background:#E8B640;font-family:Jua,sans-serif;font-size:11px;color:#2B1A0F' : 'display:none', siteTagText: S.ic + ' 오늘 보너스' };
+      return { name: m.name, img: m.img, desc: m.desc, rule: m.rule, best: m.best, start: function () { self.start(m.id); }, btn: btn(m.c, can || !!T.tut), btnText: T.tut ? '시작 · 무료' : '시작 · ', mukOn: !T.tut, box: box + (hot ? ';border-color:#E8B640;animation:gPulse 2s ease-in-out infinite' : ''),
+        siteTag: hot ? 'padding:1px 7px;border-radius:8px;background:#E8B640;font-family:Jua,sans-serif;font-size:11px;color:#2B1A0F' : 'display:none', siteTagText: '✦ 오늘 보너스' };
     });
     var tab = s.tab === 'refine' ? 'refine' : 'gather';
-    var tabs = [{ id: 'gather', label: '⛏️ 채집' }, { id: 'refine', label: '✋ 다듬기' }].map(function (t) {
+    var tabs = [{ id: 'gather', label: '채집', ic: 'ui/gather_pickaxe.webp' }, { id: 'refine', label: '다듬기', ic: 'ui/gather_hand.webp' }].map(function (t) {
       var on = t.id === tab;
-      return { label: t.label, on: on ? 'true' : 'false', pick: function () { self.setState({ tab: t.id }); self.sfx('tap'); },
+      return { label: t.label, ic: t.ic, on: on ? 'true' : 'false', pick: function () { self.setState({ tab: t.id }); self.sfx('tap'); },
         style: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:6px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:16px;' + (on ? 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #3E2616;color:#5B3A24' : 'background:#C9B08C;border:3px solid #8A6440;color:#3E2616') };
     });
     

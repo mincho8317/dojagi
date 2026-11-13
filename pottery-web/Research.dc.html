@@ -33,7 +33,7 @@ button{font-family:inherit;cursor:pointer}
 
   <div role="tablist" aria-label="연구 계열" style="position:absolute;left:12px;right:12px;top:60px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px">
     <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
-      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}"><span>{{tb.label}}</span><span style="{{tb.subStyle}}">{{tb.sub}}</span></button>
+      <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}"><span style="display:flex;align-items:center;gap:3px"><img dc-src="{{tb.ic}}" alt="" aria-hidden="true" style="width:20px;height:20px;object-fit:contain">{{tb.label}}</span><span style="{{tb.subStyle}}">{{tb.sub}}</span></button>
     </sc-for>
   </div>
 
@@ -46,7 +46,7 @@ button{font-family:inherit;cursor:pointer}
       </svg>
       <sc-for list="{{nodes}}" as="n" hint-placeholder-count="6">
         <button type="button" onClick="{{n.pick}}" aria-label="{{n.aria}}" aria-pressed="{{n.on}}" style="{{n.style}}">
-          <span style="{{n.iconStyle}}">{{n.icon}}</span>
+          <span style="{{n.iconStyle}}"><sc-if value="{{n.imgOn}}" hint-placeholder-val="{{true}}"><img dc-src="{{n.img}}" alt="" aria-hidden="true" style="width:78%;height:78%;object-fit:contain"></sc-if>{{n.icon}}</span>
           <span style="{{n.nameStyle}}">{{n.name}}</span>
           <span style="{{n.fxStyle}}">{{n.fx}}</span>
         </button>
@@ -186,7 +186,7 @@ class Component extends DCLogic {
   renderVals() {
     var self = this, s = this.state, g = s.g, QL = this.qlib(), R = g.res || {}, F = QL.fx(g);
     var SHORT = { clayLv: '흙 정제', glazeLv: '유약 발색', refineUp: '추가 획득', matKeep: '원료 절약', tixMax: '메밀묵', gTime: '채집 시간', comboUp: '콤보 시간', goldUp: '황금 돌', rareUp: '희귀', digWide: '삽 범위', snapTol: '보정 폭', snapRate: '보정 속도', doneTol: '완료 오차', fitBonus: '성형 점수', clayKeep: '흙 절약', dryRack: '건조대', dryCut: '건조 시간', fanZone: '부채 판정', fanGain: '부채 바람', bqCut: '풀무 한도', bqSafe: '반건조 파손', glazeZone: '담금 폭', kilnTol: '정합 온도', kilnCut: '소성 시간', breakCut: '소성 파손', colorMin: '발색 하한', yohen: '요변', sell: '판매가', questGold: '의뢰 골드', shard: '파편', fame: '명성', expand: '공방 확장' };
-    var ICON = { mat: '🪨', form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪', gather: '⛏' };
+    var ICON = { mat: '🪨', form: '🏺', dry: '🌬', fire: '🔥', shop: '🏪', gather: '⛏' }, RIMG = { mat: 'ui/research_materials.webp', form: 'ui/research_shaping.webp', dry: 'ui/research_drying.webp', fire: 'ui/research_firing.webp', shop: 'ui/research_business.webp', gather: 'ui/research_gathering.webp' };
     var cat = s.tab, rows = QL.RROW[cat].map(function (r) { return QL.RNODE[r[0]]; });
     var X = [62, 181, 300], W = 108, H = 74, P = 96, T0 = 12;
     function pos(n) { return { x: X[n.col], y: T0 + n.row * P }; }
@@ -211,7 +211,7 @@ class Component extends DCLogic {
       return {
         aria: n.name + ' · ' + { done: '완료', ready: ok ? '연구 가능' : '비용 부족', cond: '조건 필요', locked: '잠김' }[st],
         on: on ? 'true' : 'false',
-        icon: st === 'done' ? '✓' : (st === 'locked' ? '🔒' : (st === 'cond' ? '!' : ICON[cat])),
+        icon: st === 'done' ? '✓' : (st === 'locked' ? '🔒' : (st === 'cond' ? '!' : '')), imgOn: st !== 'done' && st !== 'locked' && st !== 'cond', img: RIMG[cat],
         iconStyle: 'position:absolute;left:-6px;top:-8px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:Jua,sans-serif;color:#FFF;border:2px solid #FFF4DE;background:' + bd,
         name: n.name, nameStyle: 'font-family:Jua,sans-serif;font-size:13px;line-height:1.15;color:' + (st === 'locked' ? '#3E372D' : '#2B1A0F'),
         fx: SHORT[k0] + ' ' + delta(k0, n.fx[k0]) + (Object.keys(n.fx).length > 1 ? ' 외' : ''),
@@ -233,7 +233,7 @@ class Component extends DCLogic {
     var tabs = QL.RCAT.map(function (c) {
       var on = c.id === cat, all = QL.RROW[c.id].length, dn = QL.RROW[c.id].filter(function (r) { return R[r[0]]; }).length, rd = QL.RROW[c.id].filter(function (r) { return QL.resState(g, r[0]) === 'ready' && afford(QL.RNODE[r[0]]); }).length;
       return {
-        label: c.n, on: on ? 'true' : 'false', sub: dn + '/' + all + (rd ? ' · 가능 ' + rd : ''),
+        label: c.n, ic: RIMG[c.id], on: on ? 'true' : 'false', sub: dn + '/' + all + (rd ? ' · 가능 ' + rd : ''),
         subStyle: 'display:block;font-family:Noto Sans KR,sans-serif;font-size:10.5px;font-weight:700;' + (rd ? 'color:#1F4A1A' : 'color:#4A2E1B'),
         style: 'all:unset;cursor:pointer;box-sizing:border-box;min-height:46px;text-align:center;padding:5px 0 4px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:13px;line-height:1.15;word-break:keep-all;' + (on ? 'background:#FFF4DE;box-shadow:0 3px 0 #3E2616;color:#A3442C' : 'background:#C9B08A;color:#3E2616'),
         pick: function () { self.setState({ tab: c.id, sel: '' }); try { var t = document.getElementById('rtree'); if (t) { t.scrollTop = 0; } } catch (e) {} }

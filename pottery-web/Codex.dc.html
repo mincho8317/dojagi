@@ -54,7 +54,7 @@ button{font-family:inherit;cursor:pointer}
         <sc-for list="{{npcs}}" as="np" hint-placeholder-count="4">
           <div style="{{np.card}}">
             <div style="display:flex;align-items:center;gap:8px">
-              <span style="{{np.av}}">{{np.ic}}</span>
+              <span style="{{np.av}}"><sc-if value="{{np.face}}" hint-placeholder-val="{{true}}"><img dc-src="{{np.face}}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"></sc-if><sc-if value="{{np.noFace}}" hint-placeholder-val="{{false}}">{{np.ic}}</sc-if></span>
               <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px">
                 <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{np.name}} <span style="font-size:12px;color:#7A5434">{{np.role}}</span></span>
                 <span style="font-size:11.5px;font-weight:700;color:#5B3A24">할머니를 「{{np.call}}」라고 불러요 · {{np.prog}}</span>
@@ -297,8 +297,8 @@ class Component extends DCLogic {
         return Object.keys(QLn.PROF).map(function (id) {
           var P = QLn.PROF[id], pr = QLn.npcProg(g, id);
           if (!pr.met && !pr.done) { return null; }
-          return { name: P.name, role: P.role, call: P.call, ic: IC[id] || '🙂', prog: pr.end ? '이야기 완료' : '의뢰 ' + pr.done + '/' + pr.total,
-            av: 'flex:0 0 40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:' + (P.dok ? '#DCE8EE' : '#F8E3CC') + ';border:2.5px solid #5B3A24',
+          var fc = (window.PotteryShared.CHARIMG || {})[P.res || ((QLn.NPC || {})[id] || {}).res] || (['min', 'yoon', 'cha', 'jeong', 'jang', 'dudu', 'bulmok', 'kids'].indexOf(id) >= 0 ? { face: 'char/f_' + id + '.webp' } : null); return { name: P.name, role: P.role, call: P.call, ic: IC[id] || '🙂', face: fc ? fc.face : '', noFace: !fc, prog: pr.end ? '이야기 완료' : '의뢰 ' + pr.done + '/' + pr.total,
+            av: 'flex:0 0 40px;height:40px;overflow:hidden;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:' + (P.dok ? '#DCE8EE' : '#F8E3CC') + ';border:2.5px solid #5B3A24',
             card: 'box-sizing:border-box;padding:10px 12px;border-radius:16px;display:flex;flex-direction:column;gap:6px;background:' + (P.dok ? '#EEF3F2' : '#F3E3C4') + ';border:3px solid ' + (pr.end ? '#C9962E' : '#8A6440'),
             rows: P.rows.map(function (r) { var open = r[0] === 'end' ? pr.end : pr.done >= r[0]; return { k: r[1], v: open ? String(r[2]).split('{이름}').join(PN) : '??? · 의뢰를 더 들어주면 알 수 있어요', vs: 'flex:1 1 auto;font-size:12.5px;line-height:1.5;word-break:keep-all;color:' + (open ? '#2B1A0F' : '#6A5D4A') }; }) };
         }).filter(Boolean);

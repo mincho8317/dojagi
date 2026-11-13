@@ -109,7 +109,7 @@ button{font-family:inherit;cursor:pointer}
             </div>
 
             <div style="display:flex;flex-direction:column;gap:6px">
-              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2F6328">👍 좋았던 부분</span>
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2F6328;display:flex;align-items:center;gap:4px"><img src="ui/feedback_thumb.webp" alt="" aria-hidden="true" style="width:22px;height:22px;object-fit:contain">좋았던 부분</span>
               <div style="display:flex;flex-wrap:wrap;gap:6px">
                 <sc-for list="{{goodChips}}" as="c" hint-placeholder-count="6">
                   <button type="button" aria-pressed="{{c.on}}" onClick="{{c.tap}}" style="{{c.style}}">{{c.label}}</button>
@@ -119,7 +119,7 @@ button{font-family:inherit;cursor:pointer}
             </div>
 
             <div style="display:flex;flex-direction:column;gap:6px">
-              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#A33B22">🤔 아쉬웠던 부분</span>
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#A33B22;display:flex;align-items:center;gap:4px"><img src="ui/feedback_thinking.webp" alt="" aria-hidden="true" style="width:22px;height:22px;object-fit:contain">아쉬웠던 부분</span>
               <div style="display:flex;flex-wrap:wrap;gap:6px">
                 <sc-for list="{{badChips}}" as="c" hint-placeholder-count="6">
                   <button type="button" aria-pressed="{{c.on}}" onClick="{{c.tap}}" style="{{c.style}}">{{c.label}}</button>

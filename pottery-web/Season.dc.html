@@ -90,12 +90,12 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <sc-if value="{{packOn}}" hint-placeholder-val="{{false}}">
     <div onClick="{{packBg}}" style="position:absolute;inset:0;z-index:79;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center">
       <div role="dialog" aria-label="꽃잎 사기" style="width:320px;box-sizing:border-box;padding:18px 16px 14px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;display:flex;flex-direction:column;gap:10px;color:#2B1A0F">
-        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:19px;color:#7A2F44">🌸 꽃잎 사기</span><span style="font-size:12px;font-weight:700;color:#1E5E48">보유 💎 {{jade}}</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Jua',sans-serif;font-size:19px;color:#7A2F44"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:20px;height:20px;vertical-align:-4px"> 꽃잎 사기</span><span style="font-size:12px;font-weight:700;color:#1E5E48;display:flex;align-items:center;gap:3px">보유 <img src="ui/ui_jade.webp" alt="" aria-hidden="true" style="width:16px;height:16px"> {{jade}}</span></div>
         <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
           <sc-for list="{{packs}}" as="pk" hint-placeholder-count="3">
             <button type="button" onClick="{{pk.ask}}" aria-label="{{pk.aria}}" style="all:unset;cursor:pointer;box-sizing:border-box;min-height:64px;padding:6px 4px;border-radius:14px;background:#FFF;border:2.5px solid #B04A68;box-shadow:0 3px 0 #A94767;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">
-              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2F44">🌸 {{pk.n}}</span>
-              <span style="font-size:12px;font-weight:700;color:#1E5E48">💎 {{pk.price}}</span>
+              <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A2F44"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:18px;height:18px;vertical-align:-3px"> {{pk.n}}</span>
+              <span style="font-size:12px;font-weight:700;color:#1E5E48"><img src="ui/ui_jade.webp" alt="" aria-hidden="true" style="width:16px;height:16px;vertical-align:-3px"> {{pk.price}}</span>
             </button>
           </sc-for>
         </div>
@@ -106,9 +106,9 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   <sc-if value="{{askOn}}" hint-placeholder-val="{{false}}">
     <div onClick="{{askBg}}" style="position:absolute;inset:0;z-index:80;background:rgba(26,15,8,.62);display:flex;align-items:center;justify-content:center">
       <div role="dialog" aria-label="옥으로 꽃잎 사기" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F">
-        <div style="font-size:38px;line-height:1">🌸</div>
+        <div style="line-height:1"><img src="_blob/2065af250719e73024f4b0b65d23915e.webp" alt="" aria-hidden="true" style="width:48px;height:48px;vertical-align:-0px"></div>
         <div style="margin:6px 0 4px;font-family:'Jua',sans-serif;font-size:20px">꽃잎 {{ask.n}}장을 살까요?</div>
-        <div style="margin:10px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:'Jua',sans-serif;font-size:18px;color:#1E5E48">💎 옥 {{ask.price}}</div>
+        <div style="margin:10px 0 4px;padding:10px;border-radius:14px;background:#E6F6EF;border:2px solid #9ED9C0;font-family:'Jua',sans-serif;font-size:18px;color:#1E5E48"><img src="ui/ui_jade.webp" alt="" aria-hidden="true" style="width:20px;height:20px;vertical-align:-4px"> 옥 {{ask.price}}</div>
         <div style="font-size:11.5px;color:#7A5434;margin-bottom:12px">보유 {{jade}} → {{ask.after}}</div>
         <div style="display:flex;gap:8px">
           <button type="button" onClick="{{askNo}}" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-family:'Jua',sans-serif;font-size:16px">취소</button>
@@ -202,8 +202,8 @@ class Component extends DCLogic {
       };
     });
     var I = [
-      { id: 'etix', name: '꽃묵', kind: '채집', res: 'ITEM_ETIX', emoji: '🌸', price: 10, col: '#F7D3DD', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.etix = (ga.etix == null ? 3 : ga.etix) + 1; p.gather = ga; } },
-      { id: 'tix', name: '메밀묵', kind: '채집', res: 'ITEM_TIX', emoji: '🥣', price: 6, col: '#FFE7A8', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.tix = (ga.tix == null ? 5 : ga.tix) + 1; p.gather = ga; } },
+      { id: 'etix', name: '꽃묵', kind: '채집', res: 'ITEM_ETIX', img: 'ui/flower_muk.webp', emoji: '🌸', price: 10, col: '#F7D3DD', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.etix = (ga.etix == null ? 3 : ga.etix) + 1; p.gather = ga; } },
+      { id: 'tix', name: '메밀묵', kind: '채집', res: 'ITEM_TIX', img: 'ui/muk.webp', emoji: '🥣', price: 6, col: '#FFE7A8', rep: true, apply: function (p) { var ga = {}; for (var x in (g.gather || {})) { ga[x] = g.gather[x]; } ga.tix = (ga.tix == null ? 5 : ga.tix) + 1; p.gather = ga; } },
       { id: 'plum', name: '매화 문양', kind: '한정 문양', res: 'PTN_PLUM', img: '_blob/b570ded58d448dba37db6e748cf57424.webp', price: 20, col: '#FCEBD8', apply: function (p) { var pt = {}; for (var x in (g.patterns || {})) { pt[x] = g.patterns[x]; } pt.plum = true; p.patterns = pt; } },
       { id: 'teabed', name: '다회 평상', kind: '한정 가구', res: 'DECO_TEABED', img: '_blob/7480af1a2e3666be0fe08ab90f2616f2.webp', price: 40, col: '#E8D5B7', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.teabed = true; p.deco = d; } },
       { id: 'lantern', name: '꽃 등롱', kind: '한정 가구', res: 'DECO_FLOWER_LAMP', img: '_blob/0ddf322aaf48ab6e1f34af33fbd75920.webp', price: 15, col: '#FFE7A8', apply: function (p) { var d = {}; for (var x in (g.deco || {})) { d[x] = g.deco[x]; } d.flowerlamp = true; p.deco = d; } },

@@ -241,7 +241,7 @@
       yoon: { name: '윤 할매', role: '골목 국밥집 주인', res: 'CHAR_YOON', tone: '#B9533A', call: '강 할매' },
       cha: { name: '차 선생', role: '동네 다도 선생', res: 'CHAR_CHA', tone: '#4E7D74', call: '강 선생님' },
       jeong: { name: '화가 정윤', role: '꽃집 겸 화실 주인', res: 'CHAR_JEONG', tone: '#7A5A93', call: '강 여사님' },
-      festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_WALK_B', tone: '#C2577A', call: '강 선생님' },
+      festa: { name: '하람 위원', role: '봄 다회 준비위원 · 시즌', res: 'CHAR_HARAM', tone: '#C2577A', call: '강 선생님' },
       jang: { name: '장 씨 할아버지', role: '장 담그는 이웃', res: 'CHAR_JANG', tone: '#8A6410', call: '명옥이' },
       dudu: { name: '두두리', role: '지하실 너머 문지기 도깨비', res: 'CHAR_DUDU', tone: '#3E6B8A', call: '묵 할멈', dok: true },
       bulmok: { name: '불목이', role: '외눈 대장장이 도깨비', res: 'CHAR_BULMOK', tone: '#8A3D10', call: '강 선생', dok: true },
@@ -766,7 +766,7 @@
       '.trk-pill{all:unset;cursor:pointer;position:fixed;z-index:9990;transform-origin:100% 0;padding:7px 11px;border-radius:14px;background:rgba(255,250,240,.97);border:2.5px solid #5B3A24;font-family:Jua,sans-serif;font-size:13px;color:#5B3A24;box-shadow:0 3px 8px rgba(0,0,0,.3)}';
     document.head.appendChild(css);
     var box = document.createElement('div'); box.className = 'trk'; box.setAttribute('role', 'region'); box.setAttribute('aria-label', '의뢰 체크리스트');
-    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.textContent = '📋 제작 안내';
+    var pill = document.createElement('a'); pill.className = 'trk-pill'; pill.href = 'Commission.dc.html'; pill.setAttribute('data-sb', '1'); pill.innerHTML = '<img src="ui/ui_memo.webp" alt="" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px;margin-right:3px">제작 안내';
     document.body.appendChild(box); document.body.appendChild(pill);
     var open = !!DEFOPEN[PAGE]; try { var so = localStorage.getItem('trkOpen2_' + PAGE); if (so !== null) { open = so === '1'; } } catch (e) {}
     var prev = {};
@@ -777,7 +777,7 @@
       var hide = document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('[data-notrk]') || document.querySelector('[role=dialog][aria-label]:not(.trk)');
       var list = L.active(g);
       var tids = L.tracked(g, list), qs = list.filter(function (x) { return tids.indexOf(x.id) >= 0; });
-      if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.textContent = list.length ? '📋 제작 안내' : '📋 의뢰 없음'; pill.setAttribute('aria-label', list.length ? '제작 안내할 의뢰 고르기' : '진행 중인 의뢰 없음'); return; }
+      if (!qs.length) { box.style.display = 'none'; pill.style.display = hide ? 'none' : 'block'; place(pill); pill.innerHTML = '<img src="ui/ui_memo.webp" alt="" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px;margin-right:3px">' + (list.length ? '제작 안내' : '의뢰 없음'); pill.setAttribute('aria-label', list.length ? '제작 안내할 의뢰 고르기' : '진행 중인 의뢰 없음'); return; }
       pill.style.display = 'none'; box.style.display = hide ? 'none' : 'block'; box.className = 'trk' + (open ? '' : ' mini'); place(box);
       var AL = L.alloc(g, list), curTag = window.__wheelTarget || '', curRow = null, body = '', okN = 0, totN = 0;
       qs.forEach(function (q) {
@@ -800,7 +800,7 @@
       if (curRow && !curRow.ok) { condLine = '<div class="trk-c"><b>' + (PAGE === 'Wheel' ? '지금 빚는 것' : '다음 할 것') + ' · ' + esc(curRow.it.name) + '</b><br>' + esc(L.stepCond(curRow.it, PAGE).join(' · ')) + '</div>'; }
       else if (allOkAll) { condLine = '<div class="trk-c" style="background:#3F8A35"><b>모두 완성!</b> 카운터에서 납품해요</div>'; }
       var head = qs.length > 1 ? '제작 안내 ' + qs.length + '건' : qs[0].title;
-      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><span>📌</span><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(head) + '</span><span class="c' + (allOkAll ? ' ok' : '') + '">' + (allOkAll ? (open ? '납품 가능' : '✓ 납품') : (qs.length > 1 ? '납품 가능 ' + okN + '/' + totN : '완성 ' + AL[qs[0].id].items.filter(function (r) { return r.ok; }).length + '/' + AL[qs[0].id].items.length)) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
+      box.innerHTML = '<button type="button" class="trk-h" aria-expanded="' + open + '"><img src="ui/ui_pin.webp" alt="" aria-hidden="true" style="width:16px;height:16px;object-fit:contain"><b style="font-weight:400;flex:0 0 auto">의뢰</b><span class="t">' + esc(head) + '</span><span class="c' + (allOkAll ? ' ok' : '') + '">' + (allOkAll ? (open ? '납품 가능' : '✓ 납품') : (qs.length > 1 ? '납품 가능 ' + okN + '/' + totN : '완성 ' + AL[qs[0].id].items.filter(function (r) { return r.ok; }).length + '/' + AL[qs[0].id].items.length)) + '</span><span>' + (open ? '▾' : '▸') + '</span></button>' +
         (open ? '<div class="trk-b">' + body + condLine + '</div>' : '');
     }
     render(); setInterval(render, 1000); window.addEventListener('storage', render); window.addEventListener('resize', render);
@@ -873,6 +873,7 @@
       '.tut-ov{position:fixed;inset:0;z-index:9999;background:rgba(26,15,8,.66);display:flex;align-items:center;justify-content:center}' +
       '.tut-box{width:min(320px,86vw);box-sizing:border-box;padding:22px 18px 16px;border-radius:24px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 0 rgba(43,26,15,.45);text-align:center;color:#2B1A0F;font-family:"Noto Sans KR",sans-serif;animation:tutPop .45s both}' +
       '.tut-box h3{margin:6px 0 6px;font-family:Jua,sans-serif;font-weight:400;font-size:22px}.tut-box p{margin:0 0 14px;font-size:13px;line-height:1.6;color:#5B3A24;white-space:pre-line}' +
+      '.tut-box{border:20px solid transparent!important;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch!important;background:none!important;box-shadow:0 8px 18px rgba(0,0,0,.35)!important;border-radius:0!important;padding:6px 4px 2px!important}' +
       '.tut-box .ic{font-size:44px;line-height:1}.tut-box .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 14px}.tut-box .chips i{font-style:normal;padding:4px 10px;border-radius:12px;background:#FFE7A8;border:2px solid #B8923F;font-family:Jua,sans-serif;font-size:14px;color:#5B3A24}' +
       '.tut-btn{all:unset;cursor:pointer;display:block;box-sizing:border-box;width:100%;padding:12px 0;margin-top:8px;border-radius:16px;font-family:Jua,sans-serif;font-size:18px;text-align:center}' +
       '.tut-btn.go{background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5}.tut-btn.sub{background:#FFFDF5;border:2px solid #C9A27A;color:#7A5434;font-size:15px}' +
@@ -980,7 +981,7 @@
       if (!force && seen === t) { return false; }
       if (document.querySelector('.tut-ov')) { return false; }
       try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
-      overlay('<div class="ic">🎯</div><h3>목표 ' + stepNo(t) + '/' + (STEPS.length - 1) + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      overlay('<div class="ic">' + window.PotteryShared.ICO('🎯') + '</div><h3>목표 ' + stepNo(t) + '/' + (STEPS.length - 1) + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
       return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
@@ -1124,12 +1125,12 @@
     function tourOn(g) { var o = t2R(); return g.tut === DONE1 && !!o && typeof o.k === 'number' && o.k < T2.length; }
     function tourCard(k, run) {
       var st = T2[k];
-      overlay('<div class="ic">' + st.ic + '</div><h3>' + (k + 1) + '/' + T2.length + ' · ' + st.goal + '</h3><p style="text-align:left;word-break:keep-all">' + st.body + '</p>', [
+      overlay('<div class="ic">' + window.PotteryShared.ICO(st.ic) + '</div><h3>' + (k + 1) + '/' + T2.length + ' · ' + st.goal + '</h3><p style="text-align:left;word-break:keep-all">' + st.body + '</p>', [
         { label: '확인', run: function () { t2Set(k, { tut2Seen: k }); if (run) { run(); } } },
         { label: '안내 그만 보기', cls: 'sub', run: function () { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } } }
       ]);
     }
-    function tourDone() { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } overlay('<div class="ic">🏆</div><h3>튜토리얼 완료!</h3><p>이제 공방을 자유롭게 운영해 보세요.\n막히면 설정에서 튜토리얼을 다시 볼 수 있어요.</p>', [{ label: '좋아요' }]); }
+    function tourDone() { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } overlay('<div class="ic">' + window.PotteryShared.ICO('🏆') + '</div><h3>튜토리얼 완료!</h3><p>이제 공방을 자유롭게 운영해 보세요.\n막히면 설정에서 튜토리얼을 다시 볼 수 있어요.</p>', [{ label: '좋아요' }]); }
     function tourMini(k) {
       var mini = document.querySelector('.tut-mini');
       if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); document.body.appendChild(mini); }
@@ -1278,7 +1279,7 @@
       }
       // 벚꽃 의뢰를 납품한 뒤 : 공방의 이벤트 버튼이 열린다
       if ((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) && ev !== '2') {
-        if (PAGE === 'Season') { evW('2'); overlay('<div class="ic">' + T3.ic + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', [{ label: '확인' }]); return; }
+        if (PAGE === 'Season') { evW('2'); overlay('<div class="ic">' + window.PotteryShared.ICO(T3.ic) + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', [{ label: '확인' }]); return; }
         if (PAGE === 'Main') { act('evBtn', true, linkTo('Season'), '🌸 벚꽃 축제가 열렸어요! 「이벤트」를 눌러 봐요'); }
         return;
       }
@@ -1316,7 +1317,7 @@
           try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var showFin = function () {
-            overlay('<div class="ic">' + (fin ? '🏆' : '🔓') + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
+            overlay('<div class="ic">' + window.PotteryShared.ICO((fin ? '🏆' : '🔓')) + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
           };
           if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', showFin); } else { showFin(); }
           notify();
@@ -1324,7 +1325,7 @@
       }
       var L = apply(load());
       if (first && L[PAGE]) {
-        overlay('<div class="ic">🔒</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 ' + ((load().tut || 0) < STEPS.length ? '튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal : '이야기를 조금 더 진행하면 열려요.') + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
+        overlay('<div class="ic">' + window.PotteryShared.ICO('🔒') + '</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 ' + ((load().tut || 0) < STEPS.length ? '튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal : '이야기를 조금 더 진행하면 열려요.') + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
       }
     }
     document.addEventListener('click', function (e) {
@@ -1389,7 +1390,7 @@
     if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (g0.tut === 7 || g0.tut === 8) { g0.tut = DONE1; save(g0); if (!t2R()) { t2W({ k: 0, seen: -1, v: 2 }); } }
     if (PAGE === 'Main' && g0.tut === undefined) {
-      overlay('<div class="ic">🏺</div><h3>도자기 공방에 어서 오세요!</h3><p>할머니가 남긴 작은 공방에서 이야기가 시작돼요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
+      overlay('<div class="ic">' + window.PotteryShared.ICO('🏺') + '</div><h3>도자기 공방에 어서 오세요!</h3><p>할머니가 남긴 작은 공방에서 이야기가 시작돼요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
         { label: '이야기 시작', run: function () { window.PotteryShared.storyPlay('prologue', function () { freshStart(load()); apply(load()); notify(); setTimeout(function () { showCard(load(), true); }, 500); }); } },
         { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
       ]);
@@ -1564,6 +1565,30 @@
   S.ptIn = function (el, x, y) {
     if (!el) { return false; } var r = el.getBoundingClientRect(); return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
   };
+  // 도자기 질감 · 흙/유약별 결(회색 텍스처)을 soft-light 로 얹고, 일부만 바른 유약은 경계에 흘러내림 스티커
+  // potTex(it, H, r) → { fill, op, dX, dY, dW, dH, dMask, dCol, dOp }
+  S.potTex = function (it, H, r) {
+    var c = this.__ptc || (this.__ptc = {}), key = it ? [it.id || '', it.clay, it.glaze, it.cov, H, (r || []).length].join('|') : '';
+    if (c.k === key && c.v) { return c.v; }
+    var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
+    if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
+    function defImg(id, mk) { if (!document.getElementById(id)) { host.firstChild.appendChild(mk()); } return 'url(#' + id + ')'; }
+    var GT = { white: 'glaze_white', celadon: 'glaze_celadon', black: 'glaze_black', cheonmok: 'glaze_black', jinsa: 'glaze_copper_red', sakura: 'glaze_cherry' };
+    var CT = { cy: 'clay_yellow', cw: 'clay_white', cr: 'clay_red', ck: 'clay_black' };
+    var gl = it && it.glaze && it.glaze !== 'none' ? it.glaze : '', cov = it && it.cov != null ? it.cov : 1, part = gl && cov < 0.97;
+    var tk = gl && !part ? (GT[gl] || 'glaze_white') : (CT[String((it && it.clay) || 'cy').slice(0, 2)] || 'clay_yellow');
+    var fill = defImg('ptx_' + tk, function () { var pt = document.createElementNS(NS, 'pattern'); pt.setAttribute('id', 'ptx_' + tk); pt.setAttribute('patternUnits', 'userSpaceOnUse'); pt.setAttribute('width', '64'); pt.setAttribute('height', '64'); var im = document.createElementNS(NS, 'image'); im.setAttribute('href', 'ui/tex_' + tk + '.webp'); im.setAttribute('width', '64'); im.setAttribute('height', '64'); im.setAttribute('preserveAspectRatio', 'none'); pt.appendChild(im); return pt; });
+    var v = { fill: fill, op: gl && !part ? 0.75 : 0.85, dX: 0, dY: 0, dW: 0, dH: 0, dMask: 'none', dCol: 'none', dOp: 0 };
+    if (part && r && r.length > 2 && H) {
+      var n = r.length, u = (1 - cov) * (n - 1), lo = Math.floor(u), hi = Math.min(n - 1, lo + 1), rh = r[lo] + (r[hi] - r[lo]) * (u - lo), e = Math.max(3, rh * 0.24), yb = -H * (1 - cov) + e;
+      var h0 = 0; String((it && it.id) || (it && it.prof || []).join(',')).split('').forEach(function (ch) { h0 = (h0 * 31 + ch.charCodeAt(0)) % 997; });
+      var D = [['drip_short', 122 / 256], ['drip_double', 141 / 256], ['drip_long', 214 / 256]][h0 % 3];
+      var w = Math.min(rh * 1.1, 90), hgt = w * D[1], room = H * (1 - cov); hgt = Math.min(hgt, Math.max(4, room * 0.8)); w = hgt / D[1];
+      var mk = defImg('pdm_' + D[0], function () { var m = document.createElementNS(NS, 'mask'); m.setAttribute('id', 'pdm_' + D[0]); m.setAttribute('maskContentUnits', 'objectBoundingBox'); var im = document.createElementNS(NS, 'image'); im.setAttribute('href', 'ui/' + D[0] + '.webp'); im.setAttribute('width', '1'); im.setAttribute('height', '1'); im.setAttribute('preserveAspectRatio', 'none'); m.appendChild(im); return m; });
+      v.dX = -w / 2 + ((h0 % 7) - 3) * rh * 0.05; v.dY = yb - hgt * 0.32; v.dW = w; v.dH = hgt; v.dMask = mk; v.dCol = (it && it.__dripCol) || '#000'; v.dOp = 1;
+    }
+    c.k = key; c.v = v; return v;
+  };
   // 유약 경계를 타원(앞쪽이 아래로 휜 곡선)으로 · 경계 바로 위는 흘러내려 고인 진한 띠
   // geo = { H, r(윤곽 반지름 배열 · 굽→입구), cov(입구에서부터 담근 비율), drip(진한 유약 빛) }
   S.covFillE = function (top, bot, geo) {
@@ -1734,14 +1759,14 @@
     // 말하는 사람 흉상 · img 가 생기면 그림으로 바뀐다 (side: 대사 상자 왼쪽/오른쪽)
     var IMG = function (k, f) { return 'char/b_' + k + '_' + f + '.webp'; };
     // 카운터 손님 그림 · wait 기본(기다림) / joy 기쁨(납품) / ask 부탁(의뢰) / face 얼굴(목록 썸네일)
-    var CI = {}; [['CHAR_MIN', 'min'], ['CHAR_YOON', 'yoon'], ['CHAR_CHA', 'cha'], ['CHAR_JEONG', 'jeong'], ['CHAR_JANG', 'jang'], ['CHAR_DUDU', 'dudu'], ['CHAR_BULMOK', 'bulmok'], ['CHAR_KIDS', 'kids']].forEach(function (r) {
+    var CI = {}; [['CHAR_HARAM', 'haram'], ['CHAR_MIN', 'min'], ['CHAR_YOON', 'yoon'], ['CHAR_CHA', 'cha'], ['CHAR_JEONG', 'jeong'], ['CHAR_JANG', 'jang'], ['CHAR_DUDU', 'dudu'], ['CHAR_BULMOK', 'bulmok'], ['CHAR_KIDS', 'kids']].forEach(function (r) {
       CI[r[0]] = { wait: 'char/c_' + r[1] + '_wait.webp', joy: 'char/c_' + r[1] + '_joy.webp', ask: 'char/c_' + r[1] + '_ask.webp', face: 'char/f_' + r[1] + '.webp' };
     });
     S.CHARIMG = CI;
     // 말하는 사람 흉상 · faces = 표정별 그림, 줄마다 {face: '...'} 로 고른다 (없으면 def)
     var ART = {
       '나': { id: 'me', emo: '🧑', tone: '#8A93A6', side: 'l', def: 'neutral', faces: { neutral: IMG('me', 'neutral'), smile: IMG('me', 'smile'), surprise: IMG('me', 'surprise'), sad: IMG('me', 'sad') },
-        ws: { neutral: IMG('mews', 'neutral'), smile: IMG('mews', 'smile'), surprise: IMG('mews', 'surprise'), proud: IMG('mews', 'proud'), sad: IMG('mews', 'neutral') } },
+        ws: { neutral: IMG('mews', 'neutral'), smile: IMG('mews', 'smile'), surprise: IMG('mews', 'surprise'), proud: IMG('mews', 'proud'), sad: IMG('mews', 'sad'), worry: IMG('mews', 'worry') } },
       '할머니': { id: 'grandma', emo: '👵', tone: '#7A5A3A', side: 'r', def: 'smile', faces: { smile: IMG('grandma', 'smile'), stubborn: IMG('grandma', 'stubborn'), sick: IMG('grandma', 'sick') } },
       '두두리': { id: 'dudu', emo: '👹', tone: '#3E6B8A', side: 'r', def: 'laugh', faces: { laugh: IMG('dudu', 'laugh'), sulk: IMG('dudu', 'sulk'), muk: IMG('dudu', 'muk') } },
       '???': { id: 'dudu', emo: '👹', tone: '#26323A', side: 'r', def: 'laugh', shadow: true, faces: { laugh: IMG('dudu', 'laugh') } },
@@ -1761,8 +1786,9 @@
         { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
-        { img: 'cg/p3.webp', dim: 'brightness(.5) saturate(.7) sepia(.35) hue-rotate(-12deg)', pic: '🫙', cap: '텅 빈 흙통', bg: '#2A2018', amb: 'dark', lines: [['', '저녁 무렵, 흙통 바닥이 드러났다.'], ['나', '…흙이 다 떨어졌네.'], ['나', '아직 받은 의뢰도 다 못 끝냈는데… 어떡하지.', { face: 'surprise' }], ['', '빈 흙통 앞에 한참을 서 있었다.']] },
-        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '덜컹—!', { fx: 'shake' }], ['', '공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?', { face: 'surprise' }], ['', '문틈으로 푸른 빛이 새어 나온다. 조심스레 고리를 당겼다.', { fx: 'enter' }]] },
+        { img: 'cg/d0.webp', pic: '🫙', cap: '텅 빈 흙통', bg: '#2A2018', amb: 'dark', lines: [['', '저녁 무렵, 흙통 바닥이 드러났다.'], ['나', '…흙이 다 떨어졌네.'], ['나', '아직 받은 의뢰도 다 못 끝냈는데… 어떡하지.', { face: 'worry' }], ['', '빈 흙통 앞에 한참을 서 있었다.']] },
+        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '덜컹—!', { fx: 'shake' }], ['', '공방 안쪽, 늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?', { face: 'surprise' }]] },
+        { img: 'cg/d1b.webp', pic: '🚪', cap: '열린 지하실 문', bg: '#141A28', amb: 'fog', lines: [['', '대답 대신, 문틈으로 푸른 빛이 새어 나온다.'], ['', '조심스레 고리를 당겼다.', { fx: 'enter' }]] },
         { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 문지기 두두리.'], ['두두리', '그런데 묵 할멈은? 같이 안 왔어?'], ['', '…쉽게 대답이 나오지 않았다.'], ['나', '…할머니는요.', { face: 'sad' }], ['나', '작년에… 돌아가셨어요. 이제, 안 계세요.', { face: 'sad' }], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다. 한동안 둘 다 아무 말이 없었다.']] },
         { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '묵 할멈이 가져다주던 메밀묵… 참 맛있었는데.', { face: 'muk' }], ['두두리', '묵 할멈은 묵을 가져올 때마다 좋은 흙 나는 자리를 물어 갔지. 내가 제일 좋은 데만 알려 줬어!', { face: 'muk' }], ['나', '(흙 나는 자리…)'], ['나', '(아직 의뢰를 다 못 끝냈는데… 여기서 흙이랑 유약 재료를 조금 더 얻어 갈 수 있지 않을까?)'], ['나', '그럼… 다음부터 제가 묵을 가져올게요.', { face: 'smile' }], ['나', '이번 한 번만, 들여보내 주세요.'], ['두두리', '크하하! 좋지! 약속이다, 김 서방!', { fx: 'flash' }]] }
       ] },
@@ -1774,14 +1800,15 @@
         { img: 'cg/a2.webp', pic: '🚶', cap: '영업 중', bg: '#5A4A30', amb: 'morning', lines: [['', '그날부터 공방 앞에 「영업 중」 팻말이 걸렸다.'], ['', '할머니를 찾는 손님만이 아니라, 그릇을 보러 오는 손님도 하나둘 늘었다.']] }
       ] },
       sakura_ask: { title: '벚꽃 빛', outfit: 'ws', steps: [
-        { img: 'cg/p3.webp', pic: '🌸', cap: '공방 작업대 앞', bg: '#4A3422', amb: 'dust', lines: [['', '하람 위원이 돌아간 뒤, 유약 통을 하나씩 열어 보았다.'], ['나', '백자유, 청자유, 흑유… 벚꽃 빛은 어디에도 없네.'], ['나', '할머니 일지에도 벚꽃 유약 얘기는 없었는데… 덜컥 맡아 버렸어.', { face: 'surprise' }], ['', '그때, 지하실 문이 빼꼼 열렸다.', { fx: 'knock' }]] },
-        { img: 'cg/p3.webp', pic: '👹', cap: '놀러 온 두두리', bg: '#4A3422', amb: 'dust', lines: [['두두리', '김 서방! 묵 냄새 따라 놀러 왔지! …어라, 얼굴이 왜 그래?'], ['나', '벚꽃 색 그릇을 부탁받았는데, 그런 유약을 만들 방법을 모르겠어요.'], ['두두리', '크하하! 그거라면 마침 잘됐다!', { fx: 'shake' }], ['두두리', '지금 도깨비 마을에 벚꽃이 한가득 폈거든! 벚꽃 언덕 돌을 부수면 벚꽃 재가 나와.', { face: 'laugh' }], ['두두리', '벚꽃 재로 유약을 만들면 딱 벚꽃 빛이 난다고, 묵 할멈이 그랬어!'], ['나', '정말요? 고마워요, 두두리!', { face: 'smile' }]] },
+        { img: 'cg/s1.webp', pic: '🌸', cap: '공방 작업대 앞', bg: '#4A3422', amb: 'dust', lines: [['', '하람 위원이 돌아간 뒤, 유약 통을 하나씩 열어 보았다.'], ['나', '백자유, 청자유, 흑유… 벚꽃 빛은 어디에도 없네.'], ['나', '할머니 일지에도 벚꽃 유약 얘기는 없었는데… 덜컥 맡아 버렸어.', { face: 'worry' }], ['', '그때, 지하실 문이 빼꼼 열렸다.', { fx: 'knock' }]] },
+        { img: 'cg/s2.webp', pic: '👹', cap: '놀러 온 두두리', bg: '#4A3422', amb: 'dust', lines: [['두두리', '김 서방! 묵 냄새 따라 놀러 왔지! …어라, 얼굴이 왜 그래?'], ['나', '벚꽃 색 그릇을 부탁받았는데, 그런 유약을 만들 방법을 모르겠어요.'], ['두두리', '크하하! 그거라면 마침 잘됐다!', { fx: 'shake' }], ['두두리', '지금 도깨비 마을에 벚꽃이 한가득 폈거든! 벚꽃 언덕 돌을 부수면 벚꽃 재가 나와.', { face: 'laugh' }], ['두두리', '벚꽃 재로 유약을 만들면 딱 벚꽃 빛이 난다고, 묵 할멈이 그랬어!'], ['나', '정말요? 고마워요, 두두리!', { face: 'smile' }]] },
+        { img: 'cg/s3.webp', pic: '🌸', cap: '벚꽃이 한가득 핀 도깨비 마을', bg: '#4A3442', amb: 'petals', lines: [['두두리', '봐, 김 서방! 이게 도깨비 마을 봄이야!', { face: 'laugh' }], ['나', '와… 온통 분홍빛이네.', { face: 'smile' }]] },
         { note: '🌸 벚꽃 축제 채집지가 열렸어요\n\n채집 화면 아래 「축제 채집지 · 벚꽃 언덕」에서\n꽃묵 🌸으로 채집해요\n\n⛏️ 흙 파기 · 봄빛 흙\n🪨 돌 부수기 · 벚꽃 재 (벚꽃유 재료)', bg: '#4A3422', img: 'cg/p3.webp' }
       ] },
       research_open: { title: '할머니의 일지', outfit: 'ws', steps: [
-        { img: 'cg/p3.webp', dim: 'brightness(.75) saturate(.85)', pic: '🧺', cap: '파편 바구니', bg: '#3A2A1E', amb: 'dust', lines: [['', '와장창 깨고, 가마에서 깨지고… 파편 바구니가 넘칠 지경이 됐다.'], ['나', '파편이 너무 많이 모였는데… 이걸 다 어떡하지?', { face: 'surprise' }], ['', '버리려고 바구니를 들다, 선반 위 낡은 공책이 눈에 띄었다.'], ['나', '…할머니 일지?']] },
-        { img: 'cg/p3.webp', dim: 'sepia(.6) brightness(.8)', pic: '📔', cap: '할머니의 일지', bg: '#3A2A1E', amb: 'memory', lines: [['할머니', '망치고 깨진 그릇도 자세히 들여다보면 다 보인다.', { face: 'smile' }], ['할머니', '손에 밴 나쁜 버릇이 어디서 났는지, 뭐가 모자랐는지.'], ['할머니', '쓸모없다 싶은 것에도, 늘 배울 게 있고 뜻이 있는 법이여.']] },
-        { img: 'cg/p3.webp', pic: '🔬', cap: '작업대', bg: '#4A3422', amb: 'morning', lines: [['나', '…쓸모없는 게 아니었구나.'], ['나', '이 파편들로 연구해 보자. 내가 뭘 놓치고 있었는지.', { face: 'proud' }], ['', '공방에 「연구」가 열렸다.', { fx: 'flash' }]] }
+        { img: 'cg/r1.webp', pic: '🧺', cap: '파편 바구니', bg: '#3A2A1E', amb: 'dust', lines: [['', '와장창 깨고, 가마에서 깨지고… 파편 바구니가 넘칠 지경이 됐다.'], ['나', '파편이 너무 많이 모였는데… 이걸 다 어떡하지?', { face: 'worry' }], ['', '버리려고 바구니를 들다, 선반 위 낡은 공책이 눈에 띄었다.'], ['나', '…할머니 일지?']] },
+        { img: 'cg/r2.webp', pic: '📔', cap: '할머니의 일지', bg: '#3A2A1E', amb: 'memory', lines: [['할머니', '망치고 깨진 그릇도 자세히 들여다보면 다 보인다.', { face: 'smile' }], ['할머니', '손에 밴 나쁜 버릇이 어디서 났는지, 뭐가 모자랐는지.'], ['할머니', '쓸모없다 싶은 것에도, 늘 배울 게 있고 뜻이 있는 법이여.']] },
+        { img: 'cg/r3.webp', pic: '🔬', cap: '파편을 늘어놓은 작업대', bg: '#4A3422', amb: 'morning', lines: [['나', '…쓸모없는 게 아니었구나.'], ['나', '이 파편들로 연구해 보자. 내가 뭘 놓치고 있었는지.', { face: 'proud' }], ['', '공방에 「연구」가 열렸다.', { fx: 'flash' }]] }
       ] },
       ep1_end: { title: '에피소드 1 · 새 간판', outfit: 'ws', steps: [
         { img: 'cg/e1.webp', pic: '🌕', cap: '보름달 항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '끝까지 ‘명옥이 손녀’라고만 부르던 장 씨 할아버지가, 내 이름을 불렀다.'], ['', '서울로 돌아갈 날짜를, 언제부턴가 세지 않게 됐다.'], ['나', '…정리하러 왔던 건데.'], ['나', '이제 여긴, 내 공방이야.', { face: 'proud' }]] },
@@ -1805,12 +1832,12 @@
       '.st-amb.morning{background:linear-gradient(180deg,rgba(255,230,160,.25),rgba(255,230,160,0) 60%)}.st-amb.dusk{background:linear-gradient(180deg,rgba(255,150,80,.22),rgba(255,150,80,0) 60%)}' +
       '.st-amb.moon{background:radial-gradient(circle at 50% 26%,rgba(255,250,220,.35),rgba(255,250,220,0) 40%)}' +
       '.st-pt{position:absolute;border-radius:50%;pointer-events:none}' +
-      '.st-pt.dust{width:4px;height:4px;background:rgba(255,236,190,.8);box-shadow:0 0 6px rgba(255,236,190,.9);animation:stDust linear infinite}' +
-      '.st-pt.fog{width:260px;height:120px;background:radial-gradient(ellipse,rgba(220,235,240,.28),rgba(220,235,240,0) 70%);animation:stFog linear infinite}' +
+      '.st-pt.dust{width:9px;height:9px;border-radius:0;background:url(ui/dust.webp) center/contain no-repeat;animation:stDust linear infinite}' +
+      '.st-pt.fog{width:300px;height:130px;border-radius:0;background:url(ui/fog.webp) center/contain no-repeat;opacity:.55;animation:stFog linear infinite}' +
       '.st-pt.steam{width:46px;height:46px;background:radial-gradient(circle,rgba(255,255,255,.35),rgba(255,255,255,0) 70%);animation:stSteam ease-out infinite}' +
-      '.st-pt.leaf{width:10px;height:7px;border-radius:7px 0;background:#C9853A;animation:stLeaf linear infinite}' +
+      '.st-pt.leaf{width:10px;height:7px;border-radius:7px 0;background:#C9853A;animation:stLeaf linear infinite}.st-pt.petal{width:14px;height:14px;border-radius:0;background:url(ui/fx_petal_pink.webp) center/contain no-repeat;animation:stLeaf linear infinite}' +
       '.st-pt.spark{width:6px;height:6px;background:#FFE7A8;box-shadow:0 0 10px #FFD66B;animation:stSpark ease-in-out infinite}' +
-      '.st-enter{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 56% 34%,rgba(170,215,255,.95) 0,rgba(110,170,240,.55) 25%,rgba(18,12,8,0) 60%);animation:stEnterL 1.4s ease-in both}@keyframes stEnterL{0%{opacity:0}60%{opacity:.8}85%{opacity:1;background-color:rgba(200,230,255,.6)}100%{opacity:1;background-color:rgba(220,240,255,.9)}}@keyframes stEnter{0%{transform:scale(1);transform-origin:56% 34%}100%{transform:scale(2.3);transform-origin:56% 34%}}' +
+      '.st-enter{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 52% 30%,rgba(170,215,255,.95) 0,rgba(110,170,240,.55) 25%,rgba(18,12,8,0) 60%);animation:stEnterL 1.4s ease-in both}@keyframes stEnterL{0%{opacity:0}60%{opacity:.8}85%{opacity:1;background-color:rgba(200,230,255,.6)}100%{opacity:1;background-color:rgba(220,240,255,.9)}}@keyframes stEnter{0%{transform:scale(1);transform-origin:52% 30%}100%{transform:scale(2.3);transform-origin:52% 30%}}' +
       '.st-flash{position:absolute;inset:0;background:#FFF4DE;pointer-events:none;animation:stFlash .5s both}' +
       // 흉상 · 대사 상자 위에 붙여서 누가 말하는지 바로 보이게
       '.st-bust{position:absolute;bottom:176px;width:150px;height:178px;border-radius:70px 70px 14px 14px;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.45);border:3px solid rgba(255,244,222,.85);transition:opacity .2s}' +
@@ -1818,6 +1845,7 @@
       '.st-bust b{font-size:96px;line-height:1;font-weight:400;margin-bottom:10px}.st-bust.shadow b,.st-bust.shadow img,.st-bust.art.shadow img{filter:brightness(0) drop-shadow(0 0 10px rgba(120,200,255,.6))}.st-bust img{width:100%;height:100%;object-fit:cover;object-position:50% 0}' +
       '.st-bust u{position:absolute;left:0;right:0;top:6px;text-decoration:none;text-align:center;font-size:10px;color:rgba(255,244,222,.7)}' +
       '.st-dlg{position:absolute;left:14px;right:14px;bottom:24px;min-height:144px;box-sizing:border-box;padding:20px 18px 30px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE,0 8px 20px rgba(0,0,0,.4);color:#2B1A0F}' +
+      '.st-dlg:not(.narr),.uf-box,.tut-box{border:20px solid transparent!important;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch!important;background:none!important;box-shadow:0 8px 18px rgba(0,0,0,.35)!important;border-radius:0!important}.st-dlg:not(.narr){padding:6px 6px 16px!important}.uf-box,.tut-box{padding:6px 4px 2px!important}' +
       '.st-dlg.narr{background:rgba(30,20,12,.88);border-color:rgba(255,231,168,.55);box-shadow:0 8px 20px rgba(0,0,0,.4);color:#FFF4DE}' +
       '.st-who{position:absolute;top:-19px;padding:4px 16px;border-radius:12px;background:#5B3A24;color:#FFE7A8;font-size:16px;border:2px solid #FFF4DE}.st-who.l{left:16px}.st-who.r{right:16px}' +
       '.st-txt{font-family:"Noto Sans KR",sans-serif;font-size:16.5px;line-height:1.7;word-break:keep-all;white-space:pre-line;min-height:56px}.st-dlg.narr .st-txt{font-style:italic;color:#FFF4DE;text-align:center}' +
@@ -1848,15 +1876,15 @@
 
     // 분위기 입자 · 장면마다 다른 움직임
     function ambient(layer, kind) {
-      var R = Math.random, cfg = { dust: ['dust', 18], fog: ['fog', 5], steam: ['steam', 7], leaves: ['leaf', 7], sparkle: ['spark', 16], moon: ['spark', 8], morning: ['dust', 10] }[kind];
+      var R = Math.random, cfg = { dust: ['dust', 18], fog: ['fog', 5], steam: ['steam', 7], leaves: ['leaf', 7], petals: ['petal', 12], sparkle: ['spark', 16], moon: ['spark', 8], morning: ['dust', 10] }[kind];
       if (!cfg) { return; }
       for (var i = 0; i < cfg[1]; i++) {
         var p = document.createElement('i'); p.className = 'st-pt ' + cfg[0];
-        var d = cfg[0] === 'fog' ? 14 + R() * 10 : (cfg[0] === 'leaf' ? 7 + R() * 5 : (cfg[0] === 'steam' ? 2.6 + R() * 1.6 : 3 + R() * 5));
+        var d = cfg[0] === 'fog' ? 14 + R() * 10 : (cfg[0] === 'leaf' || cfg[0] === 'petal' ? 7 + R() * 5 : (cfg[0] === 'steam' ? 2.6 + R() * 1.6 : 3 + R() * 5));
         p.style.animationDuration = d.toFixed(2) + 's'; p.style.animationDelay = (-R() * d).toFixed(2) + 's';
         if (cfg[0] === 'fog') { p.style.top = (35 + R() * 35).toFixed(0) + '%'; p.style.left = '0'; }
         else if (cfg[0] === 'steam') { p.style.left = (44 + R() * 10).toFixed(0) + '%'; p.style.top = '30%'; }
-        else if (cfg[0] === 'leaf') { p.style.left = (40 + R() * 70).toFixed(0) + '%'; p.style.top = '-3%'; }
+        else if (cfg[0] === 'leaf' || cfg[0] === 'petal') { p.style.left = (40 + R() * 70).toFixed(0) + '%'; p.style.top = '-3%'; }
         else { p.style.left = (R() * 100).toFixed(0) + '%'; p.style.top = (20 + R() * 60).toFixed(0) + '%'; }
         layer.appendChild(p);
       }
@@ -2002,10 +2030,13 @@
     setInterval(draw, 700); setTimeout(draw, 300);
 
     // ── 공용 작은 팝업 ──
+    // 안내 카드 머리 그림 : 이모지 → 그림 (없는 건 이모지 그대로)
+    var ICOM = { '🏺': 'tutorial_pottery', '🔓': 'tutorial_unlock', '🏆': 'tutorial_trophy', '🎯': 'tutorial_target', '📜': 'tutorial_scroll', '📖': 'tutorial_scroll', '🔔': 'tutorial_bell', '🌸': 'tutorial_blossom', '🔬': 'tutorial_research', '💎': 'ui_jade', '🎁': 'reward_box', '🔥': 'kiln_fire', '📌': 'ui_pin', '📋': 'ui_memo', '🥣': 'muk', '💥': 'display_broken' };
+    S.ICO = function (e, px) { var k = ICOM[String(e || '').replace(/\uFE0F/g, '')]; return k ? '<img src="ui/' + k + '.webp" alt="" aria-hidden="true" style="width:' + (px || 64) + 'px;height:' + (px || 64) + 'px;object-fit:contain;display:inline-block">' : e; };
     function popup(ic, title, body, btns) {
       var ov = document.createElement('div'); ov.className = 'uf-ov tut-ov'; ov.style.zIndex = '10080'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', title);
       var bx = document.createElement('div'); bx.className = 'uf-box';
-      bx.innerHTML = '<div class="ic">' + ic + '</div><h3>' + title + '</h3><p>' + body + '</p>';
+      bx.innerHTML = '<div class="ic">' + S.ICO(ic) + '</div><h3>' + title + '</h3><p>' + body + '</p>';
       btns.forEach(function (b, i) {
         var el = document.createElement('button'); el.type = 'button'; el.className = 'st-ok'; el.textContent = b.label;
         if (i > 0) { el.style.cssText = 'margin-top:8px;background:#FFFDF5;border-color:#8A6440;box-shadow:0 4px 0 #8A6440;color:#5B3A24'; }
