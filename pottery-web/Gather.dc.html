@@ -394,12 +394,12 @@ class Component extends DCLogic {
   }
   closeGame() { if (this.frame) { try { this.frame.remove(); } catch (e) {} } this.frame = null; this.G = null; this.setState({ tick: Date.now() }); }
   // ── 다듬기 : 손 토련(흙) · 절구질(유약 원료) — 바늘이 왕복하는 게이지, 가운데일수록 높은 등급 ──
-  // ── 다듬기 : 한 번에 5개 (5개 이상 있어야 시작) ──
+  // ── 다듬기 : 한 판에 가진 원료를 모두 다듬는다 (5개 단위 · 판 성적이 5개당 얻는 개수를 정함) ──
   // 손 토련 : 반죽을 꾹 누르고 있으면 압력 게이지가 차오른다 → 금색 칸에서 손을 떼면 특급 (넘치면 보통)
   // 절구질 : 바늘이 왕복 → 가운데(금색)에서 절구를 톡 누르면 특급
   refOpen(rk) {
     var g = this.loadG(), have = (g.mats || {})[rk] || 0; if (have < 5) { this.say('원료가 5개 있어야 다듬을 수 있어요 · 지금 ' + have + '개'); this.sfx('fail'); return; }
-    this.R = { rk: rk, n: 5, res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
+    this.R = { rk: rk, n: 5, batch: Math.floor(have / 5), res: [], t0: Date.now(), P: 720, done: false, hitAt: 0, puffs: [], order: this.shuf([0, 1, 2, 3, 4, 5, 6, 7]) }; this.refNewPath();
     this.setState({ tick: Date.now() }); this.sfx('tap');
   }
   refPos() { var R = this.R, P = R.P * 2, ph = ((Date.now() - R.t0) % P) / P; return ph < 0.5 ? ph * 2 : 2 - ph * 2; }
@@ -476,10 +476,11 @@ class Component extends DCLogic {
   }
   refCommit() {
     var R = this.R, D = this.D()[R.rk], g = this.loadG(), mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
-    mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - 5);
-    // 5번 성적의 평균으로 얻는 개수를 정한다 : 평균 2.6↑ 3개 · 1.8↑ 2개 · 그 아래 1개 (+연구 「다듬기」 확률로 1개 더)
+    var B = R.batch || 1; mats[R.rk] = Math.max(0, (mats[R.rk] || 0) - 5 * B);
+    // 5번 성적의 평균으로 5개당 얻는 개수를 정한다 : 평균 2.6↑ 3개 · 1.8↑ 2개 · 그 아래 1개 (+연구 「다듬기」 확률로 5개마다 1개 더)
     var sum = 0; R.res.forEach(function (gd) { sum += gd; }); var avg = sum / R.res.length; R.fg = avg >= 2.6 ? 3 : (avg >= 1.8 ? 2 : 1);
-    R.got = R.fg + (Math.random() < (this.qlib().fx(g).refineUp || 0) ? 1 : 0); R.bonus = R.got > R.fg;
+    var up = this.qlib().fx(g).refineUp || 0, extra = 0; for (var bi = 0; bi < B; bi++) { if (Math.random() < up) { extra++; } }
+    R.got = R.fg * B + extra; R.extra = extra; R.bonus = extra > 0;
     mats[D.out + '1'] = (mats[D.out + '1'] || 0) + R.got;
     this.setG({ mats: mats }); R.done = true; R.doneAt = Date.now(); this.sfx('reveal'); this.setState({ tick: Date.now() });
     var self = this; setTimeout(function () { self.setState({ tick: Date.now() }); }, 1300);
@@ -524,7 +525,7 @@ class Component extends DCLogic {
     
     var refRow = function (rk) {
       var d = D[rk], raw = mats[rk] || 0, have = String(mats[d.out + '1'] || 0) + '개';
-      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? '다듬기' : raw + '/5',
+      return { name: d.name, img: d.img, raw: raw, have: '보유 ' + have, go: function () { self.refOpen(rk); }, btnT: raw >= 5 ? (raw >= 10 ? '모두 다듬기' : '다듬기') : raw + '/5',
         btn: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (raw >= 5 ? 'background:#B9533A;border:2.5px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:2.5px solid #A89880;color:#7A6A55') };
     };
     var evBtn = 'all:unset;cursor:pointer;box-sizing:border-box;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;text-align:center;' + (ET.tix > 0 ? 'background:#B04A68;border:2.5px solid #7A2846;box-shadow:0 3px 0 #7A2846;color:#FFFDF5' : 'background:#E9D5DB;border:2.5px solid #C9A2AE;color:#9A7A84');
@@ -568,7 +569,7 @@ class Component extends DCLogic {
     if (Rf) {
       var dd = D[Rf.rk], clay = dd.kind === 'clay', now = Date.now(), hit = now - Rf.hitAt < 420, cnt = Rf.res.length;
       out.refTitle = clay ? '손 토련 · ' + dd.name : '절구질 · ' + dd.name;
-      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째 · 5번 성적으로 ' + dd.name + ' 개수가 정해져요';
+      out.refSub = (clay ? '초록 점에서 시작해 점선을 따라 끝까지 밀어요' : '바늘이 금색 칸에 왔을 때 절구를 톡!') + '\n' + Math.min(Rf.n, cnt + 1) + ' / ' + Rf.n + '번째 · 원료 ' + (5 * (Rf.batch || 1)) + '개 한 번에 · 5개당 1~3개';
       out.refImg = dd.img; out.refDown = function (e) { self.refDown(e); };
       out.refBg = 'position:absolute;left:0;top:0;width:390px;height:752px;z-index:22;overflow:hidden;background:linear-gradient(rgba(30,18,10,.88) 0,rgba(30,18,10,.6) 165px,rgba(30,18,10,.12) 270px,rgba(30,18,10,.05) 100%),#3E2616 url(' + (clay ? '_blob/e41f40f93735cbd82c4bab97fd696e6c.webp' : '_blob/a4d6614eb4ba5f50ddfa30a0ea8a46c3.webp') + ') center top/cover no-repeat';
       out.refX = 'all:unset;cursor:pointer;position:absolute;right:14px;top:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,244,222,.15);border:2px solid #8A7A63;display:flex;align-items:center;justify-content:center;font-size:20px;color:#FFF4DE;z-index:6';
@@ -635,7 +636,7 @@ class Component extends DCLogic {
             badge: "position:relative;font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:" + (gd === 3 ? '#5A3A00' : (gd === 2 ? '#1E3F5E' : '#3E3428')) };
         });
         var lf = mats[Rf.rk] || 0;
-        out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 5개 → ' + dd.name + ' ' + (Rf.got || Rf.fg) + '개' + (Rf.bonus ? ' (다듬기 요령 +1)' : '') + ' · 남은 원료 ' + lf + '개';
+        out.refSumHint = '이번 판 : ' + [3, 2, 1].filter(function (gd) { return c[gd]; }).map(function (gd) { return GT[gd] + ' ' + c[gd]; }).join(' · ') + '\n원료 ' + (5 * (Rf.batch || 1)) + '개 → ' + dd.name + ' ' + (Rf.got || Rf.fg) + '개' + (Rf.bonus ? ' (다듬기 요령 +' + Rf.extra + ')' : '') + ' · 남은 원료 ' + lf + '개';
         out.refAgain = function () { self.refOpen(Rf.rk); };
         out.refAgainText = lf >= 5 ? '한 번 더' : '원료 부족 (' + lf + '/5)';
         out.refAgainBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:13px 0;border-radius:15px;font-family:Jua,sans-serif;font-size:18px;text-align:center;' + (lf >= 5 ? 'background:#B9533A;border:3px solid #2B1A0F;box-shadow:0 3px 0 #2B1A0F;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');

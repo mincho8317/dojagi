@@ -1139,7 +1139,7 @@
       }
       if (st === '2') {
         var tr = tabOf('다듬기'); if (tr && tr.getAttribute('aria-selected') !== 'true') { act('tgTab2', true, function () { return tr; }, '원료가 5개 모였어요 · 「다듬기」에서 흙으로 만들어요'); return; }
-        act('tgRef', true, function () { var c = [].slice.call(document.querySelectorAll('button[aria-label$=" 다듬기"]')).filter(function (b) { return vis(b) && (b.textContent || '').indexOf('다듬기') >= 0; }); return c[0] || null; }, '원료 5개로 한 판! 점선을 따라 반죽을 밀어 흙을 만들어요');
+        act('tgRef', true, function () { var c = [].slice.call(document.querySelectorAll('button[aria-label$=" 다듬기"]')).filter(function (b) { return vis(b) && (b.textContent || '').indexOf('다듬기') >= 0; }); return c[0] || null; }, '모아 둔 원료를 한 판에 모두 다듬어요! 점선을 따라 반죽을 밀어 흙을 만들어요');
       }
     }
     // ── 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번 ──
