@@ -293,7 +293,7 @@ class Component extends DCLogic {
     var active = act;
     var done = defs.filter(function (d) { return d.done; });
     var list = s.tab === 'done' ? [] : act;
-    var CRN = { Wheel: '성형', Dry: '건조', Bisque: '초벌', Glaze: '유약', Kiln: '재벌', KilnOpen: '재벌' };
+    var CRN = { Wheel: '성형', Dry: '건조', Glaze: '유약', Kiln: '재벌', KilnOpen: '재벌' };
     var cards = list.map(function (q, ci) {
       var A = AL[q.id], tracked = trackIds.indexOf(q.id) >= 0;
       var lim = q.kind === 'order' ? Lm.order : LIMQ[q.id];

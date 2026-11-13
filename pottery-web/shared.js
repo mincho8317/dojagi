@@ -3,6 +3,8 @@
   var S = window.PotteryShared = {};
   // 한글은 단어 단위로 줄바꿈 (「요」 한 글자만 다음 줄로 넘어가는 것 방지)
   try { var _wb = document.createElement('style'); _wb.textContent = 'body{word-break:keep-all;overflow-wrap:break-word}'; (document.head || document.documentElement).appendChild(_wb); } catch (e) {}
+  // 초벌 공정 삭제(2026-11) : 초벌 대기·초벌 중이던 기물은 유약 대기로 옮긴다 · 화면이 저장 상태를 읽기 전에 실행
+  try { var _k = 'pottery-proto-v1', _g = JSON.parse(localStorage.getItem(_k) || 'null'); if (_g && ((_g.bisqueList || []).length || ((_g.bisque || {}).items || []).length || _g.mainFocus === 'bisque')) { _g.glazeList = (_g.glazeList || []).concat(_g.bisqueList || [], (_g.bisque || {}).items || []); _g.bisqueList = []; _g.bisque = { state: 'idle', start: 0, items: [] }; if (_g.mainFocus === 'bisque') { _g.mainFocus = 'glaze'; } localStorage.setItem(_k, JSON.stringify(_g)); } } catch (e) {}
   // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
   S.qlib = function () {
     if (this._ql) { return this._ql; }
@@ -50,8 +52,8 @@
       dryCut: { t: '건조', l: '건조 시간', b: 30, m: -30, u: '분' },
       fanZone: { t: '건조', l: '부채질 판정 폭', b: 22, m: 100, u: '%' },
       fanGain: { t: '건조', l: '부채질 1회 건조량', b: 45, m: 45, u: '초' },
-      bqCut: { t: '초벌', l: '초벌 시간', b: 20, m: -20, u: '분' },
-      bqSafe: { t: '초벌', l: '반건조 초벌 파손', b: 12, m: -100, u: '%' },
+      bqCut: { t: '재벌', l: '풀무질 단축 한도', b: 25, m: 100, u: '%' },
+      bqSafe: { t: '재벌', l: '반건조 재벌 파손', b: 10, m: -100, u: '%' },
       glazeZone: { t: '유약', l: '적정 담금 폭(백자유)', b: 0.4, m: 0.002, u: '초' },
       kilnTol: { t: '가마', l: '정합 허용 온도', b: 20, m: 1, u: '℃' },
       kilnCut: { t: '가마', l: '재벌 시간(중화도)', b: 8, m: -8, u: '시간' },
@@ -70,7 +72,7 @@
       rareUp: { t: '채집', l: '희귀 흙·진사 확률', b: 0, m: 100, u: '%p' },
       digWide: { t: '채집', l: '삽 한 번 파는 범위', b: 100, m: 100, u: '%' }
     };
-    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·초벌' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
+    var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·풀무' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
     var RROW = {
       form: [
         ['f00', 0, 1, '물레 감각', [], { snapTol: 0.01 }, 20, 0],
@@ -84,13 +86,13 @@
       ],
       dry: [
         ['d00', 0, 1, '그늘 말리기', [], { dryCut: 0.05 }, 20, 0],
-        ['d10', 1, 0, '부채 손목 I', ['d00'], { fanZone: 0.02 }, 30, 0], ['d11', 1, 1, '건조대 증설 I', ['d00'], { dryRack: 3 }, 30, 3000, 'dryUp'], ['d12', 1, 2, '초벌 예열 I', ['d00'], { bqCut: 0.05 }, 30, 0],
+        ['d10', 1, 0, '부채 손목 I', ['d00'], { fanZone: 0.02 }, 30, 0], ['d11', 1, 1, '건조대 증설 I', ['d00'], { dryRack: 3 }, 30, 3000, 'dryUp'], ['d12', 1, 2, '풀무 단련 I', ['d00'], { bqCut: 0.05 }, 30, 0],
         ['d20', 2, 0, '큰 부채 I', ['d10'], { fanGain: 0.1 }, 45, 300], ['d21', 2, 1, '통풍 선반 I', ['d11'], { dryCut: 0.05 }, 50, 300], ['d22', 2, 2, '천천히 데우기 I', ['d12'], { bqSafe: 0.03 }, 50, 300],
-        ['d30', 3, 0, '부채 손목 II', ['d20'], { fanZone: 0.02 }, 65, 600], ['d31', 3, 1, '건조대 증설 II', ['d21', 'd20'], { dryRack: 3 }, 120, 12000], ['d32', 3, 2, '초벌 예열 II', ['d22'], { bqCut: 0.05 }, 65, 600],
+        ['d30', 3, 0, '부채 손목 II', ['d20'], { fanZone: 0.02 }, 65, 600], ['d31', 3, 1, '건조대 증설 II', ['d21', 'd20'], { dryRack: 3 }, 120, 12000], ['d32', 3, 2, '풀무 단련 II', ['d22'], { bqCut: 0.05 }, 65, 600],
         ['d40', 4, 0, '큰 부채 II', ['d30'], { fanGain: 0.1 }, 85, 1000], ['d41', 4, 1, '통풍 선반 II', ['d31'], { dryCut: 0.05 }, 85, 1000], ['d42', 4, 2, '천천히 데우기 II', ['d32'], { bqSafe: 0.03 }, 85, 1000],
-        ['d50', 5, 0, '부채 손목 III', ['d40'], { fanZone: 0.03 }, 110, 1600], ['d51', 5, 1, '통풍 선반 III', ['d41', 'd40'], { dryCut: 0.05 }, 110, 1600], ['d52', 5, 2, '초벌 예열 III', ['d42'], { bqCut: 0.05 }, 110, 1600],
+        ['d50', 5, 0, '부채 손목 III', ['d40'], { fanZone: 0.03 }, 110, 1600], ['d51', 5, 1, '통풍 선반 III', ['d41', 'd40'], { dryCut: 0.05 }, 110, 1600], ['d52', 5, 2, '풀무 단련 III', ['d42'], { bqCut: 0.05 }, 110, 1600],
         ['d60', 6, 0, '큰 부채 III', ['d50'], { fanGain: 0.15 }, 150, 2500], ['d61', 6, 1, '바람길 설계', ['d51'], { dryCut: 0.05, fanZone: 0.02 }, 150, 2500], ['d62', 6, 2, '천천히 데우기 III', ['d52'], { bqSafe: 0.03 }, 150, 2500],
-        ['d70', 7, 0, '부채 장인', ['d60', 'd61'], { fanGain: 0.15, fanZone: 0.02 }, 200, 4000], ['d72', 7, 2, '초벌 장인', ['d61', 'd62'], { bqCut: 0.1, bqSafe: 0.03 }, 200, 4000]
+        ['d70', 7, 0, '부채 장인', ['d60', 'd61'], { fanGain: 0.15, fanZone: 0.02 }, 200, 4000], ['d72', 7, 2, '풀무 장인', ['d61', 'd62'], { bqCut: 0.1, bqSafe: 0.03 }, 200, 4000]
       ],
       fire: [
         ['g00', 0, 1, '유약 감각', [], { glazeZone: 25 }, 20, 0],
@@ -131,7 +133,7 @@
       for (var id in R) { var n = RNODE[id]; if (!R[id] || !n) { continue; } for (var k in n.fx) { o[k] = (o[k] || 0) + n.fx[k]; } }
       return o;
     }
-    function fxVal(key, v) { var M = FXM[key]; if (key === 'dryCut' || key === 'bqCut' || key === 'kilnCut') { return M.b * (1 - (v || 0)); } if (key === 'fanGain') { return M.b * (1 + (v || 0)); } return M.b + M.m * (v || 0); }
+    function fxVal(key, v) { var M = FXM[key]; if (key === 'dryCut' || key === 'kilnCut') { return M.b * (1 - (v || 0)); } if (key === 'fanGain') { return M.b * (1 + (v || 0)); } return M.b + M.m * (v || 0); }
     function fxFmt(key, v) { var x = fxVal(key, v), M = FXM[key]; var s = Math.abs(x - Math.round(x)) < 0.001 ? String(Math.round(x)) : (Math.abs(x * 10 - Math.round(x * 10)) < 0.001 ? x.toFixed(1) : x.toFixed(2)); return (key === 'expand' ? '7×' + s : s) + M.u; }
     function resState(g, id) {
       var n = RNODE[id], R = g.res || {};
@@ -459,7 +461,7 @@
     window.__navBooted = true;
     var KEY = 'pottery-proto-v1', self = this;
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
-    var CRAFT = { Wheel: 1, Dry: 1, Bisque: 1, Glaze: 1, Kiln: 1, KilnOpen: 1 };
+    var CRAFT = { Wheel: 1, Dry: 1, Glaze: 1, Kiln: 1, KilnOpen: 1 };
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function notify() { try { window.dispatchEvent(new StorageEvent('storage', { key: KEY })); } catch (e) {} }
     function patch(p) { var g = load(); for (var k in p) { g[k] = p[k]; } try { localStorage.setItem(KEY, JSON.stringify(g)); } catch (e) {} notify(); }
@@ -538,7 +540,7 @@
         patch({ dryUpSeen: true });
         var ov = document.createElement('div'); ov.className = 'up-ov';
         ov.setAttribute('style', 'position:fixed;inset:0;z-index:10001;background:rgba(26,15,8,.6);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif');
-        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·초벌」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-sb="1" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
+        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·풀무」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-sb="1" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
         ov.addEventListener('click', function (e) { var x = e.target.getAttribute && e.target.getAttribute('data-x'); if (x === 'close' || e.target === ov) { ov.remove(); } if (x === 'go') { try { localStorage.setItem('resFocus', 'd11'); } catch (e2) {} } });
         document.body.appendChild(ov);
         try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
@@ -614,18 +616,19 @@
     if (window.__tutBooted) { return; }
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
-    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Bisque: '초벌 가마', Glaze: '유약 바르기', Kiln: '재벌', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
-    var UNL = [['Wheel'], ['Dry', 'Queue'], ['Bisque'], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town', 'Gather']];
+    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Glaze: '유약 바르기', Kiln: '재벌', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var UNL = [['Wheel'], ['Dry', 'Queue'], [], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town', 'Gather']];
     var DONE1 = 9; // 기초 튜토리얼 완료 값 (화면 코드의 tut < 9 판정과 맞춤)
     var STEPS = [
       { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
       { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 초록 칸에 맞춰 부채질하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
-      { goal: '초벌 가마에 굽기', hint: '마른 그릇을 초벌 가마에 넣고 구워 주세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Bisque' },
-      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 초벌한 찻잔을 끌어내려 담가 보세요', next: 'Glaze' },
-      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 몇 시간 걸리니 💎옥으로 바로 완료', next: 'Kiln' },
+      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 마른 찻잔을 끌어내려 담가 보세요', next: 'Glaze' }, // (옛 초벌 단계 · 건조를 마치면 바로 건너뜀)
+      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 마른 찻잔을 끌어내려 담가 보세요', next: 'Glaze' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Kiln' },
       { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' }
     ];
+    function stepNo(t) { return t >= 3 ? t : t + 1; } // 3번(옛 초벌)은 건너뛰므로 화면 번호는 1~6
     function raw() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function prog() { try { var v = localStorage.getItem('tutProg'); return v === null ? null : +v; } catch (e) { return null; } }
     function load() { var g = raw(), p = prog(); if (typeof g.tut === 'number' && p !== null && p > g.tut) { g.tut = p; } return g; }
@@ -638,10 +641,10 @@
       var made = pieceN(g) > 0;
       var kilnIn = len(g.kilnList) || cnt(g.kilnFilled) || g.kiln === 'firing' || made;
       var glazed = len(g.glazeList) || kilnIn;
-      var bisq = len(g.bisqueList) || len((g.bisque || {}).items) || glazed;
+      var bisq = glazed; // 초벌 단계 없음
       var formed = len(g.formedList) || len(g.dryList) || bisq;
       var qq = g.quests || {}, took = !!(qq.min || qq.minDone || qq.minThanks), gave = !!(qq.minDone || qq.minThanks);
-      return [took, formed, bisq, glazed, kilnIn, made, gave];
+      return [took, formed, glazed, glazed, kilnIn, made, gave];
     }
     function locked(g) {
       var t = g.tut, L = {};
@@ -728,7 +731,7 @@
       if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return true; } // 가마를 여는 연출 중에는 끌고 가지 않는다
       var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return true; } } catch (e) {}
       // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
-      var nm = { Wheel: '물레', Dry: '건조대', Bisque: '초벌 가마', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
+      var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '재벌 가마', KilnOpen: '재벌 가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
       var ok = PAGE === 'Main' ? spotlight(linkTo(nx), '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
       if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
       return ok;
@@ -736,15 +739,15 @@
     // 밝힐 곳이 아직 안 그려졌거나 안내 창이 떠 있으면 조금 뒤 다시 찾는다
     function guideRetry(delay, n) { setTimeout(function () { if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { if (n > 0) { guideRetry(700, n - 1); } return; } if (!guideNext(load()) && n > 0) { guideRetry(700, n - 1); } }, delay); }
     function guideJade(g) {
-      var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 3: ['Bisque', '바로 완료', 'bq'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
+      var t = g.tut, L = { 2: ['Dry', '바로 말리기', 'dry'], 5: [PAGE === 'KilnOpen' ? 'KilnOpen' : 'Kiln', '바로 완료', 'kiln'] }[t];
       if (!L || L[0] !== PAGE || spotEl || document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { return; }
       var key = 'tutJade_' + L[2]; try { if (localStorage.getItem(key)) { return; } } catch (e) {}
-      var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (L[2] === 'bq' ? ((g.bisque || {}).state === 'firing' && (g.bisque.start || 0) + 1200000 > nowJ + 3000) : g.kiln === 'firing');
+      var nowJ = Date.now(), busy = L[2] === 'dry' ? (g.dryList || []).some(function (x) { return x && nowJ - x.start < 1800000; }) : (g.kiln === 'firing' && (g.kilnStart || 0) + (g.kilnDur || 28800000) > nowJ + 3000);
       if (!busy) {
         if (L[2] === 'dry' && (g.formedList || []).length) { try { if (sessionStorage.getItem('tutPre_dry')) { return; } } catch (e) {} if (spotlight(qsel('button[data-tray]'), '빚은 그릇을 꾹 잡고 아래 건조대 빈 칸으로 끌어 놓아요')) { try { sessionStorage.setItem('tutPre_dry', '1'); } catch (e) {} } }
         return;
       }
-      if (L[2] !== 'kiln') {
+      {
         var fk = 'tutFan_' + L[2], fs = 0; try { fs = +(localStorage.getItem(fk) || 0); } catch (e) {}
         if (!fs) {
           var fsel = L[2] === 'dry' ? 'button[aria-label^="부채질"]' : 'button[aria-label^="풀무질"]';
@@ -754,7 +757,7 @@
         }
         if (nowJ - fs < 9000) { return; }
       }
-      var msg = L[2] === 'bq' ? '풀무질 대신 💎옥으로 바로 완료할 수도 있어요 · 튜토리얼 중엔 무료예요' : (L[2] === 'dry' ? '부채질 대신 💎옥으로 바로 말릴 수도 있어요 · 튜토리얼 중엔 무료예요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요');
+      var msg = L[2] === 'kiln' ? '풀무질 대신 💎옥으로 바로 완료할 수도 있어요 · 튜토리얼 중엔 무료예요' : (L[2] === 'dry' ? '부채질 대신 💎옥으로 바로 말릴 수도 있어요 · 튜토리얼 중엔 무료예요' : '기다리기 지루하면 💎옥으로 바로 완료! 튜토리얼 중엔 무료예요');
       if (spotlight(btnWith(L[1]), msg)) { try { localStorage.setItem(key, '1'); } catch (e) {} }
     }
     function showCard(g, force) {
@@ -762,13 +765,13 @@
       var st = STEPS[t];
       var mini = document.querySelector('.tut-mini');
       if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); mini.addEventListener('click', function () { showCard(load(), true); }); document.body.appendChild(mini); }
-      mini.innerHTML = '🎯<b>' + (t + 1) + '/' + STEPS.length + '</b>';
+      mini.innerHTML = '🎯<b>' + stepNo(t) + '/' + (STEPS.length - 1) + '</b>';
       placeMini();
       var seen = -1; try { var sv = localStorage.getItem('tutCardSeen'); if (sv !== null) { seen = +sv; } } catch (e) {}
       if (!force && seen === t) { return false; }
       if (document.querySelector('.tut-ov')) { return false; }
       try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
-      overlay('<div class="ic">🎯</div><h3>목표 ' + (t + 1) + '/' + STEPS.length + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      overlay('<div class="ic">🎯</div><h3>목표 ' + stepNo(t) + '/' + (STEPS.length - 1) + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
       return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
@@ -842,7 +845,7 @@
         }
       }
       if (PAGE === 'Dry' && t === 2) {
-        act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 초벌 대기로 옮겨요');
+        act('dryOut', (g.dryList || []).some(function (x) { return x && now - x.start >= 1800000; }), btnWith('다 마른 것 빼기'), '다 말랐어요! 눌러서 유약 대기로 옮겨요');
       }
       if (PAGE === 'Bisque' && t === 3) {
         var bq = g.bisque || {};
@@ -865,13 +868,13 @@
       }
     }
     // 2차 튜토리얼 · 의뢰 종류와 받기 → 제작 중 의뢰 확인 → 이벤트 → 연구 (설명 위주)
-    var CRAFT = ['Wheel', 'Dry', 'Bisque', 'Glaze', 'Kiln', 'KilnOpen'];
+    var CRAFT = ['Wheel', 'Dry', 'Glaze', 'Kiln', 'KilnOpen'];
     var T2 = [
       { goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '할머님이 남긴 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 줘요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 다음에 볼 연구에 써요.' },
       { goal: '의뢰의 종류와 받는 방법', go: 'Counter', pages: ['Counter'], ic: '📜', body: '의뢰는 세 갈래예요.\n\n📜 메인 의뢰 · 공방 이야기를 따라 순서대로 열려요. 보상이 크고 새 모양이 해금돼요.\n🌸 시즌 의뢰 · 이벤트 기간에만 오는 한정 의뢰예요.\n☕ 손님 의뢰 · 사연·일간·주간·주문 손님이 수시로 찾아와요.\n\n의뢰는 카운터에서 손님 이야기를 듣고 「맡을게요」로 받아요. 윤 할매의 첫 메인 의뢰를 받아 보세요.' },
       { goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: CRAFT, passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 제작 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에서 모양을 고를 땐 「의뢰」 배지가 붙은 모양을 고르면 돼요.' },
       { goal: '메인 의뢰 3점 납품하기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
-      { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·초벌 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
+      { goal: '연구 알아보기', go: 'Research', pages: ['Research'], ic: '🔬', body: '연구는 파편으로 해요.\n\n파편은 의뢰 보상으로 받거나, 진열대에서 망작을 💥와장창 깨서 얻어요.\n성형 · 건조·풀무 · 유약·소성 · 경영·공방 네 계열에서 실력 보정과 설비를 키워요.' }
     ];
     // 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번
     var T3 = { goal: '시즌 이벤트 알아보기', go: 'Season', pages: ['Season'], ic: '🌸', body: '시즌 이벤트는 기간 한정으로 열려요.\n\n시즌 의뢰를 납품하면 꽃잎을 받고, 꽃잎으로 한정 유약·문양·가구·재료를 교환해요.\n기간이 끝나면 사라지니 남은 기간을 확인하세요.' };

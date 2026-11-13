@@ -237,7 +237,7 @@ class Component extends DCLogic {
     });
     var toggles = [
       { k: 'vib', label: '진동', desc: '물레 성공·실패, 가마 열기 때 진동' },
-      { k: 'notify', label: '완료 알림', desc: '건조·초벌·소성이 끝나면 알림' },
+      { k: 'notify', label: '완료 알림', desc: '건조·소성이 끝나면 알림' },
       { k: 'hints', label: '조작 가이드', desc: '물레 양손 잡기 등 처음 조작 안내 보기' }
     ].map(function (d) {
       var on = st[d.k] !== false;

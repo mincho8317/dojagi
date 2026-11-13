@@ -436,7 +436,7 @@ class Component extends DCLogic {
       } else { keep.push(it); }
     });
     if (!moved.length) { return 0; }
-    this.setG({ dryList: keep, bisqueList: (g.bisqueList || []).concat(moved) });
+    this.setG({ dryList: keep, glazeList: (g.glazeList || []).concat(moved) });
     var froms = moved.map(function (it) { var ix = -1; (g.dryList || []).forEach(function (x, j) { if (x.id === it.id) { ix = j; } }); return self.rootPt('dslot-' + ix, 0, -14) || self.stagePt(195, 300); });
     this.flyStart(moved.map(function (it) { return self.potOf(it, self.fillOf(it, 'dry')); }), froms);
     return moved.length;
@@ -491,14 +491,14 @@ class Component extends DCLogic {
         state: STATE[z].t,
         stateStyle: 'font-family:Jua,sans-serif;font-size:13px;color:' + STATE[z].c,
         marker: 'position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:#2B1A0F;border:1px solid #FFF4DE;left:' + Math.min(100, pct) + '%',
-        btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 초벌 대기로') : '아직 질어요',
+        btn: canPull ? (z === 'early' ? '지금 빼기 (위험)' : '빼서 유약 대기로') : '아직 질어요',
         btnStyle: btnOn + (canPull ? (z === 'early' ? 'background:#D9A93A;border:3px solid #8A6410;box-shadow:0 3px 0 #8A6410;color:#2B1A0F;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;') : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
         card: 'box-sizing:border-box;height:186px;padding:10px;border-radius:18px;background:#FFF4DE;border:3px solid ' + (z === 'ok' ? '#2F6328' : '#5B3A24') + ';box-shadow:0 4px 0 rgba(43,26,15,.4)' + (z === 'ok' ? ',0 0 0 3px #A9D69E' : '') + ';display:flex;flex-direction:column;gap:8px',
         pull: (function (id, p, zz) {
           return function () {
             if (p < 50) { self.say('아직 질어서 들면 형태가 무너져요'); return; }
             self.pull([id]);
-            self.say(zz === 'early' ? '반건조로 뺐어요 · 건조·소성 중 파손 위험이 올라요' : '완전 건조 · 초벌 대기로 옮겼어요');
+            self.say(zz === 'early' ? '반건조로 뺐어요 · 재벌 때 깨질 위험이 올라요' : '완전 건조 · 유약 대기로 옮겼어요');
           };
         })(it.id, pct, z)
       });
@@ -583,8 +583,8 @@ class Component extends DCLogic {
       selOn: !!selV, selNone: !selV, sel: selV || { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, name: '', clay: '', stars: '', state: '', pct: 0, stateStyle: '', btn: '', btnStyle: '', pull: function () {} },
       selHint: list.length ? '선반의 기물을 눌러 상태를 확인' : '선반이 비어 있어요 · 위 대기함에서 그릇을 끌어다 놓아요',
       count: list.length,
-      glazeQ: (g.bisqueList || []).length,
-      goBisque: function () { self.setG({ mainFocus: 'bisque' }); },
+      glazeQ: (g.glazeList || []).length,
+      goBisque: function () { self.setG({ mainFocus: 'glaze' }); },
       doneCount: doneIds.length,
       bf: (function () {
         var now0 = Date.now(), drying = list.filter(function (x) { return now0 - x.start < 1800000; });
@@ -610,12 +610,12 @@ class Component extends DCLogic {
       fanSub: (function () { var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); }); return mx > 0 ? (self.jadeCost(mx) ? '옥 ' + self.jadeCost(mx).toLocaleString() : '무료') + ' · ' + self.fmtLeft(mx) + ' 남음' : '다 말랐어요'; })(),
       fan: function () {
         var mx = 0; list.forEach(function (x) { mx = Math.max(mx, x.start + 1800000 - Date.now()); });
-        if (!list.length || mx <= 0) { self.say(list.length ? '이미 다 말랐어요 · 빼서 초벌로 보내요' : '말리고 있는 작품이 없어요'); return; }
+        if (!list.length || mx <= 0) { self.say(list.length ? '이미 다 말랐어요 · 빼서 유약대로 보내요' : '말리고 있는 작품이 없어요'); return; }
         self.jadeSpend(self.jadeCost(mx), function (nj) { var now0 = Date.now(); self.setG({ jadeV: 2, jade: nj, dryList: self.state.g.dryList.map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } if (now0 - x.start < 1800000) { y.start = now0 - 1800000; } return y; }) }); });
       },
       pullAll: function () {
         var n = self.pull(doneIds);
-        self.say(n ? n + '점을 초벌 대기로 옮겼어요' : '완전히 마른 작품이 없어요');
+        self.say(n ? n + '점을 유약 대기로 옮겼어요' : '완전히 마른 작품이 없어요');
       },
       toast: this.state.toast,
       toastOn: this.state.toast !== ''
@@ -725,7 +725,7 @@ class Component extends DCLogic {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
-      { id: 'bisque', step: '초벌', href: 'Bisque.dc.html' }, { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
+      { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '재벌', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];

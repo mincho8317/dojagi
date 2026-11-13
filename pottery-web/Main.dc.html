@@ -429,7 +429,6 @@ class Component extends DCLogic {
     return {
       wheel: { label: '물레', res: 'OBJ_WHEEL_TOP', img: '_blob/0c869febe97b601c467489f5294c75f0.webp', w: 2, h: 2, core: true },
       dry: { label: '건조대', res: 'OBJ_DRYRACK_TOP', img: '_blob/83573d45657fe69185d862cb7459a206.webp', w: 2, h: 1, core: true },
-      bisque: { label: '초벌 가마', short: '초벌', res: 'OBJ_BISQUE_TOP', img: '_blob/d08549886a3c3ef063c92f3f3637abb6.webp', w: 1, h: 1, core: true },
       glaze: { label: '유약대', res: 'OBJ_GLAZE_TOP', img: '_blob/b9d7849fa8f3349276dc2ec89acd3ae7.webp', w: 2, h: 1, core: true },
       kiln: { label: '재벌 가마', res: 'OBJ_KILN_TOP', img: '_blob/5cbd50f799b0c74d2e34462914dafeb0.webp', w: 2, h: 2, core: true },
       shelf: { label: '진열대', res: 'OBJ_SHELF_TOP', img: '_blob/cbe4800968084b8771ad7d717e3c7d96.webp', w: 2, h: 1, core: true },
@@ -446,7 +445,7 @@ class Component extends DCLogic {
   flowDef() {
     return [
       { id: 'wheel', step: '성형' }, { id: 'dry', step: '건조' }, { id: 'trim', step: '굽깎기' },
-      { id: 'bisque', step: '초벌' }, { id: 'glaze', step: '유약' }, { id: 'brush', step: '붓칠' },
+      { id: 'glaze', step: '유약' }, { id: 'brush', step: '붓칠' },
       { id: 'kiln', step: '재벌' }, { id: 'counter', step: '손님' }, { id: 'shelf', step: '진열' }
     ];
   }
@@ -476,7 +475,7 @@ class Component extends DCLogic {
     return null;
   }
   layoutFor(g) {
-    var base = { wheel: [0, 0, 0], dry: [2, 0, 0], bisque: [4, 0, 0], glaze: [5, 0, 0], kiln: [5, 2, 0], shelf: [0, 5, 0], counter: [3, 6, 0] };
+    var base = { wheel: [0, 0, 0], dry: [2, 0, 0], glaze: [5, 0, 0], kiln: [5, 2, 0], shelf: [0, 5, 0], counter: [3, 6, 0] };
     var stored = g.stored || {};
     var src = g.layout || base;
     var l = {};
@@ -578,7 +577,7 @@ class Component extends DCLogic {
       return 'position:absolute;white-space:nowrap;padding:2px 9px;border-radius:10px;font-family:Jua,sans-serif;font-size:11.5px;' + extra + (t === 'go' ? 'background:#4A9440;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (t === 'fire' ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24'));
     }
 
-    var SCR = { wheel: 'Wheel.dc.html', dry: 'Dry.dc.html', bisque: 'Bisque.dc.html', glaze: 'Glaze.dc.html', kiln: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', shelf: 'Display.dc.html', counter: 'Counter.dc.html' };
+    var SCR = { wheel: 'Wheel.dc.html', dry: 'Dry.dc.html', glaze: 'Glaze.dc.html', kiln: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', shelf: 'Display.dc.html', counter: 'Counter.dc.html' };
     var FN = { wheel: '성형', dry: '건조', bisque: '초벌', glaze: '유약', kiln: '재벌', shelf: '진열', counter: '손님' };
     var firstId = flow.filter(function (x) { return !!SCR[x]; })[0] || 'wheel';
     var dg = s.dg;
@@ -835,7 +834,7 @@ class Component extends DCLogic {
       trayOpt: tray.filter(function (t) { return !t.req; }),
       reqEmpty: !missing.length,
       optEmpty: !tray.filter(function (t) { return !t.req; }).length,
-      reqNote: missing.length ? '공정에 꼭 필요 · ' + missing.length + '개를 배치해야 완료할 수 있어요' : '물레·건조대·초벌·유약대·재벌·진열대·카운터',
+      reqNote: missing.length ? '공정에 꼭 필요 · ' + missing.length + '개를 배치해야 완료할 수 있어요' : '물레·건조대·유약대·재벌·진열대·카운터',
       doneStyle: 'all:unset;cursor:pointer;padding:6px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (missing.length ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5'),
       finishEdit: function () {
         if (missing.length) { self.say('필수 설비를 먼저 배치해요 · ' + missing.map(function (m) { return cat[m].label; }).join(', ')); return; }
