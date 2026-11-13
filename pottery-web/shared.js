@@ -49,6 +49,7 @@
       fitBonus: { t: '성형', l: '성형 점수 보너스', b: 0, m: 1, u: '점' },
       clayKeep: { t: '성형', l: '고급 흙 아끼기 확률', b: 0, m: 100, u: '%' },
       dryRack: { t: '건조', l: '건조대 칸', b: 3, m: 1, u: '칸' },
+      kilnSlot: { t: '소성', l: '소성가마 칸', b: 6, m: 1, u: '칸' },
       dryCut: { t: '건조', l: '건조 시간', b: 30, m: -30, u: '분' },
       fanZone: { t: '건조', l: '부채질 판정 폭', b: 22, m: 100, u: '%' },
       fanGain: { t: '건조', l: '부채질 1회 건조량', b: 45, m: 45, u: '초' },
@@ -73,57 +74,49 @@
       digWide: { t: '채집', l: '삽 한 번 파는 범위', b: 100, m: 100, u: '%' }
     };
     var RCAT = [{ id: 'form', n: '성형' }, { id: 'dry', n: '건조·풀무' }, { id: 'fire', n: '유약·소성' }, { id: 'shop', n: '경영·공방' }, { id: 'gather', n: '채집' }];
+    // 연구 트리 · 계열마다 9개 (1 · 3 · 3 · 2) · [id, 줄, 칸, 이름, 선행, 효과, 파편, 골드, 조건]
     var RROW = {
       form: [
         ['f00', 0, 1, '물레 감각', [], { snapTol: 0.01 }, 20, 0],
-        ['f10', 1, 0, '손끝 보정 I', ['f00'], { snapTol: 0.01 }, 30, 0], ['f11', 1, 1, '보정 속도 I', ['f00'], { snapRate: 0.15 }, 30, 0], ['f12', 1, 2, '형태 감각 I', ['f00'], { fitBonus: 2 }, 35, 0],
-        ['f20', 2, 0, '손끝 보정 II', ['f10'], { snapTol: 0.01 }, 50, 300], ['f21', 2, 1, '완료 판정 I', ['f11'], { doneTol: 0.005 }, 50, 300], ['f22', 2, 2, '형태 감각 II', ['f12'], { fitBonus: 2 }, 55, 300],
-        ['f30', 3, 0, '흙 절약 I', ['f20'], { clayKeep: 0.1 }, 70, 600], ['f31', 3, 1, '보정 속도 II', ['f20', 'f21'], { snapRate: 0.15 }, 70, 600], ['f32', 3, 2, '형태 감각 III', ['f22'], { fitBonus: 2 }, 75, 600],
-        ['f40', 4, 0, '손끝 보정 III', ['f30'], { snapTol: 0.015 }, 90, 1000], ['f41', 4, 1, '완료 판정 II', ['f31'], { doneTol: 0.005 }, 90, 1000], ['f42', 4, 2, '흙 절약 II', ['f32', 'f30'], { clayKeep: 0.1 }, 95, 1000],
-        ['f50', 5, 0, '보정 속도 III', ['f40'], { snapRate: 0.2 }, 120, 1600], ['f51', 5, 1, '형태 감각 IV', ['f41', 'f32'], { fitBonus: 3 }, 120, 1600], ['f52', 5, 2, '흙 절약 III', ['f42'], { clayKeep: 0.1 }, 130, 1600],
-        ['f60', 6, 0, '손끝 보정 IV', ['f50'], { snapTol: 0.015 }, 160, 2500], ['f61', 6, 1, '완료 판정 III', ['f51'], { doneTol: 0.01 }, 160, 2500], ['f62', 6, 2, '형태 감각 V', ['f52'], { fitBonus: 3 }, 170, 2500],
-        ['f70', 7, 0, '명장의 손 I', ['f60', 'f61'], { snapRate: 0.25, snapTol: 0.01 }, 220, 4000], ['f72', 7, 2, '명장의 손 II', ['f61', 'f62'], { fitBonus: 4, doneTol: 0.005 }, 220, 4000]
+        ['f10', 1, 0, '손끝 보정 I', ['f00'], { snapTol: 0.015 }, 30, 0], ['f11', 1, 1, '보정 속도 I', ['f00'], { snapRate: 0.2 }, 30, 0], ['f12', 1, 2, '형태 감각 I', ['f00'], { fitBonus: 2 }, 35, 0],
+        ['f20', 2, 0, '손끝 보정 II', ['f10'], { snapTol: 0.015 }, 60, 500], ['f21', 2, 1, '완료 판정', ['f11'], { doneTol: 0.01 }, 60, 500], ['f22', 2, 2, '형태 감각 II', ['f12'], { fitBonus: 3 }, 65, 500],
+        ['f30', 3, 0, '흙 절약', ['f20', 'f21'], { clayKeep: 0.2 }, 140, 2500], ['f32', 3, 2, '명장의 손', ['f21', 'f22'], { fitBonus: 4, snapRate: 0.25 }, 160, 3000]
       ],
       dry: [
         ['d00', 0, 1, '그늘 말리기', [], { dryCut: 0.05 }, 20, 0],
-        ['d10', 1, 0, '부채 손목 I', ['d00'], { fanZone: 0.02 }, 30, 0], ['d11', 1, 1, '건조대 증설 I', ['d00'], { dryRack: 3 }, 30, 3000, 'dryUp'], ['d12', 1, 2, '풀무 단련 I', ['d00'], { bqCut: 0.05 }, 30, 0],
-        ['d20', 2, 0, '큰 부채 I', ['d10'], { fanGain: 0.1 }, 45, 300], ['d21', 2, 1, '통풍 선반 I', ['d11'], { dryCut: 0.05 }, 50, 300], ['d22', 2, 2, '천천히 데우기 I', ['d12'], { bqSafe: 0.03 }, 50, 300],
-        ['d30', 3, 0, '부채 손목 II', ['d20'], { fanZone: 0.02 }, 65, 600], ['d31', 3, 1, '건조대 증설 II', ['d21', 'd20'], { dryRack: 3 }, 120, 12000], ['d32', 3, 2, '풀무 단련 II', ['d22'], { bqCut: 0.05 }, 65, 600],
-        ['d40', 4, 0, '큰 부채 II', ['d30'], { fanGain: 0.1 }, 85, 1000], ['d41', 4, 1, '통풍 선반 II', ['d31'], { dryCut: 0.05 }, 85, 1000], ['d42', 4, 2, '천천히 데우기 II', ['d32'], { bqSafe: 0.03 }, 85, 1000],
-        ['d50', 5, 0, '부채 손목 III', ['d40'], { fanZone: 0.03 }, 110, 1600], ['d51', 5, 1, '통풍 선반 III', ['d41', 'd40'], { dryCut: 0.05 }, 110, 1600], ['d52', 5, 2, '풀무 단련 III', ['d42'], { bqCut: 0.05 }, 110, 1600],
-        ['d60', 6, 0, '큰 부채 III', ['d50'], { fanGain: 0.15 }, 150, 2500], ['d61', 6, 1, '바람길 설계', ['d51'], { dryCut: 0.05, fanZone: 0.02 }, 150, 2500], ['d62', 6, 2, '천천히 데우기 III', ['d52'], { bqSafe: 0.03 }, 150, 2500],
-        ['d70', 7, 0, '부채 장인', ['d60', 'd61'], { fanGain: 0.15, fanZone: 0.02 }, 200, 4000], ['d72', 7, 2, '풀무 장인', ['d61', 'd62'], { bqCut: 0.1, bqSafe: 0.03 }, 200, 4000]
+        ['d10', 1, 0, '부채 손목', ['d00'], { fanZone: 0.03 }, 30, 0], ['d11', 1, 1, '통풍 선반 I', ['d00'], { dryCut: 0.1 }, 30, 0], ['d12', 1, 2, '풀무 단련 I', ['d00'], { bqCut: 0.05 }, 30, 0],
+        ['d20', 2, 0, '큰 부채', ['d10'], { fanGain: 0.15 }, 60, 500], ['d21', 2, 1, '통풍 선반 II', ['d11'], { dryCut: 0.1 }, 60, 500], ['d22', 2, 2, '천천히 데우기', ['d12'], { bqSafe: 0.05 }, 60, 500],
+        ['d30', 3, 0, '부채 장인', ['d20', 'd21'], { fanGain: 0.15, fanZone: 0.03 }, 140, 2500], ['d32', 3, 2, '풀무 장인', ['d21', 'd22'], { bqCut: 0.1, bqSafe: 0.05 }, 140, 2500]
       ],
       fire: [
-        ['g00', 0, 1, '유약 감각', [], { glazeZone: 25 }, 20, 0],
-        ['g10', 1, 0, '온도 읽기 I', ['g00'], { kilnTol: 5 }, 35, 0], ['g11', 1, 1, '담금 손 I', ['g00'], { glazeZone: 25 }, 30, 0], ['g12', 1, 2, '발색 연구 I', ['g00'], { colorMin: 3 }, 35, 0],
-        ['g20', 2, 0, '가마 단열 I', ['g10'], { kilnCut: 0.05 }, 50, 400], ['g21', 2, 1, '가마 다지기 I', ['g11'], { breakCut: 0.01 }, 50, 400], ['g22', 2, 2, '발색 연구 II', ['g12'], { colorMin: 3 }, 55, 400],
-        ['g30', 3, 0, '온도 읽기 II', ['g20'], { kilnTol: 5 }, 70, 700], ['g31', 3, 1, '담금 손 II', ['g21', 'g20'], { glazeZone: 25 }, 70, 700], ['g32', 3, 2, '요변 연구 I', ['g22'], { yohen: 0.1 }, 80, 900],
-        ['g40', 4, 0, '가마 단열 II', ['g30'], { kilnCut: 0.05 }, 90, 1200], ['g41', 4, 1, '가마 다지기 II', ['g31'], { breakCut: 0.01 }, 90, 1200], ['g42', 4, 2, '발색 연구 III', ['g32'], { colorMin: 4 }, 95, 1200],
-        ['g50', 5, 0, '담금 손 III', ['g40'], { glazeZone: 25 }, 120, 1800], ['g51', 5, 1, '가마 단열 III', ['g41', 'g40'], { kilnCut: 0.1 }, 120, 1800], ['g52', 5, 2, '요변 연구 II', ['g42'], { yohen: 0.1 }, 130, 1800],
-        ['g60', 6, 0, '온도 읽기 III', ['g50'], { kilnTol: 5 }, 160, 2800], ['g61', 6, 1, '가마 다지기 III', ['g51'], { breakCut: 0.01 }, 160, 2800], ['g62', 6, 2, '발색 연구 IV', ['g52'], { colorMin: 5 }, 170, 2800],
-        ['g70', 7, 0, '불의 장인', ['g60', 'g61'], { kilnCut: 0.1, glazeZone: 25 }, 220, 4500], ['g72', 7, 2, '빛깔의 장인', ['g61', 'g62'], { colorMin: 5, yohen: 0.1 }, 220, 4500]
+        ['g00', 0, 1, '온도 감각', [], { kilnTol: 5 }, 20, 0],
+        ['g10', 1, 0, '가마 단열 I', ['g00'], { kilnCut: 0.05 }, 35, 0], ['g11', 1, 1, '가마 다지기 I', ['g00'], { breakCut: 0.01 }, 35, 0], ['g12', 1, 2, '발색 연구 I', ['g00'], { colorMin: 3 }, 35, 0],
+        ['g20', 2, 0, '가마 단열 II', ['g10'], { kilnCut: 0.1 }, 65, 600], ['g21', 2, 1, '가마 다지기 II', ['g11'], { breakCut: 0.015 }, 65, 600], ['g22', 2, 2, '발색 연구 II', ['g12'], { colorMin: 4 }, 65, 600],
+        ['g30', 3, 0, '불의 장인', ['g20', 'g21'], { kilnCut: 0.1, kilnTol: 5 }, 160, 3000], ['g32', 3, 2, '빛깔의 장인', ['g21', 'g22'], { colorMin: 5, yohen: 0.2 }, 160, 3000]
       ],
       shop: [
         ['s00', 0, 1, '손님 응대', [], { sell: 0.03 }, 20, 0],
-        ['s10', 1, 0, '값 매기기 I', ['s00'], { sell: 0.03 }, 30, 0], ['s11', 1, 1, '이웃 인심 I', ['s00'], { questGold: 0.05 }, 30, 0], ['s12', 1, 2, '파편 줍기 I', ['s00'], { shard: 0.1 }, 30, 0],
-        ['s20', 2, 0, '입소문 I', ['s10'], { fame: 0.1 }, 45, 400], ['s21', 2, 1, '이웃 인심 II', ['s11'], { questGold: 0.05 }, 50, 400], ['s22', 2, 2, '파편 줍기 II', ['s12'], { shard: 0.1 }, 45, 400],
-        ['s30', 3, 0, '값 매기기 II', ['s20'], { sell: 0.04 }, 65, 800], ['s31', 3, 1, '공방 확장', ['s21', 's20'], { expand: 1 }, 150, 80000, 'fame3'], ['s32', 3, 2, '파편 줍기 III', ['s22'], { shard: 0.15 }, 65, 800],
-        ['s40', 4, 0, '입소문 II', ['s30'], { fame: 0.1 }, 85, 1200], ['s41', 4, 1, '이웃 인심 III', ['s31'], { questGold: 0.1 }, 90, 1500], ['s42', 4, 2, '값 매기기 III', ['s32', 's30'], { sell: 0.04 }, 90, 1500],
-        ['s50', 5, 0, '단골 장부', ['s40'], { sell: 0.05 }, 110, 2000], ['s51', 5, 1, '입소문 III', ['s41', 's40'], { fame: 0.15 }, 110, 2000], ['s52', 5, 2, '파편 줍기 IV', ['s42'], { shard: 0.15 }, 110, 2000],
-        ['s60', 6, 0, '값 매기기 IV', ['s50'], { sell: 0.05 }, 150, 3000], ['s61', 6, 1, '이웃 인심 IV', ['s51'], { questGold: 0.1 }, 150, 3000], ['s62', 6, 2, '입소문 IV', ['s52'], { fame: 0.15 }, 150, 3000],
-        ['s70', 7, 0, '공방 간판', ['s60', 's61'], { sell: 0.08, fame: 0.1 }, 220, 5000], ['s72', 7, 2, '마을의 공방', ['s61', 's62'], { questGold: 0.15, shard: 0.2 }, 220, 5000]
+        ['s10', 1, 0, '값 매기기 I', ['s00'], { sell: 0.05 }, 30, 0], ['s11', 1, 1, '이웃 인심 I', ['s00'], { questGold: 0.1 }, 30, 0], ['s12', 1, 2, '파편 줍기 I', ['s00'], { shard: 0.15 }, 30, 0],
+        ['s20', 2, 0, '입소문', ['s10'], { fame: 0.15 }, 60, 500], ['s21', 2, 1, '이웃 인심 II', ['s11'], { questGold: 0.1 }, 60, 500], ['s22', 2, 2, '파편 줍기 II', ['s12'], { shard: 0.2 }, 60, 500],
+        ['s30', 3, 0, '공방 간판', ['s20', 's21'], { sell: 0.1, fame: 0.15 }, 150, 3000], ['s32', 3, 2, '마을의 공방', ['s21', 's22'], { questGold: 0.15, shard: 0.2 }, 150, 3000]
       ],
       gather: [
         ['c00', 0, 1, '채집 요령', [], { tixMax: 1 }, 25, 0],
-        ['c10', 1, 0, '넉넉한 시간 I', ['c00'], { gTime: 3 }, 40, 300], ['c11', 1, 1, '콤보 감각 I', ['c00'], { comboUp: 0.5 }, 40, 300], ['c12', 1, 2, '황금 눈썰미 I', ['c00'], { goldUp: 0.25 }, 40, 300],
-        ['c20', 2, 0, '희귀 감별 I', ['c10'], { rareUp: 0.03 }, 60, 600], ['c21', 2, 1, '채집 가방', ['c11'], { tixMax: 1 }, 70, 800], ['c22', 2, 2, '황금 눈썰미 II', ['c12'], { goldUp: 0.25 }, 60, 600],
-        ['c30', 3, 0, '넓은 삽', ['c20', 'c21'], { digWide: 0.12 }, 90, 1200], ['c31', 3, 1, '희귀 감별 II', ['c21'], { rareUp: 0.03 }, 90, 1200], ['c32', 3, 2, '넉넉한 시간 II', ['c22'], { gTime: 3 }, 100, 1500],
-        ['c40', 4, 1, '채집 장인', ['c30', 'c31', 'c32'], { tixMax: 1, comboUp: 0.5, rareUp: 0.03 }, 160, 3000]
+        ['c10', 1, 0, '넉넉한 시간 I', ['c00'], { gTime: 3 }, 40, 300], ['c11', 1, 1, '콤보 감각', ['c00'], { comboUp: 0.5 }, 40, 300], ['c12', 1, 2, '황금 눈썰미 I', ['c00'], { goldUp: 0.25 }, 40, 300],
+        ['c20', 2, 0, '희귀 감별', ['c10'], { rareUp: 0.05 }, 70, 800], ['c21', 2, 1, '채집 가방', ['c11'], { tixMax: 1 }, 70, 800], ['c22', 2, 2, '황금 눈썰미 II', ['c12'], { goldUp: 0.25 }, 70, 800],
+        ['c30', 3, 0, '넓은 삽', ['c20', 'c21'], { digWide: 0.12, gTime: 3 }, 140, 2500], ['c32', 3, 2, '채집 장인', ['c21', 'c22'], { tixMax: 1, comboUp: 0.5, rareUp: 0.03 }, 160, 3000]
       ]
     };
+    // 설비 확장 · 상점에서 골드로 산다 (연구 트리에는 없음) · 효과는 연구와 같은 방식으로 합산
+    var UPG = [
+      { id: 'u_dry1', name: '건조대 증설 I', desc: '건조대 3칸 → 6칸', fx: { dryRack: 3 }, gold: 3000, req: [], cond: 'dryUp' },
+      { id: 'u_dry2', name: '건조대 증설 II', desc: '건조대 6칸 → 9칸', fx: { dryRack: 3 }, gold: 12000, req: ['u_dry1'], cond: '' },
+      { id: 'u_kiln', name: '소성가마 증설', desc: '가마 6칸 → 9칸 (아랫줄 열기)', fx: { kilnSlot: 3 }, gold: 8000, req: [], cond: '' },
+      { id: 'u_exp', name: '공방 확장', desc: '공방 바닥 7×7 → 7×9', fx: { expand: 1 }, gold: 80000, req: [], cond: 'fame3' }
+    ];
     var RNODE = {};
     RCAT.forEach(function (c) { RROW[c.id].forEach(function (r) { RNODE[r[0]] = { id: r[0], cat: c.id, row: r[1], col: r[2], name: r[3], req: r[4], fx: r[5], shards: r[6], gold: r[7], cond: r[8] || '' }; }); });
+    UPG.forEach(function (u) { RNODE[u.id] = { id: u.id, cat: 'upg', row: -1, col: -1, name: u.name, req: u.req, fx: u.fx, shards: 0, gold: u.gold, cond: u.cond, upg: true }; });
     var RCOND = {
       dryUp: { t: '튜토리얼 후 도자기 6점 굽기', ok: function (g) { return !!g.dryUpReady; } },
       fame3: { t: '명성 Lv 3', ok: function (g) { return (g.fameLv || 1) >= 3; } }
@@ -451,7 +444,7 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
+    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf };
     return this._ql;
   };
   // </qlib>
@@ -510,8 +503,16 @@
       for (var ok in old) { var mm = /^(tech|glaze|shop)(\d)$/.exec(ok); if (old[ok] && mm) { refund += (OLD[mm[1]] || [])[+mm[2]] || 0; } }
       var res = {}; for (var rk in (g1.res || {})) { res[rk] = g1.res[rk]; }
       var legacy = (g1.firings || 0) > 0 || Object.keys(g1.pieces || {}).length > 6;
-      if (legacy) { res.d11 = true; res.d31 = true; }
+      if (legacy) { res.u_dry1 = true; res.u_dry2 = true; }
       patch({ resV: 2, res: res, shards: (g1.shards || 0) + refund, resRefund: refund, firedTotal: g1.firedTotal || 0 });
+    }
+    // 1-3) 설비 확장을 상점(골드)으로 옮김 · 옛 연구 건조대 증설·공방 확장은 그대로 인정, 기존 공방은 가마 9칸 유지
+    if (g0.pieces && g0.resV !== 3) {
+      var g3 = load(), r3 = {}; for (var rk3 in (g3.res || {})) { r3[rk3] = g3.res[rk3]; }
+      if (r3.d31) { r3.u_dry1 = true; r3.u_dry2 = true; } else if (r3.d11 && (g3.resV === 2)) { r3.u_dry1 = true; }
+      if (r3.s31) { r3.u_exp = true; }
+      if ((g3.firings || 0) > 0) { r3.u_kiln = true; }
+      patch({ resV: 3, res: r3 });
     }
     // 2) 마지막 제작 공정 기억 + 하단 「제작」 버튼을 마지막 공정으로
     if (CRAFT[PAGE]) { try { localStorage.setItem('lastCraft', PAGE === 'KilnOpen' ? 'Kiln' : PAGE); } catch (e) {} }
@@ -535,13 +536,13 @@
       if (g.firedAtTut === undefined) { patch({ firedAtTut: fired }); return; }
       var need = (g.resTune && g.resTune.dryUnlockFired) || 6;
       if (!g.dryUpReady && fired - g.firedAtTut >= need) { patch({ dryUpReady: true }); g = load(); }
-      if (g.dryUpReady && !g.dryUpSeen && !(g.res || {}).d11) {
+      if (g.dryUpReady && !g.dryUpSeen && !(g.res || {}).u_dry1) {
         if (PAGE === 'KilnOpen' || document.querySelector('.tut-ov') || document.querySelector('.up-ov') || document.querySelector('.jade-ov')) { return; }
         patch({ dryUpSeen: true });
         var ov = document.createElement('div'); ov.className = 'up-ov';
         ov.setAttribute('style', 'position:fixed;inset:0;z-index:10001;background:rgba(26,15,8,.6);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif');
-        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>연구 「건조·풀무」에서 <b>건조대 증설</b>을 열 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Research.dc.html" data-sb="1" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">연구 보러 가기</a></div></div>';
-        ov.addEventListener('click', function (e) { var x = e.target.getAttribute && e.target.getAttribute('data-x'); if (x === 'close' || e.target === ov) { ov.remove(); } if (x === 'go') { try { localStorage.setItem('resFocus', 'd11'); } catch (e2) {} } });
+        ov.innerHTML = '<div role="dialog" aria-label="건조대 업그레이드 해금" style="width:300px;box-sizing:border-box;padding:20px 18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;text-align:center;color:#2B1A0F"><div style="font-size:40px">🪵</div><div style="font-size:21px;margin:4px 0">건조대 업그레이드 가능!</div><div style="font-family:Noto Sans KR,sans-serif;font-size:13.5px;line-height:1.55;color:#5B3A24">도자기 ' + need + '점을 구워 냈어요.<br>상점 「설비」에서 골드로 <b>건조대 증설</b>을 살 수 있어요.</div><div style="display:flex;gap:8px;margin-top:14px"><button type="button" data-x="close" style="all:unset;cursor:pointer;flex:1;padding:12px 0;border-radius:14px;border:3px solid #8A6440;color:#5B3A24;font-size:16px">나중에</button><a href="Shop.dc.html" data-sb="1" data-x="go" style="flex:1.3;padding:12px 0;border-radius:14px;background:#4A9440;border:3px solid #2F6328;color:#FFFDF5;font-size:16px;text-decoration:none">상점 보러 가기</a></div></div>';
+        ov.addEventListener('click', function (e) { var x = e.target.getAttribute && e.target.getAttribute('data-x'); if (x === 'close' || e.target === ov) { ov.remove(); } if (x === 'go') {  } });
         document.body.appendChild(ov);
         try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
       }
@@ -858,7 +859,7 @@
         var gzBtn = qsel('button[aria-label^="유약 고르기 · 지금"]')();
         if (qsel('div[role=dialog] button[aria-label$="청자유"]')()) { act('gzCel', true, qsel('div[role=dialog] button[aria-label$="청자유"]'), '「📋 의뢰」 태그가 붙은 유약이 의뢰 조건이에요 · 민 씨가 원한 청자유를 골라요'); }
         else if (gzBtn && (gzBtn.getAttribute('aria-label') || '').indexOf('청자') < 0) { act('gzOpen', true, qsel('button[aria-label^="유약 고르기 · 지금"]'), '지금은 기본 백자유예요 · 눌러서 유약을 바꿔요'); }
-        else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 유약에 담그고, 그릇 위 원형 게이지가 초록일 때 위로 올려 꺼내요'); }
+        else { act('gzDip', true, qsel('[aria-label^="도자기를 아래로"]'), '도자기를 아래로 끌어 원하는 만큼 유약에 담그고, 위로 올려 꺼내요 · 깊이 담글수록 넓게 입혀져요'); }
       }
       if (PAGE === 'Kiln' && t === 5) {
         var filled = 0, kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c]) { filled++; } }
@@ -1249,4 +1250,117 @@
       return 'url(#' + id + ')';
     } catch (e) { return bot; }
   };
+  // ── 의뢰 연출 : 의뢰를 받으면 의뢰서가 하단 「의뢰」 탭으로, 보상을 받으면 재화가 재화 표시로 날아간다 ──
+  // 저장(localStorage) 직전·직후 상태를 비교해서 감지하므로 화면마다 따로 연결할 필요가 없다
+  (function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__qfxBooted) { return; }
+    window.__qfxBooted = true;
+    var KEY = 'pottery-proto-v1';
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    var ON = { Counter: 1, Commission: 1, Main: 1, Season: 1 };
+    if (!ON[PAGE]) { return; }
+    var lastPt = null;
+    document.addEventListener('pointerdown', function (e) { lastPt = { x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
+    function parse(v) { try { return JSON.parse(v || 'null'); } catch (e) { return null; } }
+    function lib() { try { return S.qlib.call(window.__qfxCtx || (window.__qfxCtx = {})); } catch (e) { return null; } }
+    function nAct(g) { var L = lib(); try { return L && g ? L.active(g).length : 0; } catch (e) { return 0; } }
+    function fameOf(g) { return ((g && g.fameLv) || 1) * 100000 + ((g && g.fameXp) || 0); }
+    var orig = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (k, v) {
+      var before = null;
+      if (this === window.localStorage && k === KEY) { before = parse(window.localStorage.getItem(KEY)); }
+      var r = orig.apply(this, arguments);
+      if (before) { try { check(before, parse(v)); } catch (e) {} }
+      return r;
+    };
+    function check(a, b) {
+      if (!b) { return; }
+      var acc = nAct(b) > nAct(a) && (b.tut == null || b.tut >= 1 || PAGE === 'Counter');
+      var dg = (b.gold || 0) - (a.gold || 0), ds = (b.shards || 0) - (a.shards || 0), df = fameOf(b) > fameOf(a);
+      var paid = dg > 0 && (ds > 0 || df) && PAGE !== 'Main';
+      if (acc) { setTimeout(scrollFly, 0); }
+      if (paid) { setTimeout(function () { coinFly(dg, ds, (a.gold || 0), (a.shards || 0)); }, acc ? 500 : 0); }
+    }
+    function startPt() {
+      if (lastPt && Date.now() - lastPt.t < 4000) { return { x: lastPt.x, y: lastPt.y }; }
+      return { x: window.innerWidth / 2, y: window.innerHeight * 0.6 };
+    }
+    function navRect() { var n = document.querySelector('nav[aria-label="주 메뉴"]'); return n ? n.getBoundingClientRect() : { left: 0, width: window.innerWidth, top: window.innerHeight - 90, height: 90 }; }
+    function k() { return navRect().width / 390 || 1; }
+    function css() {
+      if (document.getElementById('qfx-css')) { return; }
+      var st = document.createElement('style'); st.id = 'qfx-css';
+      st.textContent = '.qfx{position:fixed;z-index:10050;pointer-events:none;left:0;top:0;will-change:transform,opacity}' +
+        '@keyframes qfxBump{0%,100%{transform:scale(1)}40%{transform:scale(1.25)}}' +
+        '.qfx-bump{animation:qfxBump .45s ease-out}' +
+        '.qfx-hud{position:fixed;z-index:10040;pointer-events:none;display:flex;flex-direction:column;gap:5px;align-items:flex-end;transform-origin:100% 0;transition:opacity .35s,transform .35s}' +
+        '.qfx-hud span{display:flex;align-items:center;gap:5px;padding:4px 11px;border-radius:14px;background:rgba(43,26,15,.9);border:2px solid #FFD66B;font-family:Jua,sans-serif;font-size:16px;color:#FFE7A8;box-shadow:0 3px 8px rgba(0,0,0,.35)}';
+      document.head.appendChild(st);
+    }
+    function fly(html, from, to, dur, delay, size, done) {
+      var el = document.createElement('div'); el.className = 'qfx';
+      el.style.fontSize = Math.round(size * k()) + 'px'; el.innerHTML = html;
+      el.style.transform = 'translate(' + (from.x - 14) + 'px,' + (from.y - 14) + 'px) scale(.4)'; el.style.opacity = '0';
+      document.body.appendChild(el);
+      var mx = (from.x + to.x) / 2 + (Math.random() - 0.5) * 120 * k(), my = Math.min(from.y, to.y) - 90 * k();
+      var t0 = performance.now() + (delay || 0);
+      function step(t) {
+        var u = (t - t0) / dur; if (u < 0) { requestAnimationFrame(step); return; }
+        if (u >= 1) { el.remove(); if (done) { done(); } return; }
+        var e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2, i = 1 - e;
+        var x = i * i * from.x + 2 * i * e * mx + e * e * to.x, y = i * i * from.y + 2 * i * e * my + e * e * to.y;
+        var sc = u < 0.15 ? 0.4 + u / 0.15 * 0.9 : 1.3 - 0.6 * u;
+        el.style.opacity = u > 0.9 ? String((1 - u) / 0.1) : '1';
+        el.style.transform = 'translate(' + (x - 14) + 'px,' + (y - 14) + 'px) scale(' + sc.toFixed(2) + ') rotate(' + Math.round(u * (html.indexOf('📜') >= 0 ? 360 : 0)) + 'deg)';
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    function bump(el) { if (!el) { return; } el.classList.remove('qfx-bump'); void el.offsetWidth; el.classList.add('qfx-bump'); }
+    function center(el) { var r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+    function scrollFly() {
+      css();
+      var tab = document.querySelector('nav[aria-label="주 메뉴"] a[href="Commission.dc.html"]');
+      var to = tab ? center(tab) : { x: window.innerWidth * 0.7, y: window.innerHeight - 40 };
+      var from = startPt();
+      try { window.__sfx && window.__sfx('whoosh'); } catch (e) {}
+      fly('<span style="display:inline-block;padding:6px 8px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;box-shadow:0 3px 6px rgba(0,0,0,.35);line-height:1">📜</span>', from, to, 750, 0, 30, function () {
+        bump(tab); try { window.__sfx && window.__sfx('ok'); } catch (e) {}
+        if (tab) { var t = document.createElement('div'); t.className = 'qfx'; var c = center(tab); t.style.cssText += ';font-family:Jua,sans-serif;font-size:' + Math.round(14 * k()) + 'px;color:#FFE7A8;text-shadow:0 2px 0 #2B1A0F;transform:translate(' + (c.x - 10) + 'px,' + (c.y - 40 * k()) + 'px);transition:transform .8s,opacity .8s'; t.textContent = '+1'; document.body.appendChild(t); requestAnimationFrame(function () { t.style.transform = 'translate(' + (c.x - 10) + 'px,' + (c.y - 70 * k()) + 'px)'; t.style.opacity = '0'; }); setTimeout(function () { t.remove(); }, 900); }
+      });
+    }
+    function chip(re) { var a = [].slice.call(document.querySelectorAll('a[aria-label],span[aria-label],div[aria-label]')).filter(function (x) { return re.test(x.getAttribute('aria-label') || '') && x.getBoundingClientRect().width > 0; }); return a[0] || null; }
+    function coinFly(dg, ds, g0, s0) {
+      css();
+      var gChip = chip(/^골드/), sChip = chip(/^파편/), hud = null, gSpan = null, sSpan = null;
+      if (!gChip || (ds > 0 && !sChip)) {
+        var nr = navRect(), kk = k();
+        hud = document.createElement('div'); hud.className = 'qfx-hud';
+        hud.style.right = Math.max(0, window.innerWidth - (nr.left + nr.width) + 10 * kk) + 'px';
+        hud.style.top = Math.round(nr.top - (844 - 92 - 64) * kk) + 'px';
+        hud.style.transform = 'scale(' + kk.toFixed(3) + ') translateY(-8px)'; hud.style.opacity = '0';
+        gSpan = document.createElement('span'); gSpan.innerHTML = '🪙 <b style="font-weight:400">' + g0.toLocaleString() + '</b>'; hud.appendChild(gSpan);
+        if (ds > 0) { sSpan = document.createElement('span'); sSpan.innerHTML = '🏺 <b style="font-weight:400">' + s0.toLocaleString() + '</b>'; hud.appendChild(sSpan); }
+        document.body.appendChild(hud);
+        requestAnimationFrame(function () { hud.style.opacity = '1'; hud.style.transform = 'scale(' + kk.toFixed(3) + ')'; });
+        gChip = gSpan; sChip = sSpan;
+      }
+      var from = startPt(), N = Math.min(10, 4 + Math.floor(dg / 800)), got = 0;
+      function count(sp, a, b, t) { if (!sp || !sp.querySelector) { return; } var bb = sp.querySelector('b'); if (!bb) { return; } var t0 = performance.now(); (function st(n) { var u = Math.min(1, (n - t0) / t); bb.textContent = Math.round(a + (b - a) * u).toLocaleString(); if (u < 1) { requestAnimationFrame(st); } })(t0); }
+      setTimeout(function () {
+        for (var i = 0; i < N; i++) {
+          (function (i) {
+            var off = { x: from.x + (Math.random() - 0.5) * 60 * k(), y: from.y + (Math.random() - 0.5) * 40 * k() };
+            fly('🪙', off, center(gChip), 700, i * 70, 24, function () { got++; bump(gChip); try { if (got % 2 === 1) { window.__sfx && window.__sfx('coin'); } } catch (e) {} if (got === 1) { count(gSpan, g0, g0 + dg, 650); } });
+          })(i);
+        }
+        if (ds > 0 && sChip) {
+          for (var j = 0; j < 4; j++) {
+            (function (j) { fly('🏺', { x: from.x + (Math.random() - 0.5) * 50 * k(), y: from.y }, center(sChip), 750, 200 + j * 90, 22, function () { bump(sChip); if (j === 0) { count(sSpan, s0, s0 + ds, 550); } }); })(j);
+          }
+        }
+        if (hud) { setTimeout(function () { hud.style.opacity = '0'; setTimeout(function () { hud.remove(); }, 400); }, 700 + N * 70 + 1300); }
+      }, hud ? 250 : 0);
+    }
+  })();
 })();

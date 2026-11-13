@@ -102,6 +102,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
             <sc-if value="{{cell.filled}}" hint-placeholder-val="{{true}}">
               <svg width="46" height="46" viewBox="{{cell.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{cell.pot.shCy}}" rx="{{cell.pot.shRx}}" ry="{{cell.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{cell.pot.d}}" fill="{{cell.pot.fill}}"></path><path d="{{cell.pot.d}}" fill="url(#potTopLight)"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.rings}}"></path><path d="{{cell.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{cell.pot.grainOp}}"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.foot}}" fill-opacity="{{cell.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.drip}}" fill-opacity="{{cell.pot.dripOp}}" clip-path="url(#potDrip)"></path><path d="{{cell.pot.d}}" fill="url(#potShade)"></path><path d="{{cell.pot.d}}" fill="none" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{cell.pot.rimY}}" rx="{{cell.pot.rimRx}}" ry="{{cell.pot.rimRy}}" fill="{{cell.pot.inner}}" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}"></ellipse></svg>
             </sc-if>
+            <sc-if value="{{cell.locked}}" hint-placeholder-val="{{false}}">
+              <span aria-hidden="true" style="font-size:20px;opacity:.75">🔒</span>
+            </sc-if>
             <sc-if value="{{cell.empty}}" hint-placeholder-val="{{true}}">
               <span aria-hidden="true" style="width:30px;height:30px;box-sizing:border-box;border:2px dashed rgba(255,231,168,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:18px;color:rgba(255,231,168,.8)">+</span>
             </sc-if>
@@ -164,26 +167,13 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <sc-if value="{{kt.done}}" hint-placeholder-val="{{false}}">
         <a href="KilnOpen.dc.html" style="box-sizing:border-box;text-align:center;padding:11px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328,0 0 14px rgba(255,214,107,.8);border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">가마 열고 꺼내기</a>
       </sc-if>
-      <sc-if value="{{kt.fan.on}}" hint-placeholder-val="{{true}}">
-        <div style="align-self:stretch;display:flex;flex-direction:column;gap:7px;padding:8px 10px 10px;border-radius:16px;background:#FCEBD8;border:2px solid #E0A06A">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#7A2F1E">{{kt.fan.title}}</span><span style="font-size:11.5px;font-weight:700;color:#7A5434;white-space:nowrap">{{kt.fan.left}}</span></div>
-          <div style="position:relative;height:26px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:13px;background:#3E2616;overflow:hidden">
-            <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
-            <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
-            <span style="{{kt.fan.bar}}"></span>
-          </div>
-          <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fan.btn}}"><span style="font-size:28px;line-height:1">🌬️</span><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.1"><span style="font-family:'Jua',sans-serif;font-size:19px">풀무질</span><span style="font-size:11.5px;font-weight:700;opacity:.9">초록 칸 유지</span></span></button>
-        </div>
-      </sc-if>
-      <sc-if value="{{kt.fan.off}}" hint-placeholder-val="{{false}}">
-        <span style="font-size:12px;font-weight:700;color:#7A5434">이번 소성은 풀무로 줄일 만큼 다 줄였어요</span>
-      </sc-if>
       <sc-if value="{{kt.busy}}" hint-placeholder-val="{{true}}">
         <button type="button" onClick="{{kt.skip}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;padding:11px 0;background:linear-gradient(#5CC9A2,#2F9A75);border:3px solid #1E5E48;box-shadow:0 4px 0 #1E5E48;border-radius:16px;font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5;text-shadow:0 2px 0 #1E5E48"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg><span>바로 완료 · {{kt.cost}}</span></button>
       </sc-if>
     </div>
   </sc-if>
 
+  <a id="goOpen" href="KilnOpen.dc.html" aria-hidden="true" tabindex="-1" style="position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none"></a>
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:36px;right:36px;top:300px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
   </sc-if>
@@ -378,6 +368,7 @@ class Component extends DCLogic {
       }, 50);
     }
   }
+  goOpen() { try { var a = document.getElementById('goOpen'); if (a) { a.click(); } } catch (e) {} }
   fmtLeft(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + '시간 ' + m + '분' : (m ? m + '분 ' + (x < 10 ? '0' : '') + x + '초' : x + '초'); }
   jadeSpend(cost, run) {
     var self = this, have = this.jadeOf(this.state.g);
@@ -411,11 +402,12 @@ class Component extends DCLogic {
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.takeFocus(); } };
     this.takeFocus();
+    if ((this.state.g || {}).kiln === 'firing') { setTimeout(function () { self.goOpen(); }, 0); } // 소성 중이면 가마 화면으로
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     this.tick = setInterval(function () { var g0 = self.state.g || {}; if (g0.kiln === 'firing' && !self.state.navSw) { self.forceUpdate(); } }, 500);
   }
   componentWillUnmount() {
-    clearInterval(this.tick); clearInterval(this.doorT); clearInterval(this.fanT); clearTimeout(this.tt);
+    clearInterval(this.tick); clearInterval(this.doorT); clearInterval(this.fanT); clearTimeout(this.tt); clearTimeout(this.goT);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
   }
   say(msg) {
@@ -488,7 +480,9 @@ class Component extends DCLogic {
     var why = Object.keys(sk.parts).map(function (k) { return PN[k] + ' ' + sk.parts[k]; }).join(' · ');
     return { skill: sk.score, skillWhy: why, colorPct: cr.pct, tint: cr.tint, yohen: cr.yohen, colorWhy: '온도 ' + match + ' 범위 ' + (TU.colorRange[match] || []).join('~') + '% · 유약 ' + ({ thin: '얇음', ok: '고르게', thick: '두꺼움', drip: '흘러내림' }[item.thick] || '-') + (cr.yohen ? ' · 요변!' : ''), pattern: item.pattern || '', cov: item.cov, name: name, grade: grade, shape: item.shape, glaze: glaze, broken: false, form: item.form || 3, fit: item.fit, color: Math.max(1, Math.ceil(cr.pct / 20)), value: value, prof: item.prof, H: item.H, clay: item.clay, goalSid: item.goalSid, goalName: item.goalName, goalGlaze: item.goalGlaze };
   }
+  slotCap() { return 6 + (this.qlib().fx(this.state.g || {}).kilnSlot || 0); } // 기본 6칸 · 상점 「소성가마 증설」로 9칸
   putAt(idx, w) {
+    if (idx >= this.slotCap()) { this.say('잠긴 칸이에요 · 상점 「설비」에서 소성가마를 증설해요'); return; }
     var fl2 = this.state.g.kilnFilled || {}, next2 = {};
     for (var k2 in fl2) { if (fl2[k2] && typeof fl2[k2] === 'object') { next2[k2] = fl2[k2]; } }
     next2[String(idx)] = w;
@@ -531,7 +525,7 @@ class Component extends DCLogic {
     var g = this.state.g, T = this.tables(), QL = this.qlib(), self = this;
     if (g.kiln === 'firing') { return; }
     var fl = {}, k; for (k in (g.kilnFilled || {})) { if (g.kilnFilled[k] && typeof g.kilnFilled[k] === 'object') { fl[k] = g.kilnFilled[k]; } }
-    var free = []; offsets.forEach(function (o, i) { if (!fl[String(i)]) { free.push({ i: i, t: cur.base + o }); } });
+    var capK = this.slotCap(), free = []; offsets.forEach(function (o, i) { if (!fl[String(i)] && i < capK) { free.push({ i: i, t: cur.base + o }); } });
     var ws = (g.kilnList || []).slice();
     // 적정 칸이 적은 유약부터 · 각자 온도 차가 가장 작은 칸
     ws.sort(function (a, b) { function n(w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return free.filter(function (f) { return QL.kMatch(f.t, o, g) === '정합'; }).length || 99; } return n(a) - n(b); });
@@ -565,7 +559,7 @@ class Component extends DCLogic {
     var heats = defs.map(function (d) {
       var on = d.id === cur.id;
       return {
-        risk: (function () { var tp = QL0.kTemps(d.id), ws = g.kilnList || [], ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length; return ws.length ? '대기 ' + ws.length + '점 중 ' + ok + '점 맞음' + (d.id === 'high' ? ' · 요변' : '') : (d.id === 'high' ? (self.tutSafe() ? '요변 가능' : '깨질 위험 · 요변') : ''); })(), riskStyle: (g.kilnList || []).length || d.id === 'high' ? 'font-size:11.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
+        risk: (function () { var tp = QL0.kTemps(d.id).slice(0, self.slotCap()), ws = g.kilnList || [], ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length; return ws.length ? '대기 ' + ws.length + '점 중 ' + ok + '점 맞음' + (d.id === 'high' ? ' · 요변' : '') : (d.id === 'high' ? (self.tutSafe() ? '요변 가능' : '깨질 위험 · 요변') : ''); })(), riskStyle: (g.kilnList || []).length || d.id === 'high' ? 'font-size:11.5px;font-weight:700;padding:0 6px;border-radius:6px;background:' + (on ? 'rgba(255,244,222,.25)' : '#F6D9CF') + ';color:' + (on ? '#FFFDF5' : '#A33B22') : 'display:none',
         label: d.label, base: (d.base - 80) + '~' + d.base, hours: d.hours, icon: d.icon, img: d.img, on: on,
         style: btnBase + (on ? 'background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;'),
         iconStyle: 'width:26px;height:22px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 4px rgba(255,220,150,.9))' : ''),
@@ -597,7 +591,7 @@ class Component extends DCLogic {
     var capWarn = [];
     (function () {
       var need = {}; waiting.forEach(function (w) { need[w.glaze] = (need[w.glaze] || 0) + 1; });
-      var free = offsets.map(function (o, i) { return filled[String(i)] ? null : cur.base + o; }).filter(function (x) { return x !== null; });
+      var free = offsets.map(function (o, i) { return filled[String(i)] || i >= self.slotCap() ? null : cur.base + o; }).filter(function (x) { return x !== null; });
       if (waiting.length > free.length) { capWarn.push('빈 칸 ' + free.length + ' · 대기 ' + waiting.length + '점 → ' + (waiting.length - free.length) + '점은 다음 소성'); }
       for (var gk in need) { var o = (T.GL[gk] || T.GL.white).opt, n = free.filter(function (t) { return QL0.kMatch(t, o, g) === '정합'; }).length; if (n < need[gk]) { capWarn.push((T.GL[gk] || T.GL.white).n + ' 적정 칸 ' + n + ' · 대기 ' + need[gk] + '점' + (n === 0 ? ' · 화도를 바꿔 봐요' : '')); } }
     })();
@@ -605,28 +599,30 @@ class Component extends DCLogic {
 
     function itemAt(i) { var v = filled[String(i)]; return v && typeof v === 'object' ? v : null; }
 
+    var capC = self.slotCap();
     var cells = offsets.map(function (off, idx) {
-      var it = itemAt(idx);
+      var it = itemAt(idx), lockC = idx >= capC && !it;
       var gl = it ? (T.GL[it.glaze] || T.GL.white) : null;
       var sh = it ? (T.SH[it.shape] || T.SH.dish) : null;
       var rk = it ? self.riskOf(it, cur.id) : null;
       var tC = cur.base + off, fm = !it && pwItem && !firingNow ? QL0.kMatch(tC, pwOpt, g) : '';
       var ring = idx === sel ? 'border:3px solid #FFE7A8;box-shadow:0 0 14px rgba(255,200,90,.8);' : (fm === '정합' ? 'border:3px solid #9BE38A;box-shadow:0 0 0 2px #2F6328,0 0 16px rgba(155,227,138,.85);animation:navPulse 1.2s ease-in-out infinite;' : 'border:2px solid rgba(255,231,168,.25);');
       return {
-        aria: it ? sh.n + ' 선택' : (fm === '정합' ? '작품 넣기 · 맞는 자리 ' + tC + '℃' : '작품 넣기'),
-        fit: it ? (gl ? self.matchOf(tC, gl.opt) : '') : (fm === '정합' ? '✓ 맞음' : (fm === '근접' ? '△ 근접' : '')),
+        aria: it ? sh.n + ' 선택' : lockC ? '잠긴 칸 · 상점에서 증설' : (fm === '정합' ? '작품 넣기 · 맞는 자리 ' + tC + '℃' : '작품 넣기'),
+        fit: lockC ? '' : (it ? (gl ? self.matchOf(tC, gl.opt) : '') : (fm === '정합' ? '✓ 맞음' : (fm === '근접' ? '△ 근접' : ''))),
         fitStyle: (function () { var m = it ? self.matchOf(tC, gl.opt) : fm; if (!m || m === '불일치' && !it) { return 'display:none'; } var c = m === '정합' ? '#2F6328' : (m === '근접' ? '#8A6410' : '#A33B22'); return 'position:absolute;left:4px;bottom:4px;padding:0 5px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + c; })(),
         risk: rk ? rk.lv : '', riskIcon: rk ? (rk.lv === '높음' ? '!!' : '!') : '',
         riskStyle: rk && rk.lv !== '낮음' ? 'position:absolute;right:4px;bottom:4px;min-width:20px;height:20px;box-sizing:border-box;padding:0 4px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:12px;line-height:1;color:#FFFDF5;background:' + rk.col + ';border:2px solid #FFF4DE;box-shadow:0 1px 3px rgba(0,0,0,.5)' : 'display:none',
         temp: (cur.base + off).toLocaleString(),
-        filled: !!it, empty: !it,
+        filled: !!it, empty: !it && !lockC, locked: lockC,
         path: sh ? sh.p : '', fill: gl ? gl.raw : '#ccc', pot: it ? self.potOf(it, self.fillOf(it, 'glazed')) : self.potOf({ shape: 'cup' }, '#ccc'),
-        style: cellBase + 'background:' + glowOf(off) + ';' + ring,
+        style: cellBase + (lockC ? 'background:rgba(30,18,10,.72);border:2px dashed rgba(255,231,168,.3);' : 'background:' + glowOf(off) + ';' + ring),
         idx: idx,
         tap: function () {
           if (Date.now() - (self.dragEnd || 0) < 350) { return; }
           if (firingNow) { self.say('소성 중에는 가마 문을 열 수 없어요'); return; }
           if (it) { self.setState({ sel: idx }); return; }
+          if (lockC) { self.say('잠긴 칸이에요 · 상점 「설비」에서 소성가마를 증설해요'); return; }
           if (!waiting.length) { self.say('가마에 넣을 기물이 없어요. 유약부터 발라요'); return; }
           if (pwItem && (self.state.pickW || waiting.length === 1)) { self.putAt(idx, pwItem); return; }
           self.setState({ pkOpen: true, pkCell: idx, sel: -1 });
@@ -732,6 +728,7 @@ class Component extends DCLogic {
         try { window.__sfx && window.__sfx('ignite'); } catch (e) {} 
         self.setG({ kiln: 'firing', kilnStart: Date.now(), kilnBoost: 0, kilnDur: Math.round(cur.hours * 3600000 * (1 - (QL0.fx(g).kilnCut || 0))), batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 0) + 1, firedTotal: (g.firedTotal || 0) + results.length, kilnFilled: {} });
         self.setState({ sel: -1, closeAt: Date.now() });
+        clearTimeout(self.goT); self.goT = setTimeout(function () { self.goOpen(); }, 900); // 불을 지피면 문 닫히는 연출 뒤 가마 화면(소성 중)으로
         clearInterval(self.doorT); var t0 = Date.now(); self.doorT = setInterval(function () { if (Date.now() - t0 > 750) { clearInterval(self.doorT); } self.setState({ doorTick: Date.now() }); }, 33);
       }
     };

@@ -38,7 +38,21 @@ button{font-family:inherit;cursor:pointer}
     </div>
 
     <sc-if value="{{isFac}}" hint-placeholder-val="{{true}}">
-      <div style="flex:1 1 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:12px;min-height:0">
+      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:4px">
+      <div style="box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">설비 확장</span>
+        <sc-for list="{{upgs}}" as="u" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 4px;border-top:2px dashed #E2CBA2">
+            <span style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;border:2px solid #E2CBA2;display:flex;align-items:center;justify-content:center;font-size:24px;padding:3px"><sc-if value="{{u.imgOn}}" hint-placeholder-val="{{true}}"><img dc-src="{{u.img}}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></sc-if><sc-if value="{{u.emojiOn}}" hint-placeholder-val="{{false}}">{{u.emoji}}</sc-if></span>
+            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
+              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{u.name}}</span>
+              <span style="font-size:11.5px;color:#5B3A24">{{u.desc}}</span>
+            </span>
+            <button type="button" onClick="{{u.buy}}" aria-label="{{u.aria}}" style="{{u.btn}}">{{u.label}}</button>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:226px;gap:12px">
 
         <article style="position:relative;box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 0 0 3px #E3B23C,0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px">
           <div style="width:96px;height:96px;display:flex;align-items:center;justify-content:center"><img src="_blob/9942f49883ccf2f71bd284b6369c0207.webp" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(43,26,15,.35))"></div>
@@ -72,6 +86,7 @@ button{font-family:inherit;cursor:pointer}
             <span style="display:flex;justify-content:space-between;padding:2px 8px;border-radius:7px;background:#F8DDD5;font-size:10.5px;font-weight:700;color:#A33B22"><span>45,000G</span><span>부족</span></span>
           </a>
         </article>
+      </div>
       </div>
     </sc-if>
 
@@ -263,7 +278,25 @@ class Component extends DCLogic {
     var trimBuy = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;border-radius:13px;font-family:Jua,sans-serif;font-size:17px;color:#FFFDF5;';
     var trimOwned = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#CFC5B4;border:3px solid #8E8473;border-radius:13px;font-family:Jua,sans-serif;font-size:16px;color:#5E5547;';
 
+    var UIMG = { u_dry1: '_blob/83573d45657fe69185d862cb7459a206.webp', u_dry2: '_blob/83573d45657fe69185d862cb7459a206.webp', u_kiln: '_blob/5cbd50f799b0c74d2e34462914dafeb0.webp' };
+    var RS = G.res || {};
+    var upgs = QLs.UPG.map(function (u) {
+      var own = !!RS[u.id], preOk = u.req.every(function (q) { return RS[q]; }), cd = u.cond && QLs.RCOND[u.cond], condOk = !cd || cd.ok(G), can = !own && preOk && condOk;
+      var why = own ? '보유 중' : (!preOk ? QLs.RNODE[u.req[0]].name + ' 먼저' : (!condOk ? cd.t : ''));
+      return {
+        name: u.name, desc: why && !own ? u.desc + ' · ' + why : u.desc, img: UIMG[u.id] || '', imgOn: !!UIMG[u.id], emoji: '🏠', emojiOn: !UIMG[u.id],
+        label: own ? '보유 중' : u.gold.toLocaleString() + 'G', aria: u.name + ' · ' + (own ? '보유 중' : u.gold.toLocaleString() + '골드'),
+        btn: 'all:unset;cursor:pointer;box-sizing:border-box;flex:0 0 86px;min-height:40px;text-align:center;padding:6px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (own ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547' : (can ? 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#E9DCC3;border:3px solid #B8A88A;color:#6B5C47')),
+        buy: function () {
+          if (own) { self.say('이미 설치했어요'); return; }
+          if (!preOk || !condOk) { self.say(why + ' · 그다음 살 수 있어요'); return; }
+          var r = {}; for (var k in RS) { r[k] = RS[k]; } r[u.id] = true;
+          self.spend(u.gold, u.name + ' 완료! ' + u.desc, { res: r });
+        }
+      };
+    });
     return {
+      upgs: upgs,
       tabs: tabs,
       isFac: s.tab === 'fac',
       isMat: s.tab === 'mat',

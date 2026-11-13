@@ -160,7 +160,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="position:absolute;left:0;top:0;width:390px;height:724px;z-index:70;background:rgba(26,15,8,.6);display:flex;align-items:flex-end">
       <div role="dialog" aria-label="유약 고르기" style="width:390px;max-height:600px;box-sizing:border-box;padding:16px 14px 18px;background:#FFF4DE;border-top:4px solid #5B3A24;border-radius:26px 26px 0 0;display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 알맞은 담금 시간이 달라요</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">유약 고르기</span><span style="font-size:11.5px;color:#7A5434">유약마다 색과 재료가 달라요</span></div>
           <button type="button" onClick="{{gsClose}}" aria-label="닫기" style="all:unset;cursor:pointer;margin-left:auto;flex:0 0 42px;height:42px;box-sizing:border-box;border-radius:50%;background:#5B3A24;display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:20px;color:#FFE7A8">✕</button>
         </div>
         <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:2px">
@@ -433,7 +433,7 @@ class Component extends DCLogic {
   liftFx(zone, ms) {
     var self = this;
     clearTimeout(this.lt);
-    this.setState({ lift: { zone: zone, ms: ms, k: Date.now() } });
+    this.setState({ lift: { zone: zone, ms: ms, cov: this.maxCov || 0, k: Date.now() } });
     this.lt = setTimeout(function () { self.setState({ lift: null }); }, 1100);
   }
   // 유약 원료 : 등급(보통·상급·특급)별 보유 · 고른 등급(없으면 가진 것 중 가장 높은 등급) · 튜토리얼은 보통 무한
@@ -462,7 +462,6 @@ class Component extends DCLogic {
       var now = Date.now(), dt = now - self.lastT; self.lastT = now;
       var rate = Math.min(1.7, (self.curCov || 0) / self.dtune().full);
       self.effMs += dt * rate; var ms = self.effMs;
-      if (ms >= 2400) { if (self.offDrag) { self.offDrag(); } else { self.finish(); } return; }
       self.setState({ holdMs: ms });
     }, 30);
   }
@@ -473,7 +472,7 @@ class Component extends DCLogic {
     var g = this.state.g;
     var cur = this.current();
     if (!cur) { this.setState({ holding: false }); return; }
-    var zone = this.zoneOf(ms);
+    var zone = 'ok'; // 타이밍 판정 없음 · 담근 깊이(cov)만 결과에 남는다
     var item = {};
     for (var k in cur) { item[k] = cur[k]; }
     item.glaze = this.gz();
@@ -498,8 +497,8 @@ class Component extends DCLogic {
     try { window.__sfx && window.__sfx('drip'); if (zone === 'ok') { setTimeout(function () { try { window.__sfx('ok'); } catch (e) {} }, 60); } else if (zone === 'drip') { window.__sfx('fail'); } } catch (e) {}
     this.liftFx(zone, ms);
     this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0 });
-    var label = { thin: '얇게 입혀졌어요', ok: '고르게 입혀졌어요 · 발색 +2%', thick: '조금 두꺼워요', drip: '너무 두꺼워요 · 흘러내릴 수 있어요 · 발색 -2%' }[zone];
-    this.say(label + ' · 가마 대기로' + (rest.length ? ' · 다음 기물' : ''), zone === 'ok' ? 'ok' : 'fail');
+    var label = '유약을 입혔어요 · 담금 ' + Math.round(item.cov * 100) + '%';
+    this.say(label + ' · 소성 대기로' + (rest.length ? ' · 다음 기물' : ''), 'ok');
   }
   renderVals0() {
     var self = this;
@@ -636,8 +635,8 @@ class Component extends DCLogic {
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : '유약 수면 · 깊이 담글수록 빨리 ↓',
       liftOn: !!s.lift,
-      liftText: s.lift ? ({ ok: '✓ 적정! 고르게 입혀짐', thin: '△ 얇음', thick: '△ 두꺼운 편', drip: '✕ 흘러내림' })[s.lift.zone] : '',
-      liftSub: s.lift ? ({ ok: '발색 +2%', thin: '조금 더 오래 담가요', thick: '조금 일찍 꺼내요', drip: '발색 -2%' })[s.lift.zone] : '',
+      liftText: s.lift ? '✓ 유약을 입혔어요' : '',
+      liftSub: s.lift ? '담금 ' + Math.round(Math.min(1, s.lift.cov || 0) * 100) + '%' : '',
       liftStyle: s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
       liftStars: s.lift && s.lift.zone === 'ok' ? [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { var a = i / 8 * Math.PI * 2, r = 70 + (i % 2) * 22; return { s: 'position:absolute;left:187px;top:316px;font-size:' + (14 + (i % 3) * 4) + 'px;color:#FFE27A;text-shadow:0 0 6px #fff;--dx:' + Math.round(Math.cos(a) * r) + 'px;--dy:' + Math.round(Math.sin(a) * r) + 'px;animation:liftStar .75s ease-out ' + (i * 0.02).toFixed(2) + 's both' }; }) : [],
       liftDrops: s.lift ? [0, 1, 2, 3, 4].map(function (i) { return { s: 'position:absolute;left:' + (160 + i * 17) + 'px;top:' + (330 + (i % 2) * 6) + 'px;width:7px;height:11px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:' + selG.raw + ';animation:dropFall .7s ease-in ' + (i * 0.07).toFixed(2) + 's both' }; }) : [],
@@ -653,7 +652,7 @@ class Component extends DCLogic {
       tubLine: selG.raw,
       needle: shown < 0 ? 'display:none' : 'position:absolute;top:-3px;bottom:-3px;width:5px;margin-left:-2px;background:#FFFDF5;border:1px solid #2B1A0F;left:' + Math.min(100, shown / 2400 * 100) + '%',
       zoneLabel: zone ? ZL[zone][0] : '도자기를 끌어내려 담그기',
-      ringOn: shown >= 0 && (!!s.holding || !!s.lift),
+      ringOn: false,
       ringSegs: (function () { var T = self.zoneT(EG), W = 2400, C = 2 * Math.PI * 32, b = [0, T[0], T[1], T[2], W], cs = ['#8EA3A8', '#5FB052', '#D9A93A', '#C9705A']; return cs.map(function (c, i) { var a0 = b[i] / W * C, a1 = b[i + 1] / W * C; return { c: c, da: (a1 - a0).toFixed(2) + ' ' + C.toFixed(2), off: (-a0).toFixed(2) }; }); })(),
       ringProg: (function () { var C = 2 * Math.PI * 32, p = Math.max(0, Math.min(1, shown / 2400)) * C; return p.toFixed(2) + ' ' + C.toFixed(2); })(),
       ringDot: (function () { var a = Math.max(0, Math.min(1, shown / 2400)) * Math.PI * 2 - Math.PI / 2; return { x: (48 + 32 * Math.cos(a)).toFixed(1), y: (48 + 32 * Math.sin(a)).toFixed(1) }; })(),
@@ -663,7 +662,7 @@ class Component extends DCLogic {
       condStyle: 'position:absolute;left:40px;right:40px;top:482px;display:' + (needQuest ? 'flex' : 'none') + ';align-items:center;justify-content:center;gap:7px;padding:7px 12px;border-radius:20px;border:3px solid #FFF4DE;box-shadow:0 3px 0 rgba(43,26,15,.4);font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;background:' + (condOk ? '#2F6328' : '#8A5A36'),
       condText: condOk ? '✓ 민 씨 의뢰 조건 · 찻잔 + 청자유' : '민 씨 의뢰: 찻잔에 청자유',
       holdLabel: s.holding ? '담그는 중…' : '꾹 눌러 담그기',
-      holdSub: s.holding ? (s.drag ? '적정에서 위로 올려 꺼내요' : '적정에서 손을 떼면 건져요') : (cur ? (cur.goalName || (SH[cur.shape] || SH.dish).n) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
+      holdSub: s.holding ? (s.drag ? '원하는 만큼 담갔으면 위로 올려 꺼내요' : '손을 떼면 건져요') : (cur ? (cur.goalName || (SH[cur.shape] || SH.dish).n) + ' · ' + selG.name + (goalG ? (goalG === EG ? ' · 의뢰 조건' : ' · 의뢰와 다름') : '') : '기물 없음'),
       holdStyle: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:11px 0;border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;' + (s.holding ? 'background:#2F6328;border:3px solid #1F4A1A;box-shadow:0 1px 0 #1F4A1A;transform:translateY(3px);color:#FFFDF5;' : 'background:#4A9440;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;'),
       holdStart: function (e) { if (s.drag) { return; } if (e && e.preventDefault) { e.preventDefault(); } self.start(); },
       holdEnd: function () { if (!self.state.drag) { self.finish(); } },
