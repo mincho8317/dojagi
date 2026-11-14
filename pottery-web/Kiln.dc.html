@@ -167,15 +167,11 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
-    <div aria-label="아궁이와 풀무" role="group" style="position:relative;height:118px;margin-top:-14px;box-sizing:border-box;border:4px solid #2B1A0F;border-top:none;border-radius:0 0 22px 22px;background:linear-gradient(#3A2418,#3A2418 6px,transparent 6px),repeating-linear-gradient(0deg,#7A4A30 0 22px,#4A2C1C 22px 25px),#7A4A30;box-shadow:inset 0 10px 14px rgba(0,0,0,.45),0 5px 0 rgba(43,26,15,.45);overflow:hidden">
-      <div aria-hidden="true" style="position:absolute;left:34px;bottom:0;width:128px;height:84px;box-sizing:border-box;border:5px solid #2B1A0F;border-bottom:none;border-radius:64px 64px 0 0;background:#1A0A05;overflow:hidden;box-shadow:0 0 0 4px #5B3A24">
-        <div class="hearth-fire" style="{{kt.fireF}}position:absolute;left:8px;right:8px;bottom:-6px;height:70px;border-radius:50% 50% 0 0;background:radial-gradient(ellipse 50% 70% at 50% 100%,#FFE7A8,#FFB24A 25%,#E0602E 55%,rgba(120,30,10,.6) 80%,rgba(0,0,0,0))"></div>
-      </div>
-      <div aria-hidden="true" style="position:absolute;left:160px;right:140px;bottom:22px;height:13px;border-radius:6px;background:linear-gradient(#8A8580,#4A4642 45%,#2A2725);border:2px solid #1A1210;box-shadow:0 3px 0 rgba(0,0,0,.35)"></div>
-      <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 발풀무 밟기" style="all:unset;cursor:pointer;position:absolute;right:34px;bottom:0;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
+    <div aria-label="발풀무" role="group" style="position:relative;height:118px;margin-top:-14px;box-sizing:border-box;border:4px solid #2B1A0F;border-top:none;border-radius:0 0 22px 22px;background:linear-gradient(#3A2418,#3A2418 6px,transparent 6px),repeating-linear-gradient(0deg,#7A4A30 0 22px,#4A2C1C 22px 25px),#7A4A30;box-shadow:inset 0 10px 14px rgba(0,0,0,.45),0 5px 0 rgba(43,26,15,.45);overflow:hidden">
+      <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 발풀무 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-60px;bottom:0;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
         <span aria-hidden="true" style="position:relative;display:block;width:120px;height:110px"><img data-bel-img="1" src="anim/pedal_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
       </button>
-      <span aria-hidden="true" style="position:absolute;right:122px;top:14px;padding:2px 9px;border-radius:10px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8;pointer-events:none">발풀무를 밟아요</span>
+      <span aria-hidden="true" style="position:absolute;left:18px;top:16px;padding:2px 9px;border-radius:10px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8;pointer-events:none">발풀무를 밟아요</span>
     </div>
   </sc-if>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
