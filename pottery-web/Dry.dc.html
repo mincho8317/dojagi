@@ -392,7 +392,7 @@ class Component extends DCLogic {
       clearTimeout(this.fanHide); this.fanHide = setTimeout(function () { self.setState({ fanAt: 0 }); }, 700);
       return;
     }
-    var gain = Math.round(T.gain * (perf ? T.perfectMul : 1)), t0 = Date.now(), list = (s.g.dryList || []), moved = 0;
+    var gain = Math.round(T.gain * (perf ? T.perfectMul : 1) * this.fanSpeed()), /* 콤보 속도 배율만큼 더 마른다 */ t0 = Date.now(), list = (s.g.dryList || []), moved = 0;
     var nl = list.map(function (it) {
       var y = {}; for (var k in it) { y[k] = it[k]; }
       var left = it.start + 1800000 - t0;
