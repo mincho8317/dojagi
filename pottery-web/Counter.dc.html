@@ -250,6 +250,7 @@ class Component extends DCLogic {
     this.wt = setInterval(function () { var sw = self.sweepDue(self.state.g); if (sw) { self.setG(sw); } var p = self.spawnWalk(self.state.g); if (p) { self.setG(p); } else { self.forceUpdate(); } self.autoDel(); }, 1000);
     var sw0 = this.sweepDue(this.state.g); if (sw0) { this.setG(sw0); }
     setTimeout(function () { self.autoDel(); }, 0);
+    this.delW = setInterval(function () { try { self.afterDel(); } catch (e) {} }, 250);
     var p0 = this.spawnWalk(this.state.g); if (p0) { this.setG(p0); }
   }
   componentWillUnmount() { clearInterval(this.wt); try { window.removeEventListener('storage', this.onStore); } catch (e) {} }
@@ -296,7 +297,7 @@ class Component extends DCLogic {
     if (msg) { this.say(msg); }
   }
   componentWillUnmount() {
-    clearTimeout(this.tt);
+    clearTimeout(this.tt); clearInterval(this.wt); clearInterval(this.delW);
     try { window.removeEventListener('storage', this.onStore); } catch (e) {}
   }
   say(msg) {
@@ -692,6 +693,16 @@ class Component extends DCLogic {
     if (call) { this.setG({ deliverCall: null }); }
     if (pick) { try { localStorage.setItem('ctab', 'del'); } catch (e) {} this.setState({ ctab: 'del', deliver: pick.id, line: 0, enterN: s.enterN + 1 }); }
     else if (call) { this.setState({ ctab: 'del' }); }
+    else { var t0 = del.length ? 'del' : 'req'; try { localStorage.setItem('ctab', t0); } catch (e) {} if (s.ctab !== t0) { this.setState({ ctab: t0, gi: 0, line: 0, enterN: s.enterN + 1 }); } } /* 들어올 때 납품할 게 있으면 납품 대기부터 */
+  }
+  /* 납품 하나가 끝나면 · 남은 납품이 있으면 납품 대기, 없으면 의뢰 손님으로 */
+  afterDel() {
+    var d = this.state.deliver || '';
+    if (this.pdel && !d) {
+      var n = this.guests(this.state.g).filter(function (x) { return x.kind === 'deliver'; }).length, t = n ? 'del' : 'req';
+      if (this.state.ctab !== t) { try { localStorage.setItem('ctab', t); } catch (e) {} this.setState({ ctab: t, gi: 0, line: 0, enterN: this.state.enterN + 1 }); }
+    }
+    this.pdel = d;
   }
   next(msg) {
     if (this.state.deliver) { var sk = {}; for (var k0 in (this.state.delSkip || {})) { sk[k0] = true; } sk[this.state.deliver] = true; this.setState({ delSkip: sk }); }
@@ -791,7 +802,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });

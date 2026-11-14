@@ -696,7 +696,7 @@
     if (CRAFT[PAGE]) { try { localStorage.setItem('lastCraft', PAGE === 'KilnOpen' ? 'Kiln' : PAGE); } catch (e) {} }
     function craftHref() {
       var lc = 'Wheel'; try { lc = localStorage.getItem('lastCraft') || 'Wheel'; } catch (e) {}
-      var g = load(); if (lc === 'Kiln' && g.kiln === 'firing') { lc = 'KilnOpen'; }
+      var g = load(); if (lc === 'Kiln' && g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) { lc = 'KilnOpen'; }
       return lc + '.dc.html';
     }
     function fixNav() {
@@ -1367,7 +1367,7 @@
       }
       // 튜토리얼 목표와 다른 선택지는 고를 수 없다
       var bad = offChoice(tg, t); if (bad) { return stop(bad); }
-      if (PAGE === 'Dry' && t === 2 && tx.indexOf('지금 빼기') >= 0) { return stop('아직 반건조예요 · 부채질이나 💎옥으로 완전히 말린 뒤 빼요'); }
+      if (PAGE === 'Dry' && t === 2 && (tx.indexOf('지금 빼기') >= 0 || tx.indexOf('꺼내기 (위험)') >= 0)) { return stop('아직 반건조예요 · 부채질이나 💎옥으로 완전히 말린 뒤 빼요'); }
       if (PAGE === 'Glaze' && t === 4 && (al.indexOf('도자기를 아래로') === 0 || tx.indexOf('꾹 눌러 담그기') >= 0)) {
         var gb = qsel('button[aria-label^="유약 고르기 · 지금"]')(), gl = gb ? gb.getAttribute('aria-label') || '' : '';
         if (gb && gl.indexOf('청자') < 0) { return stop('민 씨는 청자유를 원해요 · 먼저 유약을 청자유로 바꿔요'); }

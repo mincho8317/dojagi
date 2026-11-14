@@ -552,7 +552,7 @@ class Component extends DCLogic {
     var kilnN = (g.kilnList || []).length;
     var shelf = 0;
     for (var k in g.pieces) { if (g.pieces[k].where === 'shelf') { shelf++; } }
-    var firing = g.kiln === 'firing';
+    var firing = g.kiln === 'firing', kDone = (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000));
     var kLeftS = firing && g.kilnStart ? Math.max(0, Math.ceil((g.kilnStart + (g.kilnDur || 28800000) - now) / 1000)) : 0;
     var kf = g.kilnFilled || {}, kfN = 0; for (var kk in kf) { if (kf[kk] && typeof kf[kk] === 'object') { kfN++; } }
     var wipN = (g.formedList || []).length + dryList.length + bqList.length + (bq.items || []).length + glazeN + kilnN + kfN + (firing ? (g.batchItems || []).length : 0);
@@ -578,7 +578,7 @@ class Component extends DCLogic {
       return 'position:absolute;white-space:nowrap;padding:2px 9px;border-radius:10px;font-family:Jua,sans-serif;font-size:11.5px;' + extra + (t === 'go' ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #FFF4DE;box-shadow:0 0 10px rgba(255,230,140,.9)' : (t === 'fire' ? 'background:rgba(43,26,15,.9);color:#FFB979;border:2px solid #3E2616' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #5B3A24'));
     }
 
-    var SCR = { wheel: 'Wheel.dc.html', dry: 'Dry.dc.html', glaze: 'Glaze.dc.html', kiln: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', shelf: 'Display.dc.html', counter: 'Counter.dc.html' };
+    var SCR = { wheel: 'Wheel.dc.html', dry: 'Dry.dc.html', glaze: 'Glaze.dc.html', kiln: kDone ? 'KilnOpen.dc.html' : 'Kiln.dc.html', shelf: 'Display.dc.html', counter: 'Counter.dc.html' };
     var FN = { wheel: '성형', dry: '건조', bisque: '초벌', glaze: '유약', kiln: '소성', shelf: '진열', counter: '손님' };
     var firstId = flow.filter(function (x) { return !!SCR[x]; })[0] || 'wheel';
     var dg = s.dg;
@@ -710,7 +710,7 @@ class Component extends DCLogic {
       bisque: { title: '초벌 가마', bg: 'ROOM_SIDE_BISQUE', img: '_blob/cc5233e1cfa6aec8da5807b241b539ab.webp', wall: '#E2C7AC', obj: 'OBJ_BISQUE_SIDE' },
       glaze: { title: '유약대', bg: 'ROOM_SIDE_GLAZE', wall: '#DCE3D6', obj: 'OBJ_GLAZE_SIDE', href: 'Glaze.dc.html', action: '유약 바르기', sub: '꾹 눌러 담가요' },
       brush: { title: '붓·시유대', bg: 'ROOM_SIDE_BRUSH', wall: '#DCE3D6', obj: 'OBJ_BRUSH_SIDE', href: '', action: '붓칠은 곧 열려요', sub: '' },
-      kiln: { title: '소성가마', bg: 'ROOM_SIDE_KILN', wall: '#D8B8A0', obj: 'OBJ_KILN_SIDE', href: firing ? 'KilnOpen.dc.html' : 'Kiln.dc.html', action: firing ? '가마 열기' : '가마 채우기', sub: firing ? '굽는 중 · 눌러서 가마 보기' : '대기 ' + kilnN + '점을 칸에 넣어요' },
+      kiln: { title: '소성가마', bg: 'ROOM_SIDE_KILN', wall: '#D8B8A0', obj: 'OBJ_KILN_SIDE', href: kDone ? 'KilnOpen.dc.html' : 'Kiln.dc.html', action: kDone ? '가마 열기' : (firing ? '풀무질' : '가마 채우기'), sub: firing ? '굽는 중 · 눌러서 가마 보기' : '대기 ' + kilnN + '점을 칸에 넣어요' },
       shelf: { title: '진열대', bg: 'ROOM_SIDE_SHELF', wall: '#EADCC8', obj: 'OBJ_SHELF_SIDE', href: 'Display.dc.html', action: '진열대 보기', sub: '전시 · 판매 · 방문객' },
       counter: { title: '카운터', bg: 'ROOM_SIDE_COUNTER', img: '_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp', wall: '#E3C9A3', href: 'Counter.dc.html', action: guests.length ? '손님 맞이하기 · ' + guests.length + '명' : '손님 기다리기', sub: '얼굴 보고 의뢰를 받고 완성품을 건네요' }
     };

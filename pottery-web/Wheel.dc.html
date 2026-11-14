@@ -112,11 +112,11 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <ellipse cx="188" cy="292" rx="22" ry="8" fill="#D9C2A2" opacity="0.8"></ellipse>
         <ellipse cx="150" cy="298" rx="30" ry="7" fill="#E8D6BC" opacity="0.7"></ellipse>
       </g>
+      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="0">
+        <g pointer-events="none" style="{{mk.anim}}"><text x="{{mk.x}}" y="{{mk.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="11" fill="{{mk.c}}" stroke="#2B1A0F" stroke-width="2.2" stroke-linejoin="round" paint-order="stroke">{{mk.t}}</text></g>
+      </sc-for>
       <path d="{{ghostPath}}" fill="none" stroke="#2B1A0F" stroke-width="4.2" stroke-dasharray="6 6" opacity="0.35" pointer-events="none"></path>
       <path d="{{ghostPath}}" fill="none" stroke="#FFF4DE" stroke-width="2.2" stroke-dasharray="6 6" opacity="0.95" pointer-events="none"></path>
-      <sc-for list="{{marks}}" as="mk" hint-placeholder-count="0">
-        <g pointer-events="none" style="{{mk.anim}}"><text x="{{mk.x}}" y="{{mk.ty}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="18" fill="{{mk.c}}" stroke="#2B1A0F" stroke-width="3" stroke-linejoin="round" paint-order="stroke">{{mk.t}}</text></g>
-      </sc-for>
       <path d="{{segDonePath}}" fill="none" stroke="#1E5E16" stroke-width="7" stroke-linecap="round" opacity="0.55" pointer-events="none"></path>
       <path d="{{segDonePath}}" fill="none" stroke="#8CF27A" stroke-width="3.6" stroke-linecap="round" pointer-events="none"></path>
       <sc-for list="{{segSpark}}" as="sp" hint-placeholder-count="0">
@@ -808,7 +808,7 @@ class Component extends DCLogic {
     }
 
     if (shaping && tmin < lim + 1) { var ti = s.t.indexOf(tmin), ty0 = base - s.H * (ti / 11); marks.push({ x: (150 + self.rAt(ti) + 16).toFixed(1), y: (ty0 + 5).toFixed(1), t: '!', c: '#FF8A6B' }); }
-    marks = marks.slice(0, 6).map(function (m) { var d = { '▲': [0, -4], '▼': [0, 4], '◀': [-4, 0], '▶': [4, 0] }[m.t] || [0, 0]; return { x: m.x, y: m.y, ty: (+m.y + 6).toFixed(1), t: m.t, c: m.c, anim: '--mx:' + d[0] + 'px;--my:' + d[1] + 'px;animation:mkBob .9s ease-in-out infinite' }; });
+    marks = marks.slice(0, 6).map(function (m) { var d = { '▲': [0, -3], '▼': [0, 3], '◀': [-3, 0], '▶': [3, 0] }[m.t] || [0, 0]; return { x: m.x, y: m.y, ty: (+m.y + 4).toFixed(1), t: m.t, c: m.c, anim: '--mx:' + d[0] + 'px;--my:' + d[1] + 'px;animation:mkBob .9s ease-in-out infinite' }; });
     // 튜토리얼이 단계(높이 → 좌우 → 두께)를 판단할 수 있게 현재 상태를 알려 둔다
     try { window.__wheelTut = { shaping: shaping, fit: an.fit, hOk: !an.issues.some(function (x) { return x.kind === 'up' || x.kind === 'down'; }), sOk: !an.issues.some(function (x) { return x.kind === 'in' || x.kind === 'out'; }), tOk: !an.issues.some(function (x) { return x.kind === 'thin' || x.kind === 'thick'; }) && tmin >= lim + 1 }; } catch (e) {}
     // 높이·좌우·두께가 맞는 순간마다 서로 다른 소리
@@ -996,7 +996,7 @@ class Component extends DCLogic {
       potPath: prof.path,
       ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
-      foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1), mx: (150 + wob - (s.r[0] + 7) * 1.45).toFixed(1), mw: ((s.r[0] + 7) * 2.9).toFixed(1), my: (291 - (s.r[0] * 0.24 + 4) * 1.5).toFixed(1), mh: ((s.r[0] * 0.24 + 4) * 3).toFixed(1) },
+      foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1), mx: (150 + wob - 52 * 1.45).toFixed(1), mw: (52 * 2.9).toFixed(1), my: (291 - (48 * 0.24 + 4) * 1.5).toFixed(1), mh: ((48 * 0.24 + 4) * 3).toFixed(1) },
       wet: (function () { var mr = Math.max.apply(null, s.r), top = prof.R[11][1]; return { x: (150 + wob - mr * 1.05).toFixed(1), w: (mr * 2.1).toFixed(1), y: (top - 6).toFixed(1), h: (291 - top + 8).toFixed(1) }; })(),
       wTex: window.PotteryShared.potTex.call(window.PotteryShared, { clay: s.clay || 'cy1', id: 'wheel' }, 0, []).fill,
       rim: { cx: (150 + wob).toFixed(1), cy: prof.R[11][1].toFixed(1), rx: topR.toFixed(1), ry: (topR * 0.17 + 2).toFixed(1), irx: Math.max(3, topR - topT * 2.2).toFixed(1), iry: Math.max(1, (topR - topT * 2.2) * 0.17).toFixed(1) },
@@ -1186,7 +1186,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });

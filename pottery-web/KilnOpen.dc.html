@@ -426,6 +426,7 @@ class Component extends DCLogic {
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     if (this.readyIdle(this.state.g)) { this.startDoor(); }
+    var g9 = this.state.g || {}; if (g9.kiln === 'firing' && Date.now() < (g9.kilnStart || 0) + (g9.kilnDur || 14400000)) { setTimeout(function () { self.goKiln(); }, 0); } // 굽는 중에는 소성 화면(닫힌 가마)에서 풀무질
     this.tick = setInterval(function () { var g0 = self.state.g || {}; if (self.readyIdle(g0)) { self.startDoor(); } if (g0.kiln === 'firing' && g0.kilnStart && Date.now() < g0.kilnStart + (g0.kilnDur || 14400000) + 600 && !self.state.navSw) { self.forceUpdate(); } }, 500);
   }
   componentWillUnmount() {
@@ -826,7 +827,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });

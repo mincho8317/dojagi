@@ -93,6 +93,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
               <svg width="54" height="54" viewBox="{{s.pot.vb}}" aria-hidden="true" style="filter:drop-shadow(0 3px 2px rgba(0,0,0,.45))"><ellipse cx="0" cy="{{s.pot.shCy}}" rx="{{s.pot.shRx}}" ry="{{s.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{s.pot.d}}" fill="{{s.pot.fill}}"></path><path d="{{s.pot.d}}" fill="{{s.pot.tex}}" opacity="{{s.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{s.pot.d}}" fill="url(#potTopLight)"></path><path d="{{s.pot.d}}" fill="{{s.pot.rings}}"></path><path d="{{s.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{s.pot.grainOp}}"></path><path d="{{s.pot.d}}" fill="{{s.pot.foot}}" fill-opacity="{{s.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{s.pot.d}}" fill="{{s.pot.drip}}" fill-opacity="{{s.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{s.pot.dX}}" y="{{s.pot.dY}}" width="{{s.pot.dW}}" height="{{s.pot.dH}}" fill="{{s.pot.dCol}}" mask="{{s.pot.dMask}}" opacity="{{s.pot.dOp}}"></rect><path d="{{s.pot.d}}" fill="url(#potShade)"></path><path d="{{s.pot.d}}" fill="none" stroke="{{s.pot.edge}}" stroke-width="{{s.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{s.pot.rimY}}" rx="{{s.pot.rimRx}}" ry="{{s.pot.rimRy}}" fill="{{s.pot.inner}}" stroke="{{s.pot.edge}}" stroke-width="{{s.pot.sw}}"></ellipse></svg>
               <span style="position:relative;width:58px;height:7px;box-sizing:border-box;border:1.5px solid #2B1A0F;border-radius:5px;background:#3E2616;overflow:hidden"><span style="{{s.bar}}"></span></span>
               <span style="{{s.stateStyle}}">{{s.state}} {{s.pct}}%</span>
+              <sc-if value="{{s.selOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{s.pullStyle}}">{{s.pullTxt}}</span></sc-if>
             </button>
           </sc-if>
           <sc-if value="{{s.empty}}" hint-placeholder-val="{{false}}">
@@ -107,29 +108,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
 
   <div style="position:relative;margin-top:auto;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
-    <sc-if value="{{selOn}}" hint-placeholder-val="{{true}}">
-      <div style="display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px dashed #E1CDA9">
-        <svg width="46" height="46" viewBox="{{sel.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{sel.pot.shCy}}" rx="{{sel.pot.shRx}}" ry="{{sel.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{sel.pot.d}}" fill="{{sel.pot.fill}}"></path><path d="{{sel.pot.d}}" fill="{{sel.pot.tex}}" opacity="{{sel.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{sel.pot.d}}" fill="url(#potTopLight)"></path><path d="{{sel.pot.d}}" fill="{{sel.pot.rings}}"></path><path d="{{sel.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{sel.pot.grainOp}}"></path><path d="{{sel.pot.d}}" fill="{{sel.pot.foot}}" fill-opacity="{{sel.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{sel.pot.d}}" fill="{{sel.pot.drip}}" fill-opacity="{{sel.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{sel.pot.dX}}" y="{{sel.pot.dY}}" width="{{sel.pot.dW}}" height="{{sel.pot.dH}}" fill="{{sel.pot.dCol}}" mask="{{sel.pot.dMask}}" opacity="{{sel.pot.dOp}}"></rect><path d="{{sel.pot.d}}" fill="url(#potShade)"></path><path d="{{sel.pot.d}}" fill="none" stroke="{{sel.pot.edge}}" stroke-width="{{sel.pot.sw}}" stroke-linejoin="round"></path></svg>
-        <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
-          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{sel.name}} <span style="{{sel.stateStyle}}">{{sel.state}} {{sel.pct}}%</span></span>
-          <span style="font-size:12px;color:#7A5434">{{sel.clay}} · 형태 {{sel.stars}}</span>
-        </div>
-        <button type="button" onClick="{{sel.pull}}" style="{{sel.btnStyle}}">{{sel.btn}}</button>
-      </div>
-    </sc-if>
-    <sc-if value="{{selNone}}" hint-placeholder-val="{{false}}">
-      <span style="text-align:center;font-size:12px;color:#7A5434;padding-bottom:8px;border-bottom:2px dashed #E1CDA9">{{selHint}}</span>
-    </sc-if>
-    <div style="display:flex;gap:10px">
-      <button type="button" onClick="{{fan}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px">
-        <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
-        <span style="font-size:11.5px;font-weight:700;color:#2F7A5E">{{fanSub}}</span>
-      </button>
-      <button type="button" onClick="{{pullAll}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px">
-        <span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5">다 마른 것 빼기</span>
-        <span style="font-size:11.5px;font-weight:700;color:#E4F5D8">완전 건조 {{doneCount}}점</span>
-      </button>
-    </div>
     <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
       <div style="position:relative;display:flex;flex-direction:column;gap:7px;padding:8px 10px 10px;border-radius:16px;background:#EEF6F1;border:2px solid #9ED9C0">
         <div style="display:flex;align-items:baseline;gap:6px">
@@ -140,13 +118,29 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <div style="{{bf.zone}}"></div><div style="{{bf.perfect}}"></div>
           <div id="fanCur" style="position:absolute;top:-2px;bottom:-2px;width:7px;margin-left:-3.5px;border-radius:3px;background:#2B1A0F;box-shadow:0 0 0 2px #FFFDF5;left:0"></div>
         </div>
-        <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 커서가 초록 칸에 있을 때 누르기" style="{{bf.btn}}">
-          <span aria-hidden="true" style="position:relative;display:inline-block;width:46px;height:32px;{{bf.svg}}"><img src="ui/fan_01.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f1}}"><img src="ui/fan_02.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f2}}"></span>
-          <span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.1"><span style="font-family:'Jua',sans-serif;font-size:19px;color:#2B1A0F">부채질</span><span style="font-size:11.5px;font-weight:700;color:#2F7A5E">초록 칸에서 탭</span></span>
-        </button>
-        <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
       </div>
     </sc-if>
+    <div style="display:flex;gap:10px">
+      <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
+        <div style="position:relative;flex:0 0 104px;display:flex;align-items:center;justify-content:center">
+          <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 커서가 초록 칸에 있을 때 부채 누르기" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;filter:drop-shadow(0 4px 2px rgba(43,26,15,.35))">
+            <span aria-hidden="true" style="position:relative;display:inline-block;width:96px;height:68px;{{bf.svg}}"><img src="ui/fan_01.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f1}}"><img src="ui/fan_02.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f2}}"></span>
+            <span style="font-family:'Jua',sans-serif;font-size:12px;color:#1E5E48;white-space:nowrap">부채를 톡!</span>
+          </button>
+          <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
+        </div>
+      </sc-if>
+      <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px">
+      <button type="button" onClick="{{fan}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px">
+        <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
+        <span style="font-size:11.5px;font-weight:700;color:#2F7A5E">{{fanSub}}</span>
+      </button>
+      <button type="button" onClick="{{pullAll}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px">
+        <span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFFDF5">다 마른 것 빼기</span>
+        <span style="font-size:11.5px;font-weight:700;color:#E4F5D8">완전 건조 {{doneCount}}점</span>
+      </button>
+      </div>
+    </div>
   </div>
 
   <sc-if value="{{bf.wind}}" hint-placeholder-val="{{false}}">
@@ -504,7 +498,7 @@ class Component extends DCLogic {
       });
     }
     var CAP = Math.min(9, Math.max(list.length, 3 + (this.qlib().fx(g).dryRack || 0))), TOTAL = 9; // 기본 3칸 · 연구 「건조대 증설」로 +3씩
-    var selId = this.state.dSel && list.some(function (x) { return x.id === self.state.dSel; }) ? this.state.dSel : (list[0] ? list[0].id : '');
+    var selId = this.state.dSel && list.some(function (x) { return x.id === self.state.dSel; }) ? this.state.dSel : '';
     var selV = null;
     var cells = [];
     for (var ci = 0; ci < TOTAL; ci++) {
@@ -519,7 +513,9 @@ class Component extends DCLogic {
         bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, sl.pct).toFixed(1) + '%;background:' + zc,
         stateStyle: 'padding:2px 8px;border-radius:8px;background:' + zc + ';border:2px solid #FFF4DE;box-shadow:0 2px 0 rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:12.5px;color:' + (zc === '#E0A92C' ? '#2B1A0F' : '#FFFDF5') + ';white-space:nowrap',
         box: 'all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 2px 6px;margin-bottom:6px;border-radius:12px;' + (on2 ? 'background:rgba(255,231,168,.22);box-shadow:0 0 0 3px #FFD66B;' : '') + (it2.inAt && Date.now() < it2.inAt ? 'opacity:0;' : ''),
-        tap: (function (id) { return function () { self.setState({ dSel: id }); }; })(it2.id)
+        selOn: on2, pullTxt: sl.pct < 50 ? '아직 질어요' : (sl.state.indexOf('반건조') === 0 ? '꺼내기 (위험)' : '꺼내기'),
+        pullStyle: 'position:absolute;left:50%;top:-14px;transform:translateX(-50%);z-index:3;white-space:nowrap;padding:3px 10px;border-radius:12px;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:13px;' + (sl.pct < 50 ? 'background:#8E8473;color:#FFFDF5;box-shadow:0 3px 0 #5E5547' : (sl.state.indexOf('반건조') === 0 ? 'background:#D9A93A;color:#2B1A0F;box-shadow:0 3px 0 #8A6410' : 'background:#3B7A32;color:#FFFDF5;box-shadow:0 3px 0 #2F6328;animation:navPulse 1.2s ease-in-out infinite')),
+        tap: (function (id, pullF, p0) { return function () { if (self.state.dSel === id) { if (p0 >= 50) { self.setState({ dSel: '' }); } pullF(); return; } self.setState({ dSel: id }); }; })(it2.id, sl.pull, sl.pct)
       };
       if (on2) { selV = { pot: sl.pot, name: sl.name, clay: sl.clay, stars: sl.stars, state: cell.state, pct: sl.pct, stateStyle: cell.stateStyle, btn: sl.btn, btnStyle: sl.btnStyle.replace('box-sizing:border-box;text-align:center;padding:8px 0;', 'box-sizing:border-box;text-align:center;padding:8px 12px;flex:0 0 auto;'), pull: sl.pull }; }
       cells.push(cell);
@@ -595,7 +591,7 @@ class Component extends DCLogic {
         return {
           on: true, wind: recent && ok, wa: 'animation-name:dryWind' + sfx,
           btn: 'all:unset;cursor:pointer;align-self:center;width:190px;height:62px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border-radius:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;background:#FFFDF5;border:3px solid #2F7A5E;box-shadow:0 4px 0 #2F7A5E',
-          svg: 'transform-origin:23px 30px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), f1: recent ? 0 : 1, f2: recent ? 1 : 0, // 부칠 때 부채 펼친 그림
+          svg: 'transform-origin:48px 62px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), f1: recent ? 0 : 1, f2: recent ? 1 : 0, // 부칠 때 부채 펼친 그림
           title: recent ? (res === 'perfect' ? '완벽한 바람! ' : (res === 'hit' ? '좋은 바람! ' : '빗나갔어요')) + (ok && (self.state.fanStreak || 0) > 1 ? ' 연속 ' + self.state.fanStreak : '') : '타이밍 부채질',
           left: '남은 ' + self.fmtLeft(leftMs),
           zone: 'position:absolute;top:0;bottom:0;left:' + ((c - T.zone / 2) * 100).toFixed(1) + '%;width:' + (T.zone * 100).toFixed(1) + '%;background:#7FD1AE;transition:left .25s',
@@ -603,7 +599,7 @@ class Component extends DCLogic {
           aria: '판정 칸 ' + Math.round((c - T.zone / 2) * 100) + '~' + Math.round((c + T.zone / 2) * 100) + '%',
           tip: '커서가 초록 칸에 올 때 누르면 건조 +' + Math.round(T.gain / 1000) + '초 · 진한 칸은 ×' + T.perfectMul,
           popOn: recent, popTxt: ok ? '+' + Math.round((self.state.fanGain || 0) / 1000) + '초' : '빗나감',
-          pop: 'position:absolute;left:50%;margin-left:100px;bottom:22px;font-family:Jua,sans-serif;font-size:' + (res === 'perfect' ? 18 : 15) + 'px;color:' + (ok ? (res === 'perfect' ? '#C8601E' : '#1E5E48') : '#8A7A63') + ';text-shadow:0 1px 0 #FFF;pointer-events:none;animation:dryPop' + sfx + ' .8s ease-out both',
+          pop: 'position:absolute;left:0;right:0;text-align:center;top:-20px;white-space:nowrap;font-family:Jua,sans-serif;font-size:' + (res === 'perfect' ? 18 : 15) + 'px;color:' + (ok ? (res === 'perfect' ? '#C8601E' : '#1E5E48') : '#8A7A63') + ';text-shadow:0 1px 0 #FFF;pointer-events:none;animation:dryPop' + sfx + ' .8s ease-out both',
           tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
         };
       })(),
@@ -726,7 +722,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });

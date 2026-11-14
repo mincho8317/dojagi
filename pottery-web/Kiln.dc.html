@@ -112,6 +112,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
             <sc-if value="{{cell.filled}}" hint-placeholder-val="{{true}}">
               <svg width="46" height="46" viewBox="{{cell.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{cell.pot.shCy}}" rx="{{cell.pot.shRx}}" ry="{{cell.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{cell.pot.d}}" fill="{{cell.pot.fill}}"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.tex}}" opacity="{{cell.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{cell.pot.d}}" fill="url(#potTopLight)"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.rings}}"></path><path d="{{cell.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{cell.pot.grainOp}}"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.foot}}" fill-opacity="{{cell.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{cell.pot.d}}" fill="{{cell.pot.drip}}" fill-opacity="{{cell.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{cell.pot.dX}}" y="{{cell.pot.dY}}" width="{{cell.pot.dW}}" height="{{cell.pot.dH}}" fill="{{cell.pot.dCol}}" mask="{{cell.pot.dMask}}" opacity="{{cell.pot.dOp}}"></rect><path d="{{cell.pot.d}}" fill="url(#potShade)"></path><path d="{{cell.pot.d}}" fill="none" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{cell.pot.rimY}}" rx="{{cell.pot.rimRx}}" ry="{{cell.pot.rimRy}}" fill="{{cell.pot.inner}}" stroke="{{cell.pot.edge}}" stroke-width="{{cell.pot.sw}}"></ellipse></svg>
             </sc-if>
+            <sc-if value="{{cell.selOn}}" hint-placeholder-val="{{false}}">
+              <span aria-hidden="true" style="position:absolute;left:50%;top:-12px;transform:translateX(-50%);z-index:3;white-space:nowrap;padding:3px 11px;border-radius:12px;background:#C8601E;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A3D10;font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;animation:navPulse 1.2s ease-in-out infinite">꺼내기</span>
+            </sc-if>
             <sc-if value="{{cell.locked}}" hint-placeholder-val="{{false}}">
               <span aria-hidden="true" style="font-size:20px;opacity:.75">🔒</span>
             </sc-if>
@@ -136,28 +139,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
 
-  <div style="position:relative;box-sizing:border-box;padding:11px 12px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:18px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:11px;min-height:86px">
-    <sc-if value="{{info.has}}" hint-placeholder-val="{{true}}">
-      <span style="flex:0 0 52px;height:52px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;border:3px solid #8A6440;display:flex;align-items:center;justify-content:center">
-        <svg width="44" height="44" viewBox="{{info.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{info.pot.shCy}}" rx="{{info.pot.shRx}}" ry="{{info.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{info.pot.d}}" fill="{{info.pot.fill}}"></path><path d="{{info.pot.d}}" fill="{{info.pot.tex}}" opacity="{{info.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{info.pot.d}}" fill="url(#potTopLight)"></path><path d="{{info.pot.d}}" fill="{{info.pot.rings}}"></path><path d="{{info.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{info.pot.grainOp}}"></path><path d="{{info.pot.d}}" fill="{{info.pot.foot}}" fill-opacity="{{info.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{info.pot.d}}" fill="{{info.pot.drip}}" fill-opacity="{{info.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{info.pot.dX}}" y="{{info.pot.dY}}" width="{{info.pot.dW}}" height="{{info.pot.dH}}" fill="{{info.pot.dCol}}" mask="{{info.pot.dMask}}" opacity="{{info.pot.dOp}}"></rect><path d="{{info.pot.d}}" fill="url(#potShade)"></path><path d="{{info.pot.d}}" fill="none" stroke="{{info.pot.edge}}" stroke-width="{{info.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{info.pot.rimY}}" rx="{{info.pot.rimRx}}" ry="{{info.pot.rimRy}}" fill="{{info.pot.inner}}" stroke="{{info.pot.edge}}" stroke-width="{{info.pot.sw}}"></ellipse></svg>
-      </span>
-      <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px">
-        <div style="display:flex;align-items:center;gap:5px;min-width:0">
-          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{info.name}}</span>
-          <span style="{{info.badge}};flex:0 0 auto;white-space:nowrap">{{info.match}}</span>
-          <span style="{{info.riskStyle}}">{{info.risk}}</span>
-        </div>
-        <span style="font-size:11.5px;font-weight:700;color:#5B3A24">적정 {{info.opt}} · 이 칸 {{info.temp}}℃</span>
-        <span style="font-size:11.5px;color:#2B1A0F">{{info.note}}</span>
-        <span style="font-size:11px;color:#A33B22;line-height:1.3">{{info.riskWhy}}</span>
-      </div>
-      <button type="button" onClick="{{info.remove}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">꺼내기</button>
-    </sc-if>
-    <sc-if value="{{info.none}}" hint-placeholder-val="{{false}}">
-      <span style="flex:1;font-family:'Jua',sans-serif;font-size:14px;color:#7A5434;text-align:center;line-height:1.5;white-space:pre-line">{{info.hint}}</span>
-    </sc-if>
-  </div>
-
   <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
   <button type="button" onClick="{{fire}}" style="all:unset;position:relative;cursor:pointer;box-sizing:border-box;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 5px 0 #8A3D10;border-radius:18px;font-family:'Jua',sans-serif;font-size:22px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">
     <img src="_blob/d6ffc3828e136b95c04ef29b972105c4.webp" alt="" aria-hidden="true" draggable="false" style="width:34px;height:34px">
@@ -172,6 +153,19 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <span role="timer" style="{{kt.clockStyle}}">{{kt.clock}}</span>
       </div>
       <span style="position:relative;height:14px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:9px;background:#3E2616;overflow:hidden"><span style="{{kt.bar}}"></span></span>
+      <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;border-radius:14px;background:#FCEBD8;border:2px solid #E0A06A">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A2F1E">{{kt.fan.title}}</span><span style="font-size:11px;font-weight:700;color:#7A5434;white-space:nowrap">{{kt.fan.left}}</span></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="position:relative;flex:1 1 auto;height:24px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:12px;background:#3E2616;overflow:hidden">
+              <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
+              <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
+              <span style="{{kt.fan.bar}}"></span>
+            </div>
+            <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fanBtn}}"><img src="ui/kiln_bellows.webp" alt="" aria-hidden="true" style="width:38px;height:32px;object-fit:contain"><span style="font-family:'Jua',sans-serif;font-size:16px">풀무질</span></button>
+          </div>
+        </div>
+      </sc-if>
       <sc-if value="{{kt.done}}" hint-placeholder-val="{{false}}">
         <a href="KilnOpen.dc.html" style="box-sizing:border-box;text-align:center;padding:11px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328,0 0 14px rgba(255,214,107,.8);border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">가마 열고 꺼내기</a>
       </sc-if>
@@ -411,7 +405,6 @@ class Component extends DCLogic {
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.takeFocus(); } };
     this.takeFocus();
-    if ((this.state.g || {}).kiln === 'firing') { setTimeout(function () { self.goOpen(); }, 0); } // 소성 중이면 가마 화면으로
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
     this.tick = setInterval(function () { var g0 = self.state.g || {}; if (g0.kiln === 'firing' && !self.state.navSw) { self.forceUpdate(); } }, 500);
   }
@@ -510,7 +503,15 @@ class Component extends DCLogic {
     for (var k2 in fl2) { if (fl2[k2] && typeof fl2[k2] === 'object') { next2[k2] = fl2[k2]; } }
     next2[String(idx)] = w;
     this.setG({ kilnFilled: next2, kilnList: (this.state.g.kilnList || []).filter(function (x) { return x !== w && x.id !== w.id; }) });
-    this.setState({ pkOpen: false, sel: idx, pickW: '' });
+    this.setState({ pkOpen: false, sel: -1, pickW: '' });
+    try { window.__sfx && window.__sfx('tap'); } catch (e) {}
+  }
+  takeOut(idx) {
+    var g = this.state.g, fl = g.kilnFilled || {}, it = fl[String(idx)], next = {};
+    if (!(it && typeof it === 'object')) { return; }
+    for (var k in fl) { if (k !== String(idx) && fl[k] && typeof fl[k] === 'object') { next[k] = fl[k]; } }
+    this.setG({ kilnFilled: next, kilnList: [it].concat(g.kilnList || []) });
+    this.setState({ sel: -1 });
     try { window.__sfx && window.__sfx('tap'); } catch (e) {}
   }
   // 대기 그릇을 끌어서 가마 칸에 놓기
@@ -664,13 +665,13 @@ class Component extends DCLogic {
       var tC = cur.base + off, fm = !it && pwItem && !firingNow ? QL0.kMatch(tC, pwOpt, g) : '';
       var ring = idx === sel ? 'border:3px solid #FFE7A8;box-shadow:0 0 14px rgba(255,200,90,.8);' : (fm === '정합' ? 'border:3px solid #9BE38A;box-shadow:0 0 0 2px #2F6328,0 0 16px rgba(155,227,138,.85);animation:navPulse 1.2s ease-in-out infinite;' : 'border:2px solid rgba(255,231,168,.25);');
       return {
-        aria: it ? sh.n + ' 선택' : lockC ? '잠긴 칸 · 상점에서 증설' : (fm === '정합' ? '작품 넣기 · 맞는 자리 ' + tC + '℃' : '작품 넣기'),
+        aria: it ? (idx === sel ? sh.n + ' 꺼내기' : sh.n + ' 선택 · 한 번 더 누르면 꺼내기') : lockC ? '잠긴 칸 · 상점에서 증설' : (fm === '정합' ? '작품 넣기 · 맞는 자리 ' + tC + '℃' : '작품 넣기'),
         fit: lockC ? '' : (it ? (gl ? self.matchOf(tC, gl.opt) : '') : (fm === '정합' ? '✓ 맞음' : (fm === '근접' ? '△ 근접' : ''))),
         fitStyle: (function () { var m = it ? self.matchOf(tC, gl.opt) : fm; if (!m || m === '불일치' && !it) { return 'display:none'; } var c = m === '정합' ? '#2F6328' : (m === '근접' ? '#8A6410' : '#A33B22'); return 'position:absolute;left:4px;bottom:4px;padding:0 5px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + c; })(),
         risk: rk ? rk.lv : '', riskIcon: rk ? (rk.lv === '높음' ? '!!' : '!') : '',
         riskStyle: rk && rk.lv !== '낮음' ? 'position:absolute;right:4px;bottom:4px;min-width:20px;height:20px;box-sizing:border-box;padding:0 4px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:12px;line-height:1;color:#FFFDF5;background:' + rk.col + ';border:2px solid #FFF4DE;box-shadow:0 1px 3px rgba(0,0,0,.5)' : 'display:none',
         temp: (cur.base + off).toLocaleString(),
-        filled: !!it, empty: !it && !lockC, locked: lockC,
+        filled: !!it, empty: !it && !lockC, locked: lockC, selOn: !!it && idx === sel && !firingNow,
         path: sh ? sh.p : '', fill: gl ? gl.raw : '#ccc', pot: it ? self.potOf(it, self.fillOf(it, 'glazed')) : self.potOf({ shape: 'cup' }, '#ccc'),
         style: cellBase + (lockC ? 'background:rgba(30,18,10,.72);border:2px dashed rgba(255,231,168,.3);' : 'background:linear-gradient(' + glowOf(off) + ',' + glowOf(off) + '),url(ui/kiln_soot.webp) center/100% 100% no-repeat;background-blend-mode:multiply;' + ring), // 그을린 가마 칸 + 온도 빛
         idx: idx,
@@ -678,7 +679,7 @@ class Component extends DCLogic {
         tap: function () {
           if (Date.now() - (self.dragEnd || 0) < 350) { return; }
           if (firingNow) { self.say('소성 중에는 가마 문을 열 수 없어요'); return; }
-          if (it) { self.setState({ sel: idx }); return; }
+          if (it) { if (sel === idx) { self.takeOut(idx); } else { self.setState({ sel: idx }); } return; }
           if (lockC) { self.say('잠긴 칸이에요 · 상점 「설비」에서 소성가마를 증설해요'); return; }
           if (!waiting.length) { self.say('가마에 넣을 기물이 없어요. 유약부터 발라요'); return; }
           if (pwItem && (self.state.pickW || waiting.length === 1)) { self.putAt(idx, pwItem); return; }
@@ -725,7 +726,7 @@ class Component extends DCLogic {
     return {
       heat: heat,
       heatDown: function (e) { self.heatDrag(e); },
-      wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: !firingNow, // 대기함은 늘 보인다 (비어 있으면 안내 문구)
+      wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: true, // 대기함은 늘 보인다 (소성 중에도) (비어 있으면 안내 문구)
       capText: capWarn.join(' · '), capStyle: capWarn.length ? 'position:relative;margin:-4px 0 -4px;padding:3px 9px;border-radius:9px;background:#FCE9D6;border:2px solid #C8601E;font-size:11.5px;font-weight:700;color:#8A3D10' : 'display:none',
       autoPlace: function () { self.autoPlace(cur, offsets); },
       pk: self.pickBox({
@@ -741,7 +742,7 @@ class Component extends DCLogic {
             for (var k2 in fl2) { if (fl2[k2] && typeof fl2[k2] === 'object') { next2[k2] = fl2[k2]; } }
             next2[String(idx2)] = w;
             self.setG({ kilnFilled: next2, kilnList: (self.state.g.kilnList || []).filter(function (x) { return x !== w && x.id !== w.id; }) });
-            self.setState({ pkOpen: false, sel: idx2 });
+            self.setState({ pkOpen: false, sel: -1 });
           } });
         }),
         emptyText: '가마에 넣을 기물이 없어요', emptyHref: 'Glaze.dc.html', emptyLink: '유약대로 →'
@@ -776,7 +777,7 @@ class Component extends DCLogic {
           clock: done ? '완료!' : self.fmtLeft(left), cost: self.jadeCost(left) ? '옥 ' + self.jadeCost(left).toLocaleString() : '무료',
           clockStyle: 'font-family:Jua,sans-serif;font-size:20px;white-space:nowrap;color:' + (done ? '#3B7A32' : '#C8601E'),
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:' + (done ? '#3B7A32' : 'linear-gradient(90deg,#E07A2E,#FFB24A)'),
-          note: done ? (g.batchItems || []).length + '점 꺼낼 수 있어요' : (g.batchItems || []).length + '점 굽는 중', fan: self.fanVals(g, left),
+          note: done ? (g.batchItems || []).length + '점 꺼낼 수 있어요' : (g.batchItems || []).length + '점 굽는 중', fan: self.fanVals(g, left), fanOn: !done && self.fanVals(g, left).on, fanBtn: self.fanVals(g, left).btn.replace('align-self:center;width:190px;height:58px;', 'flex:0 0 auto;width:118px;height:44px;').replace('gap:10px', 'gap:4px'),
           skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jadeV: 2, jade: nj, kilnStart: Date.now() - KD }); }); }
         };
       })(),
@@ -788,7 +789,6 @@ class Component extends DCLogic {
         try { window.__sfx && window.__sfx('ignite'); } catch (e) {} 
         self.setG({ kiln: 'firing', kilnStart: Date.now(), kilnBoost: 0, kilnDur: Math.round(cur.hours * 3600000 * (1 - (QL0.fx(g).kilnCut || 0))), batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 0) + 1, firedTotal: (g.firedTotal || 0) + results.length, kilnFilled: {} });
         self.setState({ sel: -1, closeAt: Date.now() });
-        clearTimeout(self.goT); self.goT = setTimeout(function () { self.goOpen(); }, 900); // 불을 지피면 문 닫히는 연출 뒤 가마 화면(소성 중)으로
         clearInterval(self.doorT); var t0 = Date.now(); self.doorT = setInterval(function () { if (Date.now() - t0 > 750) { clearInterval(self.doorT); } self.setState({ doorTick: Date.now() }); }, 33);
       }
     };
@@ -866,7 +866,7 @@ class Component extends DCLogic {
     var defs = [
       { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
-      { id: 'kiln', step: '소성', href: g.kiln === 'firing' ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
+      { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
     ];
     return defs.filter(function (d) { return !st[d.id] || d.id === me; });
