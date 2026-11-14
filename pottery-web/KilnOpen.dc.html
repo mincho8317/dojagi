@@ -102,7 +102,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </sc-for>
 
     <svg style="position:absolute;left:105px;top:300px" width="180" height="40" viewBox="0 0 180 40" aria-hidden="true"><ellipse cx="90" cy="20" rx="70" ry="12" fill="#120B07" opacity="0.6"></ellipse></svg>
-    <div style="position:absolute;left:95px;top:88px;width:200px;height:236px;transform-origin:50% 90%;animation:emerge .95s cubic-bezier(.25,.9,.3,1) both">
+    <div style="position:absolute;left:95px;top:88px;width:200px;height:236px;transform-origin:50% 90%;animation:emerge .7s cubic-bezier(.25,.9,.3,1) both">
     <svg style="position:absolute;left:0;top:0" width="200" height="236" viewBox="{{it.pot.vb}}" role="img" aria-label="{{it.name}}, 빚은 모양 그대로">
       <ellipse cx="0" cy="{{it.pot.shCy}}" rx="{{it.pot.shRx}}" ry="{{it.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{it.pot.d}}" fill="{{it.pot.fill}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.tex}}" opacity="{{it.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{it.pot.d}}" fill="url(#potTopLight)"></path><path d="{{it.pot.d}}" fill="{{it.pot.rings}}"></path><path d="{{it.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{it.pot.grainOp}}"></path><path d="{{it.pot.d}}" fill="{{it.pot.foot}}" fill-opacity="{{it.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{it.pot.d}}" fill="{{it.pot.drip}}" fill-opacity="{{it.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{it.pot.dX}}" y="{{it.pot.dY}}" width="{{it.pot.dW}}" height="{{it.pot.dH}}" fill="{{it.pot.dCol}}" mask="{{it.pot.dMask}}" opacity="{{it.pot.dOp}}"></rect><path d="{{it.pot.d}}" fill="url(#potShade)"></path><path d="{{it.pot.d}}" fill="none" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}" stroke-linejoin="round"></path>
       <ellipse cx="0" cy="{{it.pot.rimY}}" rx="{{it.pot.rimRx}}" ry="{{it.pot.rimRy}}" fill="{{it.inner}}" stroke="{{it.edge}}" stroke-width="{{it.pot.sw}}"></ellipse>
@@ -110,15 +110,15 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
     <sc-if value="{{it.broken}}" hint-placeholder-val="{{false}}">
       <img src="ui/crack_branch.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:105px;top:96px;width:180px;height:200px;object-fit:contain;mix-blend-mode:multiply;animation:crackGlow .5s .2s both">
-      <img src="ui/shards.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:150px;top:262px;width:96px;height:96px;object-fit:contain;animation:fadeUp .4s .5s both">
+      <img src="ui/shards.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:150px;top:262px;width:96px;height:96px;object-fit:contain;animation:fadeUp .35s .35s both">
     </sc-if>
 
     <div style="position:absolute;left:0;right:0;top:326px;display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div style="animation:slamIn .45s .75s both;width:260px;height:56px;box-sizing:border-box;padding:0 0 4px 8px;display:flex;align-items:center;justify-content:center;background:url({{it.ribImg}}) center/100% 100% no-repeat;filter:{{it.ribFx}};font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:{{it.ribTx}};text-shadow:0 2px 0 rgba(43,26,15,.45)">{{it.grade}}</div>
-      <span style="animation:fadeUp .4s .9s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
+      <div style="animation:slamIn .4s .5s both;width:260px;height:56px;box-sizing:border-box;padding:0 0 4px 8px;display:flex;align-items:center;justify-content:center;background:url({{it.ribImg}}) center/100% 100% no-repeat;filter:{{it.ribFx}};font-family:'Jua',sans-serif;font-size:28px;letter-spacing:8px;color:{{it.ribTx}};text-shadow:0 2px 0 rgba(43,26,15,.45)">{{it.grade}}</div>
+      <span style="animation:fadeUp .35s .6s both;font-family:'Jua',sans-serif;font-size:17px;color:#FFF4DE">{{it.name}}</span>
     </div>
 
-    <div style="animation:fadeUp .45s 1s both;position:absolute;left:28px;right:28px;top:400px;box-sizing:border-box;padding:9px 14px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:6px">
+    <div style="animation:fadeUp .35s .7s both;position:absolute;left:28px;right:28px;top:400px;box-sizing:border-box;padding:9px 14px;border-radius:18px;background:#3E2616;border:3px solid #6B4429;box-shadow:inset 0 0 0 2px #2B1A0F;display:flex;flex-direction:column;gap:6px">
       <sc-if value="{{it.whole}}" hint-placeholder-val="{{true}}">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#E8D3B5">실력 점수</span>
@@ -492,10 +492,10 @@ class Component extends DCLogic {
   endDoor() { clearInterval(this.doorT); if (!this.state.doorDone) { this.setState({ doorDone: true }); } }
   showIt(i, it, fast) {
     try { window.__sfx && window.__sfx(it.broken ? 'thud' : ((it.grade === '명작' || it.grade === '요변') ? 'rare' : 'reveal')); } catch (e) {}
-    this.shownAt = Date.now(); this.setState({ ph: '', shownIdx: i, skipI: fast ? i : -1 });
+    this.shownAt = Date.now(); this.setState({ ph: '', shownIdx: i, skipI: fast ? i : -1, skipE: -1 });
     // 점수 합산 연출 타이머 (약 7초) · 단계마다 효과음
     var self = this; clearInterval(this.scT); this.scSnd = {};
-    this.scT = setInterval(function () { var t = Date.now() - self.shownAt; if (t > 7200 || self.state.shownIdx !== i) { clearInterval(self.scT); } self.setState({ scTick: Date.now() }); }, 50);
+    this.scT = setInterval(function () { var t = Date.now() - self.shownAt; if (t > 5000 || self.state.shownIdx !== i) { clearInterval(self.scT); } self.setState({ scTick: Date.now() }); }, 50);
   }
   readyIdle(g) { return g.kiln === 'firing' && (!g.kilnStart || Date.now() >= g.kilnStart + (g.kilnDur || 14400000)) && (g.openIdx || 0) === 0; }
   confirmAll() {
@@ -585,32 +585,33 @@ class Component extends DCLogic {
       function chips(list, a0, f0, gap, col) {
         var tot = 0;
         var out = list.map(function (x, i) {
-          var ap = a0 + i * 150, fl = f0 + i * gap, p = cl((t - fl) / 280), st2;
+          var ap = a0 + i * 70, fl = f0 + i * gap, p = cl((t - fl) / 220), st2;
           if (t < ap) { st2 = 'opacity:0;transform:translateY(8px)'; }
           else if (t < fl) { st2 = 'opacity:1;transform:none;transition:opacity .2s,transform .2s'; }
           else if (p < 1) { st2 = 'opacity:' + (1 - p * 0.7).toFixed(2) + ';transform:translateY(' + (-16 * p).toFixed(1) + 'px) scale(' + (1 + 0.15 * Math.sin(p * Math.PI)).toFixed(2) + ')'; }
           else { st2 = 'opacity:.6'; }
-          if (t >= fl + 200) { ding('c' + col + i, 'tap'); }
-          tot += x.v * cl((t - fl - 200) / 220);
+          if (t >= fl + 150) { ding('c' + col + i, 'tap'); }
+          tot += x.v * cl((t - fl - 150) / 180);
           return { t: x.t, st: CH + 'background:' + col + ';color:#FFFDF5;' + st2 };
         });
-        return { list: out, tot: tot, end: f0 + (list.length - 1) * gap + 420 };
+        return { list: out, tot: tot, end: f0 + (list.length - 1) * gap + 330 };
       }
       if (!P) { // 예전 방식 작품
         return { chips: [], cchips: [], tot: it.skill != null ? it.skill : '-', max: 100, totStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#FFD66B', cpct: cPct + '%', cStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#9FD4C6', cbar: 'display:block;height:100%;width:' + cPct + '%;background:' + (it.tint || '#9FD4C6'), val: (it.value || 0).toLocaleString(), valStyle: 'font-family:Jua,sans-serif;font-size:22px;color:#FFD66B', mul: '', mulStyle: 'display:none' };
       }
-      var A = chips([{ t: '성형 ' + P.form + '/100', v: P.form }, { t: '+ 건조 ' + P.dry + '/50', v: P.dry }, { t: '+ 시유 ' + P.glaze + '/50', v: P.glaze }], 1100, 1800, 300, '#8A6440');
+      var A = chips([{ t: '성형 ' + P.form + '/100', v: P.form }, { t: '+ 건조 ' + P.dry + '/50', v: P.dry }, { t: '+ 시유 ' + P.glaze + '/50', v: P.glaze }], 800, 800 + 350, 110, '#8A6440');
       var cl4 = CP ? [{ t: '무작위 ' + CP.rnd + '%', v: CP.rnd }, { t: '+ 온도 정합 ' + CP.temp + '%', v: CP.temp }, { t: '+ 유약 보너스 ' + CP.glaze + '%', v: CP.glaze }, { t: '+ 시너지 ' + CP.syn + '%', v: CP.syn }] : [];
-      var B = chips(cl4, A.end + 200, A.end + 700, 260, '#3E6B60');
+      var B = chips(cl4, 800 + 120, 800 + 470, 90, '#3E6B60'); /* 성형·발색 점수를 동시에 */
+      var ABend = Math.max(A.end, B.end);
       var cNow = t >= B.end ? cPct : Math.max(0, Math.min(100, Math.round(B.tot)));
       if (t >= B.end && t < 1e8) { ding('cdone', 'ok'); }
-      var v0 = it.valueBase || it.value || 0, v1 = it.value || 0, c0 = B.end + 250, mA = c0 + 800, mF = mA + 650, vEnd = mF + 450;
-      var vp = cl((t - c0) / 600), val = t < mF + 150 ? Math.round(v0 * vp / 100) * 100 : Math.round((v0 + (v1 - v0) * cl((t - mF - 150) / 300)) / 100) * 100;
-      if (t >= c0 + 600) { ding('v0', 'reveal'); }
-      if (t >= mF + 300) { ding('v1', 'coin'); }
-      var mp = cl((t - mF) / 300), mul = '×' + (it.colorMul || 1).toFixed(2) + ' 발색';
+      var v0 = it.valueBase || it.value || 0, v1 = it.value || 0, c0 = ABend + 80, mA = c0 + 450, mF = mA + 300, vEnd = mF + 300;
+      var vp = cl((t - c0) / 420), val = t < mF + 100 ? Math.round(v0 * vp / 100) * 100 : Math.round((v0 + (v1 - v0) * cl((t - mF - 100) / 220)) / 100) * 100;
+      if (t >= c0 + 420) { ding('v0', 'reveal'); }
+      if (t >= mF + 220) { ding('v1', 'coin'); }
+      var mp = cl((t - mF) / 250), mul = '×' + (it.colorMul || 1).toFixed(2) + ' 발색';
       var mulSt = t < mA ? 'display:none' : (mp >= 1 ? 'display:none' : 'flex:0 0 auto;padding:1px 7px;border-radius:8px;background:#3E6B60;font-family:Jua,sans-serif;font-size:13px;color:#FFFDF5;white-space:nowrap;' + (t < mF ? 'animation:popIn .35s both' : 'transform:translateX(' + (40 * mp).toFixed(1) + 'px) scale(' + (1 - 0.5 * mp).toFixed(2) + ');opacity:' + (1 - mp).toFixed(2)));
-      var flash = t >= mF + 150 && t < vEnd + 300;
+      var flash = t >= mF + 100 && t < vEnd + 250; self.APP_END = vEnd + 250;
       return {
         chips: A.list, tot: Math.round(A.tot), max: it.skillMax || 200,
         totStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#FFD66B;display:inline-block;' + (t >= A.end - 100 && t < A.end + 300 ? 'transform:scale(1.18)' : ''),
@@ -626,8 +627,14 @@ class Component extends DCLogic {
       progress: baking ? '굽는 중' : (opening ? (idx + 1) + ' / ' + items.length : (results ? '결과 확인' : '완료')),
       nextLabel: idx + 1 >= items.length ? '확인' : '다음 기물 보기 ›',
       next: function () { self.setState({ shownIdx: -1, ph: '', skipI: -1 }); self.setG({ openIdx: idx + 1, kilnSeen: 1 }); },
-      skipFlag: st.skipI === idx ? '1' : '0',
-      skipAnim: function () { if (st.skipI !== idx && Date.now() - (self.shownAt || 0) < 1500) { self.setState({ skipI: idx }); } },
+      skipFlag: st.skipI === idx || st.skipE === idx ? '1' : '0',
+      /* 눌러서 건너뛰기 : 등장 중 → 평가 연출 바로 시작 · 평가 중 → 결과까지 */
+      skipAnim: function () {
+        if (st.skipI === idx) { return; }
+        var t0 = Date.now() - (self.shownAt || 0);
+        if (t0 < 800 && st.skipE !== idx) { self.shownAt = Date.now() - 800; self.setState({ skipE: idx }); return; }
+        if (t0 < (self.APP_END || 4000)) { self.setState({ skipI: idx }); }
+      },
       doorSkip: function () { self.endDoor(); },
       opening: opening,
       summary: g.kiln !== 'firing' && !this.state.leaving,
