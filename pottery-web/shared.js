@@ -1800,6 +1800,41 @@
     st.textContent = '[data-tray],[data-kwait],[data-kcell]{touch-action:none!important;-webkit-user-select:none;user-select:none}';
     (document.head || document.documentElement).appendChild(st);
   })();
+  // ── 프레임 애니메이션 : img 하나의 그림을 차례로 바꿔 끼운다 (부채·풀무·바람·불꽃) ──
+  (function () {
+    if (typeof window === 'undefined' || window.__seq) { return; }
+    var cache = {};
+    window.__preload = function (list) { (list || []).forEach(function (u) { if (!cache[u]) { var im = new Image(); im.src = u; cache[u] = im; } }); };
+    /* el : img, frames : [[src, ms], ...], end : 'hide' 이면 끝나고 숨김, 그 밖의 문자열이면 그 그림으로 돌아감 */
+    window.__seq = function (el, frames, end) {
+      if (!el || !frames || !frames.length) { return; }
+      clearTimeout(el.__seqT); var i = 0;
+      el.style.visibility = 'visible';
+      (function step() {
+        if (i >= frames.length) { if (end === 'hide') { el.style.visibility = 'hidden'; } else if (end) { el.src = end; } return; }
+        el.src = frames[i][0]; var ms = frames[i][1]; i++;
+        el.__seqT = setTimeout(step, ms);
+      })();
+    };
+    /* 화면이 다시 그려져도 지워지지 않도록 body 에 띄운 그림으로 재생 · base : 기준 요소, opt.box : 기준 요소 안 좌표 [x, y, w, h] (요소 px), opt.hide : 재생 동안 기준 요소 숨김 */
+    var stl = null;
+    window.__seqOver = function (base, frames, opt) {
+      if (!base || !frames || !frames.length) { return; }
+      opt = opt || {};
+      var r = base.getBoundingClientRect(), k = base.offsetWidth ? r.width / base.offsetWidth : 1, bx = opt.box || [0, 0, base.offsetWidth, base.offsetHeight];
+      var im = document.createElement('img'); im.alt = ''; im.setAttribute('aria-hidden', 'true');
+      im.style.cssText = 'position:fixed;z-index:9000;pointer-events:none;object-fit:contain;left:' + (r.left + bx[0] * k) + 'px;top:' + (r.top + bx[1] * k) + 'px;width:' + (bx[2] * k) + 'px;height:' + (bx[3] * k) + 'px;' + (opt.css || '');
+      document.body.appendChild(im);
+      var key = opt.hide ? 'seq' + Math.floor(Math.random() * 1e9) : '';
+      if (key) { if (!stl) { stl = document.createElement('style'); stl.textContent = 'body[data-seqhide] [data-seqbase]{opacity:0!important}'; document.head.appendChild(stl); } base.setAttribute('data-seqbase', '1'); document.body.setAttribute('data-seqhide', key); }
+      if (base.__seqOv) { try { clearTimeout(base.__seqOv.t); base.__seqOv.im.remove(); } catch (e) {} }
+      var st = { im: im, t: 0 }; base.__seqOv = st; var i = 0;
+      (function step() {
+        if (i >= frames.length) { im.remove(); if (key && document.body.getAttribute('data-seqhide') === key) { document.body.removeAttribute('data-seqhide'); } return; }
+        im.src = frames[i][0]; var ms = frames[i][1]; i++; st.t = setTimeout(step, ms);
+      })();
+    };
+  })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
   // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다
   (function () {

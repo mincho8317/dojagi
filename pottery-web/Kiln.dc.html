@@ -130,6 +130,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <img src="ui/kiln_door_glow.webp" alt="" aria-hidden="true" style="{{door.glow}}">
           <div style="{{door.l}}"></div>
           <div style="{{door.r}}"></div>
+          <div data-kiln-flash="1" style="position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse 40% 70% at 50% 55%,rgba(255,170,60,.95),rgba(255,90,20,.45) 45%,rgba(0,0,0,0) 75%)"></div>
           <div style="{{door.lock}}">
             <img src="ui/kiln_door_bolt.webp" alt="" aria-hidden="true" style="{{door.eye}}">
             <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08">{{door.label}}</span>
@@ -150,7 +151,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
   <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
     <div style="position:relative;z-index:5;flex:1 1 auto;min-height:0;margin-top:-46px;display:flex;justify-content:center;align-items:flex-start">
-  <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fanBtn}}"><img src="ui/kiln_bellows.webp" alt="" aria-hidden="true" style="width:120px;height:92px;object-fit:contain;filter:drop-shadow(0 5px 3px rgba(0,0,0,.55))"><span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08,0 0 6px #1A0F08">풀무질</span></button>
+  <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fanBtn}}"><span aria-hidden="true" style="position:relative;display:block;width:120px;height:108px"><img data-bel-img="1" src="anim/bellows_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 3px rgba(0,0,0,.55))"></span><span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08,0 0 6px #1A0F08">풀무질</span></button>
     </div>
   </sc-if>
 
@@ -350,6 +351,12 @@ class Component extends DCLogic {
   fanTap() {
     var self = this, f = this.state.fan || { m: 0 }, now = Date.now();
     if ((f.lock || 0) > now) { return; }
+    try { /* 풀무 프레임 · 바람구멍 불꽃 · 가마 문틈 불빛 */
+      var bel = document.querySelector('[data-bel-img]');
+      window.__seqOver && window.__seqOver(bel, [['anim/bellows_2.webp', 70], ['anim/bellows_3.webp', 140], ['anim/bellows_4.webp', 90]], { hide: true, css: 'filter:drop-shadow(0 5px 3px rgba(0,0,0,.55))' });
+      window.__seqOver && window.__seqOver(bel.parentNode, [['anim/puff_1.webp', 60], ['anim/puff_2.webp', 80], ['anim/puff_3.webp', 170], ['anim/puff_4.webp', 200]], { box: [-116, 36, 128, 99] });
+      var fl = document.querySelector('[data-kiln-flash]'); if (fl && fl.animate) { fl.animate([{ opacity: 0 }, { opacity: 0.85, offset: 0.35 }, { opacity: 0 }], { duration: 700, easing: 'ease-out' }); }
+    } catch (e) {}
     var m = (f.m || 0) + 11;
     var nf = { m: m, lock: 0, tapAt: now };
     try { window.__sfx && window.__sfx('whoosh'); } catch (e) {}
@@ -401,6 +408,7 @@ class Component extends DCLogic {
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   trackBoot() { return window.PotteryShared.trackBoot.call(this); }
   componentDidMount() {
+    try { window.__preload && window.__preload(['anim/bellows_2.webp', 'anim/bellows_3.webp', 'anim/bellows_4.webp', 'anim/puff_1.webp', 'anim/puff_2.webp', 'anim/puff_3.webp', 'anim/puff_4.webp']); } catch (e) {}
     try { this.tutBoot(); } catch (e) {}
     try { this.sndBoot(); } catch (e) {}
     var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} try { selfB.trackBoot(); } catch (e) {} }, 0);

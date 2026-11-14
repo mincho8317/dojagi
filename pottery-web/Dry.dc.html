@@ -124,7 +124,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
       <div style="position:relative;display:flex;align-items:center;justify-content:center">
         <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 커서가 초록 칸에 있을 때 부채 누르기" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;filter:drop-shadow(0 4px 2px rgba(43,26,15,.35))">
-          <span aria-hidden="true" style="position:relative;display:inline-block;width:170px;height:120px;{{bf.svg}}"><img src="ui/fan_01.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f1}}"><img src="ui/fan_02.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f2}}"></span>
+          <span aria-hidden="true" style="position:relative;display:inline-block;width:170px;height:124px"><img data-fan-img="1" src="anim/fan_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></span>
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE;text-shadow:0 2px 0 #3E2616,0 0 6px #3E2616;white-space:nowrap">부채를 톡!</span>
         </button>
         <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
@@ -358,6 +358,7 @@ class Component extends DCLogic {
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   trackBoot() { return window.PotteryShared.trackBoot.call(this); }
   componentDidMount() {
+    try { window.__preload && window.__preload(['anim/fan_2.webp', 'anim/fan_3.webp', 'anim/fan_4.webp', 'anim/wind_1.webp', 'anim/wind_2.webp', 'anim/wind_3.webp']); } catch (e) {}
     try { this.tutBoot(); } catch (e) {}
     try { this.sndBoot(); } catch (e) {}
     var selfB = this; setTimeout(function () { try { selfB.navBoot(); } catch (e) {} try { selfB.trackBoot(); } catch (e) {} }, 0);
@@ -384,6 +385,11 @@ class Component extends DCLogic {
     if (now - (this.fanLast || 0) < 220) { return; }
     this.fanLast = now;
     var x = this.fanPos(), c = s.fanZone || 0.5, d = Math.abs(x - c), hit = d <= T.zone / 2, perf = d <= T.perfect / 2;
+    try { /* 부채 프레임 + 맞으면 바람 */
+      var fi = document.querySelector('[data-fan-img]');
+      window.__seqOver && window.__seqOver(fi, [['anim/fan_2.webp', 70], ['anim/fan_3.webp', 70], ['anim/fan_4.webp', 110], ['anim/fan_3.webp', 60]], { hide: true });
+      if (hit && fi) { var big = perf ? 1.2 : 1; window.__seqOver(fi, [['anim/wind_1.webp', 80], ['anim/wind_2.webp', 150], ['anim/wind_3.webp', 170]], { box: [70, -70 * big, 200 * big, 112 * big], css: 'transform:rotate(-28deg);transform-origin:10% 70%;' + (perf ? 'filter:brightness(1.15) drop-shadow(0 0 6px rgba(255,255,255,.9));' : '') }); }
+    } catch (e) {}
     if (!hit) {
       try { window.__sfx && window.__sfx('thud'); } catch (e) {}
       this.setState({ fanAt: now, fanRes: 'miss', fanN: (s.fanN || 0) + 1, fanStreak: 0 });
@@ -595,7 +601,7 @@ class Component extends DCLogic {
         return {
           on: true, wind: recent && ok, wa: 'animation-name:dryWind' + sfx,
           btn: 'all:unset;cursor:pointer;align-self:center;width:190px;height:62px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border-radius:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;background:#FFFDF5;border:3px solid #2F7A5E;box-shadow:0 4px 0 #2F7A5E',
-          svg: 'transform-origin:85px 110px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), f1: recent ? 0 : 1, f2: recent ? 1 : 0, // 부칠 때 부채 펼친 그림
+          svg: '', f1: 1, f2: 0,
           title: recent ? (res === 'perfect' ? '완벽한 바람! ' : (res === 'hit' ? '좋은 바람! ' : '빗나갔어요')) + (ok && (self.state.fanStreak || 0) > 1 ? ' 연속 ' + self.state.fanStreak : '') : '타이밍 부채질',
           left: '남은 ' + self.fmtLeft(leftMs),
           zone: 'position:absolute;top:0;bottom:0;left:' + ((c - T.zone / 2) * 100).toFixed(1) + '%;width:' + (T.zone * 100).toFixed(1) + '%;background:#7FD1AE;transition:left .25s',
