@@ -98,16 +98,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </sc-if>
 
-  <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
-    <div style="position:relative;display:flex;flex-direction:column;gap:5px;min-height:62px;box-sizing:border-box;justify-content:center;padding:6px 10px 8px;border-radius:16px;background:#FCEBD8;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A2F1E">{{kt.fan.title}}</span><span style="font-size:11px;font-weight:700;color:#7A5434;white-space:nowrap">{{kt.fan.left}}</span></div>
-      <div style="position:relative;height:24px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:12px;background:#3E2616;overflow:hidden">
-        <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
-        <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
-        <span style="{{kt.fan.bar}}"></span>
-      </div>
-    </div>
-  </sc-if>
   <sc-if value="{{hasWait}}" hint-placeholder-val="{{true}}">
   <div role="group" aria-label="소성 대기함 · {{waitN}}점 · 끌어서 가마 칸에 놓기" style="position:relative;display:flex;align-items:center;gap:4px;min-height:62px;box-sizing:border-box;padding:4px 5px;border-radius:14px;background:rgba(43,26,15,.78);box-shadow:0 3px 0 rgba(43,26,15,.35);margin:-2px 0 -4px">
     <span style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;width:40px;font-family:'Jua',sans-serif;font-size:12px;line-height:1.15;color:#FFE7A8;text-align:center">대기<b style="font-weight:400;font-size:18px;color:#FFFDF5">{{waitN}}</b></span>
@@ -167,11 +157,18 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
-    <div aria-label="발풀무" role="group" style="position:relative;height:118px;margin-top:-14px;box-sizing:border-box;border:4px solid #2B1A0F;border-top:none;border-radius:0 0 22px 22px;background:linear-gradient(#3A2418,#3A2418 6px,transparent 6px),repeating-linear-gradient(0deg,#7A4A30 0 22px,#4A2C1C 22px 25px),#7A4A30;box-shadow:inset 0 10px 14px rgba(0,0,0,.45),0 5px 0 rgba(43,26,15,.45);overflow:hidden">
-      <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 발풀무 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-60px;bottom:0;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
-        <span aria-hidden="true" style="position:relative;display:block;width:120px;height:110px"><img data-bel-img="1" src="anim/pedal_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
+    <div aria-label="발풀무" role="group" style="position:relative;height:150px;margin-top:-14px;box-sizing:border-box;border:4px solid #2B1A0F;border-top:none;border-radius:0 0 22px 22px;background:linear-gradient(#3A2418,#3A2418 6px,transparent 6px),repeating-linear-gradient(0deg,#7A4A30 0 22px,#4A2C1C 22px 25px),#7A4A30;box-shadow:inset 0 10px 14px rgba(0,0,0,.45),0 5px 0 rgba(43,26,15,.45);overflow:hidden">
+      <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 발풀무 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-72px;bottom:-9px;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
+        <span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" src="anim/pedal_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
       </button>
-      <span aria-hidden="true" style="position:absolute;left:18px;top:16px;padding:2px 9px;border-radius:10px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8;pointer-events:none">발풀무를 밟아요</span>
+      <span aria-hidden="true" style="position:absolute;left:10px;top:50%;margin-top:-6px;padding:4px 8px;border-radius:10px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#FFE7A8;text-align:center;pointer-events:none">풀무를 밟아<br>불을 키워요</span>
+      <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
+        <div role="img" aria-label="{{kt.fan.title}}" style="position:absolute;left:50%;top:7px;width:132px;margin-left:-66px;height:12px;box-sizing:border-box;border:2px solid #3E2616;border-radius:6px;background:#3E2616;overflow:hidden;box-shadow:0 2px 0 rgba(0,0,0,.35)">
+          <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.55)"></span>
+          <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.7)"></span>
+          <span style="{{kt.fan.bar}}"></span>
+        </div>
+      </sc-if>
     </div>
   </sc-if>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
@@ -745,7 +742,7 @@ class Component extends DCLogic {
     return {
       heat: heat,
       heatDown: function (e) { self.heatDrag(e); },
-      wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: !firingNow, // 대기함은 늘 보인다 (소성 중에도) (비어 있으면 안내 문구)
+      wait: wait, waitN: waiting.length, noWait: waiting.length === 0, hasWait: true, // 대기함은 늘 보인다 (소성 중에도) (비어 있으면 안내 문구)
       capText: capWarn.join(' · '), capStyle: capWarn.length ? 'position:relative;margin:-4px 0 -4px;padding:3px 9px;border-radius:9px;background:#FCE9D6;border:2px solid #C8601E;font-size:11.5px;font-weight:700;color:#8A3D10' : 'display:none',
       autoPlace: function () { self.autoPlace(cur, offsets); },
       pk: self.pickBox({
