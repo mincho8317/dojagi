@@ -931,14 +931,19 @@
       return ok;
     }
     /* 공방 화면에서는 다음 설비 안내가 꺼져 있으면 계속 다시 띄운다 (컷신·팝업에 가려 놓치는 경우 대비) */
+    var gmLoadT = Date.now(), gmAct = 0;
+    try { document.addEventListener('pointerdown', function () { gmAct = Date.now(); }, true); } catch (e) {}
     function guideMain(g) {
-      if (PAGE !== 'Main') { return; }
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
-      var nx = nextOf(g); if (!nx || nx === 'Main') { return; }
+      var nx = nextOf(g); if (!nx || nx === PAGE) { return; }
+      if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return; }
       if (spotEl || ptrDown || document.querySelector('.tut-ov,.jade-ov,.st-ov,.sm-ov,[aria-modal="true"]')) { return; }
       var now = Date.now(); if (spotMute.guideMain && spotMute.guideMain > now) { return; }
+      /* 다른 화면에서는 손을 떼고 잠깐 기다린 뒤에만 「공방으로」 안내 (진행 중인 대화·연출을 가로막지 않게) */
+      if (PAGE !== 'Main' && (now - gmLoadT < 2500 || now - gmAct < 2500)) { return; }
       var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '소성가마', KilnOpen: '소성가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
-      spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요', 'guideMain');
+      if (PAGE === 'Main') { spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요', 'guideMain'); }
+      else { spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요', 'guideMain'); }
     }
     // 밝힐 곳이 아직 안 그려졌거나 안내 창이 떠 있으면 조금 뒤 다시 찾는다
     function guideRetry(delay, n) { setTimeout(function () { if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { if (n > 0) { guideRetry(700, n - 1); } return; } if (!guideNext(load()) && n > 0) { guideRetry(700, n - 1); } }, delay); }
@@ -975,7 +980,7 @@
       if (!force && seen === t) { return false; }
       if (document.querySelector('.tut-ov')) { return false; }
       try { localStorage.setItem('tutCardSeen', String(t)); } catch (e) {}
-      overlay('<div class="ic">' + window.PotteryShared.ICO('🎯') + '</div><h3>목표 ' + stepNo(t) + '/' + (STEPS.length - 1) + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
+      overlay('<div class="ic">' + (window.PotteryShared.ICO || String)('🎯') + '</div><h3>목표 ' + stepNo(t) + '/' + (STEPS.length - 1) + '</h3><p><b style="display:block;margin-bottom:6px;font-family:Jua,sans-serif;font-weight:400;font-size:17px;color:#2B1A0F">' + st.goal + '</b>' + st.hint + '</p>', [{ label: '확인', run: function () { setTimeout(function () { guideNext(load()); }, 350); } }]);
       return true;
     }
     function gameRect() { var el = document.getElementById('__host') || document.querySelector('[data-navroot]'); if (el) { var r = el.getBoundingClientRect(); if (r.width > 50) { return { l: r.left, t: r.top, k: r.width / 390 }; } } var w = Math.min(window.innerWidth, 390 * window.innerHeight / 844); return { l: (window.innerWidth - w) / 2, t: 0, k: w / 390 }; }
@@ -1119,12 +1124,12 @@
     function tourOn(g) { var o = t2R(); return g.tut === DONE1 && !!o && typeof o.k === 'number' && o.k < T2.length; }
     function tourCard(k, run) {
       var st = T2[k];
-      overlay('<div class="ic">' + window.PotteryShared.ICO(st.ic) + '</div><h3>' + (k + 1) + '/' + T2.length + ' · ' + st.goal + '</h3><p style="text-align:left;word-break:keep-all">' + st.body + '</p>', [
+      overlay('<div class="ic">' + (window.PotteryShared.ICO || String)(st.ic) + '</div><h3>' + (k + 1) + '/' + T2.length + ' · ' + st.goal + '</h3><p style="text-align:left;word-break:keep-all">' + st.body + '</p>', [
         { label: '확인', run: function () { t2Set(k, { tut2Seen: k }); if (run) { run(); } } },
         { label: '안내 그만 보기', cls: 'sub', run: function () { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } } }
       ]);
     }
-    function tourDone() { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } overlay('<div class="ic">' + window.PotteryShared.ICO('🏆') + '</div><h3>튜토리얼 완료!</h3><p>이제 공방을 자유롭게 운영해 보세요.\n막히면 설정에서 튜토리얼을 다시 볼 수 있어요.</p>', [{ label: '좋아요' }]); }
+    function tourDone() { t2Set(99); var mm = document.querySelector('.tut-mini'); if (mm) { mm.remove(); } overlay('<div class="ic">' + (window.PotteryShared.ICO || String)('🏆') + '</div><h3>튜토리얼 완료!</h3><p>이제 공방을 자유롭게 운영해 보세요.\n막히면 설정에서 튜토리얼을 다시 볼 수 있어요.</p>', [{ label: '좋아요' }]); }
     function tourMini(k) {
       var mini = document.querySelector('.tut-mini');
       if (!mini) { mini = document.createElement('button'); mini.type = 'button'; mini.className = 'tut-mini'; mini.setAttribute('aria-label', '튜토리얼 목표 보기'); document.body.appendChild(mini); }
@@ -1273,7 +1278,7 @@
       }
       // 벚꽃 의뢰를 납품한 뒤 : 공방의 이벤트 버튼이 열린다
       if ((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) && ev !== '2') {
-        if (PAGE === 'Season') { evW('2'); overlay('<div class="ic">' + window.PotteryShared.ICO(T3.ic) + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', [{ label: '확인' }]); return; }
+        if (PAGE === 'Season') { evW('2'); overlay('<div class="ic">' + (window.PotteryShared.ICO || String)(T3.ic) + '</div><h3>' + T3.goal + '</h3><p style="text-align:left;word-break:keep-all">' + T3.body + '</p>', [{ label: '확인' }]); return; }
         if (PAGE === 'Main') { act('evBtn', true, linkTo('Season'), '🌸 벚꽃 축제가 열렸어요! 「이벤트」를 눌러 봐요'); }
         return;
       }
@@ -1311,7 +1316,7 @@
           try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {}
           var names = opened.filter(function (p) { return p !== 'KilnOpen' && p !== 'Queue'; }).map(function (p) { return NAMES[p]; });
           var showFin = function () {
-            overlay('<div class="ic">' + window.PotteryShared.ICO((fin ? '🏆' : '🔓')) + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
+            overlay('<div class="ic">' + (window.PotteryShared.ICO || String)((fin ? '🏆' : '🔓')) + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
           };
           if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', showFin); } else { showFin(); }
           notify();
@@ -1319,7 +1324,7 @@
       }
       var L = apply(load());
       if (first && L[PAGE]) {
-        overlay('<div class="ic">' + window.PotteryShared.ICO('🔒') + '</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 ' + ((load().tut || 0) < STEPS.length ? '튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal : '이야기를 조금 더 진행하면 열려요.') + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
+        overlay('<div class="ic">' + (window.PotteryShared.ICO || String)('🔒') + '</div><h3>아직 잠겨 있어요</h3><p>' + '「' + (NAMES[PAGE] || '이 화면') + '」 화면은 ' + ((load().tut || 0) < STEPS.length ? '튜토리얼을 진행하면 열려요.\n지금 목표: ' + STEPS[load().tut].goal : '이야기를 조금 더 진행하면 열려요.') + '</p>', [{ label: '공방으로', run: function () { if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }]);
       }
     }
     document.addEventListener('click', function (e) {
@@ -1384,7 +1389,7 @@
     if (typeof g0.tut === 'number' && g0.tutV !== 2 && mig !== '2') { g0.tut = (g0.tut === 0 && !pieceN(g0)) ? 0 : g0.tut + 1; g0.tutV = 2; save(g0); }
     if (g0.tut === 7 || g0.tut === 8) { g0.tut = DONE1; save(g0); if (!t2R()) { t2W({ k: 0, seen: -1, v: 2 }); } }
     if (PAGE === 'Main' && g0.tut === undefined) {
-      overlay('<div class="ic">' + window.PotteryShared.ICO('🏺') + '</div><h3>도자기 공방에 어서 오세요!</h3><p>할머니가 남긴 작은 공방에서 이야기가 시작돼요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
+      overlay('<div class="ic">' + (window.PotteryShared.ICO || String)('🏺') + '</div><h3>도자기 공방에 어서 오세요!</h3><p>할머니가 남긴 작은 공방에서 이야기가 시작돼요.\n손님의 의뢰를 받아 빚고 굽고 납품하며\n새 기능이 차례로 열려요.</p>', [
         { label: '이야기 시작', run: function () { window.PotteryShared.storyPlay('prologue', function () { freshStart(load()); apply(load()); notify(); setTimeout(function () { showCard(load(), true); }, 500); }); } },
         { label: '건너뛰고 모든 기능 열기', cls: 'sub', run: function () { var g = load(); g.tut = 99; save(g); apply(g); } }
       ]);
@@ -1997,6 +2002,9 @@
 
     // 공방 화면 · 이야기 카드 (지금 에피소드·챕터와 진행)
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    // 안내 카드 머리 그림 : 이모지 → 그림 (없는 건 이모지 그대로) · 모든 화면에서 쓰므로 공방 전용 코드보다 먼저 정의
+    var ICOM = { '🏺': 'tutorial_pottery', '🔓': 'tutorial_unlock', '🏆': 'tutorial_trophy', '🎯': 'tutorial_target', '📜': 'tutorial_scroll', '📖': 'tutorial_scroll', '🔔': 'tutorial_bell', '🌸': 'tutorial_blossom', '🔬': 'tutorial_research', '💎': 'ui_jade', '🎁': 'reward_box', '🔥': 'kiln_fire', '📌': 'ui_pin', '📋': 'ui_memo', '🥣': 'muk', '💥': 'display_broken' };
+    S.ICO = function (e, px) { var k = ICOM[String(e || '').replace(/\uFE0F/g, '')]; return k ? '<img src="ui/' + k + '.webp" alt="" aria-hidden="true" style="width:' + (px || 64) + 'px;height:' + (px || 64) + 'px;object-fit:contain;display:inline-block">' : e; };
     if (PAGE !== 'Main') { return; }
     function gameK() { var n = document.querySelector('nav[aria-label="주 메뉴"]'); if (!n) { return null; } var r = n.getBoundingClientRect(); return { k: r.width / 390, l: r.left, t: r.top - 752 * (r.width / 390) }; }
     var el = null;
@@ -2025,8 +2033,6 @@
 
     // ── 공용 작은 팝업 ──
     // 안내 카드 머리 그림 : 이모지 → 그림 (없는 건 이모지 그대로)
-    var ICOM = { '🏺': 'tutorial_pottery', '🔓': 'tutorial_unlock', '🏆': 'tutorial_trophy', '🎯': 'tutorial_target', '📜': 'tutorial_scroll', '📖': 'tutorial_scroll', '🔔': 'tutorial_bell', '🌸': 'tutorial_blossom', '🔬': 'tutorial_research', '💎': 'ui_jade', '🎁': 'reward_box', '🔥': 'kiln_fire', '📌': 'ui_pin', '📋': 'ui_memo', '🥣': 'muk', '💥': 'display_broken' };
-    S.ICO = function (e, px) { var k = ICOM[String(e || '').replace(/\uFE0F/g, '')]; return k ? '<img src="ui/' + k + '.webp" alt="" aria-hidden="true" style="width:' + (px || 64) + 'px;height:' + (px || 64) + 'px;object-fit:contain;display:inline-block">' : e; };
     function popup(ic, title, body, btns) {
       var ov = document.createElement('div'); ov.className = 'uf-ov tut-ov'; ov.style.zIndex = '10080'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', title);
       var bx = document.createElement('div'); bx.className = 'uf-box';
