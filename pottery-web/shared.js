@@ -1017,7 +1017,7 @@
     function freshStart(keep) {
       var g = { tut: 0, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout', 'pname', 'scenes'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
-      save(g); try { Object.keys(localStorage).forEach(function (k) { if (/^tut(Wh_|Fan_|Jade_|2$)/.test(k)) { localStorage.removeItem(k); } }); } catch (e) {} return g;
+      try { Object.keys(localStorage).forEach(function (k) { if (/^(tut|ctab$|lastCraft|wheelWip|trkOpen2_|t2auto|contestCh|resFocus)/.test(k) && k !== 'tutMig') { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); } catch (e) {} save(g); return g; /* 처음부터 : 지난 진행의 튜토리얼·채집 단계 기록도 지운다 (남아 있으면 민 씨 납품 직후 채집 끝 컷신이 나옴) */
     }
     var actLast = {}, ptrDown = false, whStage = '', whLast = 0;
     ['pointerdown', 'pointermove', 'touchmove', 'keydown'].forEach(function (ev) { document.addEventListener(ev, function (e) { if (ev === 'pointermove' && !e.buttons) { return; } window.__tutIn = Date.now(); }, true); });
@@ -1207,6 +1207,8 @@
       if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
       var st = gR();
       if (st === 'done') { // 예전 저장 : 채집은 끝났는데 아직 공방을 안 열었으면
+        var gmD = g.mats || {}, didG = ['ry', 'rr', 'rw', 'rk', 'ow', 'oc', 'ob', 'oj'].some(function (k) { return k in gmD; }) || (g.gather && Object.keys(g.gather).length > 0);
+        if (!didG && !g.shopOpen) { gW(''); return; } /* 채집을 한 적 없는데 'done' 이면 지난 진행의 흔적 → 채집 튜토리얼부터 */
         if (!g.shopOpen && PAGE !== 'Gather') { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); }); }
         return;
       }
@@ -1464,44 +1466,55 @@
     /* 배경음악 파일 (bgm/bgm_키.mp3) · 화면·컷신별 곡, 끝나기 전에 같은 곡을 겹쳐 틀어 끊김 없이 반복, 화면을 옮겨도 이어서 재생 · 파일을 못 읽으면 합성음으로 */
     var PAGE_BGM = { Main: 'main', MainSide: 'main', Queue: 'main', Codex: 'main', Settings: 'main', Resources: 'main', Wheel: 'craft', Dry: 'craft', Glaze: 'craft', Kiln: 'craft', KilnOpen: 'craft', Counter: 'counter', Commission: 'counter', Town: 'counter', Display: 'counter', Gather: 'gather', Shop: 'shop', Research: 'shop', Season: 'festa', Contest: 'festa' };
     var SCENE_BGM = { prologue: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa' };
-    var BF = { cur: null, scene: null, ok: false, dead: false, XF: 3.5 };
+    /* 곡은 화면을 옮겨도 끝까지 이어서 들려준다 · 한 곡이 끝날 때 지금 화면에 맞는 곡으로 넘어감 · 컷신은 바로 바꾸고 끝나면 듣던 곡·자리로 돌아감 */
+    var BF = { cur: null, scene: null, prev: null, ok: false, dead: false, XF: 5 };
     function bgmWant() { return BF.scene || PAGE_BGM[PAGE] || 'main'; }
-    function bgmPlayer(key, at, fadeIn) {
+    function bgmFade(g, to, sec, delay) { try { var t0 = ac.currentTime + (delay || 0); g.gain.cancelScheduledValues(ac.currentTime); g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), ac.currentTime); g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), t0); g.gain.linearRampToValueAtTime(Math.max(0.0001, to), t0 + sec); } catch (e) {} }
+    function bgmPlayer(key, at, fadeIn, delay) {
       var a = new Audio(), g = ac.createGain(), p = { a: a, g: g, key: key, xf: false };
       a.preload = 'auto'; a.src = 'bgm/bgm_' + key + '.mp3';
       try { var src = ac.createMediaElementSource(a); src.connect(g); g.connect(mBF); } catch (e) { BF.dead = true; return null; }
       g.gain.value = 0.0001;
       a.addEventListener('error', function () { if (!BF.ok && !BF.dead) { BF.dead = true; startBgm(); } });
       a.addEventListener('playing', function () { BF.ok = true; });
-      var go = function () { if (at && isFinite(a.duration) && at < a.duration - BF.XF - 1) { try { a.currentTime = at; } catch (e) {} } a.play().catch(function () {}); g.gain.setValueAtTime(0.0001, ac.currentTime); g.gain.exponentialRampToValueAtTime(1, ac.currentTime + (fadeIn || 1.2)); };
+      var go = function () { if (at && isFinite(a.duration) && at < a.duration - BF.XF - 1) { try { a.currentTime = at; } catch (e) {} } setTimeout(function () { a.play().catch(function () {}); bgmFade(g, 1, fadeIn || 2); }, (delay || 0) * 1000); };
       if (a.readyState >= 1) { go(); } else { a.addEventListener('loadedmetadata', go, { once: true }); }
       return p;
     }
     function bgmStop(p, fade) {
       if (!p) { return; }
-      try { p.g.gain.cancelScheduledValues(ac.currentTime); p.g.gain.setValueAtTime(Math.max(0.0001, p.g.gain.value), ac.currentTime); p.g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + (fade || 1.2)); } catch (e) {}
-      setTimeout(function () { try { p.a.pause(); p.a.removeAttribute('src'); p.a.load(); p.g.disconnect(); } catch (e) {} }, ((fade || 1.2) + 0.3) * 1000);
+      bgmFade(p.g, 0.0001, fade || 2.5);
+      setTimeout(function () { try { p.a.pause(); p.a.removeAttribute('src'); p.a.load(); p.g.disconnect(); } catch (e) {} }, ((fade || 2.5) + 0.4) * 1000);
     }
-    function bgmSwitch(key, at) {
+    /* 곡 바꾸기 : 앞 곡을 천천히 줄이고, 조금 뒤 새 곡을 천천히 올린다 */
+    function bgmSwitch(key, at, out, inn, gap) {
       if (!ac || BF.dead) { return; }
       if (BF.cur && BF.cur.key === key) { return; }
-      var old = BF.cur; BF.cur = bgmPlayer(key, at, 1.2); bgmStop(old, 1.2);
+      var old = BF.cur; BF.cur = bgmPlayer(key, at, inn || 3, old ? (gap == null ? 1.2 : gap) : 0); bgmStop(old, out || 2.5);
     }
-    function kickBgm() { var c = BF.cur; if (!c || !c.a.paused || BF.dead) { return; } c.a.play().catch(function () {}); try { c.g.gain.cancelScheduledValues(ac.currentTime); c.g.gain.setValueAtTime(0.0001, ac.currentTime); c.g.gain.exponentialRampToValueAtTime(1, ac.currentTime + 1.2); } catch (e) {} }
+    function kickBgm() { var c = BF.cur; if (!c || !c.a.paused || BF.dead) { return; } c.a.play().catch(function () {}); bgmFade(c.g, 1, 1.5); }
     function startFileBgm() {
-      var at = 0; try { var sp = JSON.parse(sessionStorage.getItem('bgmPos') || 'null'); if (sp && sp.k === bgmWant()) { at = sp.t || 0; } } catch (e) {}
-      bgmSwitch(bgmWant(), at);
+      var key = bgmWant(), at = 0;
+      try { var sp = JSON.parse(sessionStorage.getItem('bgmPos') || 'null'); if (sp && sp.k) { key = sp.k; at = sp.t || 0; } } catch (e) {}
+      if (!BF.dead) { BF.cur = bgmPlayer(key, at, at ? 1.2 : 2.5, 0); }
       setInterval(function () {
         var c = BF.cur; if (!c || BF.dead || !ac || ac.state !== 'running') { return; }
         var d = c.a.duration;
-        if (!c.xf && isFinite(d) && d > 10 && c.a.currentTime > d - BF.XF) { c.xf = true; var n = bgmPlayer(c.key, 0, BF.XF); if (n) { BF.cur = n; bgmStop(c, BF.XF); } }
+        if (!c.xf && isFinite(d) && d > 20 && c.a.currentTime > d - BF.XF) { c.xf = true; var nk = bgmWant(); var n = bgmPlayer(nk, 0, BF.XF, nk === c.key ? 0 : 1.5); if (n) { BF.cur = n; bgmStop(c, BF.XF); } }
       }, 200);
-      var savePos = function () { try { if (BF.cur && !BF.scene) { sessionStorage.setItem('bgmPos', JSON.stringify({ k: BF.cur.key, t: BF.cur.a.currentTime || 0 })); } } catch (e) {} };
-      window.addEventListener('pagehide', savePos); window.addEventListener('beforeunload', savePos); setInterval(savePos, 2000);
+      var savePos = function () { try { var c = (BF.prev && BF.scene) || BF.ret ? null : BF.cur; if (BF.ret) { sessionStorage.setItem('bgmPos', JSON.stringify({ k: BF.ret.k, t: BF.ret.t })); } else if (c) { sessionStorage.setItem('bgmPos', JSON.stringify({ k: c.key, t: c.a.currentTime || 0 })); } else if (BF.prev) { sessionStorage.setItem('bgmPos', JSON.stringify({ k: BF.prev.k, t: BF.prev.t })); } } catch (e) {} };
+      window.addEventListener('pagehide', savePos); window.addEventListener('beforeunload', savePos); setInterval(savePos, 1000);
     }
     window.__bgmState = function () { return { key: BF.cur && BF.cur.key, ok: BF.ok, dead: BF.dead, t: BF.cur ? BF.cur.a.currentTime : 0, paused: BF.cur ? BF.cur.a.paused : null, ac: ac && ac.state }; };
     window.__bgmSeek = function (t) { if (BF.cur) { BF.cur.a.currentTime = t < 0 ? BF.cur.a.duration + t : t; } };
-    window.__bgmScene = function (id) { BF.scene = (id && SCENE_BGM[id]) || null; if (ac && !BF.dead) { bgmSwitch(bgmWant(), 0); } };
+    window.__bgmScene = function (id) {
+      var k = (id && SCENE_BGM[id]) || null;
+      if (!ac || BF.dead) { BF.scene = k; return; }
+      if (k) { if (!BF.scene && BF.cur) { BF.prev = { k: BF.cur.key, t: BF.cur.a.currentTime || 0 }; } BF.scene = k; bgmSwitch(k, 0, 2, 2.5, 0.8); return; }
+      if (!BF.scene) { return; }
+      BF.scene = null; var pv = BF.prev; BF.prev = null; BF.ret = pv;
+      setTimeout(function () { BF.ret = null; if (BF.scene) { if (pv) { BF.prev = pv; } return; } if (pv) { bgmSwitch(pv.k, pv.t, 2.5, 3, 1); } }, 400); /* 컷신이 이어지면 돌아가지 않는다 */
+    };
     // 장면별 배경 효과 (가마 불 소리, 물레 모터)
     function firing() { var g = load(); if (PAGE === 'Bisque') { return (g.bisque || {}).state === 'firing'; } if (PAGE === 'Kiln' || PAGE === 'KilnOpen') { return g.kiln === 'firing'; } return false; }
     function startAmb() {

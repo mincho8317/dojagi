@@ -286,7 +286,7 @@ class Component extends DCLogic {
       reset: function () {
         if (!armed) { self.setState({ armed: true }); return; }
         var keep = { settings: g.settings, feedbacks: g.feedbacks };
-        try { localStorage.setItem('pottery-proto-v1', JSON.stringify(keep)); } catch (e) {}
+        try { localStorage.setItem('pottery-proto-v1', JSON.stringify(keep)); Object.keys(localStorage).forEach(function (k) { if (/^(tut|ctab$|lastCraft|wheelWip|trkOpen2_|t2auto|contestCh|resFocus)/.test(k) && k !== 'tutMig') { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); } catch (e) {}
         self.setState({ g: self.loadG(), armed: false });
         self.say('진행 상황이 처음으로 돌아갔어요 · 설정과 피드백은 유지');
       },
