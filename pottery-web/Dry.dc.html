@@ -83,6 +83,19 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
 
+  <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
+    <div style="position:relative;display:flex;flex-direction:column;gap:7px;padding:7px 10px 9px;border-radius:16px;background:#EEF6F1;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.35)">
+      <div style="display:flex;align-items:baseline;gap:6px">
+        <span style="font-family:'Jua',sans-serif;font-size:15px;color:#1E5E48">{{bf.title}}</span>
+        <span style="margin-left:auto;font-size:12px;font-weight:700;color:#2F7A5E;white-space:nowrap">{{bf.left}}</span>
+      </div>
+      <div role="img" aria-label="{{bf.aria}}" style="position:relative;height:28px;border-radius:14px;background:#D6E9DF;border:2.5px solid #2F7A5E;overflow:hidden">
+        <div style="{{bf.zone}}"></div><div style="{{bf.perfect}}"></div>
+        <div id="fanCur" style="position:absolute;top:-2px;bottom:-2px;width:7px;margin-left:-3.5px;border-radius:3px;background:#2B1A0F;box-shadow:0 0 0 2px #FFFDF5;left:0"></div>
+      </div>
+    </div>
+  </sc-if>
+
   <div role="group" class="wood-wall" aria-label="건조대 선반 · {{count}}/{{cap}}" style="position:relative;box-sizing:border-box;border:6px solid #5B3A24;border-bottom-width:10px;border-radius:10px 10px 4px 4px;box-shadow:inset 0 0 18px rgba(43,26,15,.45),0 6px 0 rgba(43,26,15,.4)">
     <span style="position:absolute;right:8px;top:6px;z-index:2;padding:1px 8px;border-radius:8px;background:rgba(43,26,15,.75);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">{{count}}/{{cap}}</span>
     <sc-for list="{{tiers}}" as="tr" hint-placeholder-count="2">
@@ -107,30 +120,21 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </sc-for>
   </div>
 
-  <div style="position:relative;margin-top:auto;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
-    <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
-      <div style="position:relative;display:flex;flex-direction:column;gap:7px;padding:8px 10px 10px;border-radius:16px;background:#EEF6F1;border:2px solid #9ED9C0">
-        <div style="display:flex;align-items:baseline;gap:6px">
-          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#1E5E48">{{bf.title}}</span>
-          <span style="margin-left:auto;font-size:12px;font-weight:700;color:#2F7A5E;white-space:nowrap">{{bf.left}}</span>
-        </div>
-        <div role="img" aria-label="{{bf.aria}}" style="position:relative;height:28px;border-radius:14px;background:#D6E9DF;border:2.5px solid #2F7A5E;overflow:hidden">
-          <div style="{{bf.zone}}"></div><div style="{{bf.perfect}}"></div>
-          <div id="fanCur" style="position:absolute;top:-2px;bottom:-2px;width:7px;margin-left:-3.5px;border-radius:3px;background:#2B1A0F;box-shadow:0 0 0 2px #FFFDF5;left:0"></div>
-        </div>
+  <div style="flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center">
+      <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
+      <div style="position:relative;display:flex;align-items:center;justify-content:center">
+        <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 커서가 초록 칸에 있을 때 부채 누르기" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;filter:drop-shadow(0 4px 2px rgba(43,26,15,.35))">
+          <span aria-hidden="true" style="position:relative;display:inline-block;width:170px;height:120px;{{bf.svg}}"><img src="ui/fan_01.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f1}}"><img src="ui/fan_02.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f2}}"></span>
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE;text-shadow:0 2px 0 #3E2616,0 0 6px #3E2616;white-space:nowrap">부채를 톡!</span>
+        </button>
+        <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
       </div>
     </sc-if>
+  </div>
+
+  <div style="position:relative;margin-top:0;box-sizing:border-box;padding:10px 12px 12px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:22px;box-shadow:inset 0 0 0 3px #F0D9AE,0 5px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
     <div style="display:flex;gap:10px">
-      <sc-if value="{{bf.on}}" hint-placeholder-val="{{true}}">
-        <div style="position:relative;flex:0 0 104px;display:flex;align-items:center;justify-content:center">
-          <button type="button" onPointerDown="{{bf.tap}}" aria-label="부채질 · 커서가 초록 칸에 있을 때 부채 누르기" style="all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;filter:drop-shadow(0 4px 2px rgba(43,26,15,.35))">
-            <span aria-hidden="true" style="position:relative;display:inline-block;width:96px;height:68px;{{bf.svg}}"><img src="ui/fan_01.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f1}}"><img src="ui/fan_02.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{bf.f2}}"></span>
-            <span style="font-family:'Jua',sans-serif;font-size:12px;color:#1E5E48;white-space:nowrap">부채를 톡!</span>
-          </button>
-          <sc-if value="{{bf.popOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="{{bf.pop}}">{{bf.popTxt}}</span></sc-if>
-        </div>
-      </sc-if>
-      <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:8px">
+      <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:row;gap:8px">
       <button type="button" onClick="{{fan}}" style="all:unset;cursor:pointer;flex:1;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px">
         <span style="display:flex;align-items:center;gap:4px;font-family:'Jua',sans-serif;font-size:16px;color:#1E5E48"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" style="flex:0 0 auto;vertical-align:-3px"><path d="M12 2l8 6-3 12H7L4 8z" fill="#3FB58E" stroke="#1E5E48" stroke-width="1.6" stroke-linejoin="round"></path><path d="M12 2l3 6H9zM4 8h16M9 8l3 12 3-12" fill="none" stroke="#1E5E48" stroke-width="1" stroke-linejoin="round" opacity=".6"></path><path d="M8 7.5l2-3" stroke="#E6FFF4" stroke-width="1.6" stroke-linecap="round"></path></svg>바로 말리기</span>
         <span style="font-size:11.5px;font-weight:700;color:#2F7A5E">{{fanSub}}</span>
@@ -591,7 +595,7 @@ class Component extends DCLogic {
         return {
           on: true, wind: recent && ok, wa: 'animation-name:dryWind' + sfx,
           btn: 'all:unset;cursor:pointer;align-self:center;width:190px;height:62px;box-sizing:border-box;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border-radius:18px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;background:#FFFDF5;border:3px solid #2F7A5E;box-shadow:0 4px 0 #2F7A5E',
-          svg: 'transform-origin:48px 62px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), f1: recent ? 0 : 1, f2: recent ? 1 : 0, // 부칠 때 부채 펼친 그림
+          svg: 'transform-origin:85px 110px;' + (recent ? 'animation:dryFan' + sfx + ' .28s ease-out' : ''), f1: recent ? 0 : 1, f2: recent ? 1 : 0, // 부칠 때 부채 펼친 그림
           title: recent ? (res === 'perfect' ? '완벽한 바람! ' : (res === 'hit' ? '좋은 바람! ' : '빗나갔어요')) + (ok && (self.state.fanStreak || 0) > 1 ? ' 연속 ' + self.state.fanStreak : '') : '타이밍 부채질',
           left: '남은 ' + self.fmtLeft(leftMs),
           zone: 'position:absolute;top:0;bottom:0;left:' + ((c - T.zone / 2) * 100).toFixed(1) + '%;width:' + (T.zone * 100).toFixed(1) + '%;background:#7FD1AE;transition:left .25s',
@@ -599,7 +603,7 @@ class Component extends DCLogic {
           aria: '판정 칸 ' + Math.round((c - T.zone / 2) * 100) + '~' + Math.round((c + T.zone / 2) * 100) + '%',
           tip: '커서가 초록 칸에 올 때 누르면 건조 +' + Math.round(T.gain / 1000) + '초 · 진한 칸은 ×' + T.perfectMul,
           popOn: recent, popTxt: ok ? '+' + Math.round((self.state.fanGain || 0) / 1000) + '초' : '빗나감',
-          pop: 'position:absolute;left:0;right:0;text-align:center;top:-20px;white-space:nowrap;font-family:Jua,sans-serif;font-size:' + (res === 'perfect' ? 18 : 15) + 'px;color:' + (ok ? (res === 'perfect' ? '#C8601E' : '#1E5E48') : '#8A7A63') + ';text-shadow:0 1px 0 #FFF;pointer-events:none;animation:dryPop' + sfx + ' .8s ease-out both',
+          pop: 'position:absolute;left:0;right:0;text-align:center;top:-6px;white-space:nowrap;font-family:Jua,sans-serif;font-size:' + (res === 'perfect' ? 18 : 15) + 'px;color:' + (ok ? (res === 'perfect' ? '#C8601E' : '#1E5E48') : '#8A7A63') + ';text-shadow:0 1px 0 #FFF;pointer-events:none;animation:dryPop' + sfx + ' .8s ease-out both',
           tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
         };
       })(),

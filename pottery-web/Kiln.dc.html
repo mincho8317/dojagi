@@ -136,8 +136,23 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           </div>
         </div>
       </sc-if>
+      <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
+        <div style="position:absolute;left:8px;right:8px;top:8px;z-index:3;display:flex;flex-direction:column;gap:5px;padding:6px 9px 8px;border-radius:14px;background:rgba(252,235,216,.94);border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(26,15,8,.5)">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A2F1E">{{kt.fan.title}}</span><span style="font-size:11px;font-weight:700;color:#7A5434;white-space:nowrap">{{kt.fan.left}}</span></div>
+          <div style="position:relative;height:24px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:12px;background:#3E2616;overflow:hidden">
+            <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
+            <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
+            <span style="{{kt.fan.bar}}"></span>
+          </div>
+        </div>
+      </sc-if>
     </div>
   </div>
+  <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
+    <div style="position:relative;z-index:5;flex:1 1 auto;min-height:0;margin-top:-46px;display:flex;justify-content:center;align-items:flex-start">
+  <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fanBtn}}"><img src="ui/kiln_bellows.webp" alt="" aria-hidden="true" style="width:120px;height:92px;object-fit:contain;filter:drop-shadow(0 5px 3px rgba(0,0,0,.55))"><span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08,0 0 6px #1A0F08">풀무질</span></button>
+    </div>
+  </sc-if>
 
   <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
   <button type="button" onClick="{{fire}}" style="all:unset;position:relative;cursor:pointer;box-sizing:border-box;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 5px 0 #8A3D10;border-radius:18px;font-family:'Jua',sans-serif;font-size:22px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">
@@ -153,19 +168,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <span role="timer" style="{{kt.clockStyle}}">{{kt.clock}}</span>
       </div>
       <span style="position:relative;height:14px;box-sizing:border-box;border:3px solid #5B3A24;border-radius:9px;background:#3E2616;overflow:hidden"><span style="{{kt.bar}}"></span></span>
-      <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
-        <div style="display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;border-radius:14px;background:#FCEBD8;border:2px solid #E0A06A">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#7A2F1E">{{kt.fan.title}}</span><span style="font-size:11px;font-weight:700;color:#7A5434;white-space:nowrap">{{kt.fan.left}}</span></div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="position:relative;flex:1 1 auto;height:24px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:12px;background:#3E2616;overflow:hidden">
-              <span style="position:absolute;left:55%;width:30%;top:0;bottom:0;background:rgba(95,176,82,.45)"></span>
-              <span style="position:absolute;left:95%;right:0;top:0;bottom:0;background:rgba(208,69,43,.6)"></span>
-              <span style="{{kt.fan.bar}}"></span>
-            </div>
-            <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 바람 불어넣기" style="{{kt.fanBtn}}"><img src="ui/kiln_bellows.webp" alt="" aria-hidden="true" style="width:38px;height:32px;object-fit:contain"><span style="font-family:'Jua',sans-serif;font-size:16px">풀무질</span></button>
-          </div>
-        </div>
-      </sc-if>
       <sc-if value="{{kt.done}}" hint-placeholder-val="{{false}}">
         <a href="KilnOpen.dc.html" style="box-sizing:border-box;text-align:center;padding:11px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328,0 0 14px rgba(255,214,107,.8);border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">가마 열고 꺼내기</a>
       </sc-if>
@@ -777,7 +779,7 @@ class Component extends DCLogic {
           clock: done ? '완료!' : self.fmtLeft(left), cost: self.jadeCost(left) ? '옥 ' + self.jadeCost(left).toLocaleString() : '무료',
           clockStyle: 'font-family:Jua,sans-serif;font-size:20px;white-space:nowrap;color:' + (done ? '#3B7A32' : '#C8601E'),
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:' + (done ? '#3B7A32' : 'linear-gradient(90deg,#E07A2E,#FFB24A)'),
-          note: done ? (g.batchItems || []).length + '점 꺼낼 수 있어요' : (g.batchItems || []).length + '점 굽는 중', fan: self.fanVals(g, left), fanOn: !done && self.fanVals(g, left).on, fanBtn: self.fanVals(g, left).btn.replace('align-self:center;width:190px;height:58px;', 'flex:0 0 auto;width:118px;height:44px;').replace('gap:10px', 'gap:4px'),
+          note: done ? (g.batchItems || []).length + '점 꺼낼 수 있어요' : (g.batchItems || []).length + '점 굽는 중', fan: self.fanVals(g, left), fanOn: !done && self.fanVals(g, left).on, fanBtn: 'all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:0;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;' + (self.fanVals(g, left).btn.indexOf('#CFC5B4') >= 0 ? 'filter:grayscale(.8) brightness(.8);' : ''),
           skip: function () { var lm = Math.max(0, (self.state.g.kilnStart || 0) + KD - Date.now()); if (lm <= 0) { return; } self.jadeSpend(self.jadeCost(lm), function (nj) { self.setG({ jadeV: 2, jade: nj, kilnStart: Date.now() - KD }); }); }
         };
       })(),
