@@ -29,13 +29,13 @@ button{font-family:inherit;cursor:pointer}
 @keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
 @keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
 @keyframes navPulse{0%,100%{opacity:.85}50%{opacity:1}}
-.navdrop>div{height:724px !important}
+.navdrop>div{height:754px !important}
 body:has(.navdrop [role=dialog]) [data-nav]{display:none !important}
 body:has(.navdrop [role=dialog]) .navarrows{display:none}
 </style>
 </helmet>
 <div style="{{navRoot}}">
-  <div style="position:absolute;left:0;top:0;right:0;height:56px;box-sizing:border-box;background:#3E2616;border-bottom:2px solid #2B1A0F">
+  <div style="display:none">
     <a href="Queue.dc.html" aria-label="작업 대기함 {{navWip}}개" style="position:absolute;left:6px;top:5px;width:62px;height:44px;box-sizing:border-box;border-radius:11px;background:#5B3A24;border:2px solid #FFD66B;box-shadow:0 3px 0 #2B1A0F;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:'Jua',sans-serif;color:#FFE7A8;text-decoration:none"><img src="_blob/3ef48cbb2fb638b04dbc2f27fc2f65b1.webp" alt="" aria-hidden="true" draggable="false" style="width:22px;height:20px;object-fit:contain"><span style="font-size:11.5px">대기함 <span style="color:#FFD66B">{{navWip}}</span></span></a>
     <div onPointerDown="{{navBarDown}}" onPointerMove="{{navBarMove}}" onPointerUp="{{navBarUp}}" onPointerCancel="{{navBarUp}}" onClickCapture="{{navBarClick}}" role="navigation" aria-label="제작 공정" style="position:absolute;left:74px;right:4px;top:0;height:56px;overflow:hidden;touch-action:pan-y;cursor:grab">
       <div style="{{navStrip}}">
@@ -121,10 +121,10 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
     <div style="position:absolute;left:12px;right:12px;bottom:16px;z-index:6">
       <sc-if value="{{meOn}}" hint-placeholder-val="{{false}}"><img dc-src="{{meImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-6px;bottom:100%;margin-bottom:-34px;width:176px;height:209px;object-fit:contain;object-position:50% 100%;pointer-events:none;z-index:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));animation:meIn .28s ease-out both"></sc-if>
-    <section style="position:relative;min-height:200px;box-sizing:border-box;padding:8px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
+    <section style="position:relative;min-height:200px;box-sizing:border-box;padding:16px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
       <button type="button" onClick="{{advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>
-      <span style="position:absolute;left:16px;top:-18px;padding:4px 14px;border-radius:10px;background:{{whoBg}};border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{whoName}}</span>
-      <span style="position:absolute;right:16px;top:-14px;padding:2px 10px;border-radius:9px;background:{{guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{guest.tag}}</span>
+      <span style="position:absolute;left:4px;top:-40px;z-index:2;padding:4px 14px;border-radius:10px;background:{{whoBg}};border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{whoName}}</span>
+      <span style="position:absolute;right:4px;top:-34px;z-index:2;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 10px;border-radius:9px;border:2px solid #3E2616;background:{{guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{guest.tag}}</span>
       <span style="font-size:15px;line-height:1.7;color:#2B1A0F">{{line}}</span>
       <sc-if value="{{showCard}}" hint-placeholder-val="{{false}}">
         <span style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#F3E3C4;border:2px solid #8A6440">
@@ -162,36 +162,36 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
   <div aria-hidden="true" style="{{navDust}}">FX_DUST_LAND</div>
   <sc-if value="{{navPrevOn}}" hint-placeholder-val="{{true}}">
-    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:0;top:356px;width:32px;height:68px;z-index:20;box-sizing:border-box;border-radius:0 12px 12px 0;background:rgba(255,244,222,.9);border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;writing-mode:vertical-rl">{{navPrevName}}</span></a>
+    <a href="{{navPrevHref}}" data-nav="prev" aria-label="이전 공정" style="position:absolute;left:0;top:330px;width:32px;height:68px;z-index:20;box-sizing:border-box;border-radius:0 12px 12px 0;background:rgba(255,244,222,.9);border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">◀</span><span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;writing-mode:vertical-rl">{{navPrevName}}</span></a>
   </sc-if>
   <sc-if value="{{navNextOn}}" hint-placeholder-val="{{true}}">
-    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:0;top:356px;width:32px;height:68px;z-index:20;box-sizing:border-box;border-radius:12px 0 0 12px;background:rgba(255,244,222,.9);border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;writing-mode:vertical-rl">{{navNextName}}</span></a>
+    <a href="{{navNextHref}}" data-nav="next" aria-label="다음 공정" style="position:absolute;right:0;top:330px;width:32px;height:68px;z-index:20;box-sizing:border-box;border-radius:12px 0 0 12px;background:rgba(255,244,222,.9);border:2px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-decoration:none;color:#5B3A24"><span style="font-family:'Jua',sans-serif;font-size:18px;line-height:1">▶</span><span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;writing-mode:vertical-rl">{{navNextName}}</span></a>
   </sc-if>
   <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
     <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
   </sc-if>
-  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:64px;box-sizing:border-box;padding:0 6px 4px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:90px;box-sizing:border-box;padding:0 6px 10px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
     <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
-      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">공방</span>
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">공방</span>
     </a>
     <a href="Gather.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
-      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">채집</span>
+      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
-    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-16px">
-      <span style="width:54px;height:54px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
-        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
+    <a href="Wheel.dc.html" aria-current="page" style="display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;margin-top:-22px">
+      <span style="width:66px;height:66px;box-sizing:border-box;border-radius:50%;background:#3B7A32;border:4px solid #FFD66B;box-shadow:0 4px 0 #2F6328,inset 0 3px 0 #6DB35E;display:flex;align-items:center;justify-content:center">
+        <img src="_blob/57df2cdf4d037636e8c5fa366b12ec35.webp" alt="" aria-hidden="true" style="width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))">
       </span>
-      <span style="font-family:'Jua',sans-serif;font-size:13px;color:#FFD66B">제작</span>
+      <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFD66B">제작</span>
     </a>
     <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
-      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">의뢰</span>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
-      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:30px;height:30px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:11px;white-space:nowrap;color:#F6E7CC">상점</span>
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">상점</span>
     </a>
   </nav>
 </div>
@@ -814,7 +814,7 @@ class Component extends DCLogic {
     function isWork(e) { var t = e.target; return !!(t && t.closest && t.closest('[data-work]')); }
     return {
       navRoot: 'position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616',
-      navDropStyle: 'width:390px;height:724px',
+      navDropStyle: 'width:390px;height:754px',
       navDust: 'display:none',
       navStrip: 'position:absolute;left:0;top:5px;display:flex;gap:5px;transform:translateX(' + off.toFixed(1) + 'px);' + (self.navBar ? '' : 'transition:transform .18s ease-out;'),
       navFadeL: off < -2 ? 'position:absolute;left:0;top:0;width:26px;height:56px;pointer-events:none;background:linear-gradient(90deg,#3E2616,rgba(62,38,22,0))' : 'display:none',
@@ -833,7 +833,7 @@ class Component extends DCLogic {
         return { href: d.href, label: d.step, aria: d.step + ' 설비로 이동', icon: ({ wheel: '_blob/631c128163d820378ae912cca30901ff.webp', dry: '_blob/440e5c6c074d35ced67a473fee4b4053.webp', bisque: '_blob/7fd660fe1c4dae49b58afde915b91d82.webp', glaze: '_blob/6acfa509bf46179df837b4ecb2e16813.webp', kiln: '_blob/71a4875611b84c9990079398dc735817.webp', shelf: '_blob/d655c0e16e17fab5b5f20461848b67e1.webp', counter: '_blob/8c1100b4b356235661ebe13d71ba6eda.webp' })[d.id] || '', iconStyle: 'width:24px;height:22px;object-fit:contain;pointer-events:none;' + (j < i ? 'filter:grayscale(.6);opacity:.55;' : ''),
           style: 'flex:0 0 54px;width:54px;height:44px;box-sizing:border-box;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;font-family:Jua,sans-serif;font-size:12.5px;white-space:nowrap;text-decoration:none;user-select:none;-webkit-user-drag:none;' + (on ? 'background:#FFD66B;color:#2B1A0F;border:2px solid #FFF4DE;box-shadow:0 3px 0 #8A6410;' : (j < i ? 'background:rgba(255,244,222,.12);color:#C9B79A;border:2px solid transparent;' : 'background:rgba(255,244,222,.88);color:#5B3A24;border:2px solid #8A6440;box-shadow:0 3px 0 #2B1A0F;')) };
       }),
-      navStage: 'position:absolute;left:0;top:56px;width:390px;height:724px;overflow:hidden;transform-origin:0 0;transform:translateX(' + dx + 'px);touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
+      navStage: 'position:absolute;left:0;top:0px;width:390px;height:754px;overflow:hidden;transform-origin:0 0;transform:translateX(' + dx + 'px);touch-action:pan-y;' + (s.navSw ? '' : 'transition:transform .22s ease;'),
       navMenuOpen: s.navMenu ? 'true' : 'false',
       navMenuTap: function () { self.setState({ navMenu: !self.state.navMenu }); },
       navMenuHide: 'z-index:60;',

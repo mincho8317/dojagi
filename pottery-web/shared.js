@@ -330,44 +330,30 @@
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
       { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데.)', '나/smile: (민 씨 아주머니도 그렇고… 할머니를 기다리는 사람이 이렇게 많았구나.)', '나: (남은 흙이 떨어질 때까지만, 좀 만들어 드려야겠다.)'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
-      { id: 'm02', npc: 'yoon', ch: 'table', st: ['t4', 't5', 't6'], n: { t4: 2 }, title: '단골상 차림', intro: ['우리 집 단골들은 그릇 바뀐 걸 귀신같이 알아.', '강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '단골상에 올릴 걸로 넉넉히 부탁해. 종지는 두 개!'], done: ['상이 환해졌어.', '…자네 어릴 적엔 할매 속 꽤나 썩였지. 그래도 할매는 한 번을 안 다그치더라.'] },
-      { id: 'm03', npc: 'yoon', ch: 'table', st: ['t7', 't8', 't9'], title: '명절 대목 준비', intro: ['명절엔 서울 사는 손주 녀석이 내려와.', '손님도 배로 오고. 잔칫상엔 자잘한 그릇이 많이 들어.', '종지랑 사발, 대접으로 한 벌 더 부탁해.'], done: ['이걸로 대목은 걱정 없겠어. 손주 녀석이 그릇 예쁘다고 난리여.'] },
-      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
+      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '근디 손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
       { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 나 없어도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠어?'], done: ['…그려. 이 접시여. 고마워, 정말.', '손주 녀석 국밥, 내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.'] },
       // ── 2챕터 · 차 선생의 찻자리 ──
       { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], title: '강 선생님의 제자', intro: ['윤 할매께 소식 들었습니다. …강 선생님께 흙을 배웠던 사람입니다.', '저는 결국 그릇 대신 차를 택했지요.', '다도 수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 선생님 잔을 처음 쥐었을 때가 떠오릅니다.'] },
-      { id: 'm07', npc: 'cha', ch: 'tea', st: ['c4', 'c5', 'c6'], n: { c4: 2 }, minGrade: '수작', title: '수업 견본 잔', intro: ['학생이 줄고 있습니다. 좋은 잔을 보여 주면 마음이 동하지 않을까 해서요.', '견본으로 쓸 잔이니, 수작 이상으로 부탁드립니다.'], done: ['잔이 가지런하니 찻자리가 정갈해졌습니다. 학생 한 명이 다시 오겠다고 하더군요.'] },
-      { id: 'm08', npc: 'cha', ch: 'tea', st: ['c7', 'c8', 'c9'], title: '계절의 찻잔', intro: ['다시 온다던 그 학생 말입니다. 고등학생인데, 차 맛을 안다고 우기더군요.', '이번 계절에 어울리는 잔으로, 그 아이 몫까지 부탁합니다.'], done: ['그 아이가 잔을 들고 한참 웃더군요. 계절이 잔 안에 들어온 것 같다고.', '…제가 하려던 말을 빼앗겼습니다.'] },
       { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병원 앞까지 갔다가 돌아왔습니다. 세 번이나요.', '약해진 모습을 볼 자신이 없었습니다. {이름} 님은 1년을 곁에 있었다지요.', '나/sad: (…나도, 할머니한테 끝내 못 한 말이 있는데.)', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
       { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], unlockNote: '화병 · 다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '찻자리에 꽃 한 송이 꽂을 화병과, 두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다.', '다회 날, 첫 잔은 선생님 자리에 두겠습니다.'] },
       // ── 3챕터 · 정윤의 화실 ──
       { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '(사정을 들은 정윤이, 들고 온 꽃다발을 말없이 작업대에 내려놓는다)', '…늦었네요, 제가.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병 하나랑, 가게에 둘 것도 몇 개요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
       { id: 'm12', npc: 'jeong', ch: 'vase', st: ['v4', 'v5', 'v6'], title: '빈 캔버스', intro: ['(휴대폰 속 빈 캔버스 사진을 보여 주며) 이거, 1년째 이래요.', '서울에서 게임 회사 원화가였어요. 마감 끝나면 다음 마감이 와 있고… 어느 날 펜을 못 잡겠더라고요.', '…어? {이름} 님도 게임 회사였어요? 기획자요? 아, 그럼 다 아시겠네. 업데이트 전날 밤.', '(둘이 동시에 한숨을 쉬고, 정윤이 처음으로 크게 웃는다)', '그림 대신 병이라도 놓아 보려고요. 화실에 둘 병을 부탁해요.'], done: ['병을 놓으니 빈 캔버스가 덜 무서워요.', '다음엔 {이름} 님이 제 얼굴 좀 봐 주세요. 마감 전 표정인지 아닌지.'] },
-      { id: 'm13', npc: 'jeong', ch: 'vase', st: [], type: 'gather', mats: { cr1: 5 }, rw: { gold: 900, shards: 20 }, title: '흙으로 만든 물감', intro: ['여사님이 알려 주셨어요. 적토를 곱게 갈면 물감이 된대요.', '적토 다섯 덩이만 나눠 주실 수 있을까요? 그걸로 다시 그려 볼래요.'], done: ['손이 떨리는데… 붓을 잡았어요. 고마워요.'] },
-      { id: 'm14', npc: 'jeong', ch: 'vase', st: ['v10', 'v11', 'v12'], title: '봄 화단의 병', intro: ['그림 한 장을 끝냈어요! 가게 앞 화단 그림이에요.', '그림 속 화단에 진짜 병을 놓고 싶어요.'], done: ['지나가는 사람들이 그림이랑 병을 같이 찍어 가요.'] },
-      { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '항아리', title: '그림 속 항아리', intro: ['동네 작은 전시에 나가기로 했어요. 무섭지만요.', '그림 속 공방 앞에 늘 항아리가 있었거든요. 여사님 공방 그림 옆에, {이름} 님 항아리를 같이 놓고 싶어요.'], done: ['그림보다 항아리가 더 예쁘다고들 해요. 질투 나네요!', '다음 전시도 같이 나가요. 이번엔 제가 먼저 신청할게요.'] },
+      { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], unlockNote: '항아리', title: '그림 속 항아리', intro: ['병을 놓고 나서, 다시 붓을 잡았어요. 그림 한 장을 끝냈어요!', '그래서… 동네 작은 전시에 나가기로 했어요. 무섭지만요.', '그림 속 공방 앞에 늘 항아리가 있었거든요. 여사님 공방 그림 옆에, {이름} 님 항아리를 같이 놓고 싶어요.'], done: ['그림보다 항아리가 더 예쁘다고들 해요. 질투 나네요!', '다음 전시도 같이 나가요. 이번엔 제가 먼저 신청할게요.'] },
       // ── 4챕터 · 장 씨네 장독대 ──
       { id: 'm16', npc: 'jang', ch: 'jar', st: ['j1', 'j2', 'j3'], title: '장독대가 비었구먼', intro: ['…명옥이 손녀로구먼.', '장독대 항아리가 몇 개 깨졌네. 장 담글 철이 오는데 말이야.'], done: ['튼튼하구먼. 명옥이 독처럼.'] },
       { id: 'm17', npc: 'jang', ch: 'jar', st: [], type: 'visit', rw: { gold: 1000, shards: 30, mats: { ck1: 5 } }, title: '어릴 적 이야기', intro: ['명옥이랑 나는 저 냇가 건너 같은 동네에서 났네.', '그 사람은 어릴 때부터 흙장난을 좋아했지. 손이 늘 시커멨어.', '내 장독은 다 이 공방 가마에서 구웠어. 오십 년을.', '아들 보내고 나서는… 손녀 하나 보고 살았지.', '(흑토 꾸러미를 내민다) 장독 빚을 흙이네. 명옥이한테 주려던 거야.'], done: ['…말이 길었구먼. 늙은이 수다였네.'] },
-      { id: 'm18', npc: 'jang', ch: 'jar', st: ['j7', 'j8', 'j9'], title: '작은 독 여럿', intro: ['올해는 골목 집집마다 장을 조금씩 담가 주려 하네.', '항아리가 여럿 필요해. 장 종지도 하나 곁들여 주게.'], done: ['이만하면 집집마다 하나씩 돌아가겠구먼.'] },
-      { id: 'm19', npc: 'jang', ch: 'jar', st: ['j10', 'j11', 'j12'], title: '동네 장 나눔', intro: ['명옥이가 해마다 하던 장 나눔을, 올해는 내가 하려네.', '담아 줄 항아리가 더 있어야겠어.'], done: ['다들 고맙다고 인사하러 오더군. 명옥이 얘기를 한참 했지.'] },
       { id: 'm20', npc: 'jang', ch: 'jar', st: ['j13', 'j14', 'j15'], unlockNote: '달항아리', title: '보름달 항아리', intro: ['명옥이가 늘 그랬지. 언젠가 보름달 같은 항아리를 빚겠다고.', '…그 말, 나한테 처음 한 말이었네. 열일곱 살 때.', '자네가 대신 빚어 주겠나?'], done: ['…보름달이구먼.', '고맙네, {이름}.'] }
     ];
     // ── 도깨비 이야기 · 에피소드 1 (지하실 너머) ──
     var DSTORY = [
       { id: 'd01', npc: 'dudu', ch: 'dok1', st: ['da1', 'da2'], title: '묵 그릇이 없어!', intro: ['김 서방! 묵 가져왔나? …어, 그릇이 없네!', '묵 할멈이 준 묵그릇이 지난겨울에 와장창 깨졌거든.', '묵 담을 대접이랑 양념장 종지! 묵이 춤을 출 만큼 멋지게!'], done: ['이거지! 묵이 그릇에서 덩실덩실!'] },
-      { id: 'd02', npc: 'dudu', ch: 'dok1', st: ['da3'], title: '방망이 받침', intro: ['도깨비 체면이 있지, 방망이를 맨바닥에 둘 순 없잖아!', '묵 할멈은 늘 우묵한 사발에 꽂아 줬어.'], done: ['크하하! 이제 마을에서 내 방망이가 제일 멋지다!'] },
       { id: 'd03', npc: 'dudu', ch: 'dok1', st: [], type: 'visit', rw: { gold: 500, shards: 20, mats: { ry: 6, ow: 4 } }, title: '묵 할멈이 처음 온 날', intro: ['묵 할멈이 처음 여기 왔을 때 말이야, 길을 잃고 울고 있었어. 열 살쯤이었나.', '내가 겁주려고 크게 웃었는데, 그 꼬마가 품에서 메밀묵을 꺼내 주더라고.', '그날부터 친구야. 오십 년도 넘게.', '(두두리가 흙 원료와 원석을 한 아름 안겨 준다) 이건 그냥 줄게. 친구 손녀니까!'], done: ['크흠… 눈에 먼지가 들어갔네.'] },
-      { id: 'd04', npc: 'dudu', ch: 'dok1', st: ['da4', 'da5'], title: '이웃 도깨비 잔치', intro: ['김 서방이 묵 가져온다고 소문이 났어! 이웃들이 잔치하재.', '잔치 그릇 두 개만 더!'], done: ['잔치 대성공! 다들 김 서방 이름을 외웠어. 김 서방이라고.'] },
       { id: 'd05', npc: 'dudu', ch: 'dok1', st: ['da6', 'da7'], title: '두두리의 큰 잔', intro: ['사실 걱정했어. 묵 할멈이 안 오면 지하실 문이 영영 닫힐까 봐.', '근데 김 서방이 왔잖아! 우리 우정의 잔을 빚자고!'], done: ['김 서방이 묵만 잘 가져오면 문은 안 닫혀!', '참, 대장간 불목이가 김 서방을 보고 싶대. 무뚝뚝해도 착한 놈이야.'] },
-      { id: 'd06', npc: 'bulmok', ch: 'dok2', st: ['db1', 'db2'], title: '말 없는 대장장이', intro: ['……강 선생 손녀냐.', '물항아리. 화로 옆에 둘 거. 대접도.', '(그게 다였다)'], done: ['……쓸 만하다.'] },
-      { id: 'd07', npc: 'bulmok', ch: 'dok2', st: ['db3', 'db4'], minGrade: '수작', title: '쇠 식힐 물그릇', intro: ['달군 쇠 식힐 물그릇이다. 금 가면 다친다.', '……쉴 때 쓸 잔도. 수작 이상으로.'], done: ['……좋다. 강 선생 것만큼.'] },
-      { id: 'd08', npc: 'bulmok', ch: 'dok2', st: [], type: 'gather', mats: { gb1: 4 }, rw: { gold: 900, shards: 25 }, title: '화로 벽 고치기', intro: ['화로 벽이 갈라졌다. 철광 섞은 흙으로 바른다.', '철광 원료 네 개. 강 선생도 그렇게 했다.'], done: ['……불이 다시 산다.'] },
+      { id: 'd06', npc: 'bulmok', ch: 'dok2', st: ['db1', 'db2'], title: '말 없는 대장장이', intro: ['……강 선생 손녀냐.', '물그릇. 화로 옆에 둘 거. 대접도.', '(그게 다였다)'], done: ['……쓸 만하다.'] },
       { id: 'd09', npc: 'bulmok', ch: 'dok2', st: [], type: 'visit', rw: { gold: 700, shards: 25, mats: { oj: 3 } }, title: '꺼져 가던 화로', intro: ['……예전에, 이 화로가 꺼져 가던 해가 있었다.', '마을 방망이를 아무도 못 고쳤지. 강 선생이 와서 사흘 밤을 흙을 쌓았다.', '고맙다는 말을, 못 했다.', '(불목이가 붉은 원석을 내민다) ……진사다. 받아라.'], done: ['……너한테 하는 거 아니다. 강 선생한테 하는 거다.'] },
       { id: 'd10', npc: 'bulmok', ch: 'dok2', st: ['db5', 'db6'], title: '불목이의 찻잔', intro: ['……찻잔 하나. 대접 하나.', '찻잔은 내 거. 대접은…… 강 선생 자리. 그 사람은 차보다 국을 좋아했다.'], done: ['……불 다루는 건 강 선생한테 배웠다. 너도 배워라.', '꼬마들이 너 찾더라. 시끄러운 놈들이다.'] },
       { id: 'd11', npc: 'kids', ch: 'dok3', st: ['dc1', 'dc2'], title: '소꿉놀이 그릇', intro: ['방울이: 김 서방이다! 진짜 사람이다!', '도롱이: 소꿉놀이 그릇 만들어 줘! 강 할머니처럼!'], done: ['방울이: 우와, 강 할머니 그릇이랑 똑같아!', '도롱이: 아니야, 이게 더 커!'] },
-      { id: 'd12', npc: 'kids', ch: 'dok3', st: ['dc3'], choose: { key: 'dc3', any: ['white', 'celadon'] }, title: '누구 그릇이 더 예뻐?', intro: ['방울이: 나는 하얀 게 좋아!', '도롱이: 나는 파르스름한 게 좋아!', '둘이 동시에: 김 서방이 골라 줘!'], done: ['(두 꼬마가 한참 다투다 웃는다)'], doneBy: { white: ['방울이: 거봐, 하얀 게 이겼지!', '도롱이: 흥, 다음엔 내 거야!'], celadon: ['도롱이: 거봐, 파란 게 이겼지!', '방울이: 흥, 다음엔 내 거야!'] } },
-      { id: 'd13', npc: 'kids', ch: 'dok3', st: ['dc4', 'dc5'], title: '보물 그릇', intro: ['도롱이: 숨바꼭질할 때 보물 숨길 그릇이 필요해!', '방울이: 강 할머니는 맨날 사탕 넣어 줬는데….'], done: ['도롱이: 보물 넣었다! 안 알려 줄 거야!'] },
       { id: 'd14', npc: 'kids', ch: 'dok3', st: [], type: 'visit', rw: { gold: 600, shards: 30, mats: { rw: 5 } }, title: '강 할머니는 언제 와?', intro: ['방울이: 김 서방, 강 할머니는 언제 와?', '(뭐라고 말해야 할지 몰라 한참 망설인다)', '도롱이: …어른들이 그러는데, 이제 안 온대.', '방울이: 그래도 김 서방이 오니까 괜찮아. 이거, 강 할머니랑 캐던 하얀 흙이야.'], done: ['방울이: 또 놀러 와야 해. 약속!'] },
       { id: 'd15', npc: 'kids', ch: 'dok3', st: ['dc6', 'dc7'], title: '마을 한가운데 큰 독', intro: ['도롱이: 쉿, 비밀인데… 마을 한가운데 큰 독 있잖아.', '방울이: 금이 갔대. 어른들이 쉬쉬해.', '도롱이: 그릇 두 개만 만들어 줘. 그 앞에 물 떠 놓고 빌 거야.'], done: ['방울이: 할미가 그러는데, 큰 독은 강 할머니만 고칠 수 있대.', '도롱이: 김 서방도 강 할머니 손녀니까… 고칠 수 있지?'] }
     ];
@@ -441,8 +427,6 @@
     var SSTORY = [
       { id: 'e00', npc: 'festa', ch: 'season', st: ['s0'], title: '벚꽃 빛 그릇', intro: ['안녕하세요! 봄 다회 준비위원 하람이에요.', '올해 다회 주제가 「벚꽃」이거든요. 찻잔도 벚꽃 빛이었으면 해서요.', '혹시… 벚꽃 색 그릇을 만들어 주실 수 있을까요?', '나: (벚꽃 색…? 그런 유약은 써 본 적이 없는데.)'], accLabel: '한번 알아볼게요', done: ['와… 정말 벚꽃 빛이에요!', '다회 준비, 이제 같이 해 주실 거죠? 공방에 축제 안내를 붙여 둘게요!'] },
       { id: 'e01', npc: 'festa', ch: 'season', st: ['s1', 's2', 's3'], title: '봄 다회 첫 상차림', intro: ['봄 다회 준비위원 하람이에요! 올해 다회 그릇을 공방에 맡기고 싶어서요.', '잔이랑 종지, 사발부터 하나씩 부탁드려요.'], done: ['와, 다회 분위기가 벌써 나요!', '축제 동안 다른 부탁도 드릴게요.'] },
-      { id: 'e02', npc: 'festa', ch: 'season', st: ['s4', 's5', 's6'], title: '손님맞이 그릇', intro: ['다회 손님이 생각보다 많대요.', '같은 그릇으로 한 벌 더 부탁해요.'], done: ['이 정도면 손님이 몰려와도 걱정 없겠어요.'] },
-      { id: 'e03', npc: 'festa', ch: 'season', st: ['s7', 's8', 's9'], title: '꽃잎 다과상', intro: ['다과상에 올릴 작은 그릇이 필요해요.', '빛깔이 고운 걸로요!'], done: ['꽃잎이 그릇 위에서 더 예뻐 보여요.'] },
       { id: 'e04', npc: 'festa', ch: 'season', st: ['s10'], unlockNote: '연꽃잔', title: '봄 다회의 연꽃잔', intro: ['마지막 부탁이에요. 다회의 상징, 연꽃잔!', '낮고 활짝 핀 꽃처럼 빚어 주세요.'], done: ['다회의 주인공이 생겼네요. 정말 고마워요!', '연꽃잔 모양은 이제 공방 틀에 남을 거예요.'] }
     ];
     var GRANK = { '범작': 0, '양작': 1, '수작': 2, '명작': 3, '요변': 3 };
@@ -501,7 +485,7 @@
     function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
     function lineState(g, line) {
       // 시즌(이벤트) 의뢰는 첫 메인 의뢰 납품을 마친 뒤부터 찾아온다 (이미 시작한 시즌 의뢰는 그대로)
-      if (line === 'season') { var mq0 = g.mq || {}, dq0 = g.dq || {}, mainOk = (mq0.i || 0) >= 5 && (dq0.i || 0) >= 5; /* 에피소드 1의 1챕터 · 도깨비 1챕터를 끝낸 뒤 */ var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      if (line === 'season') { var mq0 = g.mq || {}, dq0 = g.dq || {}, mainOk = (mq0.i || 0) >= MAIN.filter(function (q) { return q.ch === MAIN[0].ch; }).length && (dq0.i || 0) >= DOK.filter(function (q) { return q.ch === DOK[0].ch; }).length; /* 에피소드 1의 1챕터 · 도깨비 1챕터를 끝낸 뒤 */ var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
       if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (!!tg || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
       var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
     }
@@ -910,7 +894,7 @@
       [].slice.call(spotEl.querySelectorAll('.blk')).forEach(function (b) {
         ['pointerdown', 'click', 'touchstart'].forEach(function (ev) { b.addEventListener(ev, function (e) { e.preventDefault(); e.stopPropagation(); if (ev === 'pointerdown') { bubEl.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 260 }); toast('반짝이는 곳을 눌러 주세요 · 안내를 닫으려면 「안내 잠깐 닫기」'); } }, { passive: false }); });
       });
-      spotEl.querySelector('.skip').addEventListener('click', function (e) { e.stopPropagation(); if (spotKey) { spotMute[spotKey] = Date.now() + 20000; } spotOff(); });
+      spotEl.querySelector('.skip').addEventListener('click', function (e) { e.stopPropagation(); if (spotKey) { spotMute[spotKey] = Date.now() + 20000; } if (PAGE === 'Main') { spotMute.guideMain = Date.now() + 20000; } spotOff(); });
       var holeR = null;
       function place() {
         var el = spotFind && spotFind(), r = vis(el); if (!r || !spotEl) { spotOff(); return; }
@@ -945,6 +929,16 @@
       var ok = PAGE === 'Main' ? spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
       if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
       return ok;
+    }
+    /* 공방 화면에서는 다음 설비 안내가 꺼져 있으면 계속 다시 띄운다 (컷신·팝업에 가려 놓치는 경우 대비) */
+    function guideMain(g) {
+      if (PAGE !== 'Main') { return; }
+      var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return; }
+      var nx = nextOf(g); if (!nx || nx === 'Main') { return; }
+      if (spotEl || ptrDown || document.querySelector('.tut-ov,.jade-ov,.st-ov,.sm-ov,[aria-modal="true"]')) { return; }
+      var now = Date.now(); if (spotMute.guideMain && spotMute.guideMain > now) { return; }
+      var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '소성가마', KilnOpen: '소성가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
+      spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요', 'guideMain');
     }
     // 밝힐 곳이 아직 안 그려졌거나 안내 창이 떠 있으면 조금 뒤 다시 찾는다
     function guideRetry(delay, n) { setTimeout(function () { if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov')) { if (n > 0) { guideRetry(700, n - 1); } return; } if (!guideNext(load()) && n > 0) { guideRetry(700, n - 1); } }, delay); }
@@ -1002,7 +996,7 @@
         var leaves = [].slice.call(a.querySelectorAll('*')).filter(function (el) { return !el.children.length && el.tagName !== 'svg' && el.tagName !== 'IMG' && !el.closest('svg') && ((el.getAttribute('data-tl-orig') !== null) || /\S/.test(el.textContent || '')); });
         var lb = leaves.filter(function (el) { return !/^[\d,.\s+%·/-]+$/.test(el.getAttribute('data-tl-orig') !== null ? el.getAttribute('data-tl-orig') : el.textContent); });
         lb = lb.length ? [lb[lb.length - 1]] : [];
-        if (!leaves.length && /\S/.test(a.textContent || '') && on) { var tn = [].slice.call(a.childNodes).filter(function (n) { return n.nodeType === 3 && /\S/.test(n.nodeValue); })[0]; if (tn) { if (!a.hasAttribute('data-tl-tn')) { a.setAttribute('data-tl-tn', tn.nodeValue); } tn.nodeValue = '??'; } }
+        if (!leaves.length && /\S/.test(a.textContent || '') && on) { var tn = [].slice.call(a.childNodes).filter(function (n) { return n.nodeType === 3 && /\S/.test(n.nodeValue); })[0]; if (tn) { if (!a.hasAttribute('data-tl-tn')) { a.setAttribute('data-tl-tn', tn.nodeValue); } if (tn.nodeValue !== '??') { tn.nodeValue = '??'; } } }
         if (!on && a.hasAttribute('data-tl-tn')) { var tn2 = [].slice.call(a.childNodes).filter(function (n) { return n.nodeType === 3; })[0]; if (tn2 && tn2.nodeValue === '??') { tn2.nodeValue = a.getAttribute('data-tl-tn'); } a.removeAttribute('data-tl-tn'); }
         lb.forEach(function (el) {
           if (on) { if (el.getAttribute('data-tl-orig') === null) { el.setAttribute('data-tl-orig', el.textContent); } if (el.textContent !== '??') { el.textContent = '??'; } }
@@ -1400,7 +1394,7 @@
       // 화면이 늦게 그려지면 밝힐 곳이 아직 없을 수 있어 몇 번 더 찾아본다
       if (!showCard(gS, false)) { guideRetry(1200, 8); }
     }
-    setInterval(function () { check(false); guideJade(load()); guideAct(load()); tour(load()); seasonTour(load()); gatherTour(load()); resTour(load()); }, 1000);
+    setInterval(function () { check(false); guideMain(load()); guideJade(load()); guideAct(load()); tour(load()); seasonTour(load()); gatherTour(load()); resTour(load()); }, 1000);
   };
   S.sndBoot = function () {
     if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sndBooted) { return; }
