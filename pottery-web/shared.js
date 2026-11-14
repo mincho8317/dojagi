@@ -1817,7 +1817,8 @@
       })();
     };
     /* 화면이 다시 그려져도 지워지지 않도록 body 에 띄운 그림으로 재생 · base : 기준 요소, opt.box : 기준 요소 안 좌표 [x, y, w, h] (요소 px), opt.hide : 재생 동안 기준 요소 숨김 */
-    var stl = null;
+    var stl = null, HID = {};
+    function hideCss() { if (!stl) { stl = document.createElement('style'); document.head.appendChild(stl); } var ks = Object.keys(HID).filter(function (k) { return HID[k] > 0; }); stl.textContent = ks.length ? ks.join(',') + '{opacity:0!important}' : ''; }
     window.__seqOver = function (base, frames, opt) {
       if (!base || !frames || !frames.length) { return; }
       opt = opt || {};
@@ -1825,12 +1826,13 @@
       var im = document.createElement('img'); im.alt = ''; im.setAttribute('aria-hidden', 'true');
       im.style.cssText = 'position:fixed;z-index:9000;pointer-events:none;object-fit:contain;left:' + (r.left + bx[0] * k) + 'px;top:' + (r.top + bx[1] * k) + 'px;width:' + (bx[2] * k) + 'px;height:' + (bx[3] * k) + 'px;' + (opt.css || '');
       document.body.appendChild(im);
-      var key = opt.hide ? 'seq' + Math.floor(Math.random() * 1e9) : '';
-      if (key) { if (!stl) { stl = document.createElement('style'); stl.textContent = 'body[data-seqhide] [data-seqbase]{opacity:0!important}'; document.head.appendChild(stl); } base.setAttribute('data-seqbase', '1'); document.body.setAttribute('data-seqhide', key); }
-      if (base.__seqOv) { try { clearTimeout(base.__seqOv.t); base.__seqOv.im.remove(); } catch (e) {} }
-      var st = { im: im, t: 0 }; base.__seqOv = st; var i = 0;
+      var hs = opt.hideSel || ''; if (hs) { HID[hs] = (HID[hs] || 0) + 1; hideCss(); }
+      var slot = opt.slot || 'x'; base.__seqOv = base.__seqOv || {};
+      var prev = base.__seqOv[slot]; if (prev && !prev.done) { try { clearTimeout(prev.t); prev.im.remove(); if (prev.hs) { HID[prev.hs] = Math.max(0, (HID[prev.hs] || 0) - 1); hideCss(); } } catch (e) {} }
+      var st = { im: im, t: 0, hs: hs }; base.__seqOv[slot] = st; var i = 0;
+      if (opt.anim && im.animate) { try { im.animate(opt.anim[0], opt.anim[1]); } catch (e) {} }
       (function step() {
-        if (i >= frames.length) { im.remove(); if (key && document.body.getAttribute('data-seqhide') === key) { document.body.removeAttribute('data-seqhide'); } return; }
+        if (i >= frames.length) { st.done = true; im.remove(); if (hs) { HID[hs] = Math.max(0, (HID[hs] || 0) - 1); hideCss(); } return; }
         im.src = frames[i][0]; var ms = frames[i][1]; i++; st.t = setTimeout(step, ms);
       })();
     };
