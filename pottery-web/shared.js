@@ -1408,18 +1408,18 @@
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
     function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
     function vol(k) { var s = load().settings || {}, v = s[k]; return (typeof v === 'number' ? v : (k === 'bgm' ? 70 : 80)) / 100; }
-    var ac = null, mB = null, mS = null, rev = null, noiseBuf = null, bgmOn = false, amb = null, clayG = null, clayLvl = 0, motorG = null;
+    var ac = null, mB = null, mBF = null, mS = null, rev = null, noiseBuf = null, bgmOn = false, amb = null, clayG = null, clayLvl = 0, motorG = null;
     function mkNoise() { var n = ac.sampleRate * 2, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (var i = 0; i < n; i++) { d[i] = Math.random() * 2 - 1; } return b; }
     function mkRev() { var n = Math.floor(ac.sampleRate * 2.2), b = ac.createBuffer(2, n, ac.sampleRate); for (var c = 0; c < 2; c++) { var d = b.getChannelData(c); for (var i = 0; i < n; i++) { d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3); } } var cv = ac.createConvolver(); cv.buffer = b; var g = ac.createGain(); g.gain.value = 0.32; cv.connect(g); g.connect(mB); return cv; }
-    function upd() { if (!ac) { return; } var b = vol('bgm'), s = vol('sfx'); mB.gain.setTargetAtTime(0.55 * b * b, ac.currentTime, 0.1); mS.gain.setTargetAtTime(0.8 * s * s, ac.currentTime, 0.05); }
+    function upd() { if (!ac) { return; } var b = vol('bgm'), s = vol('sfx'); mB.gain.setTargetAtTime(0.55 * b * b, ac.currentTime, 0.1); mBF.gain.setTargetAtTime(0.9 * b * b, ac.currentTime, 0.1); mS.gain.setTargetAtTime(0.8 * s * s, ac.currentTime, 0.05); }
     function init() {
-      if (ac) { if (ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } return; }
+      if (ac) { if (ac.state === 'suspended') { try { ac.resume().then(kickBgm, function () {}); } catch (e) {} } kickBgm(); return; }
       var C = window.AudioContext || window.webkitAudioContext; if (!C) { return; }
       try { ac = new C(); } catch (e) { ac = null; return; }
       var comp = ac.createDynamicsCompressor(); comp.connect(ac.destination);
-      mB = ac.createGain(); mS = ac.createGain(); mB.connect(comp); mS.connect(comp);
+      mB = ac.createGain(); mS = ac.createGain(); mBF = ac.createGain(); mB.connect(comp); mS.connect(comp); mBF.connect(ac.destination);
       noiseBuf = mkNoise(); rev = mkRev(); upd();
-      startBgm(); startAmb();
+      startFileBgm(); startAmb();
     }
     function env(g, t, a, peak, dec) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + dec); }
     function tone(type, f, t, a, peak, dec, out, f2) { var o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if (f2) { o.frequency.exponentialRampToValueAtTime(f2, t + a + dec); } env(g, t, a, peak, dec); o.connect(g); g.connect(out || mS); o.start(t); o.stop(t + a + dec + 0.05); return o; }
@@ -1461,6 +1461,47 @@
         }
       }, 200);
     }
+    /* 배경음악 파일 (bgm/bgm_키.mp3) · 화면·컷신별 곡, 끝나기 전에 같은 곡을 겹쳐 틀어 끊김 없이 반복, 화면을 옮겨도 이어서 재생 · 파일을 못 읽으면 합성음으로 */
+    var PAGE_BGM = { Main: 'main', MainSide: 'main', Queue: 'main', Codex: 'main', Settings: 'main', Resources: 'main', Wheel: 'craft', Dry: 'craft', Glaze: 'craft', Kiln: 'craft', KilnOpen: 'craft', Counter: 'counter', Commission: 'counter', Town: 'counter', Display: 'counter', Gather: 'gather', Shop: 'shop', Research: 'shop', Season: 'festa', Contest: 'festa' };
+    var SCENE_BGM = { prologue: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa' };
+    var BF = { cur: null, scene: null, ok: false, dead: false, XF: 3.5 };
+    function bgmWant() { return BF.scene || PAGE_BGM[PAGE] || 'main'; }
+    function bgmPlayer(key, at, fadeIn) {
+      var a = new Audio(), g = ac.createGain(), p = { a: a, g: g, key: key, xf: false };
+      a.preload = 'auto'; a.src = 'bgm/bgm_' + key + '.mp3';
+      try { var src = ac.createMediaElementSource(a); src.connect(g); g.connect(mBF); } catch (e) { BF.dead = true; return null; }
+      g.gain.value = 0.0001;
+      a.addEventListener('error', function () { if (!BF.ok && !BF.dead) { BF.dead = true; startBgm(); } });
+      a.addEventListener('playing', function () { BF.ok = true; });
+      var go = function () { if (at && isFinite(a.duration) && at < a.duration - BF.XF - 1) { try { a.currentTime = at; } catch (e) {} } a.play().catch(function () {}); g.gain.setValueAtTime(0.0001, ac.currentTime); g.gain.exponentialRampToValueAtTime(1, ac.currentTime + (fadeIn || 1.2)); };
+      if (a.readyState >= 1) { go(); } else { a.addEventListener('loadedmetadata', go, { once: true }); }
+      return p;
+    }
+    function bgmStop(p, fade) {
+      if (!p) { return; }
+      try { p.g.gain.cancelScheduledValues(ac.currentTime); p.g.gain.setValueAtTime(Math.max(0.0001, p.g.gain.value), ac.currentTime); p.g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + (fade || 1.2)); } catch (e) {}
+      setTimeout(function () { try { p.a.pause(); p.a.removeAttribute('src'); p.a.load(); p.g.disconnect(); } catch (e) {} }, ((fade || 1.2) + 0.3) * 1000);
+    }
+    function bgmSwitch(key, at) {
+      if (!ac || BF.dead) { return; }
+      if (BF.cur && BF.cur.key === key) { return; }
+      var old = BF.cur; BF.cur = bgmPlayer(key, at, 1.2); bgmStop(old, 1.2);
+    }
+    function kickBgm() { var c = BF.cur; if (!c || !c.a.paused || BF.dead) { return; } c.a.play().catch(function () {}); try { c.g.gain.cancelScheduledValues(ac.currentTime); c.g.gain.setValueAtTime(0.0001, ac.currentTime); c.g.gain.exponentialRampToValueAtTime(1, ac.currentTime + 1.2); } catch (e) {} }
+    function startFileBgm() {
+      var at = 0; try { var sp = JSON.parse(sessionStorage.getItem('bgmPos') || 'null'); if (sp && sp.k === bgmWant()) { at = sp.t || 0; } } catch (e) {}
+      bgmSwitch(bgmWant(), at);
+      setInterval(function () {
+        var c = BF.cur; if (!c || BF.dead || !ac || ac.state !== 'running') { return; }
+        var d = c.a.duration;
+        if (!c.xf && isFinite(d) && d > 10 && c.a.currentTime > d - BF.XF) { c.xf = true; var n = bgmPlayer(c.key, 0, BF.XF); if (n) { BF.cur = n; bgmStop(c, BF.XF); } }
+      }, 200);
+      var savePos = function () { try { if (BF.cur && !BF.scene) { sessionStorage.setItem('bgmPos', JSON.stringify({ k: BF.cur.key, t: BF.cur.a.currentTime || 0 })); } } catch (e) {} };
+      window.addEventListener('pagehide', savePos); window.addEventListener('beforeunload', savePos); setInterval(savePos, 2000);
+    }
+    window.__bgmState = function () { return { key: BF.cur && BF.cur.key, ok: BF.ok, dead: BF.dead, t: BF.cur ? BF.cur.a.currentTime : 0, paused: BF.cur ? BF.cur.a.paused : null, ac: ac && ac.state }; };
+    window.__bgmSeek = function (t) { if (BF.cur) { BF.cur.a.currentTime = t < 0 ? BF.cur.a.duration + t : t; } };
+    window.__bgmScene = function (id) { BF.scene = (id && SCENE_BGM[id]) || null; if (ac && !BF.dead) { bgmSwitch(bgmWant(), 0); } };
     // 장면별 배경 효과 (가마 불 소리, 물레 모터)
     function firing() { var g = load(); if (PAGE === 'Bisque') { return (g.bisque || {}).state === 'firing'; } if (PAGE === 'Kiln' || PAGE === 'KilnOpen') { return g.kiln === 'firing'; } return false; }
     function startAmb() {
@@ -1512,6 +1553,7 @@
       if (el && !el.closest('[data-work]') && Date.now() - lastTap > 60) { lastTap = Date.now(); window.__sfx('tap'); }
     }, true);
     document.addEventListener('keydown', function () { init(); }, true);
+    setTimeout(function () { try { init(); } catch (e) {} }, 300);
     // 저장 데이터 변화로 공통 효과음 (골드 증가 · 옥 사용 · 튜토리얼 해금)
     var prev = load();
     setInterval(function () {
@@ -1893,12 +1935,12 @@
     S.storyPlay = function (id, done, opt) {
       var sc = SCENES[id]; if (!sc) { if (done) { done(); } return; }
       try { sc.steps.forEach(function (st) { (st.lines || []).forEach(function (ln) { var src = artImg(ART[ln[0]], ln[2] && ln[2].face, sc.outfit); if (src) { new Image().src = src; } }); }); } catch (e) {}
-      opt = opt || {};
+      opt = opt || {}; try { if (window.__bgmScene) { window.__bgmScene(id); } } catch (e) {}
       var ov = document.createElement('div'); ov.className = 'st-ov tut-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', sc.title);
       var box = document.createElement('div'); box.className = 'st-box'; ov.appendChild(box);
       var steps = sc.steps.filter(function (s) { return !(opt.replay && s.input); }), si = 0, li = 0;
       var dlg = null, bust = null, typing = null, lastWho = null;
-      function finish() { stopType(); ov.remove(); var g = load(), seen = {}; for (var k in (g.scenes || {})) { seen[k] = 1; } seen[id] = 1; patch({ scenes: seen }); if (done) { done(); } }
+      function finish() { stopType(); ov.remove(); try { if (window.__bgmScene) { window.__bgmScene(null); } } catch (e) {} var g = load(), seen = {}; for (var k in (g.scenes || {})) { seen[k] = 1; } seen[id] = 1; patch({ scenes: seen }); if (done) { done(); } }
       function stopType(full) { if (typing) { clearInterval(typing.t); if (full) { typing.el.innerHTML = ''; typing.el.textContent = typing.s; } typing = null; if (dlg) { var nx = dlg.querySelector('.st-next'); if (nx) { nx.style.visibility = 'visible'; } } } }
       function fx(kind) {
         if (kind === 'shake' || kind === 'knock') { box.classList.remove('fx-shake', 'fx-knock'); void box.offsetWidth; box.classList.add('fx-' + kind); try { window.__sfx && window.__sfx(kind === 'shake' ? 'shake' : 'thud'); } catch (e) {} if (kind === 'knock') { setTimeout(function () { try { window.__sfx && window.__sfx('thud'); } catch (e) {} }, 260); } }
