@@ -909,7 +909,7 @@ class Component extends DCLogic {
     var self = this, s = this.state, fl = this.navFlow(), me = this.navId(), K = 1;
     var i = 0;
     fl.forEach(function (d, j) { if (d.id === me) { i = j; } });
-    var prev = fl[i - 1], next = fl[i + 1];
+    var prev = fl[i - 1], next = fl[i + 1] || fl.filter(function (d) { return d.id === 'wheel'; })[0]; /* 진열 다음은 다시 물레로 */
     var dx = s.navDx || 0;
     var NB = 59, VW = 264, TW = fl.length * NB - 5, minOff = Math.min(0, VW - TW);
     var autoOff = Math.max(minOff, Math.min(0, VW / 2 - (i * NB + 27)));

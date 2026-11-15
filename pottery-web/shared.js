@@ -1046,6 +1046,14 @@
     }
     function anyWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
     function giftIn(g) { var P0 = g.pieces || {}, n = { store: 0, shelf: 0, badLive: false }; ['tg1', 'tg2', 'tg3', 'tg4', 'tg5', 'tg6'].forEach(function (k) { var p = P0[k]; if (p) { if (p.where === 'store') { n.store++; } else if (p.where === 'shelf') { n.shelf++; } } }); var b = P0.tg7; n.badLive = !!(b && (b.where === 'store' || b.where === 'shelf')); return n; }
+    /* 진열 튜토리얼 동안 진열·보관함·안내 말고는 누르지 못하게 */
+    var tlStyle = null;
+    function tlock(on) {
+      try {
+        if (!tlStyle) { tlStyle = document.createElement('style'); tlStyle.textContent = 'body[data-tlock] :is(a,button,[role=tab],[role=button]):not(.tut-ov *):not(.tut-spot *):not(.tut-box *):not(#dstore *):not(#dshelf *){pointer-events:none!important;filter:grayscale(.5) brightness(.85)}'; document.head.appendChild(tlStyle); }
+        if (on) { document.body.setAttribute('data-tlock', '1'); } else if (document.body.hasAttribute('data-tlock')) { document.body.removeAttribute('data-tlock'); }
+      } catch (e) {}
+    }
     function guideAct(g) {
       var t = g.tut, now = Date.now();
       if (typeof t !== 'number' || t >= STEPS.length) { return; }
@@ -1121,7 +1129,7 @@
       { id: 'quest', goal: '이야기 의뢰 받기', go: 'Counter', pages: ['Counter'], ic: '📜', body: '할머니를 찾아온 손님들이 그릇을 부탁해요.\n\n📖 공방 이야기 · 단골 손님의 사연을 따라 순서대로 열려요.\n카운터에서 이야기를 듣고 의뢰를 받으면 의뢰 내역서에 적혀요.' },
       { id: 'track', goal: '제작 중 의뢰 확인하기', go: 'Wheel', pages: ['Wheel', 'Glaze'], passive: true, ic: '📌', body: '받은 의뢰는 의뢰 내역서에 모여요.\n\n📌 제작 안내를 켠 의뢰는 물레·유약 화면 위쪽 체크리스트에 요구 기물과 완성 수가 떠요.\n물레에 들어가면 제작 안내를 켠 의뢰에 맞는 흙과 모양이 자동으로 골라져요.\n다른 걸 빚고 싶으면 흙·목표 버튼으로 바꾸면 돼요.' },
       { id: 'wait', goal: '남은 흙으로 의뢰 만들기', go: 'Counter', pages: [], passive: true, ic: '🍲', body: '' },
-      { id: 'display', goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '창고에서 찾은 할머니의 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 주고, 손님이 사 가기도 해요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 연구에 써요.' },
+      { id: 'display', goal: '명작 진열과 와장창', go: 'Display', pages: ['Display'], ic: '🏺', body: '창고에서 찾은 할머니의 명작 6점과 망작 1점이 보관함에 들어왔어요.\n\n🏺 명작은 꾹 잡고 끌어서 위쪽 진열대에 놓아요. 진열한 작품은 시간당 명성을 올려 줘요.\n🛍️ 진열대에 작품이 올라가 있어야 구경하고 사 가는 판매 손님이 카운터에 찾아와요. 진열대가 비어 있으면 의뢰 손님만 와요.\n💥 망작은 끌어서 와장창 칸에 놓으면 깨지면서 파편을 얻어요. 파편은 연구에 써요.' },
       { id: 'kinds', goal: '새로 오는 손님들', go: 'Counter', pages: ['Counter'], ic: '🔔', body: '공방 문을 열자 새 손님들이 찾아와요.\n\n📖 공방 이야기 · 단골 손님의 사연\n👹 도깨비 이야기 · 지하실 너머 도깨비들의 부탁\n📅 일간·주간 의뢰 · 동네 손님의 짧은 부탁\n🌸 시즌 의뢰 · 기간 한정 이벤트\n🛒 취향 손님 · 진열대를 보고 찾아오는 손님' }
     ]; // 연구는 파편이 100개 모이면 「할머니의 일지」 컷신과 함께 따로 열린다 (resTour)
     var T2LAST = T2.length - 1;
@@ -1162,8 +1170,9 @@
       g.pieces = ps; g.order = order; g.tutGift = true; return true;
     }
     function tour(g) {
-      if (!tourOn(g)) { return; }
       var o2 = t2R(), k = o2.k, st = T2[k];
+      if (!(tourOn(g) && k === 3 && PAGE === 'Display')) { tlock(false); }
+      if (!tourOn(g)) { return; }
       tourMini(k);
       if (document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov')) { return; }
       // 진행 조건
@@ -1195,10 +1204,11 @@
         else { act('t2talk', true, qsel('[aria-label="대화 넘기기"]'), '윤 할매 이야기를 들어요 · 눌러서 대화를 넘겨요'); }
       }
       if (k === 3 && PAGE === 'Display') {
+        tlock(true);
         var gj = giftIn(g), shN = pieceN(g, ['shelf']), P2 = g.pieces || {};
         var byName = function (ids) { return function () { var nm = ids.map(function (i) { return P2[i] && (P2[i].where === 'store' || P2[i].where === 'shelf') ? P2[i].name : null; }).filter(Boolean); var c = [].slice.call(document.querySelectorAll('#dstore button[aria-label], #dshelf button[aria-label]')).filter(function (b) { return nm.indexOf(b.getAttribute('aria-label')) >= 0 && vis(b); }); return c[0] || null; }; };
         var stIds = ['tg1', 'tg2', 'tg3', 'tg4', 'tg5', 'tg6'].filter(function (i) { return P2[i] && P2[i].where === 'store'; });
-        if (stIds.length && shN < 6) { act('t2ds' + shN, true, byName(stIds), '명작을 꾹 잡고 위 진열대로 끌어서 놓아요 (' + shN + '/6)'); }
+        if (stIds.length && shN < 6) { act('t2ds' + shN, true, byName(stIds), '명작을 꾹 잡고 위 진열대로 끌어서 놓아요 (' + shN + '/6) · 진열해야 판매 손님이 와요'); }
         else if (gj.badLive) { act('t2sm', true, byName(['tg7']), '망작을 꾹 잡고 끌면 💥 와장창 칸이 나타나요 · 거기에 놓아 깨요'); }
       }
       if (k === 1 && (PAGE === 'Wheel' || PAGE === 'Glaze')) {
