@@ -236,7 +236,7 @@ button{font-family:inherit;cursor:pointer}
     <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
-      <sc-if value="{{commBadgeOn}}" hint-placeholder-val="{{true}}"><span style="position:absolute;right:10px;top:0;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:'Jua',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center">{{commBadge}}</span></sc-if>
+      <sc-if value="{{commBadgeOn}}" hint-placeholder-val="{{true}}"><span data-cb="1" style="position:absolute;right:10px;top:0;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:'Jua',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center">{{commBadge}}</span></sc-if>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
@@ -308,22 +308,24 @@ class Component extends DCLogic {
   }
   walkGap(g) {
     var n = 0; for (var k in (g.pieces || {})) { if (g.pieces[k].where === 'shelf') { n++; } }
-    return Math.max(45000, 135000 - n * 15000); // 취향 손님만 오므로 간격을 넉넉히
+    return Math.max(15000, 45000 - n * 5000); /* 진열대에 많이 올릴수록 판매 손님이 자주 온다 */
   }
   makeWalk(g, t) {
     var NAMES = [['산책하던 이웃', 'CHAR_WALK_A'], ['출근길 직장인', 'CHAR_WALK_B'], ['여행객', 'CHAR_WALK_C'], ['동네 할머니', 'CHAR_WALK_D'], ['신혼부부', 'CHAR_WALK_E'], ['미대생', 'CHAR_WALK_F']];
     var seed = Math.floor(Math.random() * 1000);
     var nm = NAMES[seed % NAMES.length];
-    var taste = true; // 구매(지나가는) 손님은 없앴다 · 찾는 그릇이 있는 취향 손님만
+    var taste = false; /* 판매 손님만 */
     var QLw = this.qlib(), shapes = QLw.knownShapes(g || {}), glazes = ['', '', 'white', 'celadon', 'black']; // 물레에서 고를 수 있는 모양만 주문
     return { id: 'wk' + t + '_' + seed, type: taste ? 'taste' : 'walk', name: nm[0], res: nm[1], seed: seed, at: t, want: taste ? { shape: QLw.WSM[shapes[seed % shapes.length]], sk: shapes[seed % shapes.length], glaze: glazes[Math.floor(seed / 3) % glazes.length] } : null };
   }
   spawnWalk(g) {
-    var now = Date.now(), w0 = g.walkins || [], w = w0.filter(function (x) { return x.type !== 'walk'; }), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = w.length !== w0.length;
+    var now = Date.now(), w0 = g.walkins || [], w = w0.filter(function (x) { return x.type === 'walk'; }), nx = g.walkNext || 0, gap = this.walkGap(g), guard = 0, changed = w.length !== w0.length;
+    var shelfN = 0; for (var k in (g.pieces || {})) { if (g.pieces[k].where === 'shelf') { shelfN++; } }
+    if (!shelfN) { if (w.length) { w = []; changed = true; } return changed || nx ? { walkins: w, walkNext: 0 } : null; } /* 진열대가 비면 판매 손님이 오지 않는다 */
     if (!nx) { nx = now + 4000; changed = true; }
-    while (nx <= now && w.length < 4 && guard++ < 8) { w.push(this.makeWalk(g, nx)); nx += gap; changed = true; }
-    if (w.length >= 4 && nx <= now) { nx = now + gap; changed = true; }
-    return changed ? { walkins: w, walkNext: nx } : null;
+    while (nx <= now && w.length < Math.min(3, shelfN) && guard++ < 8) { w.push(this.makeWalk(g, nx)); nx += gap; changed = true; }
+    if (w.length >= Math.min(3, shelfN) && nx <= now) { nx = now + gap; changed = true; }
+    return changed ? { walkins: w, walkNext: nx, tasteOrders: [] } : null;
   }
   tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Main'); }
   sndBoot() { return window.PotteryShared.sndBoot.call(this); }
@@ -541,14 +543,14 @@ class Component extends DCLogic {
     this.setState({ zoom: zz, px: c.px, py: c.py, zAnim: !!anim });
     if (anim) { clearTimeout(this.zt); this.zt = setTimeout(function () { self.setState({ zAnim: false }); }, 300); }
   }
+  /* 카운터에서 지금 받을 수 있는 의뢰 (메인·도깨비·시즌 + 튜토리얼 민 씨) */
   guestInfo(g) {
-    var q = g.quests || {};
-    var list = [];
-    if (!q.min) { list.push({ res: 'CHAR_MIN', line: '“찻잔 하나만 부탁드려도 될까요?”' }); } else if (q.minDone && !q.minThanks) { list.push({ res: 'CHAR_MIN', line: '“고마워서 인사하러 왔어요.”' }); }
-    if (!q.guest) { list.push({ res: 'CHAR_GUEST', line: '“밥공기 주문하려고요.”' }); } else if (q.guestDone && !q.guestThanks) { list.push({ res: 'CHAR_GUEST', line: '“그릇 잘 쓰고 있어요.”' }); }
-    if (!q.week) { list.push({ res: 'CHAR_CAFE', line: '“카페 잔을 부탁하고 싶어요.”' }); } else if (q.weekDone && !q.weekThanks) { list.push({ res: 'CHAR_CAFE', line: '“손님들이 잔을 좋아해요.”' }); }
-    if (g.curator !== 'done') { list.push({ res: 'CHAR_CURATOR', line: '“진열대 작품을 보고 싶어요.”' }); }
-    (g.walkins || []).forEach(function (w) { list.push({ res: w.res, line: w.type === 'taste' ? '“찾는 그릇이 있는데요…”' : '“구경 좀 해도 될까요?”' }); });
+    var QL = this.qlib(), q = g.quests || {}, list = [], tutOk = typeof g.tut !== 'number' || g.tut >= 8;
+    if (!q.min) { list.push({ res: 'CHAR_MIN', line: '“찻잔 하나만 부탁드려도 될까요?”' }); }
+    ['main', 'dok', 'season'].forEach(function (LN) {
+      var M = QL.lineState(g, LN); if (!M.open || !M.def || M.allDone || M.acc || M.thanks || !tutOk || !M.lvOk) { return; }
+      list.push({ res: M.def.res, line: '“' + String((M.def.intro || [''])[0]).split('{이름}').join(g.pname || '손녀') + '”' });
+    });
     return list;
   }
   renderVals() {
@@ -879,7 +881,7 @@ class Component extends DCLogic {
       gold: g.gold.toLocaleString(),
       shards: g.shards,
       wip: wipN, wipOn: wipN > 0,
-      commBadge: (guests.length) + wipN, commBadgeOn: ((guests.length) + wipN) > 0,
+      commBadge: self.qlib().reqCounts(g).accepted, commBadgeOn: self.qlib().reqCounts(g).accepted > 0,
       seasonD: Math.max(0, Math.ceil((new Date('2026-11-17T00:00:00+09:00') - Date.now()) / 86400000)),
       starTotal: (function () { var t = 0, st = (g.contest || {}).stars || {}; for (var k in st) { t += st[k]; } return t; })(),
       questBadge: guests.length,

@@ -623,7 +623,17 @@
       });
       return { pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 };
     }
-    this._ql = { clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    /* 의뢰 수 : offers = 카운터에서 지금 받을 수 있는 의뢰 · accepted = 받아 둔(진행 중) 의뢰 · 메인·도깨비·시즌 + 튜토리얼 민 씨 */
+    function reqCounts(g) {
+      var q = g.quests || {}, offers = 0, accepted = 0, tutOk = typeof g.tut !== 'number' || g.tut >= 8;
+      if (!q.min) { offers++; } else if (!q.minDone) { accepted++; }
+      ['main', 'dok', 'season'].forEach(function (LN) {
+        var M = lineState(g, LN); if (!M.open || !M.def || M.allDone) { return; }
+        if (M.acc && !M.thanks) { accepted++; } else if (!M.acc && !M.thanks && tutOk && M.lvOk) { offers++; }
+      });
+      return { offers: offers, accepted: accepted };
+    }
+    this._ql = { reqCounts: reqCounts, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
@@ -1837,6 +1847,23 @@
         im.src = frames[i][0]; var ms = frames[i][1]; i++; st.t = setTimeout(step, ms);
       })();
     };
+  })();
+  // ── 하단 탭 「의뢰」 숫자 : 받아 둔(진행 중) 의뢰 수 · 모든 화면 공통 (공방은 자체 표시) ──
+  (function () {
+    if (typeof window === 'undefined' || window.__cbadge) { return; }
+    window.__cbadge = 1;
+    function upd() {
+      try {
+        var a = document.querySelector('nav[aria-label="주 메뉴"] a[href="Commission.dc.html"]'); if (!a || a.querySelector('[data-cb]')) { return; }
+        var g = JSON.parse(localStorage.getItem('pottery-proto-v1') || 'null'); if (!g || !window.PotteryShared || !window.PotteryShared.qlib) { return; }
+        var n = window.PotteryShared.qlib.call(window.PotteryShared).reqCounts(g).accepted;
+        var b = a.querySelector('[data-cbx]');
+        if (!n) { if (b) { b.remove(); } return; }
+        if (!b) { b = document.createElement('span'); b.setAttribute('data-cbx', '1'); b.setAttribute('aria-label', '진행 중 의뢰 ' + n); b.style.cssText = 'position:absolute;right:10px;top:0;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:Jua,sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center;pointer-events:none'; if (getComputedStyle(a).position === 'static') { a.style.position = 'relative'; } a.appendChild(b); }
+        if (b.textContent !== String(n)) { b.textContent = String(n); }
+      } catch (e) {}
+    }
+    setInterval(upd, 1000); setTimeout(upd, 300);
   })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
   // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다
