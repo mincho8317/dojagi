@@ -364,7 +364,7 @@ class Component extends DCLogic {
   ftune() {
     var rf = this.qlib().fx((this.state && this.state.g) || {});
     // 부채질 조정값 · 커서 왕복 시간, 판정 칸 폭(0~1), 완벽 칸 폭, 성공 1회 건조 진행량(ms), 완벽 배율
-    return { period: 1150, zone: 0.22 + (rf.fanZone || 0), perfect: 0.07, gain: Math.round(45000 * (1 + (rf.fanGain || 0))), perfectMul: 1.6 };
+    return { period: 1150, zone: 0.22 + (rf.fanZone || 0), perfect: 0.07, gain: Math.round(30000 * (1 + (rf.fanGain || 0))), perfectMul: 1.6 };
   }
   /* 연속 성공(콤보)마다 커서가 빨라진다 · 1콤보당 +8% 선형, 최대 3배 */
   fanSpeed() { var st = (this.state && this.state.fanStreak) || 0; return Math.min(3, 1 + 0.08 * st); }

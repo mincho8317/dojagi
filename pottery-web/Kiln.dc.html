@@ -508,9 +508,12 @@ class Component extends DCLogic {
     if (cr.yohen && glaze === 'black') { glaze = 'cheonmok'; name = '천목 ' + shn; }
     if (cr.yohen) { name = '요변 ' + name; }
     var cv = TU.colorValue, cm = cv[0] + (cv[1] - cv[0]) * cr.pct / 100;
+    var G2 = TU.gradeCut2 || { '명작': 260, '수작': 200 }, tot3 = sk.score + cr.pct; /* 등급 = 실력 + 발색 */
+    grade = tot3 >= G2['명작'] ? '명작' : (tot3 >= G2['수작'] ? '수작' : '양작');
     var mult = TU.gradeMul[grade] || 1;
-    var vBase = Math.max(100, Math.round(sh.base * mult * cl.sell * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 100);
-    var value = Math.round(vBase * cm / 100) * 100;
+    /* 평가액 = 예전의 1/10 */
+    var vBase = Math.max(10, Math.round(sh.base * mult * cl.sell * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 10);
+    var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
     var why = Object.keys(sk.parts).map(function (k) { return PN[k] + ' ' + sk.parts[k]; }).join(' · ');

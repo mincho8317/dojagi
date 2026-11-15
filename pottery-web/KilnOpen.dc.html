@@ -606,7 +606,7 @@ class Component extends DCLogic {
       var cNow = t >= B.end ? cPct : Math.max(0, Math.min(100, Math.round(B.tot)));
       if (t >= B.end && t < 1e8) { ding('cdone', 'ok'); }
       var v0 = it.valueBase || it.value || 0, v1 = it.value || 0, c0 = ABend + 80, mA = c0 + 450, mF = mA + 300, vEnd = mF + 300;
-      var vp = cl((t - c0) / 420), val = t < mF + 100 ? Math.round(v0 * vp / 100) * 100 : Math.round((v0 + (v1 - v0) * cl((t - mF - 100) / 220)) / 100) * 100;
+      var vp = cl((t - c0) / 420), val = t < mF + 100 ? Math.round(v0 * vp / 10) * 10 : Math.round((v0 + (v1 - v0) * cl((t - mF - 100) / 220)) / 10) * 10;
       if (t >= c0 + 420) { ding('v0', 'reveal'); }
       if (t >= mF + 220) { ding('v1', 'coin'); }
       var mp = cl((t - mF) / 250), mul = '×' + (it.colorMul || 1).toFixed(2) + ' 발색';
@@ -713,7 +713,7 @@ class Component extends DCLogic {
         name: it.name, grade: it.grade, value: (it.value || 0).toLocaleString(),
         form: stars(it.form || 0, '★', '☆'), color: stars(it.color || 0, '◆', '◇'),
         skill: typeof it.skill === 'number' ? it.skill + '점 · ' + it.grade : it.grade,
-        skillWhy: it.skillWhy ? it.skillWhy + ' · 명작 ' + QLk.TUNE.gradeCut['명작'] + '+ · 수작 ' + QLk.TUNE.gradeCut['수작'] + '+' : '이전 방식으로 구운 작품',
+        skillWhy: it.skillWhy ? it.skillWhy + ' · 실력+발색 ' + ((it.skill || 0) + (it.colorPct || 0)) + '/300 · 명작 ' + QLk.TUNE.gradeCut2['명작'] + '+ · 수작 ' + QLk.TUNE.gradeCut2['수작'] + '+' : '이전 방식으로 구운 작품',
         colorPct: cPct + '%' + (it.yohen ? ' 요변' : ''), tint: it.tint || look.body,
         colorBar: 'display:block;height:100%;width:' + cPct + '%;background:linear-gradient(90deg,' + (it.tint || look.body) + ',#FFE7A8)',
         colorWhy: '무작위 · ' + (it.colorWhy || '') + ' · 평가액 ×' + (QLk.TUNE.colorValue[0] + (QLk.TUNE.colorValue[1] - QLk.TUNE.colorValue[0]) * cPct / 100).toFixed(2),

@@ -57,7 +57,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{targetName}} 빚기</div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:64px;display:flex;align-items:stretch;gap:6px">
+  <div style="position:absolute;left:12px;right:12px;top:134px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{openClay}}" aria-label="흙 바꾸기 · 지금 {{clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
       <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} ▾</span></span>
@@ -68,7 +68,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </button>
   </div>
 
-  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:12px;top:116px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
+  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
       <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{fitPct}}<span style="font-size:18px">%</span></span>
