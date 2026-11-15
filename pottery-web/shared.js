@@ -25,8 +25,8 @@
         fire: { '정합': 100, '근접': 65, '불일치': 25 }
       },
       gradeCut: { '명작': 180, '수작': 140 }, // 실력 점수 200점 만점 · 미만은 양작
-      gradeCut2: { '명작': 260, '수작': 200 }, // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
-      colorTemp: { '정합': 30, '근접': 15, '불일치': 0 }, // 발색 · 온도 정합 몫(%)
+      gradeCut2: { '명작': 287, '수작': 250 }, /* 실력 200 + 모든 연구 + 최고 궁합이면 발색 72~100 → 명작 약 50% */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
+      colorTemp: { '정합': 45, '근접': 20, '불일치': 0 }, colorRnd: 30, /* 운 요소 0~30% (예전 0~70%) */ // 발색 · 온도 정합 몫(%)
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
       // 발색 % = 무작위 · 등급과 무관 · 평가액에만 반영
       colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
@@ -174,9 +174,9 @@
       return br >= 0 ? mixHex(c, '#FFFFFF', br) : mixHex(c, '#000000', -br);
     }
     function colorRoll(it, match, heat, g) {
-      // 발색 = 무작위 0~70% + 온도 정합 30% + 유약 보너스 + 흙과 유약 시너지
+      // 발색 = 무작위 0~30% + 온도 정합 45% + 유약 보너스 + 흙과 유약 시너지
       var F = g ? fx(g) : {};
-      var cp = { rnd: Math.round(Math.random() * 70), temp: TUNE.colorTemp[match] != null ? TUNE.colorTemp[match] : 0, glaze: (TUNE.colorThick[it.thick] || 0) + (match === '정합' ? Math.round((F.colorMin || 0) / 2) : 0), syn: (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2 };
+      var cp = { rnd: Math.round(Math.random() * (TUNE.colorRnd || 30)), temp: TUNE.colorTemp[match] != null ? TUNE.colorTemp[match] : 0, glaze: (TUNE.colorThick[it.thick] || 0) + (match === '정합' ? Math.round((F.colorMin || 0) / 2) : 0), syn: (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2 };
       var pct = Math.max(5, Math.min(100, cp.rnd + cp.temp + cp.glaze + cp.syn));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }

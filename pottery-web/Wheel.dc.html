@@ -685,9 +685,10 @@ class Component extends DCLogic {
     // 비선형 일치율: 목표에 가까울수록 같은 손질에도 크게 오른다 (지수 곡선) · 95% 이상은 100%로 스냅
     var eS = 0;
     for (var e2 = 0; e2 < 12; e2++) { eS += Math.max(0, Math.abs(s.r[e2] - tr[e2]) / tr[e2] - 0.03); }
-    var E = eS / 12 + Math.max(0, Math.abs(herr) - 0.03) * 0.6 + Math.max(0, tOut - 0.2) * 0.018;
+    var E = eS / 12 + Math.max(0, Math.abs(herr) - 0.03) * 0.6 + Math.max(0, tOut - 0.2) * 0.04;
     var fit = Math.round(100 * Math.exp(-8 * E));
     if (fit >= 95) { fit = 100; }
+    if (tOut > 0.2) { fit = Math.min(fit, 94); } /* 두께가 목표 범위 밖이면 100%(실력 만점)가 될 수 없다 */
     var regions = [{ n: '아랫부분', a: 0, b: 3 }, { n: '몸통', a: 4, b: 7 }, { n: '입구', a: 8, b: 11 }];
     var issues = [];
     regions.forEach(function (rg) {
