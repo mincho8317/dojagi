@@ -1170,7 +1170,7 @@
       g.pieces = ps; g.order = order; g.tutGift = true; return true;
     }
     function tour(g) {
-      var o2 = t2R(), k = o2.k, st = T2[k];
+      var o2 = t2R() || {}, k = o2.k, st = T2[k];
       if (!(tourOn(g) && k === 3 && PAGE === 'Display')) { tlock(false); }
       if (!tourOn(g)) { return; }
       tourMini(k);
