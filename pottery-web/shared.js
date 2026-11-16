@@ -2197,7 +2197,7 @@
       var cur = ''; try { cur = localStorage.getItem('potVer') || ''; } catch (e) { return; }
       if (cur === VER || document.querySelector('[aria-label="새 버전 안내"]')) { return; }
       var g = load(), tp = 0; try { tp = +(localStorage.getItem('tutProg') || 0); } catch (e) {}
-      var played = (typeof g.tut === 'number' && g.tut > 0) || tp > 0 || Object.keys(g.pieces || {}).length > 0;
+      var played = (typeof g.tut === 'number' && g.tut > 0) || tp > 0; /* 기본 시드 기물만 있는 첫 실행은 제외 */
       function mark() { try { localStorage.setItem('potVer', VER); } catch (e) {} }
       if (!played) { mark(); return; }
       var ov = popup('✨', '새로운 버전이 나왔어요', '이야기와 튜토리얼 흐름이 바뀌었어요.\n초기화 후 처음부터 진행해 보시겠어요?', [
