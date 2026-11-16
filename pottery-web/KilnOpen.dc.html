@@ -425,6 +425,7 @@ class Component extends DCLogic {
     var self = this;
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); } };
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
+    try { var gF = this.state.g || {}, KDf = gF.kilnDur || 0; if (gF.kiln === 'firing' && gF.kilnStart && Date.now() >= gF.kilnStart + KDf) { var ffx = this.qlib().fireFinish(gF); if (ffx) { this.setG(ffx); } } } catch (e) {} /* 불 다스림 · 요변 찬스 결과를 꺼내기 전에 반영 */
     if (this.readyIdle(this.state.g)) { this.startDoor(); }
     var g9 = this.state.g || {}; if (g9.kiln === 'firing' && Date.now() < (g9.kilnStart || 0) + (g9.kilnDur || 14400000)) { setTimeout(function () { self.goKiln(); }, 0); } // 굽는 중에는 소성 화면(닫힌 가마)에서 풀무질
     this.tick = setInterval(function () { var g0 = self.state.g || {}; if (self.readyIdle(g0)) { self.startDoor(); } if (g0.kiln === 'firing' && g0.kilnStart && Date.now() < g0.kilnStart + (g0.kilnDur || 14400000) + 600 && !self.state.navSw) { self.forceUpdate(); } }, 500);
@@ -600,7 +601,7 @@ class Component extends DCLogic {
         return { gradeOn: true, ribTxt: it.grade, ribFx: it.ribFx || 'none', ribAnim: 'animation:slamIn .4s .5s both;', chips: [], cchips: [], tot: it.skill != null ? it.skill : '-', max: 100, totStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#FFD66B', cpct: cPct + '%', cStyle: 'font-family:Jua,sans-serif;font-size:19px;color:#9FD4C6', cbar: 'display:block;height:100%;width:' + cPct + '%;background:' + (it.tint || '#9FD4C6'), val: (it.value || 0).toLocaleString(), valStyle: 'font-family:Jua,sans-serif;font-size:22px;color:#FFD66B', mul: '', mulStyle: 'display:none' };
       }
       var A = chips([{ t: '성형 ' + P.form + '/100', v: P.form }, { t: '+ 건조 ' + P.dry + '/50', v: P.dry }, { t: '+ 시유 ' + P.glaze + '/50', v: P.glaze }], 800, 800 + 350, 110, '#8A6440');
-      var cl4 = CP ? (CP.rnd ? [{ t: '무작위 ' + CP.rnd + '%', v: CP.rnd }] : []).concat([{ t: (CP.rnd ? '+ ' : '') + '온도 정합 ' + CP.temp + '%', v: CP.temp }, { t: '+ 유약 보너스 ' + CP.glaze + '%', v: CP.glaze }, { t: '+ 흙·유약 궁합 ' + CP.syn + '%', v: CP.syn }]) : []; /* 새 작품은 무작위 없음 */
+      var cl4 = CP ? (CP.rnd ? [{ t: '무작위 ' + CP.rnd + '%', v: CP.rnd }] : []).concat([{ t: (CP.rnd ? '+ ' : '') + '온도 정합 ' + CP.temp + '%', v: CP.temp }, { t: '+ 유약 보너스 ' + CP.glaze + '%', v: CP.glaze }, { t: '+ 흙·유약 궁합 ' + CP.syn + '%', v: CP.syn }]).concat(CP.fire ? [{ t: '+ 불 다스림 ' + CP.fire + '%', v: CP.fire }] : []) : []; /* 새 작품은 무작위 없음 */
       var B = chips(cl4, 800 + 120, 800 + 470, 90, '#3E6B60'); /* 성형·발색 점수를 동시에 */
       var ABend = Math.max(A.end, B.end);
       var cNow = t >= B.end ? cPct : Math.max(0, Math.min(100, Math.round(B.tot)));

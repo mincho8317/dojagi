@@ -628,10 +628,30 @@
       return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, shards: cnt * TUNE.itemShards, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
     }
     // 소성 결과 보기를 시작했다가 다른 화면으로 가면, 남은 작품을 그대로 대기함에 넣는다
+    /* 소성이 끝날 때 한 번 : 풀무로 불을 잘 다스린 만큼 발색 +0~10% · 요변 찬스 성공 수만큼 요변 굴림 → 등급·값 다시 계산 */
+    function fireFinish(g) {
+      if (!g || g.kilnFx || !(g.batchItems || []).length) { return null; }
+      var KD = g.kilnDur || 1, T = g.kilnTend || {}, pts = ((T.gA || 0) + 0.4 * (T.lA || 0)) / KD, bonus = Math.round(Math.min(1, pts * 1.08) * 10), yo = Math.min(3, g.kilnYo || 0);
+      var cv = TUNE.colorValue, G2 = TUNE.gradeCut2;
+      var items = g.batchItems.map(function (x) {
+        if (x.broken) { return x; }
+        var y = {}, k; for (k in x) { y[k] = x[k]; }
+        var pct = Math.min(100, (x.colorPct || 0) + bonus), cp = {}; for (k in (x.colorParts || {})) { cp[k] = x.colorParts[k]; } cp.fire = bonus;
+        var newYo = !x.yohen && yo > 0 && pct >= 70 && Math.random() < 0.2 * yo;
+        if (newYo) { pct = 100; y.yohen = true; if (y.glaze === 'black') { y.glaze = 'cheonmok'; y.name = y.name.replace(/^흑유/, '천목'); } y.name = '요변 ' + y.name; }
+        var gr = (x.skill || 0) + pct >= G2['명작'] ? '명작' : ((x.skill || 0) + pct >= G2['수작'] ? '수작' : '양작');
+        var m0 = TUNE.gradeMul[x.grade] || 1, m1 = TUNE.gradeMul[gr] || 1, vb = Math.max(10, Math.round((x.valueBase || 10) * m1 / m0 * (newYo ? TUNE.yohen.valueMul : 1) / 10) * 10), cm = cv[0] + (cv[1] - cv[0]) * pct / 100;
+        y.colorPct = pct; y.colorParts = cp; y.grade = gr; y.valueBase = vb; y.value = Math.round(vb * cm / 10) * 10; y.colorMul = Math.round(cm * 100) / 100; y.color = Math.max(1, Math.ceil(pct / 20));
+        y.tint = tintOf(newYo && x.glaze === 'black' ? 'cheonmok' : y.glaze, pct);
+        y.colorWhy = (x.colorWhy || '') + (bonus ? ' · 불 다스림 +' + bonus + '%' : '') + (newYo ? ' · 요변 찬스!' : '');
+        return y;
+      });
+      return { batchItems: items, kilnFx: true, kilnBonus: bonus };
+    }
     function settleKiln(g) {
       if (!g || g.kiln !== 'firing' || !g.kilnSeen) { return null; }
       if (g.kilnStart && Date.now() < g.kilnStart + (g.kilnDur || 28800000)) { return null; }
-      var items = g.batchItems || []; if (!items.length) { return null; }
+      var ff = fireFinish(g), items = (ff ? ff.batchItems : g.batchItems) || []; if (!items.length) { return null; }
       var pieces = {}, k; for (k in (g.pieces || {})) { pieces[k] = g.pieces[k]; }
       var order = (g.order || []).slice(), log = [], shards = g.shards || 0, broken = g.broken || 0, now = Date.now();
       var sf = {}, gf = {}; for (k in (g.shapesFound || {})) { sf[k] = g.shapesFound[k]; } for (k in (g.glazesFound || {})) { gf[k] = g.glazesFound[k]; }
@@ -654,7 +674,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { reqCounts: reqCounts, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>

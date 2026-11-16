@@ -18,6 +18,8 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 button{font-family:inherit;cursor:pointer}
 </style>
 <style>
+@keyframes auraPulse{0%,100%{transform:scale(.9);opacity:.75}50%{transform:scale(1.08);opacity:1}}
+@keyframes popIn{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
 @keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
 @keyframes navShake{0%{transform:translate(0,0)}15%{transform:translate(-5px,4px)}35%{transform:translate(5px,-3px)}55%{transform:translate(-3px,2px)}75%{transform:translate(2px,-1px)}100%{transform:translate(0,0)}}
 @keyframes navDust{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
@@ -70,7 +72,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
       <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24;display:flex;align-items:center;gap:3px"><img src="ui/kiln_fire.webp" alt="" aria-hidden="true" style="width:22px;height:22px;object-fit:contain">최고 온도</span>
       <span style="font-family:'Jua',sans-serif;font-size:19px;color:#C8601E">{{heat.temp}}℃</span>
-      <span style="margin-left:auto;padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:#5B3A24">{{heat.hours}}시간</span>
+      <span style="margin-left:auto;padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:#5B3A24">{{heat.mins}}분</span>
       <span style="{{heat.riskStyle}}">{{heat.riskText}}</span>
       <sc-if value="{{heat.yohen}}" hint-placeholder-val="{{false}}"><span style="padding:1px 8px;border-radius:8px;font-size:11.5px;font-weight:700;color:#FFFDF5;background:#7A5A93">요변</span></sc-if>
     </div>
@@ -145,6 +147,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <div style="{{door.l}}"></div>
           <div style="{{door.r}}"></div>
           <div aria-hidden="true" style="{{kt.doorHeat}}"></div>
+          <sc-if value="{{kt.yoOn}}" hint-placeholder-val="{{false}}">
+            <div data-yo-flame="1" aria-live="assertive" style="{{kt.yoStyle}}"><span style="font-size:46px;line-height:1;filter:drop-shadow(0 0 12px #FFD54A)">✨</span><span style="font-family:'Jua',sans-serif;font-size:17px;color:#FFF6C8;text-shadow:0 2px 0 #5B3A10,0 0 10px #FFB300">{{kt.yoTxt}}</span></div>
+          </sc-if>
           <div style="{{door.lock}}">
             <img src="ui/kiln_door_bolt.webp" alt="" aria-hidden="true" style="{{door.eye}}">
             <span style="font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;text-shadow:0 2px 0 #1A0F08">{{door.label}}</span>
@@ -155,11 +160,12 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
     <div aria-label="발풀무" role="group" style="position:relative;z-index:5;height:150px;margin-top:-22px">
-      <button type="button" onPointerDown="{{kt.fan.tap}}" aria-label="풀무질 · 발풀무 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-72px;bottom:14px;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
-        <span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" src="anim/pedal_1.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
+      <button type="button" onPointerDown="{{kt.fan.down}}" aria-label="풀무질 · 발풀무를 아래로 끌어 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-72px;bottom:14px;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
+        <span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" dc-src="{{kt.pedImg}}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
       </button>
       <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
         <span aria-live="polite" style="{{kt.labelStyle}}">{{kt.label}}</span>
+        <span aria-label="{{kt.tendAria}}" style="position:absolute;left:50%;top:-20px;transform:translateX(-50%);display:flex;gap:5px;white-space:nowrap;font-family:'Jua',sans-serif;font-size:11.5px"><span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.85);color:#9BD35A">🔥 불 다스림 +{{kt.tend}}%</span><span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.85);color:#FFD54A">✨ 요변 {{kt.yoN}}/3</span></span>
         <div role="img" aria-label="{{kt.fan.title}}" style="position:absolute;left:50%;top:-46px;width:250px;margin-left:-125px;height:22px;box-sizing:border-box;border:2.5px solid #3E2616;border-radius:9px;background:#3E2616;overflow:hidden;box-shadow:0 2px 0 rgba(0,0,0,.45),0 0 0 2px rgba(255,231,168,.35)">
           <span style="position:absolute;left:35%;width:25%;top:0;bottom:0;background:rgba(232,196,64,.32)"></span>
           <span style="position:absolute;left:60%;width:18%;top:0;bottom:0;background:rgba(155,211,90,.38);border-left:1.5px solid rgba(26,15,8,.6)"></span>
@@ -184,7 +190,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
   <button type="button" onClick="{{fire}}" style="all:unset;position:relative;cursor:pointer;box-sizing:border-box;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 5px 0 #8A3D10;border-radius:18px;font-family:'Jua',sans-serif;font-size:22px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">
     <img src="_blob/d6ffc3828e136b95c04ef29b972105c4.webp" alt="" aria-hidden="true" draggable="false" style="width:34px;height:34px">
-    불 지피기 · {{hours}}시간 · {{count}}점
+    불 지피기 · {{mins}}분 · {{count}}점
   </button>
   </sc-if>
 
@@ -356,8 +362,30 @@ class Component extends DCLogic {
       left: '남은 시간 ' + this.fmtSec(left),
       bar: 'position:absolute;left:0;top:0;bottom:0;width:' + Math.min(100, m).toFixed(1) + '%;background:' + col + ';border-radius:0 6px 6px 0;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)' + (mu ? ',0 0 8px ' + col : '') + ';transition:width .05s linear,background .15s',
       btn: 'all:unset;cursor:pointer;align-self:center;width:190px;height:58px;box-sizing:border-box;border-radius:20px;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;touch-action:manipulation;user-select:none;' + (lock ? 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547' : 'background:radial-gradient(circle at 40% 35%,#FFE7A8,#E0A06A);border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;color:#7A2F1E;transform:scale(' + (1 + (now - (f.tapAt || 0) < 120 ? -0.08 : 0)) + ')'),
-      tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); }
+      tap: function (e) { if (e && e.preventDefault) { e.preventDefault(); } self.fanTap(); },
+      down: function (e) { self.pedDown(e); }
     };
+  }
+  /* 발풀무 : 아래로 끌면 밟히며 바람이 들어간다 (끈 거리만큼 게이지 상승) · 위로 올리면 페달이 돌아온다 */
+  pedDown(e) {
+    if (e && e.preventDefault) { e.preventDefault(); }
+    var self = this, y = e.clientY;
+    function mv(ev) {
+      var dy = ev.clientY - y; y = ev.clientY;
+      var f = self.state.fan || { m: 0 }, now = Date.now(), pos = self.state.ped || 0;
+      if (dy > 0) {
+        var npos = Math.min(60, pos + dy);
+        if ((f.lock || 0) <= now && npos > pos) {
+          var m = (f.m || 0) + (npos - pos) * 0.22, nf = { m: m, lock: 0, tapAt: now };
+          if (m > 98) { nf.m = 40; nf.lock = now + 1500; self.say('과열! 풀무를 너무 세게 밟았어요'); try { window.__sfx && window.__sfx('hiss'); window.__buzz && window.__buzz([30, 40, 30]); } catch (e2) {} }
+          self.setState({ fan: nf, ped: npos });
+          if (pos < 45 && npos >= 45) { try { window.__sfx && window.__sfx('whoosh'); window.__buzz && window.__buzz(8); } catch (e3) {} }
+          self.fanLoop();
+        } else { self.setState({ ped: npos }); }
+      } else if (dy < 0) { self.setState({ ped: Math.max(0, pos + dy) }); }
+    }
+    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.setState({ ped: 0 }); }
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
   fanTap() {
     var self = this, f = this.state.fan || { m: 0 }, now = Date.now();
@@ -371,23 +399,45 @@ class Component extends DCLogic {
     try { window.__sfx && window.__sfx('whoosh'); } catch (e) {}
     if (m > 98) { nf.m = 40; nf.lock = now + 1500; this.say('과열! 풀무를 너무 세게 밟았어요'); try { window.__sfx && window.__sfx('hiss'); } catch (e) {} }
     this.setState({ fan: nf });
+    this.fanLoop();
+  }
+  fanLoop() {
+    var self = this, now = Date.now();
     if (!this.fanT) {
-      this.fanLast = now; this.fanAcc = 0; this.fanFlush = now;
+      this.fanLast = now; this.fanAcc = 0; this.fanFlush = now; this.tendG = 0; this.tendL = 0;
       this.fanT = setInterval(function () {
         var t = Date.now(), dt = (t - self.fanLast) / 1000; self.fanLast = t;
         var F = self.state.fan || { m: 0 }, lk = (F.lock || 0) > t, g0 = self.state.g || {};
-        var mm = Math.max(0, (F.m || 0) - 20 * dt);
+        var mm = Math.max(0, (F.m || 0) - 14 * dt);
         var mu2 = self.fanMult(mm, lk); if (mu2 > 0) { self.fanAcc += dt * 1000 * (mu2 - 1); } /* ×N : 1초에 N초가 흐른다 */
+        if (mu2 === 15) { self.tendG += dt * 1000 * mu2; } else if (mu2 === 6) { self.tendL += dt * 1000 * mu2; } /* 불 다스림 : 적정 칸에서 진행한 몫 */
+        var yc = self.state.yc; if (yc && !yc.ok && t < yc.until && mu2 === 15) { yc.hit = (yc.hit || 0) + dt * 1000; if (yc.hit >= 700) { self.yoHit(); } }
         var nf2 = {}; for (var k in F) { nf2[k] = F[k]; } nf2.m = mm;
         self.setState({ fan: nf2 });
         if (t - self.fanFlush > 500 && self.fanAcc > 0) {
           var KD = g0.kilnDur || 14400000, used = g0.kilnBoost || 0, add = Math.min(self.fanAcc, Math.max(0, self.fanCap(g0) - used), Math.max(0, (g0.kilnStart || 0) + KD - t));
           self.fanAcc = 0; self.fanFlush = t;
-          if (add > 0 && g0.kiln === 'firing') { self.setG({ kilnStart: g0.kilnStart - add, kilnBoost: used + add }); var b0 = self.state.bst || { n: 0, at: 0 }; self.setState({ bst: { n: (t - b0.at < 2500 ? b0.n : 0) + add, at: t } }); }
+          var td = g0.kilnTend || {}, ntd = { gA: (td.gA || 0) + self.tendG, lA: (td.lA || 0) + self.tendL }; self.tendG = 0; self.tendL = 0;
+          if (add > 0 && g0.kiln === 'firing') { self.setG({ kilnStart: g0.kilnStart - add, kilnBoost: used + add, kilnTend: ntd }); var b0 = self.state.bst || { n: 0, at: 0 }; self.setState({ bst: { n: (t - b0.at < 2500 ? b0.n : 0) + add, at: t } }); }
         }
         if (mm <= 0 && !lk && t - (F.tapAt || 0) > 1500) { clearInterval(self.fanT); self.fanT = null; }
       }, 50);
     }
+  }
+  /* 요변 찬스 : 굽는 동안 가끔 금빛 불꽃 · 그동안 게이지를 초록 칸에 0.7초 붙잡으면 성공 (소성마다 최대 3번) */
+  yoTick() {
+    var g = this.state.g || {}, now = Date.now(), yc = this.state.yc;
+    if (g.kiln !== 'firing' || !g.kilnStart || now >= g.kilnStart + (g.kilnDur || 0) || (g.kilnYo || 0) >= 3) { if (yc) { this.setState({ yc: null }); } return; }
+    if (yc && now < yc.until + 900) { return; }
+    if (yc) { if (!yc.ok) { this.say('요변 찬스를 놓쳤어요'); } this.setState({ yc: null }); this.yoNext = now + 30000 + Math.random() * 25000; return; }
+    if (!this.yoNext) { this.yoNext = now + 15000 + Math.random() * 15000; }
+    if (now >= this.yoNext) { this.setState({ yc: { until: now + 2600, hit: 0, ok: false } }); try { window.__sfx && window.__sfx('rare'); window.__buzz && window.__buzz([20, 30, 20]); } catch (e) {} }
+  }
+  yoHit() {
+    var yc = this.state.yc, g = this.state.g || {}; if (!yc || yc.ok) { return; }
+    yc.ok = true; this.setState({ yc: yc }); this.setG({ kilnYo: Math.min(3, (g.kilnYo || 0) + 1) });
+    try { window.__sfx && window.__sfx('gMaster'); window.__buzz && window.__buzz([30, 40, 60]); window.__sparkle && window.__sparkle(document.querySelector('[data-yo-flame]') || { x: 195, y: 300 }, { n: 22, r: 90, big: true }); } catch (e) {}
+    this.say('✨ 요변 기운이 깃들었어요! (' + Math.min(3, (g.kilnYo || 0) + 1) + '/3)', 'ok');
   }
   goOpen() { try { var a = document.getElementById('goOpen'); if (a) { a.click(); } } catch (e) {} }
   fmtSec(ms) { var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + '시간 ' : '') + (h || m ? (h && m < 10 ? '0' : '') + m + '분 ' : '') + (x < 10 && (h || m) ? '0' : '') + x + '초'; }
@@ -426,7 +476,7 @@ class Component extends DCLogic {
     this.onStore = function (e) { if (!e || e.key === 'pottery-proto-v1' || e.key === null) { self.setState({ g: self.loadG() }); self.takeFocus(); } };
     this.takeFocus();
     try { window.addEventListener('storage', this.onStore); } catch (e) {}
-    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (g0.kiln === 'firing' && !self.state.navSw) { self.forceUpdate(); } }, 500);
+    this.tick = setInterval(function () { var g0 = self.state.g || {}; if (g0.kiln === 'firing' && !self.state.navSw) { self.yoTick(); self.forceUpdate(); } }, 500);
   }
   componentWillUnmount() {
     clearInterval(this.tick); clearInterval(this.doorT); clearInterval(this.fanT); clearTimeout(this.tt); clearTimeout(this.goT);
@@ -641,7 +691,7 @@ class Component extends DCLogic {
       var ok = ws.filter(function (w) { var o = (T.GL[w.glaze] || T.GL.white).opt; return tp.some(function (t) { return QL0.kMatch(t, o, g) === '정합'; }); }).length;
       var rp = Math.round(self.heatRisk(HB) * 100), pc = (HB - 1160) / 160 * 100;
       return {
-        temp: HB.toLocaleString(), low: (HB - 80).toLocaleString(), hours: cur.hours, risk: rp, pct: pc.toFixed(1),
+        temp: HB.toLocaleString(), low: (HB - 80).toLocaleString(), hours: cur.hours, mins: Math.round(cur.hours * 10), risk: rp, pct: pc.toFixed(1),
         riskText: rp ? '깨짐 +' + rp + '%' : '깨짐 걱정 없음', yohen: cur.id === 'high',
         fit: ws.length ? '대기 ' + ws.length + '점 중 ' + ok + '점이 맞는 칸 있음' : '가마 칸 온도 ' + (HB - 80).toLocaleString() + '~' + HB.toLocaleString() + '℃',
         knob: 'position:absolute;top:50%;left:' + pc.toFixed(1) + '%;width:30px;height:30px;margin:-15px 0 0 -15px;box-sizing:border-box;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFF4DE,#FFB24A);border:3px solid #5B3A24;box-shadow:0 2px 0 #2B1A0F;pointer-events:none',
@@ -775,7 +825,7 @@ class Component extends DCLogic {
       cells: cells,
       info: info,
       count: placed.length,
-      hours: cur.hours,
+      hours: cur.hours, mins: Math.round(cur.hours * 10 * (1 - (QL0.fx(g).kilnCut || 0))),
       kilnQ: waiting.length,
       batch: (g.batchItems || []).length || g.batch || 3,
       firingNow: firingNow, idle: !firingNow,
@@ -801,7 +851,14 @@ class Component extends DCLogic {
           title: done ? '소성 완료' : '소성 중',
           clock: done ? '완료!' : self.fmtSec(left), cost: self.jadeCost(left) ? '옥 ' + self.jadeCost(left).toLocaleString() : '무료',
           clockStyle: 'font-family:Jua,sans-serif;font-size:20px;white-space:nowrap;transition:color .2s,transform .2s;color:' + (done ? '#3B7A32' : (self.fanVals(g, left).mult ? '#2F9A55;transform:scale(1.08)' : '#C8601E')),
-          label: self.fanVals(g, left).mult ? self.fanVals(g, left).mult + '배 빠르게 진행 중' : '풀무를 밟아 불을 키워요', labelStyle: 'position:absolute;left:0;right:0;top:-70px;text-align:center;font-family:Jua,sans-serif;pointer-events:none;text-shadow:0 2px 0 #1A0F08,0 0 6px #1A0F08;transition:color .15s;font-size:' + (self.fanVals(g, left).mult === 15 ? 17 : 15) + 'px;color:' + ({ 3: '#FFE27A', 6: '#C8F09A', 15: '#7FE07A' }[self.fanVals(g, left).mult] || '#FFE7A8'),
+          pedImg: (function () { var pp = self.state.ped || 0; return pp < 15 ? 'anim/pedal_1.webp' : (pp < 38 ? 'anim/pedal_2.webp' : 'anim/pedal_3.webp'); })(),
+          tend: (function () { var T = g.kilnTend || {}, pts = ((T.gA || 0) + (self.tendG || 0) + 0.4 * ((T.lA || 0) + (self.tendL || 0))) / Math.max(1, KD); return Math.round(Math.min(1, pts * 1.08) * 10); })(),
+          tendAria: '불 다스림 발색 보너스 · 요변 찬스 ' + (g.kilnYo || 0) + '번 성공',
+          yoN: Math.min(3, g.kilnYo || 0),
+          yoOn: !!(self.state.yc && !done && Date.now() < self.state.yc.until + 900),
+          yoTxt: self.state.yc && self.state.yc.ok ? '요변 기운 성공!' : '요변 찬스! 초록 칸을 지켜요',
+          yoStyle: 'position:absolute;left:0;right:0;top:18%;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;z-index:3;animation:' + (self.state.yc && self.state.yc.ok ? 'popIn .4s both' : 'auraPulse .5s ease-in-out infinite'),
+          label: self.fanVals(g, left).mult ? self.fanVals(g, left).mult + '배 빠르게 진행 중' : '풀무를 아래로 밟아 불을 키워요', labelStyle: 'position:absolute;left:0;right:0;top:-70px;text-align:center;font-family:Jua,sans-serif;pointer-events:none;text-shadow:0 2px 0 #1A0F08,0 0 6px #1A0F08;transition:color .15s;font-size:' + (self.fanVals(g, left).mult === 15 ? 17 : 15) + 'px;color:' + ({ 3: '#FFE27A', 6: '#C8F09A', 15: '#7FE07A' }[self.fanVals(g, left).mult] || '#FFE7A8'),
           boostTxt: '시간 ×' + self.fanVals(g, left).mult + ' 빠르게',
           boostStyle: 'position:absolute;left:50%;top:-76px;white-space:nowrap;padding:3px 9px;border-radius:12px;background:' + ({ 3: '#4F8F3E', 6: '#2F7A2E', 15: '#C9A227' }[self.fanVals(g, left).mult] || '#2F9A55') + ';border:2px solid #FFF4DE;box-shadow:0 3px 0 rgba(0,0,0,.35);font-family:Jua,sans-serif;font-size:' + (self.fanVals(g, left).mult === 15 ? 17 : 14) + 'px;color:#FFFDF5;transform:translateX(-50%);animation:navPulse .6s ease-in-out infinite;pointer-events:none',
           bar: 'position:absolute;left:0;top:0;bottom:0;width:' + pc.toFixed(1) + '%;border-radius:8px;background:' + (done ? '#3B7A32' : 'linear-gradient(90deg,#E07A2E,#FFB24A)'),
@@ -818,7 +875,7 @@ class Component extends DCLogic {
         if (!placed.length) { self.say('빈 가마는 때줄 수 없어요'); return; }
         var results = placed.map(function (p) { return self.judge(p.it, p.temp, cur.id); });
         try { window.__sfx && window.__sfx('ignite'); } catch (e) {} 
-        self.setG({ kiln: 'firing', kilnStart: Date.now(), kilnBoost: 0, kilnDur: Math.round(cur.hours * 3600000 * (1 - (QL0.fx(g).kilnCut || 0))), batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 0) + 1, firedTotal: (g.firedTotal || 0) + results.length, kilnFilled: {} });
+        self.setG({ kiln: 'firing', kilnStart: Date.now(), kilnBoost: 0, kilnDur: Math.round(cur.hours * 600000 * (1 - (QL0.fx(g).kilnCut || 0))), kilnTend: {}, kilnYo: 0, kilnFx: false, batchItems: results, batch: results.length, openIdx: 0, openLog: [], firings: (g.firings || 0) + 1, firedTotal: (g.firedTotal || 0) + results.length, kilnFilled: {} });
         self.setState({ sel: -1, closeAt: Date.now() });
         clearInterval(self.doorT); var t0 = Date.now(); self.doorT = setInterval(function () { if (Date.now() - t0 > 750) { clearInterval(self.doorT); } self.setState({ doorTick: Date.now() }); }, 33);
       }
