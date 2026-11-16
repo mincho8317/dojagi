@@ -617,7 +617,7 @@
       items.forEach(function (x, i) {
         if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
         var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
+        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', covAng: x.covAng, value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
         order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
         log.push({ name: x.name, action: x.grade + ' · 대기함' });
       });
@@ -1606,6 +1606,31 @@
       if (typeof g.tut === 'number' && typeof prev.tut === 'number' && g.tut > prev.tut) { window.__sfx('unlock'); }
       prev = g;
     }, 300);
+  };
+  // 기울여 담근 유약 경계 · it.covAng(0 = 굽부터 세워서 · 180 = 입구부터 뒤집어서 · 그 사이는 비스듬히) + it.cov(담근 비율)
+  // 0°·180°는 기존 곡선 경계, 나머지는 기울기 방향을 따라 곧은 사선 경계 + 경계 쪽 진한 띠
+  S.covAngOf = function (it) {
+    var a = it && it.covAng != null ? +it.covAng : (it && it.covDir === 'foot' ? 0 : 180); a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a;
+  };
+  S.covFillAng = function (glz, clay, it, geo) {
+    var a = this.covAngOf(it), c = Math.max(0.02, Math.min(1, it.cov)), ab = Math.abs(a);
+    if (ab === 180) { return this.covFill(glz, clay, 1 - c, { H: geo.H, r: geo.r, cov: c, drip: geo.drip }); }
+    if (ab === 0) { return this.covFill(clay, glz, c, { H: geo.H, r: geo.r, cov: 1 - c, drip: clay }); }
+    try {
+      var rad = a * Math.PI / 180, nx = Math.sin(rad), ny = Math.cos(rad), r = geo.r, n = r.length, H = geo.H, lo = 1e9, hi = -1e9;
+      for (var i = 0; i < n; i++) { var y = -H * i / (n - 1); [r[i], -r[i]].forEach(function (x) { var d = x * nx + y * ny; if (d < lo) { lo = d; } if (d > hi) { hi = d; } }); }
+      var sb = hi - c * (hi - lo), f = (sb - lo) / Math.max(1, hi - lo), band = Math.min(0.06, 0.02 + c * 0.03), drip = geo.drip || glz;
+      var id = 'cva_' + String(glz).replace('#', '') + '_' + String(clay).replace('#', '') + '_' + Math.round(a) + '_' + Math.round(c * 100) + '_' + Math.round(H) + '_' + Math.round(r[0]) + '_' + Math.round(r[n - 1]);
+      if (!document.getElementById(id)) {
+        var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
+        if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
+        var lg = document.createElementNS(NS, 'linearGradient'); lg.setAttribute('id', id); lg.setAttribute('gradientUnits', 'userSpaceOnUse');
+        lg.setAttribute('x1', (nx * lo).toFixed(2)); lg.setAttribute('y1', (ny * lo).toFixed(2)); lg.setAttribute('x2', (nx * hi).toFixed(2)); lg.setAttribute('y2', (ny * hi).toFixed(2));
+        [[0, clay], [f - 0.006, clay], [f + 0.004, drip], [f + band, drip], [f + band + 0.03, glz], [1, glz]].forEach(function (p) { var st = document.createElementNS(NS, 'stop'); st.setAttribute('offset', Math.max(0, Math.min(1, p[0])).toFixed(4)); st.setAttribute('stop-color', p[1]); lg.appendChild(st); });
+        (host.querySelector('defs') || host.firstChild || host).appendChild(lg);
+      }
+      return 'url(#' + id + ')';
+    } catch (e) { return glz; }
   };
   // 대기함 끌어 놓기 · 진열대와 같은 방식 (그릇 그림이 손가락을 따라오고, 놓을 곳이 빛난다)
   // o = { target(x, y) → 놓을 요소 | null, drop(el), miss(x, y)?, start()? }

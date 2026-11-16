@@ -93,7 +93,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <span style="{{potHintStyle}}">{{potHint}}</span>
     <svg width="120" height="140" viewBox="{{cur.vb}}" role="img" aria-label="시유 중인 작품, 실시간 렌더" style="{{cur.flip}}">
       <path d="{{cur.d}}" fill="{{cur.bisque}}"></path>
-      <defs><clipPath id="gCoatClip"><rect x="-600" y="{{cur.clipY}}" width="1200" height="{{cur.clipH}}"></rect></clipPath></defs>
+      <defs><clipPath id="gCoatClip"><rect x="-3000" y="{{cur.clipY}}" width="6000" height="{{cur.clipH}}" transform="{{cur.clipT}}"></rect></clipPath></defs>
       <path d="{{cur.d}}" fill="{{cur.coat}}" opacity="{{cur.coatOp}}" clip-path="url(#gCoatClip)"></path>
       <path d="{{cur.d}}" fill="{{cur.coat}}" opacity="{{cur.wetOp}}" clip-path="url(#gCoatClip)"></path>
       <path d="{{cur.d}}" fill="url(#potTopLight)" opacity="{{cur.vis}}"></path>
@@ -124,10 +124,15 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </sc-if>
   <div aria-hidden="true" style="{{subGuide}}">{{subGuideText}}</div>
   <sc-if value="{{dirOn}}" hint-placeholder-val="{{true}}">
-    <div role="group" aria-label="담그는 방향" style="position:absolute;left:38px;top:206px;z-index:4;display:flex;flex-direction:column;gap:5px">
-      <span style="align-self:flex-start;padding:1px 7px;border-radius:7px;background:rgba(43,26,15,.82);font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8">담그는 방향</span>
-      <button type="button" onClick="{{dirRim}}" aria-pressed="{{dirRimP}}" style="{{dirRimSt}}"><svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><path d="M3 2h12l-2 12H5z" fill="#C9A68C" stroke="#5B3A24" stroke-width="1.5" transform="rotate(180 9 9)"></path><path d="M9 16v3M6.5 17l2.5 2.5 2.5-2.5" stroke="#2F6328" stroke-width="1.6" fill="none"></path></svg>입구부터</button>
-      <button type="button" onClick="{{dirFoot}}" aria-pressed="{{dirFootP}}" style="{{dirFootSt}}"><svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><path d="M3 2h12l-2 12H5z" fill="#C9A68C" stroke="#5B3A24" stroke-width="1.5"></path><path d="M9 16v3M6.5 17l2.5 2.5 2.5-2.5" stroke="#2F6328" stroke-width="1.6" fill="none"></path></svg>굽부터</button>
+    <div role="meter" aria-label="{{angAria}}" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="{{angVal}}" style="position:absolute;left:30px;top:200px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none">
+      <span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440">기울기</span>
+      <svg width="62" height="62" viewBox="-35 -35 70 70" aria-hidden="true">
+        <circle cx="0" cy="0" r="30" fill="#F3E3C4" stroke="#C9A27A" stroke-width="2"></circle>
+        <sc-for list="{{angTicks}}" as="tk" hint-placeholder-count="24"><line x1="{{tk.x1}}" y1="{{tk.y1}}" x2="{{tk.x2}}" y2="{{tk.y2}}" stroke="{{tk.c}}" stroke-width="{{tk.w}}" stroke-linecap="round"></line></sc-for>
+        <g transform="{{angRot}}"><path d="M-8 -11h16l-3 18h-10z" fill="#C9A68C" stroke="#5B3A24" stroke-width="1.6" stroke-linejoin="round"></path><ellipse cx="0" cy="-11" rx="8" ry="2.2" fill="#8A6440"></ellipse></g>
+        <path d="M-24 25q6 -3 12 0t12 0t12 0t12 0" fill="none" stroke="#5E9BB0" stroke-width="2.5" stroke-linecap="round"></path>
+      </svg>
+      <span style="{{angLabSt}}">{{angLab}}</span><span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440;margin-top:-2px">{{angNm}}</span>
     </div>
   </sc-if>
   <sc-if value="{{pvOn}}" hint-placeholder-val="{{true}}">
@@ -279,7 +284,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), glaze: 'white', sel: '', dir: 'rim', holding: false, holdMs: 0, lastMs: -1, toast: '', toastKind: 'ok' };
+    this.state = { g: this.loadG(), glaze: 'white', sel: '', ang: 180, holding: false, holdMs: 0, lastMs: -1, toast: '', toastKind: 'ok' };
   }
   gdef() {
     return {
@@ -415,16 +420,26 @@ class Component extends DCLogic {
   }
   dtune() { return { maxDip: 1.5, startCov: 0.06, liftCov: 0.02, full: 0.6, maxMs: 2400 }; }
   // 끌어내린 정도(dip) → 그릇이 유약에 잠긴 높이 비율 (0~1) · 그릇 위쪽 208px에서 시작, 수면은 390px
+  // 기울기 정규화 : -180 ~ 180 · 15° 단위
+  angN(a) { a = Math.round((+a || 0) / 15) * 15; a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a; }
+  // 기울인 그릇의 아래 방향 투영 범위 (담근 비율 → 경계 위치)
+  angExt(pp, a) {
+    var rad = a * Math.PI / 180, nx = Math.sin(rad), ny = Math.cos(rad), r = pp.rr || [20, 20], n = r.length, H = pp.H || 60, lo = 1e9, hi = -1e9;
+    for (var i = 0; i < n; i++) { var y = -H * i / (n - 1); for (var sg = -1; sg <= 1; sg += 2) { var d = sg * r[i] * nx + y * ny; if (d < lo) { lo = d; } if (d > hi) { hi = d; } } }
+    return { lo: lo, hi: hi };
+  }
+  angName(a) { var b = Math.abs(this.angN(a)); return b === 180 ? '입구부터' : (b === 0 ? '굽부터' : (b === 90 ? '옆으로' : '비스듬히')); }
   covOf(dip) { var top = 208 + dip * 125; return Math.max(0, Math.min(1, (top + 140 - 390) / 140)); }
   potDown(e) {
     if (this.state.holding || this.state.drag) { return; }
     if (e && e.preventDefault) { e.preventDefault(); }
     var self = this, el = document.getElementById('gpot');
     var k = el ? el.getBoundingClientRect().height / 140 : 1;
-    var y0 = e.clientY, t0 = Date.now(), moved = 0, T = this.dtune();
+    var y0 = e.clientY, x0 = e.clientX, a0 = this.state.ang != null ? this.state.ang : 180, t0 = Date.now(), moved = 0, T = this.dtune();
     this.setState({ drag: true, dragDip: 0 });
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
+      if (!self.state.holding) { var dx = (ev.clientX - x0) / (k || 1), na = Math.round((a0 + dx * 1.1) / 15) * 15; if (na !== self.state.ang) { self.setState({ ang: na }); try { window.__buzz && window.__buzz(6); window.__sfx && window.__sfx('tap'); } catch (e2) {} } }
       var dip = Math.max(0, Math.min(T.maxDip, dy / 125)), cv = self.covOf(dip);
       var s = self.state; self.curCov = cv;
       if (!s.holding && cv >= T.startCov) { self.start(true); }
@@ -494,7 +509,8 @@ class Component extends DCLogic {
     item.pattern = this.state.plum && (g.patterns || {}).plum ? 'plum' : '';
     item.mm = Math.round(ms / 10) / 100;
     item.cov = Math.round(Math.max(0.05, Math.min(1, this.maxCov || 1)) * 100) / 100; // 실제로 담근 높이 비율 · 완성작 채색에 그대로 쓴다
-    item.covDir = this.state.dir === 'foot' ? 'foot' : 'rim'; /* 담근 방향 : 입구부터(rim) · 굽부터(foot) */
+    item.covAng = this.angN(this.state.ang); /* 담근 기울기 : 0 = 굽부터 세워서 · ±180 = 입구부터 뒤집어서 · 15° 단위 */
+    item.covDir = Math.abs(item.covAng) >= 90 ? 'rim' : 'foot';
     var rest = (g.glazeList || []).filter(function (x) { return x.id !== cur.id; });
     var patch = { glazeList: rest, kilnList: (g.kilnList || []).concat([item]) };
     // 유약 1회 = 원료 1개 (백자유 장석 · 청자유 철분 · 흑유 철광 · 진사유 진사)
@@ -631,30 +647,30 @@ class Component extends DCLogic {
       plumPressed: s.plum ? 'true' : 'false',
       plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐어요' : '매화 문양을 넣어요 · 소성 후 값어치 +20%'); } },
       plumStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 8px;border-radius:14px;font-family:Jua,sans-serif;font-size:11px;' + (s.plum ? 'background:#FCE3EA;border:3px solid #D46A86;box-shadow:0 0 0 2px #F4B6C4;color:#A94767' : 'background:#FFFDF5;border:3px dashed #C9A27A;color:#8A6440'),
-      cur: (function () { var dryC = cur ? self.fillOf(cur, 'dry') : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var footD = s.dir === 'foot', flip = !!(s.drag || s.holding) && !footD, yCut = vbA[1] + (140 - clipPy - 10) * vbA[2] / 120, yCutF = vbA[1] + vbA[3] - (140 - clipPy - 10) * vbA[2] / 120; return { flip: 'transform:rotate(' + (flip ? 180 : 0) + 'deg);transform-origin:50% 50%;transition:transform .22s ease-out;overflow:visible', clipY: s.holding ? (footD ? yCutF.toFixed(1) : '-3000') : '9999', clipH: s.holding ? (footD ? '3000' : (yCut + 3000).toFixed(1)) : '1', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? dryC : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
+      cur: (function () { var dryC = cur ? self.fillOf(cur, 'dry') : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var aN = self.angN(s.ang), act = !!(s.drag || s.holding), cvL = Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)), ex = self.angExt(pp, aN), sb = ex.hi - cvL * (ex.hi - ex.lo); return { flip: 'transform:rotate(' + (act ? aN : 0) + 'deg);transform-origin:50% 50%;transition:transform .18s ease-out;overflow:visible', clipY: s.holding ? sb.toFixed(1) : '9999', clipH: s.holding ? '6000' : '1', clipT: 'rotate(' + (-aN) + ')', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? dryC : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
       ripple: (function () { var top = 208 + Math.round(dip * 125), sub = top + 140 - 390; if (sub <= 4) { return 'display:none'; } var t = Date.now() / 1000, w = 96 + 14 * Math.sin(t * 7), h = w * 0.24; return 'position:absolute;left:' + (195 - w / 2).toFixed(1) + 'px;top:' + (390 - h / 2).toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;box-sizing:border-box;border-radius:50%;border:2.5px solid rgba(255,255,255,.75);box-shadow:0 0 0 5px rgba(255,255,255,.18);pointer-events:none'; })(),
       curPot: self.potOf(cur || { shape: 'cup' }, '#EAD8C4'),
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
       curMeta: cur ? CLAY[cur.clay] + ' · ' + (DRY[cur.dry] || DRY.ok).t : '',
       openPick: function () { if (!s.holding) { self.setState({ pkOpen: true }); } },
       dirOn: !!cur,
-      dirRimP: s.dir !== 'foot' ? 'true' : 'false', dirFootP: s.dir === 'foot' ? 'true' : 'false',
-      dirRim: function () { if (!s.holding && !s.drag) { self.setState({ dir: 'rim' }); self.say('입구부터 담가요 · 위쪽부터 유약이 입혀져요'); } },
-      dirFoot: function () { if (!s.holding && !s.drag) { self.setState({ dir: 'foot' }); self.say('굽부터 담가요 · 아래쪽부터 유약이 입혀져요'); } },
-      dirRimSt: (function () { var on = s.dir !== 'foot'; return 'all:unset;cursor:pointer;display:flex;align-items:center;gap:3px;padding:3px 8px 3px 5px;border-radius:11px;font-family:Jua,sans-serif;font-size:12.5px;' + (on ? 'background:#2F6328;color:#FFFDF5;border:2px solid #E4F5D8;box-shadow:0 2px 0 #1B3D17' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #C9A27A') + ((s.holding || s.drag) ? ';opacity:.5' : ''); })(),
-      dirFootSt: (function () { var on = s.dir === 'foot'; return 'all:unset;cursor:pointer;display:flex;align-items:center;gap:3px;padding:3px 8px 3px 5px;border-radius:11px;font-family:Jua,sans-serif;font-size:12.5px;' + (on ? 'background:#2F6328;color:#FFFDF5;border:2px solid #E4F5D8;box-shadow:0 2px 0 #1B3D17' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #C9A27A') + ((s.holding || s.drag) ? ';opacity:.5' : ''); })(),
+      angVal: self.angN(s.ang), angAria: '담그는 기울기 ' + self.angN(s.ang) + '도 · ' + self.angName(s.ang),
+      angRot: 'rotate(' + self.angN(s.ang) + ')',
+      angLab: Math.abs(self.angN(s.ang)) + '°', angNm: self.angName(s.ang),
+      angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
+      angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
       pvOn: !!cur,
       pv: (function () {
         if (!cur) { return self.potOf({ shape: 'cup' }, '#EAD8C4'); }
         var cvP = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0;
         if (cvP < 0.03) { return self.potOf(cur, self.fillOf(cur, 'dry')); }
-        var fk = {}; for (var kk in cur) { fk[kk] = cur[kk]; } fk.glaze = self.gz(); fk.cov = Math.min(1, cvP); fk.covDir = s.dir === 'foot' ? 'foot' : 'rim';
+        var fk = {}; for (var kk in cur) { fk[kk] = cur[kk]; } fk.glaze = self.gz(); fk.cov = Math.min(1, cvP); fk.covAng = self.angN(s.ang); delete fk.covDir;
         return self.potOf(fk, self.fillOf(fk, 'glazed'));
       })(),
-      pvPct: (function () { var c = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0; return c < 0.03 ? (s.dir === 'foot' ? '굽 쪽부터' : '입구 쪽부터') : '담금 ' + Math.round(Math.min(1, c) * 100) + '%'; })(),
+      pvPct: (function () { var c = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0; return c < 0.03 ? self.angName(s.ang) : '담금 ' + Math.round(Math.min(1, c) * 100) + '%'; })(),
       pvPctSt: 'font-family:Jua,sans-serif;font-size:12px;color:' + ((s.drag || s.holding) ? '#2F6328' : '#8A6440'),
-      pvAria: '완성 미리보기 · ' + (s.dir === 'foot' ? '굽부터' : '입구부터') + ' 담금',
-      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : (s.dir === 'foot' ? '↓ 끌어내려 굽부터 담그기' : '↓ 끌어내려 입구부터 담그기')) : '위 대기함에서 기물 고르기',
+      pvAria: '완성 미리보기 · ' + self.angName(s.ang) + ' 담금',
+      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : '위 대기함에서 기물 고르기',
       potDown: function (e) { if (!cur) { self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : (s.drag && (self.curCov || 0) > 0 ? '담금 ' + Math.round((self.curCov || 0) * 100) + '% · 조금 더 ↓' : '유약 수면 · 깊이 담글수록 빨리 ↓'),
@@ -719,11 +735,11 @@ class Component extends DCLogic {
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
     var _part = _gl && it && it.cov != null && it.cov < 0.97, _clay = _CLF[it && it.clay] || _CLF.basic;
-    var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) })) : (fill || '#C9A68C');
+    var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
+    return { H: H, rr: r, inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
