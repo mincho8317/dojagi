@@ -25,12 +25,12 @@
         fire: { '정합': 100, '근접': 65, '불일치': 25 }
       },
       gradeCut: { '명작': 180, '수작': 140 }, // 실력 점수 200점 만점 · 미만은 양작
-      gradeCut2: { '명작': 287, '수작': 250 }, /* 실력 200 + 모든 연구 + 최고 궁합이면 발색 72~100 → 명작 약 50% */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
-      colorTemp: { '정합': 45, '근접': 20, '불일치': 0 }, colorRnd: 30, /* 운 요소 0~30% (예전 0~70%) */ // 발색 · 온도 정합 몫(%)
+      gradeCut2: { '명작': 287, '수작': 250 }, /* 발색은 무작위 없음 · 연구 전부 + 최고 궁합 = 발색 100 → 실력 187+ 이면 명작 */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
+      colorTemp: { '정합': 55, '근접': 25, '불일치': 0 }, colorRnd: 0, /* 운 요소 없음 · 발색 = 온도 정합 55 + 고른 유약 10 + 연구 12 + 흙·유약 궁합 최대 24 (100에서 자름) */ // 발색 · 온도 정합 몫(%)
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
       // 발색 % = 무작위 · 등급과 무관 · 평가액에만 반영
       colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
-      colorThick: { ok: 5, thin: -5, thick: 0, drip: -10 },
+      colorThick: { ok: 10, thin: -5, thick: 0, drip: -15 },
       colorValue: [0.75, 1.3], // 발색 0% → ×0.75 · 100% → ×1.3
       yohen: { heat: 'high', minPct: 92, chance: 0.5, valueMul: 2 }, // 요변 = 발색 특수 결과(등급 아님)
       // 가마 칸 온도 = 화도 기준 + 칸별 오프셋 · 중화도는 모든 유약의 적정 칸을 보장
@@ -53,7 +53,7 @@
       fitBonus: { t: '성형', l: '성형 점수 보너스', b: 0, m: 1, u: '점' },
       clayKeep: { t: '성형', l: '흙 아끼기 확률', b: 0, m: 100, u: '%' },
       clayLv: { t: '재료', l: '흙 정제 단계', b: 0, m: 1, u: '단계' },
-      glazeLv: { t: '재료', l: '유약 발색 보너스', b: 4, m: 2, u: '%' },
+      glazeLv: { t: '재료', l: '유약 발색 보너스', b: 6, m: 3, u: '%' },
       refineUp: { t: '재료', l: '다듬기 1개 더 얻을 확률', b: 0, m: 100, u: '%' },
       matKeep: { t: '재료', l: '유약 원료 아끼기 확률', b: 0, m: 100, u: '%' },
       dryRack: { t: '건조', l: '건조대 칸', b: 3, m: 1, u: '칸' },
@@ -67,7 +67,7 @@
       kilnTol: { t: '가마', l: '정합 허용 온도', b: 20, m: 1, u: '℃' },
       kilnCut: { t: '가마', l: '소성 시간(중화도)', b: 3.5, m: -3.5, u: '시간' },
       breakCut: { t: '가마', l: '소성 기본 파손', b: 4, m: -100, u: '%' },
-      colorMin: { t: '발색', l: '정합 발색 하한', b: 70, m: 1, u: '%' },
+      colorMin: { t: '발색', l: '정합 발색 보너스', b: 0, m: 1, u: '%' },
       yohen: { t: '발색', l: '요변 확률(고화도·발색 92%+)', b: 50, m: 100, u: '%' },
       sell: { t: '판매', l: '작품 판매가', b: 100, m: 100, u: '%' },
       questGold: { t: '의뢰', l: '이야기 의뢰 골드', b: 100, m: 100, u: '%' },
@@ -174,10 +174,10 @@
       return br >= 0 ? mixHex(c, '#FFFFFF', br) : mixHex(c, '#000000', -br);
     }
     function colorRoll(it, match, heat, g) {
-      // 발색 = 무작위 0~30% + 온도 정합 45% + 유약 보너스 + 흙과 유약 시너지
+      // 발색 = 온도 정합 55% + 유약 보너스(바름 상태 + 연구) + 흙과 유약 궁합 (무작위 없음)
       var F = g ? fx(g) : {};
-      var cp = { rnd: Math.round(Math.random() * (TUNE.colorRnd || 30)), temp: TUNE.colorTemp[match] != null ? TUNE.colorTemp[match] : 0, glaze: (TUNE.colorThick[it.thick] || 0) + (match === '정합' ? Math.round((F.colorMin || 0) / 2) : 0), syn: (clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 2 };
-      var pct = Math.max(5, Math.min(100, cp.rnd + cp.temp + cp.glaze + cp.syn));
+      var cp = { rnd: 0, temp: TUNE.colorTemp[match] != null ? TUNE.colorTemp[match] : 0, glaze: (TUNE.colorThick[it.thick] || 0) + (match === '정합' ? (F.colorMin || 0) : 0), syn: Math.round((clayOf(it.clay, it.glaze).color + (it.ggp != null ? it.ggp : (it.glaze === 'sakura' ? 2 : (GGRADE[it.gg] || 0)))) * 3) };
+      var pct = Math.max(5, Math.min(100, cp.temp + cp.glaze + cp.syn));
       var Y = TUNE.yohen, yo = heat === Y.heat && pct >= Y.minPct && Math.random() < Y.chance + (F.yohen || 0);
       if (yo) { pct = 100; }
       return { pct: pct, parts: cp, yohen: yo, tint: tintOf(yo && it.glaze === 'black' ? 'cheonmok' : it.glaze, pct) };
@@ -204,18 +204,18 @@
       3: { n: '', sell: 1.3, thin: 2.4, carve: 1.0, feel: 1.0, snap: 1.0, color: 2 }
     };
     var CCOLOR = {
-      w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +4% · 잘 갈라져요', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
-      y: { n: '황토', aff: { celadon: 1, black: 1 }, sell: -0.05, snap: 0.1, note: '청자·흑유 발색 +2% · 보정 +10%', col: '#D2AE7C', wet: '#B48A58', dry: '#E2C79E' },
-      r: { n: '적토', aff: { jinsa: 2, black: 1, white: -1 }, thin: 0.1, feel: -0.1, note: '진사 발색 +4% · 끈기 좋아 손맛 -10%', col: '#B9765A', wet: '#9A5A40', dry: '#D49A7E' },
-      k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 발색 +4% · 단단해 두께 변화 -10%', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
-      s: { n: '봄빛 흙', aff: { sakura: 2 }, sell: 0.05, thin: -0.2, note: '축제 흙 · 벚꽃유 발색 +4%', col: '#E2B4A6', wet: '#B98A7E', dry: '#F0D3C7' }
+      w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +6% · 잘 갈라져요', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
+      y: { n: '황토', aff: { celadon: 1, black: 1 }, sell: -0.05, snap: 0.1, note: '청자·흑유 발색 +3% · 보정 +10%', col: '#D2AE7C', wet: '#B48A58', dry: '#E2C79E' },
+      r: { n: '적토', aff: { jinsa: 2, black: 1, white: -1 }, thin: 0.1, feel: -0.1, note: '진사 발색 +6% · 끈기 좋아 손맛 -10%', col: '#B9765A', wet: '#9A5A40', dry: '#D49A7E' },
+      k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 발색 +6% · 단단해 두께 변화 -10%', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
+      s: { n: '봄빛 흙', aff: { sakura: 2 }, sell: 0.05, thin: -0.2, note: '축제 흙 · 벚꽃유 발색 +6%', col: '#E2B4A6', wet: '#B98A7E', dry: '#F0D3C7' }
     };
     // 등급 없음 : 흙·유약 원료는 색·종류별 한 가지(키 끝자리 1). 품질은 연구 「재료」 계열의 정제 단계로 오른다
     var CLAYKEYS = ['cy1', 'cw1', 'cr1', 'ck1'];
     var _gC = null, _gT = 0;
     function curG() { var now = Date.now(); if (_gC && now - _gT < 400) { return _gC; } try { _gC = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { _gC = {}; } _gT = now; return _gC; }
     function clayLv(g) { return Math.min(2, fx(g || curG()).clayLv || 0); }
-    function glazePts(g) { return 2 + Math.min(2, fx(g || curG()).glazeLv || 0); } // 발색 점수 2·3·4 = +4·6·8%
+    function glazePts(g) { return 2 + Math.min(2, fx(g || curG()).glazeLv || 0); } // 발색 점수 2·3·4 = +6·9·12%
     function lerpG(a, b, t) { var o = {}; for (var k in a) { o[k] = typeof a[k] === 'number' ? a[k] + (b[k] - a[k]) * t : a[k]; } return o; }
     var CLEGACY = { basic: 'cy1', refined: 'cy2', kaolin: 'cw2', porcelain: 'cw3', premium: 'cw3' };
     function clayOf(id, glaze) {
@@ -617,7 +617,7 @@
       items.forEach(function (x, i) {
         if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
         var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
+        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
         order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
         log.push({ name: x.name, action: x.grade + ' · 대기함' });
       });
@@ -879,7 +879,7 @@
       var el = document.querySelector('.tut-toast');
       if (!el) { el = document.createElement('div'); el.className = 'tut-toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
       el.textContent = msg; el.style.display = 'block';
-      clearTimeout(toastT); toastT = setTimeout(function () { el.style.display = 'none'; }, 2200);
+      clearTimeout(toastT); toastT = setTimeout(function () { el.style.display = 'none'; }, msg.length > 30 ? 3600 : 2200);
     }
     function overlay(html, btns) {
       var ov = document.createElement('div'); ov.className = 'tut-ov';
@@ -935,9 +935,10 @@
       var nx = nextOf(g); if (nx === PAGE) { return true; }
       if (PAGE === 'KilnOpen' && (nx === 'Kiln' || nx === 'KilnOpen')) { return true; } // 가마를 여는 연출 중에는 끌고 가지 않는다
       var key = 'tutSpot_' + t + '_' + PAGE; try { if (sessionStorage.getItem(key)) { return true; } } catch (e) {}
-      // 다음 공정은 공방으로 돌아가 해당 설비를 눌러 이동한다
+      // 다음 공정 : 옆 화살표가 있으면 바로, 없으면 공방으로 돌아가 해당 설비를 눌러 이동한다
       var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '소성가마', KilnOpen: '소성가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
-      var ok = PAGE === 'Main' ? spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요');
+      var arw = PAGE !== 'Main' ? qsel('a[data-nav][href="' + nx + '.dc.html"]') : null; /* 옆 화살표가 다음 공정이면 공방을 거치지 않는다 */
+      var ok = PAGE === 'Main' ? spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요') : (arw && arw() ? spotlight(arw, '옆 화살표로 「' + nm + '」에 바로 가요') : spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요'));
       if (ok) { try { sessionStorage.setItem(key, '1'); } catch (e) {} }
       return ok;
     }
@@ -954,6 +955,7 @@
       if (PAGE !== 'Main' && (now - gmLoadT < 2500 || now - gmAct < 2500)) { return; }
       var nm = { Wheel: '물레', Dry: '건조대', Glaze: '유약대', Kiln: '소성가마', KilnOpen: '소성가마', Counter: '카운터', Display: '진열대' }[nx] || NAMES[nx] || nx;
       if (PAGE === 'Main') { spotlight(function () { return qsel('a[data-fac][href="' + nx + '.dc.html"]')() || linkTo(nx)(); }, '「' + nm + '」를 눌러 이동해요', 'guideMain'); }
+      else if (qsel('a[data-nav][href="' + nx + '.dc.html"]')()) { spotlight(qsel('a[data-nav][href="' + nx + '.dc.html"]'), '옆 화살표로 「' + nm + '」에 바로 가요', 'guideMain'); } /* 공방을 거치지 않고 다음 공정으로 */
       else { spotlight(function () { return qsel('nav a[href="Main.dc.html"]')() || linkTo('Main')(); }, '공방으로 돌아가서 「' + nm + '」를 눌러요', 'guideMain'); }
     }
     // 밝힐 곳이 아직 안 그려졌거나 안내 창이 떠 있으면 조금 뒤 다시 찾는다
@@ -1341,7 +1343,9 @@
           var showFin = function () {
             overlay('<div class="ic">' + (window.PotteryShared.ICO || String)((fin ? '🏆' : '🔓')) + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
           };
-          if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', showFin); } else { showFin(); }
+          if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', showFin); }
+          else if (fin) { showFin(); }
+          else { /* 중간 단계는 화면을 가리지 않는다 : 목표 칩 갱신 + 짧은 알림 */ toast('🎯 다음 목표 ' + stepNo(nt) + '/' + (STEPS.length - 1) + ' · ' + STEPS[nt].goal + (names.length ? '  (🔓 ' + names.join(', ') + ')' : '')); setTimeout(function () { showCard(load(), false); var mm = document.querySelector('.tut-mini'); if (mm && mm.animate) { mm.animate([{ transform: mm.style.transform + ' scale(1)' }, { transform: mm.style.transform + ' scale(1.35)' }, { transform: mm.style.transform + ' scale(1)' }], { duration: 600, iterations: 2 }); } guideRetry(450, 8); }, 100); }
           notify();
         }
       }
@@ -1576,7 +1580,11 @@
       sOk: function (t) { [76, 81, 84].forEach(function (m, i) { tone('triangle', mf(m), t + i * 0.07, 0.003, 0.09, 0.45); }); }, // 성형 · 좌우 맞음 (밝은 3음)
       tOk: function (t) { tone('sine', mf(88), t, 0.002, 0.08, 0.9); tone('sine', mf(95), t + 0.05, 0.002, 0.06, 1.1); noise(t, 0.3, 'highpass', 6500, 0.6, 0.05); }, // 성형 · 두께 맞음 (맑은 종소리)
       pop: function (t) { tone('triangle', 380, t, 0.003, 0.16, 0.12, null, 900); noise(t, 0.08, 'bandpass', 1200, 1.5, 0.12); },
-      thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); }
+      thud: function (t) { tone('sine', 140, t, 0.003, 0.3, 0.18, null, 70); noise(t, 0.06, 'lowpass', 600, 0.7, 0.2); },
+      /* 등급 공개 전용 : 도장 쾅 + 등급별 화음 */
+      gPlain: function (t) { FX.thud(t); noise(t, 0.05, 'bandpass', 900, 2, 0.25); tone('triangle', mf(67), t + 0.12, 0.004, 0.2, 0.35); tone('triangle', mf(72), t + 0.12, 0.004, 0.16, 0.35); },
+      gGood: function (t) { FX.thud(t); [72, 76, 79, 84].forEach(function (m, i) { tone('sine', mf(m), t + 0.1 + i * 0.08, 0.003, 0.18, 0.8); tone('triangle', mf(m) * 2, t + 0.1 + i * 0.08, 0.002, 0.04, 0.4); }); noise(t + 0.3, 0.6, 'highpass', 7000, 0.5, 0.06); },
+      gMaster: function (t) { tone('sine', 70, t, 0.002, 0.5, 0.6, null, 45); noise(t, 0.12, 'lowpass', 500, 0.8, 0.5); [60, 64, 67, 72, 76, 79, 84, 88].forEach(function (m, i) { tone('sine', mf(m), t + 0.12 + i * 0.065, 0.003, 0.2, 1.4); tone('triangle', mf(m) * 2, t + 0.12 + i * 0.065, 0.002, 0.05, 0.8); }); [72, 76, 79].forEach(function (m) { tone('sine', mf(m), t + 0.75, 0.01, 0.16, 1.8); }); noise(t + 0.2, 1.6, 'highpass', 7500, 0.5, 0.1); }
     };
     window.__sfx = function (n, k) { try { init(); if (!ac || !FX[n]) { return; } FX[n](ac.currentTime + 0.01, k); } catch (e) {} };
     window.__clay = function (a) { clayLvl += Math.min(0.08, a * 0.012); };
@@ -1874,6 +1882,86 @@
       } catch (e) {}
     }
     setInterval(upd, 1000); setTimeout(upd, 300);
+  })();
+  /* ── 유약 뭉침 무늬 : 소성 때 무작위로 정해지는 무늬(spot)를 모든 화면의 그릇 그림에 덧입힌다 ── */
+  (function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__spotDefs) { return; }
+    window.__spotDefs = true;
+    function rng(sd) { return function () { sd = (sd * 16807) % 2147483647; return (sd - 1) / 2147483646; }; }
+    function tile(id, body) { return '<pattern id="' + id + '" patternUnits="objectBoundingBox" patternContentUnits="objectBoundingBox" width="1" height="1">' + body + '</pattern>'; }
+    function circles(sd, n, r0, r1, y0, y1, col, op) {
+      var R = rng(sd), o = '';
+      for (var i = 0; i < n; i++) {
+        var r = r0 + (r1 - r0) * R();
+        o += '<ellipse cx="' + (0.08 + 0.84 * R()).toFixed(3) + '" cy="' + (y0 + (y1 - y0) * R()).toFixed(3) + '" rx="' + r.toFixed(3) + '" ry="' + (r * (0.8 + 0.3 * R())).toFixed(3) + '" fill="' + col + '" fill-opacity="' + (op * (0.7 + 0.5 * R())).toFixed(3) + '"></ellipse>';
+      }
+      return o;
+    }
+    function drips(sd) {
+      var R = rng(sd), o = '';
+      for (var i = 0; i < 7; i++) {
+        var x = 0.08 + 0.84 * R(), y0 = 0.05 + 0.1 * R(), L = 0.25 + 0.4 * R(), w = 0.018 + 0.02 * R();
+        o += '<path d="M' + (x - w).toFixed(3) + ' ' + y0.toFixed(3) + 'Q' + (x - w * 1.4).toFixed(3) + ' ' + (y0 + L * 0.6).toFixed(3) + ' ' + x.toFixed(3) + ' ' + (y0 + L).toFixed(3) + 'Q' + (x + w * 1.4).toFixed(3) + ' ' + (y0 + L * 0.6).toFixed(3) + ' ' + (x + w).toFixed(3) + ' ' + y0.toFixed(3) + 'Z" fill="#000" fill-opacity=".13"></path>';
+      }
+      return o;
+    }
+    var D = tile('potSp_dot0', circles(11, 9, 0.03, 0.06, 0.12, 0.82, '#000', 0.12)) +
+      tile('potSp_dot1', circles(47, 8, 0.03, 0.065, 0.12, 0.82, '#fff', 0.2)) +
+      tile('potSp_speck0', circles(23, 34, 0.007, 0.014, 0.08, 0.86, '#000', 0.16)) +
+      tile('potSp_speck1', circles(91, 30, 0.007, 0.015, 0.08, 0.86, '#2B1A0F', 0.2)) +
+      tile('potSp_cloud0', circles(5, 4, 0.12, 0.2, 0.15, 0.75, '#fff', 0.13)) +
+      tile('potSp_cloud1', circles(77, 4, 0.12, 0.2, 0.15, 0.75, '#000', 0.09)) +
+      tile('potSp_drip0', drips(13)) + tile('potSp_drip1', drips(59));
+    function put() {
+      if (!document.body || document.getElementById('potSpotDefs')) { return; }
+      var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      s.setAttribute('id', 'potSpotDefs'); s.setAttribute('aria-hidden', 'true'); s.setAttribute('width', '0'); s.setAttribute('height', '0');
+      s.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden');
+      s.innerHTML = '<defs>' + D + '</defs>';
+      document.body.appendChild(s);
+    }
+    put(); document.addEventListener('DOMContentLoaded', put); setInterval(put, 1500);
+    /* 그릇 그림의 무늬 칸 값 : 매화 문양 > 유약 뭉침 무늬 > 기본 물레 자국 */
+    window.__potRings = function (it) {
+      if (it && it.pattern === 'plum') { return 'url(#potPlum)'; }
+      if (it && it.spot) { return 'url(#potSp_' + it.spot + ')'; }
+      return 'url(#potRings)';
+    };
+    /* 소성 때 무늬 뽑기 : 유약 바름 상태(뭉침 정도)에 따라 확률이 다르다 · 좋고 나쁨 없이 생김새만 다름 */
+    var W = { thin: { '': 70, speck: 20, dot: 10 }, ok: { '': 45, dot: 25, speck: 15, cloud: 15 }, thick: { '': 20, dot: 35, cloud: 30, speck: 15 }, drip: { '': 10, drip: 60, dot: 15, cloud: 15 } };
+    window.__spotRoll = function (thick) {
+      var w = W[thick] || W.ok, tot = 0, k; for (k in w) { tot += w[k]; }
+      var r = Math.random() * tot; for (k in w) { r -= w[k]; if (r < 0) { return k ? k + (Math.random() < 0.5 ? '0' : '1') : ''; } }
+      return '';
+    };
+    window.__spotName = function (sp) { return ({ dot: '원형 반점', speck: '잔점', cloud: '구름 얼룩', drip: '흐른 자국' })[(sp || '').replace(/[01]$/, '')] || '무늬 없음'; };
+  })();
+  /* ── 손맛 연출 공용 : 반짝임(__sparkle) · 진동(__buzz) ── */
+  (function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__sparkle) { return; }
+    var RM = false; try { RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    window.__buzz = function (ms) {
+      try { var g = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); if ((g.settings || {}).vib === false) { return; } if (navigator.vibrate) { navigator.vibrate(ms); } } catch (e) {}
+    };
+    /* target : 요소 또는 {x,y} 화면 좌표 · o.n 개수 · o.r 퍼짐 반경 · o.col 색 · o.big 큰 별 */
+    window.__sparkle = function (target, o) {
+      o = o || {}; if (!document.body) { return; }
+      var x, y, w = 0, h = 0;
+      if (target && target.getBoundingClientRect) { var b = target.getBoundingClientRect(); x = b.left + b.width / 2; y = b.top + b.height / 2; w = b.width; h = b.height; }
+      else if (target) { x = target.x; y = target.y; } else { return; }
+      var n = o.n || 8, R = o.r || 40, cols = o.col ? [o.col] : ['#FFE27A', '#FFF6C8', '#FFD14A', '#FFFFFF'];
+      for (var i = 0; i < n; i++) {
+        var s = document.createElement('div'), sz = (o.big ? 10 : 6) + Math.random() * (o.big ? 10 : 6);
+        var sx = x + (o.spread ? (Math.random() - 0.5) * w : 0), sy = y + (o.spread ? (Math.random() - 0.5) * h : 0);
+        s.setAttribute('aria-hidden', 'true');
+        s.style.cssText = 'position:fixed;left:' + (sx - sz / 2) + 'px;top:' + (sy - sz / 2) + 'px;width:' + sz + 'px;height:' + sz + 'px;pointer-events:none;z-index:9999;background:' + cols[i % cols.length] + ';clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 4px rgba(255,220,120,.9))';
+        document.body.appendChild(s);
+        var a = Math.random() * Math.PI * 2, d = R * (0.4 + Math.random() * 0.8);
+        if (RM || !s.animate) { setTimeout(function (el) { return function () { el.remove(); }; }(s), 300); continue; }
+        var an = s.animate([{ transform: 'translate(0,0) scale(.3) rotate(0deg)', opacity: 1 }, { transform: 'translate(' + (Math.cos(a) * d).toFixed(1) + 'px,' + (Math.sin(a) * d).toFixed(1) + 'px) scale(1) rotate(' + (90 + Math.random() * 90).toFixed(0) + 'deg)', opacity: 1, offset: 0.5 }, { transform: 'translate(' + (Math.cos(a) * d * 1.3).toFixed(1) + 'px,' + (Math.sin(a) * d * 1.3 - 8).toFixed(1) + 'px) scale(.2) rotate(200deg)', opacity: 0 }], { duration: 520 + Math.random() * 380, easing: 'cubic-bezier(.2,.8,.3,1)' });
+        an.onfinish = function (el) { return function () { el.remove(); }; }(s);
+      }
+    };
   })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
   // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다

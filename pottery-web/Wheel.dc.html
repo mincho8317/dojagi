@@ -572,7 +572,7 @@ class Component extends DCLogic {
       var k = Date.now(), sp = (s.segFx || []).filter(function (x) { return k - x.k < 700; });
       newly.forEach(function (j) { sp.push({ i: j, k: k + j }); });
       out.segFx = sp;
-      try { window.__sfx && window.__sfx('dot', Math.min(12, done.filter(Boolean).length)); } catch (e) {} // 구간이 맞을 때는 작은 소리 (높이·좌우·두께는 따로)
+      try { window.__sfx && window.__sfx('dot', Math.min(12, done.filter(Boolean).length)); window.__buzz && window.__buzz(10); } catch (e) {} // 구간이 맞을 때는 작은 소리 (높이·좌우·두께는 따로)
       if (done.every(Boolean) && hOk && !this.perfectSaid) { this.perfectSaid = true; this.say('완벽! 모든 구간이 목표 선에 맞았어요 · 완성을 눌러요', 'ok'); }
     }
     return out;
@@ -814,6 +814,18 @@ class Component extends DCLogic {
     try { window.__wheelTut = { shaping: shaping, fit: an.fit, hOk: !an.issues.some(function (x) { return x.kind === 'up' || x.kind === 'down'; }), sOk: !an.issues.some(function (x) { return x.kind === 'in' || x.kind === 'out'; }), tOk: !an.issues.some(function (x) { return x.kind === 'thin' || x.kind === 'thick'; }) && tmin >= lim + 1 }; } catch (e) {}
     // 높이·좌우·두께가 맞는 순간마다 서로 다른 소리
     try { var wt = window.__wheelTut || {}, pv = this._wtPrev || {}; if (shaping && pv.on) { if (wt.hOk && !pv.hOk) { window.__sfx && window.__sfx('hOk'); } else if (wt.sOk && !pv.sOk) { window.__sfx && window.__sfx('sOk'); } else if (wt.tOk && !pv.tOk) { window.__sfx && window.__sfx('tOk'); } } this._wtPrev = { on: !!shaping, hOk: wt.hOk, sOk: wt.sOk, tOk: wt.tOk }; } catch (e) {}
+    /* 손맛 : 일치율이 5%씩 오를 때마다 반짝 + 짧은 진동 · 별이 늘면 크게 · 100%면 축하 */
+    try {
+      var fz = this._fitFx || (this._fitFx = { top: 0, star: 0 }), fN = an.fit || 0, stN = Math.floor(fN / 20);
+      if (!shaping) { fz.top = fN; fz.star = stN; }
+      else if (fN >= fz.top + 5) {
+        var mEl = document.querySelector('[aria-label="목표 일치율"] span[style*="34px"]') || document.querySelector('[aria-label="목표 일치율"]');
+        if (fN >= 100 && fz.top < 100) { window.__sparkle && window.__sparkle(mEl, { n: 22, r: 90, big: true }); window.__buzz && window.__buzz([25, 40, 35]); }
+        else if (stN > fz.star) { window.__sparkle && window.__sparkle(mEl, { n: 14, r: 60, big: true }); window.__buzz && window.__buzz(22); }
+        else { window.__sparkle && window.__sparkle(mEl, { n: 6, r: 34 }); window.__buzz && window.__buzz(8); }
+        fz.top = Math.floor(fN / 5) * 5; fz.star = Math.max(fz.star, stN);
+      }
+    } catch (e) {}
     var grabOn = !!s.grab && !!this.drag && shaping;
     var grab = { y1: 0, h: 0, y: 0, hx: 0, ax: 0, ay: 0, arrow: '', label: '', ly: 0, op: 0.35 };
     if (grabOn) {
