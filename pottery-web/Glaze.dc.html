@@ -142,6 +142,15 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <span style="{{pvPctSt}}">{{pvPct}}</span>
     </div>
   </sc-if>
+  <sc-if value="{{recoatOn}}" hint-placeholder-val="{{false}}">
+    <button type="button" onClick="{{recoatTap}}" aria-label="방금 담근 그릇에 한 번 더 담그기 (덧시유)" style="all:unset;cursor:pointer;position:absolute;right:26px;top:318px;z-index:5;box-sizing:border-box;padding:5px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #2F6328;box-shadow:0 3px 0 #1B3D17;font-family:'Jua',sans-serif;font-size:13px;color:#2F6328;white-space:nowrap;animation:navPulse 1.2s ease-in-out infinite">＋ 한 번 더 담그기</button>
+  </sc-if>
+  <sc-if value="{{condOn}}" hint-placeholder-val="{{false}}">
+    <div role="list" aria-label="의뢰 시유 조건" style="position:absolute;left:12px;right:12px;top:488px;z-index:4;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;padding:5px 8px;border-radius:12px;background:rgba(43,26,15,.88);border:2px solid #6B4429">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">📋 의뢰 조건</span>
+      <sc-for list="{{conds}}" as="cd" hint-placeholder-count="3"><span role="listitem" style="{{cd.st}}">{{cd.t}}</span></sc-for>
+    </div>
+  </sc-if>
   <sc-if value="{{liftOn}}" hint-placeholder-val="{{false}}">
     <div aria-hidden="true" style="position:absolute;left:0;top:0;width:390px;height:520px;pointer-events:none;z-index:6">
       <div style="{{liftStyle}}">{{liftText}}<span style="display:block;font-size:13px;opacity:.95">{{liftSub}}</span></div>
@@ -401,6 +410,7 @@ class Component extends DCLogic {
   }
   gz() {
     var cur = this.current(), s = this.state;
+    if (cur && cur.recoat) { var r2 = cur.goalReq && cur.goalReq.g2; return r2 && r2 !== true && s.glazeManual !== cur.id ? r2 : s.glaze; }
     if (cur && cur.goalGlaze && s.glazeManual !== cur.id) { return cur.goalGlaze; }
     return s.glaze;
   }
@@ -420,6 +430,15 @@ class Component extends DCLogic {
   }
   dtune() { return { maxDip: 1.5, startCov: 0.06, liftCov: 0.02, full: 0.6, maxMs: 2400 }; }
   // 끌어내린 정도(dip) → 그릇이 유약에 잠긴 높이 비율 (0~1) · 그릇 위쪽 208px에서 시작, 수면은 390px
+  // 덧시유 : 방금 담근 그릇을 소성 대기에서 다시 꺼내 한 번 더 담근다 (한 그릇에 두 층까지)
+  recoat() {
+    var g = this.state.g, id = this.state.lastId, kl = g.kilnList || [], it = kl.filter(function (x) { return x.id === id; })[0];
+    if (!it || it.g2) { this.setState({ lastId: '' }); return; }
+    var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
+    this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
+    this.setState({ sel: id, lastId: '', glazeManual: '' });
+    this.say('한 번 더 담가요 · 유약과 기울기를 골라 덧입혀요', 'ok');
+  }
   // 기울기 정규화 : -180 ~ 180 · 15° 단위
   angN(a) { a = Math.round((+a || 0) / 15) * 15; a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a; }
   // 기울인 그릇의 아래 방향 투영 범위 (담근 비율 → 경계 위치)
@@ -511,11 +530,16 @@ class Component extends DCLogic {
     item.cov = Math.round(Math.max(0.05, Math.min(1, this.maxCov || 1)) * 100) / 100; // 실제로 담근 높이 비율 · 완성작 채색에 그대로 쓴다
     item.covAng = this.angN(this.state.ang); /* 담근 기울기 : 0 = 굽부터 세워서 · ±180 = 입구부터 뒤집어서 · 15° 단위 */
     item.covDir = Math.abs(item.covAng) >= 90 ? 'rim' : 'foot';
+    if (cur.recoat) { /* 덧시유 : 두 번째 층만 새로 기록하고 첫 층은 그대로 둔다 */
+      item.g2 = item.glaze; item.g2col = this.fillOf({ glaze: item.g2 }, 'glazed'); item.cov2 = item.cov; item.ang2 = item.covAng; item.thick2 = item.thick;
+      item.glaze = cur.glaze; item.cov = cur.cov; item.covAng = cur.covAng; item.covDir = cur.covDir; item.thick = cur.thick; item.pattern = cur.pattern || ''; item.mm = cur.mm;
+      delete item.recoat;
+    }
     var rest = (g.glazeList || []).filter(function (x) { return x.id !== cur.id; });
     var patch = { glazeList: rest, kilnList: (g.kilnList || []).concat([item]) };
     // 유약 1회 = 원료 1개 (백자유 장석 · 청자유 철분 · 흑유 철광 · 진사유 진사)
-    var MI = this.matInfo(g, item.glaze);
-    item.gg = MI.gd; item.ggp = MI.pts; // 이 그릇을 바를 때의 유약 정제 단계 (발색 점수)
+    var MI = this.matInfo(g, cur.recoat ? item.g2 : item.glaze);
+    if (!cur.recoat) { item.gg = MI.gd; item.ggp = MI.pts; } // 이 그릇을 바를 때의 유약 정제 단계 (발색 점수 · 첫 층 기준)
     if (!(MI.tut && MI.gd === 1)) {
       var m = {}; for (var a in (g.mats || {})) { m[a] = g.mats[a]; }
       if (Math.random() >= (this.qlib().fx(g).matKeep || 0)) { m[MI.key] = Math.max(0, (m[MI.key] || 0) - 1); } // 연구 「재료 아끼기」
@@ -527,8 +551,8 @@ class Component extends DCLogic {
     if (rest.length) { this.flyIn([this.potOf(rest[0], this.fillOf(rest[0], 'bisque'))], [gp], 0.6); }
     try { window.__sfx && window.__sfx('drip'); if (zone === 'ok') { setTimeout(function () { try { window.__sfx('ok'); } catch (e) {} }, 60); } else if (zone === 'drip') { window.__sfx('fail'); } } catch (e) {}
     this.liftFx(zone, ms);
-    this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0 });
-    var label = '유약을 입혔어요 · 담금 ' + Math.round(item.cov * 100) + '%';
+    this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0, lastId: cur.recoat ? '' : item.id });
+    var label = cur.recoat ? '덧시유를 입혔어요 · 담금 ' + Math.round((item.cov2 || 0) * 100) + '%' : '유약을 입혔어요 · 담금 ' + Math.round(item.cov * 100) + '%';
     this.say(label + ' · 소성 대기로' + (rest.length ? ' · 다음 기물' : ''), 'ok');
   }
   renderVals0() {
@@ -647,7 +671,7 @@ class Component extends DCLogic {
       plumPressed: s.plum ? 'true' : 'false',
       plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐어요' : '매화 문양을 넣어요 · 소성 후 값어치 +20%'); } },
       plumStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 8px;border-radius:14px;font-family:Jua,sans-serif;font-size:11px;' + (s.plum ? 'background:#FCE3EA;border:3px solid #D46A86;box-shadow:0 0 0 2px #F4B6C4;color:#A94767' : 'background:#FFFDF5;border:3px dashed #C9A27A;color:#8A6440'),
-      cur: (function () { var dryC = cur ? self.fillOf(cur, 'dry') : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var aN = self.angN(s.ang), act = !!(s.drag || s.holding), cvL = Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)), ex = self.angExt(pp, aN), sb = ex.hi - cvL * (ex.hi - ex.lo); return { flip: 'transform:rotate(' + (act ? aN : 0) + 'deg);transform-origin:50% 50%;transition:transform .18s ease-out;overflow:visible', clipY: s.holding ? sb.toFixed(1) : '9999', clipH: s.holding ? '6000' : '1', clipT: 'rotate(' + (-aN) + ')', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? dryC : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
+      cur: (function () { var dryC = cur ? (cur.recoat ? self.fillOf(cur, 'glazed') : self.fillOf(cur, 'dry')) : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var aN = self.angN(s.ang), act = !!(s.drag || s.holding), cvL = Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)), ex = self.angExt(pp, aN), sb = ex.hi - cvL * (ex.hi - ex.lo); return { flip: 'transform:rotate(' + (act ? aN : 0) + 'deg);transform-origin:50% 50%;transition:transform .18s ease-out;overflow:visible', clipY: s.holding ? sb.toFixed(1) : '9999', clipH: s.holding ? '6000' : '1', clipT: 'rotate(' + (-aN) + ')', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? (cur.recoat ? pp.fill : dryC) : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
       ripple: (function () { var top = 208 + Math.round(dip * 125), sub = top + 140 - 390; if (sub <= 4) { return 'display:none'; } var t = Date.now() / 1000, w = 96 + 14 * Math.sin(t * 7), h = w * 0.24; return 'position:absolute;left:' + (195 - w / 2).toFixed(1) + 'px;top:' + (390 - h / 2).toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;box-sizing:border-box;border-radius:50%;border:2.5px solid rgba(255,255,255,.75);box-shadow:0 0 0 5px rgba(255,255,255,.18);pointer-events:none'; })(),
       curPot: self.potOf(cur || { shape: 'cup' }, '#EAD8C4'),
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
@@ -659,10 +683,29 @@ class Component extends DCLogic {
       angLab: Math.abs(self.angN(s.ang)) + '°', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
+      recoatOn: (function () { if (!s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
+      recoatTap: function () { self.recoat(); },
+      condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
+      conds: (function () {
+        if (!cur) { return []; }
+        var QLc = self.qlib(), rq = cur.goalReq || {}, out = [], live = (s.drag || s.holding) ? Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)) : null, aN = self.angN(s.ang);
+        function chip(t, st) { var bg = st === 'ok' ? '#2F6328' : (st === 'bad' ? '#A33B22' : 'rgba(255,244,222,.16)'), fg = st === 'wait' ? '#E8D3B5' : '#FFFDF5'; return { t: (st === 'ok' ? '✓ ' : (st === 'bad' ? '✗ ' : '')) + t, st: 'padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;white-space:nowrap;background:' + bg + ';color:' + fg + (st === 'wait' ? ';border:1px dashed #C9A27A' : '') }; }
+        var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유' };
+        if (cur.goalGlaze) { out.push(chip(GN[cur.goalGlaze] || cur.goalGlaze, cur.recoat ? 'ok' : (self.gz() === cur.goalGlaze ? 'ok' : 'bad'))); }
+        var pc = cur.recoat ? { covAng: cur.covAng, cov: cur.cov, g2: self.gz(), ang2: aN } : { covAng: aN, cov: live == null ? 1 : live };
+        (QLc.glzChecks ? QLc.glzChecks(pc, rq) : []).forEach(function (c) {
+          var st = c.ok ? 'ok' : 'bad';
+          if (!cur.recoat && (c.k === 'g2' || c.k === 'ang2')) { st = 'wait'; }
+          if (!cur.recoat && c.k === 'cov' && live == null) { st = 'wait'; }
+          out.push(chip(c.t, st));
+        });
+        return out;
+      })(),
       pvOn: !!cur,
       pv: (function () {
         if (!cur) { return self.potOf({ shape: 'cup' }, '#EAD8C4'); }
         var cvP = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0;
+        if (cur.recoat) { if (cvP < 0.03) { return self.potOf(cur, self.fillOf(cur, 'glazed')); } var fr = {}; for (var kr in cur) { fr[kr] = cur[kr]; } fr.g2 = self.gz(); fr.g2col = self.fillOf({ glaze: fr.g2 }, 'glazed'); fr.cov2 = Math.min(1, cvP); fr.ang2 = self.angN(s.ang); return self.potOf(fr, self.fillOf(fr, 'glazed')); }
         if (cvP < 0.03) { return self.potOf(cur, self.fillOf(cur, 'dry')); }
         var fk = {}; for (var kk in cur) { fk[kk] = cur[kk]; } fk.glaze = self.gz(); fk.cov = Math.min(1, cvP); fk.covAng = self.angN(s.ang); delete fk.covDir;
         return self.potOf(fk, self.fillOf(fk, 'glazed'));
@@ -734,7 +777,7 @@ class Component extends DCLogic {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && it.cov < 0.97, _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
