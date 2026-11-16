@@ -18,6 +18,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 button{font-family:inherit;cursor:pointer}
 </style>
 <style>
+@keyframes pedBob{0%,100%{margin-top:0}50%{margin-top:10px}}
 @keyframes auraPulse{0%,100%{transform:scale(.9);opacity:.75}50%{transform:scale(1.08);opacity:1}}
 @keyframes popIn{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
 @keyframes navLand{0%{transform:scale(1,1)}25%{transform:scale(1.06,.9)}55%{transform:translateY(-12px) scale(.98,1.03)}80%{transform:translateY(0) scale(1.02,.98)}100%{transform:translateY(0) scale(1,1)}}
@@ -160,8 +161,8 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
     <div aria-label="발풀무" role="group" style="position:relative;z-index:5;height:150px;margin-top:-22px">
-      <button type="button" onPointerDown="{{kt.fan.down}}" aria-label="풀무질 · 발풀무를 아래로 끌어 밟기" style="all:unset;cursor:pointer;position:absolute;left:50%;margin-left:-72px;bottom:14px;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent">
-        <span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" dc-src="{{kt.pedImg}}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
+      <button type="button" onPointerDown="{{kt.fan.down}}" aria-label="풀무질 · 발풀무를 아래로 끌어 밟기" style="all:unset;cursor:ns-resize;position:absolute;left:50%;margin-left:-110px;width:220px;bottom:0;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;box-sizing:border-box;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent">
+        <span aria-hidden="true" style="{{kt.pedHint}}">↓ 쓸어내려 밟기</span><span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" dc-src="{{kt.pedImg}}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
       </button>
       <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
         <span aria-live="polite" style="{{kt.labelStyle}}">{{kt.label}}</span>
@@ -370,13 +371,14 @@ class Component extends DCLogic {
   pedDown(e) {
     if (e && e.preventDefault) { e.preventDefault(); }
     var self = this, y = e.clientY;
+    try { if (e.currentTarget && e.currentTarget.setPointerCapture) { e.currentTarget.setPointerCapture(e.pointerId); } } catch (e0) {} /* 손가락이 페달 밖으로 나가도 계속 받는다 */
     function mv(ev) {
       var dy = ev.clientY - y; y = ev.clientY;
       var f = self.state.fan || { m: 0 }, now = Date.now(), pos = self.state.ped || 0;
       if (dy > 0) {
         var npos = Math.min(60, pos + dy);
         if ((f.lock || 0) <= now && npos > pos) {
-          var m = (f.m || 0) + (npos - pos) * 0.22, nf = { m: m, lock: 0, tapAt: now };
+          var m = (f.m || 0) + (npos - pos) * 0.25, nf = { m: m, lock: 0, tapAt: now };
           if (m > 98) { nf.m = 40; nf.lock = now + 1500; self.say('과열! 풀무를 너무 세게 밟았어요'); try { window.__sfx && window.__sfx('hiss'); window.__buzz && window.__buzz([30, 40, 30]); } catch (e2) {} }
           self.setState({ fan: nf, ped: npos });
           if (pos < 45 && npos >= 45) { try { window.__sfx && window.__sfx('whoosh'); window.__buzz && window.__buzz(8); } catch (e3) {} }
@@ -408,7 +410,7 @@ class Component extends DCLogic {
       this.fanT = setInterval(function () {
         var t = Date.now(), dt = (t - self.fanLast) / 1000; self.fanLast = t;
         var F = self.state.fan || { m: 0 }, lk = (F.lock || 0) > t, g0 = self.state.g || {};
-        var mm = Math.max(0, (F.m || 0) - 14 * dt);
+        var mm = Math.max(0, (F.m || 0) - 10 * dt);
         var mu2 = self.fanMult(mm, lk); if (mu2 > 0) { self.fanAcc += dt * 1000 * (mu2 - 1); } /* ×N : 1초에 N초가 흐른다 */
         if (mu2 === 15) { self.tendG += dt * 1000 * mu2; } else if (mu2 === 6) { self.tendL += dt * 1000 * mu2; } /* 불 다스림 : 적정 칸에서 진행한 몫 */
         var yc = self.state.yc; if (yc && !yc.ok && t < yc.until && mu2 === 15) { yc.hit = (yc.hit || 0) + dt * 1000; if (yc.hit >= 700) { self.yoHit(); } }
@@ -851,6 +853,7 @@ class Component extends DCLogic {
           title: done ? '소성 완료' : '소성 중',
           clock: done ? '완료!' : self.fmtSec(left), cost: self.jadeCost(left) ? '옥 ' + self.jadeCost(left).toLocaleString() : '무료',
           clockStyle: 'font-family:Jua,sans-serif;font-size:20px;white-space:nowrap;transition:color .2s,transform .2s;color:' + (done ? '#3B7A32' : (self.fanVals(g, left).mult ? '#2F9A55;transform:scale(1.08)' : '#C8601E')),
+          pedHint: (function () { var fm = ((self.state.fan || {}).m || 0); return fm < 3 && !done ? 'position:absolute;left:50%;top:6px;transform:translateX(-50%);white-space:nowrap;padding:2px 9px;border-radius:10px;background:rgba(43,26,15,.85);font-family:Jua,sans-serif;font-size:13px;color:#FFE7A8;animation:pedBob 1s ease-in-out infinite;pointer-events:none;z-index:2' : 'display:none'; })(),
           pedImg: (function () { var pp = self.state.ped || 0; return pp < 15 ? 'anim/pedal_1.webp' : (pp < 38 ? 'anim/pedal_2.webp' : 'anim/pedal_3.webp'); })(),
           tend: (function () { var T = g.kilnTend || {}, pts = ((T.gA || 0) + (self.tendG || 0) + 0.4 * ((T.lA || 0) + (self.tendL || 0))) / Math.max(1, KD); return Math.round(Math.min(1, pts * 1.08) * 10); })(),
           tendAria: '불 다스림 발색 보너스 · 요변 찬스 ' + (g.kilnYo || 0) + '번 성공',
