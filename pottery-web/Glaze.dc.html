@@ -69,6 +69,17 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <img src="_blob/77f6907c1843f9b7401e349e55ada0fa.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 5px 4px rgba(43,26,15,.35))">
     <div style="{{liquid}}"></div>
   </div>
+  <sc-if value="{{glzEmpty}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:58px;right:58px;top:418px;z-index:6;box-sizing:border-box;padding:9px 12px 11px;border-radius:14px;background:rgba(255,248,235,.96);border:3px solid #8A6440;box-shadow:0 4px 0 rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center">
+      <span style="font-family:'Jua',sans-serif;font-size:17px;color:#A3442C">{{glzEmptyTitle}}</span>
+      <span style="font-size:12px;line-height:1.4;color:#5B3A24">{{glzEmptyWhy}}</span>
+      <span style="display:flex;gap:8px;margin-top:2px">
+        <a href="Gather.dc.html" style="all:unset;cursor:pointer;padding:5px 12px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:13.5px;color:#FFFDF5">⛏ 채집하러 가기</a>
+        <a href="Shop.dc.html" style="all:unset;cursor:pointer;padding:5px 12px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13.5px;color:#2B1A0F">상점</a>
+      </span>
+      <sc-if value="{{glzAlt}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{gsOpen}}" style="all:unset;cursor:pointer;margin-top:3px;font-family:'Jua',sans-serif;font-size:13px;color:#2F6328;text-decoration:underline">{{glzAltTxt}}</button></sc-if>
+    </div>
+  </sc-if>
 
   <sc-if value="{{trayOn}}" hint-placeholder-val="{{true}}">
   <div role="group" aria-label="{{trayAria}}" style="{{trayBox}}">
@@ -293,7 +304,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), glaze: 'white', sel: '', ang: 180, holding: false, holdMs: 0, lastMs: -1, toast: '', toastKind: 'ok' };
+    this.state = { g: this.loadG(), glaze: 'white', sel: '', ang: 0, holding: false, holdMs: 0, lastMs: -1, toast: '', toastKind: 'ok' };
   }
   gdef() {
     return {
@@ -454,7 +465,7 @@ class Component extends DCLogic {
     if (e && e.preventDefault) { e.preventDefault(); }
     var self = this, el = document.getElementById('gpot');
     var k = el ? el.getBoundingClientRect().height / 140 : 1;
-    var y0 = e.clientY, x0 = e.clientX, a0 = this.state.ang != null ? this.state.ang : 180, t0 = Date.now(), moved = 0, T = this.dtune();
+    var y0 = e.clientY, x0 = e.clientX, a0 = this.state.ang != null ? this.state.ang : 0, t0 = Date.now(), moved = 0, T = this.dtune();
     this.setState({ drag: true, dragDip: 0 });
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
@@ -492,7 +503,7 @@ class Component extends DCLogic {
     var key = QL.glazeMatKey(id), n = tut ? Infinity : (M[key] || 0); // 등급 없음 · 발색 보너스는 연구 「유약 정제」 단계
     return { gs: [{ gd: 1, key: key, n: n }], key: key, gd: 1, n: n, total: n, tut: tut, pts: QL.glazePts(g) };
   }
-  matLbl(g, id) { var I = this.matInfo(g, id); return id === 'sakura' ? '벚꽃 재 ' + I.n : (I.tut ? '원료 무한' : '원료 ' + I.total); }
+  matLbl(g, id) { var I = this.matInfo(g, id); return id === 'sakura' ? '벚꽃 재 ' + I.n : (I.tut ? '원료 무한' : (I.total > 0 ? '원료 ' + I.total : '원료 0 · 없음')); }
   noMat(g, id) { return !(this.matInfo(g, id).n > 0); }
   start(viaDrag) {
     if (this.state.holding) { return; }
@@ -671,7 +682,7 @@ class Component extends DCLogic {
       plumPressed: s.plum ? 'true' : 'false',
       plumTap: function () { if (!s.holding) { self.setState({ plum: !s.plum }); self.say(s.plum ? '매화 문양을 뺐어요' : '매화 문양을 넣어요 · 소성 후 값어치 +20%'); } },
       plumStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 8px;border-radius:14px;font-family:Jua,sans-serif;font-size:11px;' + (s.plum ? 'background:#FCE3EA;border:3px solid #D46A86;box-shadow:0 0 0 2px #F4B6C4;color:#A94767' : 'background:#FFFDF5;border:3px dashed #C9A27A;color:#8A6440'),
-      cur: (function () { var dryC = cur ? (cur.recoat ? self.fillOf(cur, 'glazed') : self.fillOf(cur, 'dry')) : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var aN = self.angN(s.ang), act = !!(s.drag || s.holding), cvL = Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)), ex = self.angExt(pp, aN), sb = ex.hi - cvL * (ex.hi - ex.lo); return { flip: 'transform:rotate(' + (act ? aN : 0) + 'deg);transform-origin:50% 50%;transition:transform .18s ease-out;overflow:visible', clipY: s.holding ? sb.toFixed(1) : '9999', clipH: s.holding ? '6000' : '1', clipT: 'rotate(' + (-aN) + ')', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? (cur.recoat ? pp.fill : dryC) : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
+      cur: (function () { var dryC = cur ? (cur.recoat ? self.fillOf(cur, 'glazed') : self.fillOf(cur, 'dry')) : '#E8DCCB', pp = self.potOf(cur || { shape: 'cup' }, dryC); var ed = cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).edge : pp.edge) : 'rgba(0,0,0,0)'; var vbA = pp.vb.split(' ').map(Number); var aN = self.angN(s.ang), act = !!(s.drag || s.holding), cvL = Math.min(1, Math.max(self.maxCov || 0, self.curCov || 0)), ex = self.angExt(pp, aN), sb = ex.hi - cvL * (ex.hi - ex.lo); var aRaw = Math.round((+s.ang || 0) / 15) * 15; /* 화면 회전은 정규화하지 않은 연속 각도 : 180 ↔ -180 경계에서 한 바퀴 돌지 않는다 · 담그기 전후에도 자세 그대로 */ return { flip: 'transform:rotate(' + aRaw + 'deg);transform-origin:50% 50%;transition:transform .16s ease-out;overflow:visible', clipY: s.holding ? sb.toFixed(1) : '9999', clipH: s.holding ? '6000' : '1', clipT: 'rotate(' + (-aN) + ')', wetOp: s.holding ? 0.35 : 0, d: pp.d, vb: pp.vb, sw: pp.sw, rimY: pp.rimY, rimRx: pp.rimRx, rimRy: pp.rimRy, bisque: cur ? (cur.recoat ? pp.fill : dryC) : 'rgba(0,0,0,0)', coat: selG.raw, coatOp: coatOp, edge: ed, inner: cur ? (coatOp > 0.5 ? self.potOf(cur, selG.raw).inner : pp.inner) : 'rgba(0,0,0,0)', rings: s.plum && (g.patterns || {}).plum && coatOp > 0.3 ? 'url(#potPlum)' : 'url(#potRings)', vis: cur ? 1 : 0, grain: cur ? (0.22 - coatOp * 0.12).toFixed(2) : 0 }; })(),
       ripple: (function () { var top = 208 + Math.round(dip * 125), sub = top + 140 - 390; if (sub <= 4) { return 'display:none'; } var t = Date.now() / 1000, w = 96 + 14 * Math.sin(t * 7), h = w * 0.24; return 'position:absolute;left:' + (195 - w / 2).toFixed(1) + 'px;top:' + (390 - h / 2).toFixed(1) + 'px;width:' + w.toFixed(1) + 'px;height:' + h.toFixed(1) + 'px;box-sizing:border-box;border-radius:50%;border:2.5px solid rgba(255,255,255,.75);box-shadow:0 0 0 5px rgba(255,255,255,.18);pointer-events:none'; })(),
       curPot: self.potOf(cur || { shape: 'cup' }, '#EAD8C4'),
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
@@ -731,7 +742,12 @@ class Component extends DCLogic {
       }),
       potWrap: 'position:absolute;left:135px;top:' + potTop + 'px;width:120px;height:140px;transition:' + (s.drag ? 'none' : 'top .18s ease-out') + ';clip-path:inset(-40px -30px ' + Math.max(0, potTop + 140 - 390) + 'px -30px);' + ((s.potHide || 0) > Date.now() ? 'opacity:0;' : ''),
       tubColor: 'rgba(255,248,235,.35)',
-      liquid: 'position:absolute;left:17px;top:13px;width:245px;height:30px;border-radius:50%;opacity:.93;box-shadow:inset 0 6px 10px rgba(43,26,15,.35);background:' + selG.raw,
+      glzEmpty: !!cur && self.noMat(g, EG),
+      glzAlt: (function () { return ['white', 'celadon', 'black', 'jinsa', 'sakura'].some(function (z) { return z !== EG && !self.noMat(g, z) && (z !== 'jinsa' || (g.glazesFound || {}).jinsa) && (z !== 'sakura' || (g.glazesFound || {}).sakura); }); })(),
+      glzAltTxt: '원료가 있는 다른 유약 고르기 ›',
+      glzEmptyTitle: selG.name + ' 없음 · 보유 0',
+      glzEmptyWhy: (function () { var QGm = self.qlib(); return EG === 'sakura' ? '벚꽃 재가 없어서 담글 수 없어요. 축제 채집지에서 모을 수 있어요.' : '원료(' + ((QGm.GMATN || {})[EG] || '원료') + ')가 없어서 담글 수 없어요. 채집 「돌 부수기」에서 모으거나 상점에서 살 수 있어요.'; })(),
+      liquid: self.noMat(g, EG) ? 'position:absolute;left:30px;top:20px;width:219px;height:24px;border-radius:50%;opacity:.95;background:radial-gradient(ellipse at 50% 45%,#4A2F1E 0%,#2E1C12 75%);box-shadow:inset 0 0 0 3px ' + selG.raw + '55,inset 0 6px 10px rgba(0,0,0,.45)' /* 빈 유약통 : 바닥과 마른 자국만 */ : 'position:absolute;left:17px;top:13px;width:245px;height:30px;border-radius:50%;opacity:.93;box-shadow:inset 0 6px 10px rgba(43,26,15,.35);background:' + selG.raw,
       tubLine: selG.raw,
       needle: shown < 0 ? 'display:none' : 'position:absolute;top:-3px;bottom:-3px;width:5px;margin-left:-2px;background:#FFFDF5;border:1px solid #2B1A0F;left:' + Math.min(100, shown / 2400 * 100) + '%',
       zoneLabel: zone ? ZL[zone][0] : '도자기를 끌어내려 담그기',

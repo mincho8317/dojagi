@@ -60,7 +60,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <div style="position:absolute;left:12px;right:12px;top:134px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{openClay}}" aria-label="흙 바꾸기 · 지금 {{clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
-      <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} ▾</span></span>
+      <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} <span style="{{clayCntSt}}">{{clayCnt}}</span> ▾</span></span>
     </button>
     <button type="button" onClick="{{openTarget}}" aria-label="목표 모양 바꾸기 · 지금 {{targetName}}" style="all:unset;cursor:pointer;flex:0 1 auto;min-width:0;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <svg width="28" height="28" viewBox="{{tgIcon.vb}}" aria-hidden="true" style="flex:0 0 auto"><path d="{{tgIcon.d}}" fill="#E8D3B5" stroke="#5B3A24" stroke-width="{{tgIcon.sw}}" stroke-linejoin="round"></path></svg>
@@ -240,6 +240,17 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </sc-if>
 
+  <sc-if value="{{noClay}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:44px;right:44px;top:250px;z-index:6;box-sizing:border-box;padding:12px 14px 13px;border-radius:16px;background:rgba(255,248,235,.96);border:3px solid #8A6440;box-shadow:0 4px 0 rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
+      <span style="font-family:'Jua',sans-serif;font-size:19px;color:#A3442C">흙 없음 · 보유 0</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#5B3A24">물레에 올릴 흙이 없어서 빚을 수 없어요.<br>채집에서 흙을 캐 토련하거나, 상점에서 살 수 있어요.</span>
+      <span style="display:flex;gap:8px;margin-top:2px">
+        <a href="Gather.dc.html" style="all:unset;cursor:pointer;padding:6px 14px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">⛏ 채집하러 가기</a>
+        <a href="Shop.dc.html" style="all:unset;cursor:pointer;padding:6px 14px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">상점</a>
+      </span>
+      <span style="font-size:11px;color:#8A6440">흙을 얻으면 바로 물레에 올라가요</span>
+    </div>
+  </sc-if>
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="{{toastStyle}}">{{toast}}</div>
   </sc-if>
@@ -922,7 +933,7 @@ class Component extends DCLogic {
       var avail = own !== 0;
       return {
         name: c.n, res: c.res, on: on,
-        own: own === -1 ? '무한' : (own > 0 ? own + '개' : '없음'),
+        own: own === -1 ? '무한' : (own > 0 ? own + '개' : '0'), none0: own === 0,
         dot: 'flex:0 0 auto;width:26px;height:20px;object-fit:contain;' + (on ? 'filter:drop-shadow(0 0 3px rgba(255,231,168,.9))' : ''), img: c.img,
         style: 'all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:4px;padding:4px 4px;border-radius:11px;' + (on ? 'background:#5B3A24;border:2px solid #3E2616;color:#FFE7A8;' : (avail ? 'background:#FFF4DE;border:2px solid #8A6440;color:#5B3A24;' : 'background:#D9CDB6;border:2px dashed #A8987C;color:#7A6A55;')),
         pick: function () {
@@ -960,11 +971,14 @@ class Component extends DCLogic {
 
     return {
       clays: claysOut,
-      dropTf: dropA.tf, dropOp: dropA.op, dustTf: dustA.tf, dustOp: dustA.op,
+      dropTf: dropA.tf, dropOp: s.clay ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
       fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
       chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
       fx: fxV,
       clayName: cur.n, clayImg: cur.img,
+      clayCnt: (function () { if (self.qlib().isTut(g)) { return ''; } var n = s.clay ? ((g.mats || {})[s.clay] || 0) : 0; return n > 0 ? '×' + n : '0'; })(),
+      clayCntSt: 'font-size:12px;' + (s.clay ? 'color:#8A6440' : 'color:#C0392B;font-weight:700'),
+      noClay: !s.clay,
       tgIcon: self.iconOf(tg),
       tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
@@ -978,12 +992,12 @@ class Component extends DCLogic {
         var QLc = self.qlib();
         var rec = g.goal && clays[i].id === g.goal.clay;
         return {
-          name: clays[i].n, meta: clays[i].none ? '채집에서 캐서 다듬거나 상점에서 사요' : ('보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
+          name: clays[i].n, meta: clays[i].none ? '보유 0 · 채집에서 캐서 토련하거나 상점에서 사요' : ('보유 ' + c.own + ' · 최소 ' + QLc.clayOf(clays[i].id).thin + 'mm · ' + QLc.clayOf(clays[i].id).note.split(' · ')[0]), img: c.img, on: c.on ? 'true' : 'false', aria: clays[i].n + ' 흙 · 보유 ' + c.own,
           imgStyle: 'width:52px;height:40px;object-fit:contain', svgStyle: 'display:none', pedStyle: 'display:none', icon: { vb: '0 0 1 1', d: '', sw: 0 },
           goal: '', goalStyle: 'display:none',
-          tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.own === '없음' ? '없음' : ''))),
-          tagStyle: (c.on || rec || c.own === '없음' || clays[i].event) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : (clays[i].event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))) : 'display:none',
-          style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (c.on ? 'background:#FFF;border:3px solid #5B3A24;box-shadow:0 0 0 3px #FFD66B' : (c.own === '없음' ? 'background:#E9DFCC;border:2px dashed #A8987C;opacity:.7' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
+          tag: c.on ? '사용 중' : (rec ? '★ 스테이지 추천' : (clays[i].event ? '🌸 봄 축제 한정' : (c.none0 ? '보유 0' : ''))),
+          tagStyle: (c.on || rec || c.none0 || clays[i].event) ? 'position:absolute;left:6px;top:6px;padding:1px 7px;border-radius:7px;font-size:10px;font-weight:700;' + (c.on ? 'background:#5B3A24;color:#FFE7A8' : (rec ? 'background:#7A5A93;color:#FFF' : (clays[i].event ? 'background:#D46A86;color:#FFF' : 'background:#A8987C;color:#FFF'))) : 'display:none',
+          style: 'all:unset;cursor:pointer;position:relative;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:3px;padding:24px 6px 10px;border-radius:16px;' + (c.on ? 'background:#FFF;border:3px solid #5B3A24;box-shadow:0 0 0 3px #FFD66B' : (c.none0 ? 'background:#E9DFCC;border:2px dashed #A8987C;opacity:.7' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 3px 0 #C9A27A')),
           pick: function () { self.setState({ sheet: '' }); c.pick(); }
         };
       }) : targets.map(function (k) {

@@ -161,7 +161,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
   <sc-if value="{{firingNow}}" hint-placeholder-val="{{false}}">
     <div aria-label="발풀무" role="group" style="position:relative;z-index:5;height:150px;margin-top:-22px">
-      <button type="button" onPointerDown="{{kt.fan.down}}" aria-label="풀무질 · 발풀무를 아래로 끌어 밟기" style="all:unset;cursor:ns-resize;position:absolute;left:50%;margin-left:-110px;width:220px;bottom:0;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;box-sizing:border-box;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent">
+      <button type="button" data-work="1" onPointerDown="{{kt.fan.down}}" aria-label="풀무질 · 발풀무를 아래로 끌어 밟기" style="all:unset;cursor:ns-resize;position:absolute;left:50%;margin-left:-110px;width:220px;bottom:0;height:170px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;box-sizing:border-box;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent">
         <span aria-hidden="true" style="{{kt.pedHint}}">↓ 쓸어내려 밟기</span><span aria-hidden="true" style="position:relative;display:block;width:144px;height:132px"><img data-bel-img="1" dc-src="{{kt.pedImg}}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 2px rgba(0,0,0,.5))"></span>
       </button>
       <sc-if value="{{kt.fanOn}}" hint-placeholder-val="{{true}}">
@@ -373,6 +373,7 @@ class Component extends DCLogic {
     var self = this, y = e.clientY;
     try { if (e.currentTarget && e.currentTarget.setPointerCapture) { e.currentTarget.setPointerCapture(e.pointerId); } } catch (e0) {} /* 손가락이 페달 밖으로 나가도 계속 받는다 */
     function mv(ev) {
+      if (ev.pointerId !== pid0) { return; } if (ev.cancelable) { ev.preventDefault(); }
       var dy = ev.clientY - y; y = ev.clientY;
       var f = self.state.fan || { m: 0 }, now = Date.now(), pos = self.state.ped || 0;
       if (dy > 0) {
@@ -386,8 +387,15 @@ class Component extends DCLogic {
         } else { self.setState({ ped: npos }); }
       } else if (dy < 0) { self.setState({ ped: Math.max(0, pos + dy) }); }
     }
-    function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.setState({ ped: 0 }); }
-    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+    var pid0 = e.pointerId;
+    /* 풀무 입력이 끝나면 화면 스와이프 잠금도 반드시 푼다 (손가락이 화면 밖으로 나가거나 창을 벗어나도) */
+    function up(ev) {
+      if (ev && ev.pointerId != null && ev.pointerId !== pid0 && ev.type !== 'blur' && ev.type !== 'visibilitychange') { return; }
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); window.removeEventListener('blur', up); document.removeEventListener('visibilitychange', up);
+      try { if (self.navWork) { delete self.navWork[pid0]; } if (!self.navWork || !Object.keys(self.navWork).length) { self.navP = null; self.setState({ navLock: false, navSw: false, navDx: 0 }); } } catch (e4) {}
+      self.setState({ ped: 0 });
+    }
+    window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); window.addEventListener('blur', up); document.addEventListener('visibilitychange', up);
   }
   fanTap() {
     var self = this, f = this.state.fan || { m: 0 }, now = Date.now();
