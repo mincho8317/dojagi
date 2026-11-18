@@ -963,7 +963,7 @@ class Component extends DCLogic {
 
     return {
       clays: claysOut,
-      dropTf: dropA.tf, dropOp: s.clay && !(self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
+      dropTf: dropA.tf, dropOp: s.clay && !window.__wEmpty && !(self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
       fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
       chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
       fx: fxV,
@@ -1078,6 +1078,7 @@ class Component extends DCLogic {
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
       noMenu: function (e) { if (e && e.preventDefault) { e.preventDefault(); } },
       pDown: function (e) {
+        if (window.__wEmpty) { try { window.__wEmptyTap && window.__wEmptyTap(); } catch (er) {} return; }
         if (!self.state.clay) { self.say('흙이 없어요 · 채집에서 캐서 다듬거나 상점에서 사요', 'fail'); return; }
         var el = e.currentTarget;
         try { el.setPointerCapture(e.pointerId); } catch (err) {}
@@ -1199,7 +1200,7 @@ class Component extends DCLogic {
         self.setState(nf);
         self.clearFx(nf.fx.k, 1800);
         try { window.__studioPost && window.__studioPost('formed', { id: item.id }); } catch (e) {}
-        if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었어요! 건조대로 가요'); } else { self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올려요'); }
+        if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었어요! 건조대로 가요'); } else { self.say(tg.n + ' ' + stars + (window.__pano ? ' 완성!' : ' 성형 대기로 · 건조대에서 골라 올려요')); }
       }
     };
   }
