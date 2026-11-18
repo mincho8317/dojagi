@@ -57,7 +57,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{targetName}} 빚기</div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:134px;display:flex;align-items:stretch;gap:6px">
+  <div style="position:absolute;left:12px;right:156px;top:134px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{openClay}}" aria-label="흙 바꾸기 · 지금 {{clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
       <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{clayName}} <span style="{{clayCntSt}}">{{clayCnt}}</span> ▾</span></span>
@@ -68,7 +68,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </button>
   </div>
 
-  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
+  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:156px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
       <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{fitPct}}<span style="font-size:18px">%</span></span>
@@ -79,7 +79,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:188px;height:500px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+  <div style="position:absolute;left:12px;right:12px;top:188px;height:440px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
     
 
     <svg style="position:absolute;left:8px;top:18px;overflow:visible" width="350" height="384" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
@@ -172,16 +172,8 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </sc-if>
     </svg>
 
-    <div style="position:absolute;left:5px;top:150px;width:46px;box-sizing:border-box;padding:16px 9px;background:url(ui/thickness_gauge_frame.webp) center/100% 100% no-repeat,linear-gradient(rgba(43,26,15,.88),rgba(43,26,15,.88)) center/58% 94% no-repeat;display:flex;flex-direction:column-reverse;align-items:center;gap:3px" role="img" aria-label="높이별 두께">
-      <span style="{{tminStyle}}">{{tmin}}</span>
-      <sc-for list="{{segs}}" as="s" hint-placeholder-count="12">
-        <span style="{{s.style}}"></span>
-      </sc-for>
-      <span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#FFE7A8">두께</span>
 
-    </div>
-
-    <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
+    <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:0;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
     <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
       <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{fx.flash}}"></div>
@@ -193,7 +185,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </sc-if>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+  <div style="position:absolute;right:12px;top:64px;width:136px;box-sizing:border-box;padding:6px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
     <div style="display:none;align-items:center;gap:10px">
       <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">흔들림</span>
       <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="흔들림 게이지 · 가득 차면 무너짐">
@@ -202,7 +194,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </div>
       <span style="{{wLabelStyle}}">{{wLabel}}</span>
     </div>
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;flex-direction:column;gap:6px">
       <div style="flex:1 1 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:3px solid #5B3A24;border-radius:14px;overflow:hidden">
         <sc-for list="{{speeds}}" as="sp" hint-placeholder-count="3">
           <button type="button" aria-pressed="{{sp.on}}" onClick="{{sp.pick}}" style="{{sp.style}}">{{sp.label}}</button>
@@ -699,7 +691,7 @@ class Component extends DCLogic {
     var tAvg = 0;
     for (var tt = 0; tt < 12; tt++) { tAvg += s.t[tt]; }
     tAvg = tAvg / 12;
-    var tOut = Math.max(0, tAvg - tg.T[1], tg.T[0] - tAvg);
+    var tOut = 0; /* 두께는 판정하지 않는다 (높이·넓이만) */
     // 비선형 일치율: 목표에 가까울수록 같은 손질에도 크게 오른다 (지수 곡선) · 95% 이상은 100%로 스냅
     var eS = 0;
     for (var e2 = 0; e2 < 12; e2++) { eS += Math.max(0, Math.abs(s.r[e2] - tr[e2]) / tr[e2] - 0.03); }
@@ -721,8 +713,8 @@ class Component extends DCLogic {
       issues.push({ mag: Math.abs(herr), kind: herr > 0 ? 'down' : 'up', ci: 11, text: '높이 ' + (herr > 0 ? '높음 ↓' : '낮음 ↑') + ' ' + Math.round(Math.abs(herr) * 100) + '%' });
     }
     issues.sort(function (x, y) { return y.mag - x.mag; });
-    if (tAvg > tg.T[1] + 0.2) { issues.push({ mag: (tAvg - tg.T[1]) / 5, kind: 'thin', ci: 5.5, text: '두께 두꺼움 ' + tAvg.toFixed(1) + 'mm' }); }
-    else if (tAvg < tg.T[0] - 0.2) { issues.push({ mag: (tg.T[0] - tAvg) / 5, kind: 'thick', ci: 5.5, text: '두께 얇음 ' + tAvg.toFixed(1) + 'mm' }); }
+    if (false) { issues.push({ mag: (tAvg - tg.T[1]) / 5, kind: 'thin', ci: 5.5, text: '두께 두꺼움 ' + tAvg.toFixed(1) + 'mm' }); }
+    else if (false) { issues.push({ mag: (tg.T[0] - tAvg) / 5, kind: 'thick', ci: 5.5, text: '두께 얇음 ' + tAvg.toFixed(1) + 'mm' }); }
     issues.sort(function (x, y) { return y.mag - x.mag; });
     if (fit < 100 && !issues.length) {
       var wj = -1, wd = 0.03;
@@ -972,7 +964,7 @@ class Component extends DCLogic {
     else if (s.squeezePrep) { hint = '그대로 꾸욱 · 양손을 떼지 말기'; }
     else if (!shaping) { hint = s.touchUI ? '양손으로 흙 양옆을 동시에 꾸욱 누르고 있기 · 흔들림이 가라앉아요' : '흙을 꾹 누르고 있기 · 손으로 감싸 흔들림을 가라앉혀요'; }
     else if (this.drag && this.drag.axis) { hint = this.drag.axis === 'v' ? (s.grab && s.grab.mode === 'w' ? '위로 쓸면 얇게, 아래로 쓸면 두껍게 · 쓴 자리는 매끈하게 다듬어져요' : '높이 손잡이를 올리면 높아지고, 내리면 낮아져요 · 두께는 그대로') : '바깥으로 밀면 넓어지고, 안으로 모으면 좁아져요'; }
-    else { hint = '좌우로 밀어 모양 · 벽을 위아래로 쓸어 두께 · 위의 높이 손잡이로 높이' ; }
+    else { hint = '좌우로 밀어 넓이 · 위의 높이 손잡이로 높이' ; }
 
     function pid(e) { return String(e.pointerId); }
 
@@ -1013,7 +1005,7 @@ class Component extends DCLogic {
         var t = self.shapes()[k], on = s.target === k, isG = k === 'goal', isQ = /^q:/.test(k);
         var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.sk === k); }));
         return {
-          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: 'position:relative;z-index:1', pedStyle: 'width:76px;height:22px;object-fit:contain;margin-top:-12px', icon: self.iconOf(t),
+          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm', img: '', imgStyle: 'display:none', svgStyle: 'position:relative;z-index:1', pedStyle: 'width:76px;height:22px;object-fit:contain;margin-top:-12px', icon: self.iconOf(t),
           on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : (isQ ? ' · 의뢰 기물' : '')),
           goal: isG ? '' : gc.text, goalStyle: isG ? 'display:none' : gc.style,
           tag: isQ ? (on ? '선택 중 · ' : '') + '📋 의뢰' + (t.full ? ' ✓' : ' ' + t.left + '점') : (isG ? (on ? '선택 중 · ' : '') + '★ ' + g.goal.num + '스테이지 목표' : (on ? '선택 중' : '')),
@@ -1076,7 +1068,7 @@ class Component extends DCLogic {
         var act = !shaping ? '' : (ax === 'h' ? 'shape' : (ax === 'v' ? (md === 'w' ? 'thick' : (md === 'h' ? 'height' : 'thick')) : ''));
         var L = shaping ? [
           { k: 'shape', t: '모양', d: 'M3 11h16M7 7l-4 4 4 4M15 7l4 4-4 4' },
-          { k: 'thick', t: '두께', d: 'M5 3v16M14 3v16M11 6l3-3 3 3M11 16l3 3 3-3' },
+          
           { k: 'height', t: '높이', d: 'M6 11h10M11 2v5M8 5l3-3 3 3M11 15v5M8 17l3 3 3-3' }
         ] : [{ k: 'press', t: s.wrapping ? '감싸는 중' : '양손 꾹', d: 'M4 6v10M18 6v10M7 11h3M15 11h-3' }];
         return L.map(function (o) {
@@ -1087,7 +1079,7 @@ class Component extends DCLogic {
         });
       })(),
       hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
-      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+      finishStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
       toast: s.toast,
       toastOn: s.toast !== '',
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
@@ -1162,10 +1154,11 @@ class Component extends DCLogic {
           if (Math.abs(tx) + Math.abs(ty) < 10 * d.k) { return; }
           d.axis = Math.abs(tx) >= Math.abs(ty) ? 'h' : 'v';
           if (d.axis === 'v') { d.sub = 'wall'; }
+          if (d.sub === 'wall' && !d.hdl) { d.axis = 'h'; d.sub = ''; } /* 두께 조작 없앰 : 위아래로 쓸어도 두께는 바뀌지 않는다 */
           clearTimeout(self.holdT);
         } else if (d.sub !== 'rim') {
           d.ax = d.ax * 0.8 + Math.abs(dx); d.ay = d.ay * 0.8 + Math.abs(dy);
-          if (d.axis === 'h' && d.ay > 10 && d.ay > 2.2 * d.ax) { d.axis = 'v'; d.sub = 'wall'; }
+          if (false) { d.axis = 'v'; d.sub = 'wall'; }
           else if (d.axis === 'v' && d.ax > 10 && d.ax > 2.2 * d.ay) { d.axis = 'h'; d.sub = ''; }
         }
         var p = self.toView(d.el, e.clientX, e.clientY);

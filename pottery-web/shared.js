@@ -212,7 +212,7 @@
       w: { n: '백토', aff: { white: 2, celadon: 2 }, sell: 0.1, thin: -0.1, carve: 0.1, snap: -0.1, note: '백자·청자 발색 +6% · 잘 갈라져요', col: '#E4DED2', wet: '#C9C2B4', dry: '#F2EEE6' },
       y: { n: '황토', aff: { celadon: 1, black: 1 }, sell: -0.05, snap: 0.1, note: '청자·흑유 발색 +3% · 보정 +10%', col: '#D2AE7C', wet: '#B48A58', dry: '#E2C79E' },
       r: { n: '적토', aff: { jinsa: 2, black: 1, white: -1 }, thin: 0.1, feel: -0.1, note: '진사 발색 +6% · 끈기 좋아 손맛 -10%', col: '#B9765A', wet: '#9A5A40', dry: '#D49A7E' },
-      k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 발색 +6% · 단단해 두께 변화 -10%', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
+      k: { n: '흑토', aff: { black: 2, white: -1, celadon: -1 }, sell: 0.05, carve: -0.1, note: '흑유 발색 +6% · 단단해 손이 덜 간다', col: '#6E625A', wet: '#4E4540', dry: '#8E837A' },
       s: { n: '봄빛 흙', aff: { sakura: 2 }, sell: 0.05, thin: -0.2, note: '축제 흙 · 벚꽃유 발색 +6%', col: '#E2B4A6', wet: '#B98A7E', dry: '#F0D3C7' }
     };
     // 등급 없음 : 흙·유약 원료는 색·종류별 한 가지(키 끝자리 1). 품질은 연구 「재료」 계열의 정제 단계로 오른다

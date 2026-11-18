@@ -54,7 +54,8 @@ body:has([data-zoom]) a[aria-label^="이야기 진행"],body:has([aria-modal="tr
 .blink{animation:blink 1s ease-in-out infinite}
 @keyframes meIn{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
 .navdrop>div{height:754px !important}
-[data-strip]{scrollbar-width:none}[data-strip]::-webkit-scrollbar{display:none}
+[data-strip]{scrollbar-width:none;scroll-snap-type:x mandatory}[data-strip]::-webkit-scrollbar{display:none}
+[data-panel]{scroll-snap-align:start;scroll-snap-stop:always}
 [data-zst]>div{background:transparent !important}
 [data-zst] div[style^="position:absolute;left:12px;top:12px;right:12px"]{display:none !important}
 [data-zst="Counter"] img[src*="c34a05dab38452d9ce4a40ffc6f3e5dd"]{display:none !important}
@@ -71,11 +72,128 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 <clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
 <filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
 </defs></svg>
-  <div data-strip="1" style="position:absolute;left:0;top:62px;width:390px;height:692px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch">
-   <div style="position:relative;width:1560px;height:692px;background:repeating-linear-gradient(90deg,rgba(91,58,36,.5) 0 8px,transparent 8px 390px) 0 0/1560px 430px no-repeat,linear-gradient(#EBD6B3,#D8BA8E) 0 0/1560px 430px no-repeat,linear-gradient(#5B3A24,#5B3A24) 0 430px/1560px 8px no-repeat,repeating-linear-gradient(90deg,#9A6A44 0 64px,#93633F 64px 128px) 0 438px/1560px 212px no-repeat,#3E2616">
-    <div data-panel="0" style="position:absolute;left:0px;top:0;width:390px;height:650px;overflow:hidden">
+  <div data-strip="1" style="position:absolute;left:0;top:56px;width:390px;height:696px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch">
+   <div style="position:relative;width:1560px;height:696px;background:repeating-linear-gradient(90deg,rgba(91,58,36,.5) 0 8px,transparent 8px 390px) 0 0/1560px 420px no-repeat,linear-gradient(#EBD6B3,#D8BA8E) 0 0/1560px 420px no-repeat,linear-gradient(#5B3A24,#5B3A24) 0 420px/1560px 8px no-repeat,repeating-linear-gradient(90deg,#9A6A44 0 64px,#93633F 64px 128px) 0 428px/1560px 268px no-repeat,#3E2616">
+    <div data-panel="0" style="position:absolute;left:0px;top:0;width:390px;height:500px;overflow:hidden">
       <sc-if value="{{pv0}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:27px;top:0;width:390px;height:754px;transform:scale(.862);transform-origin:0 0">
+<div style="position:absolute;left:7.5px;top:-53.8px;width:390px;height:754px;transform:scale(0.9615);transform-origin:0 0">
+<div class="navdrop" data-zst="Counter" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#E3C9A3;color:#2B1A0F">
+
+  <img src="_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-35px;top:0;width:461px;height:922px;pointer-events:none;user-select:none">
+  <img src="_blob/43d55c767a5aa363eaff2cb8c2f845b9.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;right:14px;top:148px;width:83px;height:100px;pointer-events:none">
+
+  <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
+    <a href="Main.dc.html" onClick="{{ct.backToCounter}}" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
+      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </a>
+    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">카운터</div>
+    <a href="Commission.dc.html" style="flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24;text-decoration:none">
+      <span style="width:18px;height:18px;box-sizing:border-box;border-radius:4px;font-size:4.5px;font-weight:900;display:flex;align-items:center;justify-content:center"><img src="_blob/1d0e1bb40ced0631fa158d238843ac20.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>의뢰 내역서
+    </a>
+  </div>
+
+  <div role="tablist" aria-label="손님 분류" style="position:absolute;left:12px;right:12px;top:64px;display:flex;gap:8px">
+    <sc-for list="{{ct.ctabs}}" as="ct" hint-placeholder-count="2">
+      <button type="button" role="tab" aria-selected="{{ct.on}}" onClick="{{ct.pick}}" style="{{ct.style}}"><span style="font-size:16px">{{ct.label}}</span><span style="{{ct.subStyle}}">{{ct.sub}}</span></button>
+    </sc-for>
+  </div>
+  <div style="{{ct.queueRow}}">
+    <div style="flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:5px;overflow-x:auto">
+      <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:12px;color:#5B3A24">줄 선 순서</span>
+      <sc-for list="{{ct.queue}}" as="qq" hint-placeholder-count="3">
+        <span style="{{qq.style}}">{{qq.name}}</span>
+      </sc-for>
+    </div>
+  </div>
+  <sc-if value="{{ct.delOpen}}" hint-placeholder-val="{{false}}">
+    <div role="region" aria-label="납품 대기" style="position:absolute;left:12px;right:12px;top:126px;z-index:20;max-height:420px;overflow-y:auto;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
+      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">납품할 수 있는 의뢰 · 「부르기」로 손님을 불러 건네요</span>
+      <sc-for list="{{ct.delList}}" as="dl" hint-placeholder-count="2">
+        <button type="button" onClick="{{dl.call}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#F3E3C4;border:3px solid #3B7A32">
+          <sc-if value="{{dl.hasP}}" hint-placeholder-val="{{false}}"><img dc-src="{{dl.pimg}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:cover;object-position:50% 20%;border-radius:10px;border:2px solid #8A6440;box-sizing:border-box"></sc-if><sc-if value="{{dl.noP}}" hint-placeholder-val="{{true}}"><span style="flex:0 0 40px;height:40px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24">{{dl.res}}</span></sc-if>
+          <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{dl.name}}</span><span style="font-size:11px;color:#5B3A24">{{dl.title}}</span></span>
+          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#2F6328">부르기 →</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{ct.delEmpty}}" hint-placeholder-val="{{false}}">
+        <span style="font-size:12.5px;color:#7A5434;text-align:center;line-height:1.6">조건을 채운 의뢰가 없어요<br>작품이 준비되면 여기서 손님을 부를 수 있어요</span>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ct.hasGuest}}" hint-placeholder-val="{{true}}">
+    <div style="{{ct.guestWrap}}">
+      <sc-if value="{{ct.guest.hasImg}}" hint-placeholder-val="{{false}}">
+        <img class="bob" dc-src="{{ct.guest.img}}" alt="{{ct.guest.name}}" draggable="false" style="position:absolute;left:95px;top:0;width:200px;height:300px;object-fit:contain;object-position:50% 100%;pointer-events:none">
+      </sc-if>
+      <sc-if value="{{ct.guest.noImg}}" hint-placeholder-val="{{true}}">
+      <div class="bob" style="position:absolute;left:95px;top:0;width:200px;height:300px;box-sizing:border-box;border:3px dashed {{ct.guest.tone}};border-radius:24px 24px 12px 12px;background:rgba(255,248,235,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#3E2616;text-align:center">
+        <img src="ui/guest_silhouette.webp" alt="" aria-hidden="true" style="width:150px;height:164px;object-fit:contain;opacity:.85">
+        <span style="font-family:Jua,sans-serif;font-size:16px">{{ct.guest.name}}</span>
+      </div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ct.noGuest}}" hint-placeholder-val="{{false}}">
+    <div style="position:absolute;left:40px;right:40px;top:200px;box-sizing:border-box;padding:18px;border-radius:18px;background:rgba(255,244,222,.92);border:3px solid #5B3A24;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+      <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{ct.emptyTitle}}</span>
+      <span style="font-size:12px;color:#7A5434">{{ct.nextGuest}}</span>
+      <a href="Wheel.dc.html" style="padding:9px 18px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5;text-decoration:none">물레로</a>
+    </div>
+  </sc-if>
+
+  <img src="_blob/afa5b1b61c1caeaf1edef99c030ed1ea.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:20px;top:380px;width:350px;height:130px;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(43,26,15,.4))">
+
+
+  <sc-if value="{{ct.hasGuest}}" hint-placeholder-val="{{true}}">
+    <div style="position:absolute;left:12px;right:12px;top:300px;z-index:6">
+      <sc-if value="{{ct.meOn}}" hint-placeholder-val="{{false}}"><img dc-src="{{ct.meImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-6px;bottom:100%;margin-bottom:-34px;width:176px;height:209px;object-fit:contain;object-position:50% 100%;pointer-events:none;z-index:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));animation:meIn .28s ease-out both"></sc-if>
+    <section style="position:relative;min-height:170px;box-sizing:border-box;padding:16px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
+      <button type="button" onClick="{{ct.advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>
+      <span style="position:absolute;left:4px;top:-40px;z-index:2;padding:4px 14px;border-radius:10px;background:{{ct.whoBg}};border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{ct.whoName}}</span>
+      <span style="position:absolute;right:4px;top:-34px;z-index:2;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 10px;border-radius:9px;border:2px solid #3E2616;background:{{ct.guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{ct.guest.tag}}</span>
+      <span style="font-size:15px;line-height:1.7;color:#2B1A0F">{{ct.line}}</span>
+      <sc-if value="{{ct.showCard}}" hint-placeholder-val="{{false}}">
+        <span style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#F3E3C4;border:2px solid #8A6440">
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#B9533A">{{ct.card.title}}</span>
+          <span style="display:flex;flex-wrap:wrap;gap:5px">
+            <sc-for list="{{ct.card.conds}}" as="cd" hint-placeholder-count="2">
+              <span style="padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;font-size:11.5px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+            </sc-for>
+          </span>
+          <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{ct.card.reward}}</span>
+        </span>
+      </sc-if>
+      <sc-if value="{{ct.showChoices}}" hint-placeholder-val="{{false}}">
+        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{ct.choices}}" as="ch" hint-placeholder-count="2">
+            <sc-if value="{{ch.isLink}}" hint-placeholder-val="{{false}}">
+              <a href="{{ch.href}}" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</a>
+            </sc-if>
+            <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
+              <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
+            </sc-if>
+          </sc-for>
+        </div>
+      </sc-if>
+      <span style="{{ct.moreStyle}}">{{ct.moreLabel}}</span>
+    </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ct.toastOn}}" hint-placeholder-val="{{false}}">
+    <p role="status" style="margin:0;height:auto;position:absolute;left:30px;right:30px;top:110px;z-index:30;padding:12px 14px;border-radius:16px;background:rgba(47,99,40,.95);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-align:center;pointer-events:none">{{ct.toast}}</p>
+  </sc-if>
+</div>
+</div>
+  </div>
+
+      </sc-if>
+    </div>
+    <div data-panel="1" style="position:absolute;left:390px;top:0;width:390px;height:500px;overflow:hidden">
+      <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
+<div style="position:absolute;left:24.5px;top:-49.0px;width:390px;height:754px;transform:scale(0.8741);transform-origin:0 0">
 <div class="navdrop" data-zst="Wheel" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -86,7 +204,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{w.targetName}} 빚기</div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:134px;display:flex;align-items:stretch;gap:6px">
+  <div style="position:absolute;left:12px;right:156px;top:134px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{w.openClay}}" aria-label="흙 바꾸기 · 지금 {{w.clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{w.clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
       <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{w.clayName}} <span style="{{w.clayCntSt}}">{{w.clayCnt}}</span> ▾</span></span>
@@ -97,7 +215,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </button>
   </div>
 
-  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{w.fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
+  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{w.fitPct}}" style="position:absolute;left:12px;right:156px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
       <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{w.fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{w.fitPct}}<span style="font-size:18px">%</span></span>
@@ -108,7 +226,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:188px;height:500px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+  <div style="position:absolute;left:12px;right:12px;top:188px;height:440px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
     
 
     <svg style="position:absolute;left:8px;top:18px;overflow:visible" width="350" height="384" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
@@ -201,16 +319,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       </sc-if>
     </svg>
 
-    <div style="position:absolute;left:5px;top:150px;width:46px;box-sizing:border-box;padding:16px 9px;background:url(ui/thickness_gauge_frame.webp) center/100% 100% no-repeat,linear-gradient(rgba(43,26,15,.88),rgba(43,26,15,.88)) center/58% 94% no-repeat;display:flex;flex-direction:column-reverse;align-items:center;gap:3px" role="img" aria-label="높이별 두께">
-      <span style="{{w.tminStyle}}">{{w.tmin}}</span>
-      <sc-for list="{{w.segs}}" as="s" hint-placeholder-count="12">
-        <span style="{{s.style}}"></span>
-      </sc-for>
-      <span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#FFE7A8">두께</span>
 
-    </div>
-
-    <div data-work="1" onPointerDown="{{w.pDown}}" onPointerMove="{{w.pMove}}" onPointerUp="{{w.pUp}}" onPointerCancel="{{w.pUp}}" onContextMenu="{{w.noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:52px;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
+    <div data-work="1" onPointerDown="{{w.pDown}}" onPointerMove="{{w.pMove}}" onPointerUp="{{w.pUp}}" onPointerCancel="{{w.pUp}}" onContextMenu="{{w.noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:0;right:0;top:0;bottom:44px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
     <sc-if value="{{w.fxFail}}" hint-placeholder-val="{{false}}">
       <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{w.fx.flash}}"></div>
@@ -222,7 +332,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </sc-if>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:12px 14px 14px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+  <div style="position:absolute;right:12px;top:64px;width:136px;box-sizing:border-box;padding:6px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
     <div style="display:none;align-items:center;gap:10px">
       <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">흔들림</span>
       <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="흔들림 게이지 · 가득 차면 무너짐">
@@ -231,7 +341,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       </div>
       <span style="{{w.wLabelStyle}}">{{w.wLabel}}</span>
     </div>
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;flex-direction:column;gap:6px">
       <div style="flex:1 1 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:3px solid #5B3A24;border-radius:14px;overflow:hidden">
         <sc-for list="{{w.speeds}}" as="sp" hint-placeholder-count="3">
           <button type="button" aria-pressed="{{sp.on}}" onClick="{{sp.pick}}" style="{{sp.style}}">{{sp.label}}</button>
@@ -306,9 +416,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="1" data-drop="glaze" style="position:absolute;left:390px;top:0;width:390px;height:650px;overflow:hidden">
-      <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:27px;top:0;width:390px;height:754px;transform:scale(.862);transform-origin:0 0">
+    <div data-panel="2" data-drop="glaze" style="position:absolute;left:780px;top:0;width:390px;height:500px;overflow:hidden">
+      <sc-if value="{{pv2}}" hint-placeholder-val="{{true}}">
+<div style="position:absolute;left:0.0px;top:-48.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Glaze" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-glaze" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -437,7 +547,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
   <div style="{{gz.condStyle}}">{{gz.condText}}</div>
 
-  <div style="position:absolute;left:12px;right:12px;bottom:14px;box-sizing:border-box;padding:14px 16px 16px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:11px">
+  <div style="position:absolute;left:12px;right:12px;top:52px;box-sizing:border-box;padding:6px 10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:11px">
 
 
     <div style="display:flex;gap:7px">
@@ -527,13 +637,13 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="2" style="position:absolute;left:780px;top:0;width:390px;height:650px;overflow:hidden">
-      <sc-if value="{{pv2}}" hint-placeholder-val="{{true}}">
-      <div style="position:absolute;left:12px;right:12px;top:36px;height:30px;display:flex;align-items:center;justify-content:space-between">
+    <div data-panel="3" style="position:absolute;left:1170px;top:0;width:390px;height:500px;overflow:hidden">
+      <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
+      <div style="position:absolute;left:12px;right:12px;top:6px;height:30px;display:flex;align-items:center;justify-content:space-between">
         <span style="padding:2px 10px;border-radius:10px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">{{kHead}}</span>
         <button type="button" onClick="{{woodAll}}" aria-label="굽는 가마 모두에 장작 넣기" style="all:unset;cursor:pointer;padding:4px 10px;border-radius:12px;background:#8A5A36;border:2px solid #3E2616;box-shadow:0 3px 0 #3E2616;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE">🪵 모두 장작</button>
       </div>
-      <div style="position:absolute;left:12px;top:74px;width:366px;display:grid;grid-template-columns:repeat(3,112px);gap:10px 15px">
+      <div style="position:absolute;left:12px;top:40px;width:366px;display:grid;grid-template-columns:repeat(3,112px);gap:8px 15px">
         <sc-for list="{{kilns}}" as="kn" hint-placeholder-count="9">
           <div data-kiln="{{kn.idx}}" data-kfree="{{kn.free}}" role="group" aria-label="{{kn.aria}}" style="{{kn.box}}">
             <div style="{{kn.mouth}}"><sc-if value="{{kn.has}}" hint-placeholder-val="{{false}}"><svg width="58" height="62" viewBox="{{kn.pot.vb}}" aria-hidden="true"><path d="{{kn.pot.d}}" fill="{{kn.pot.fill}}"></path><path d="{{kn.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{kn.pot.d}}" fill="none" stroke="{{kn.pot.edge}}" stroke-width="{{kn.pot.sw}}"></path><ellipse cx="0" cy="{{kn.pot.rimY}}" rx="{{kn.pot.rimRx}}" ry="{{kn.pot.rimRy}}" fill="{{kn.pot.inner}}" stroke="{{kn.pot.edge}}" stroke-width="{{kn.pot.sw}}"></ellipse></svg></sc-if></div>
@@ -548,7 +658,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
               <button type="button" onClick="{{kn.collect}}" aria-label="다 구운 기물 꺼내기" style="all:unset;cursor:pointer;position:absolute;left:10px;right:10px;bottom:6px;height:28px;border-radius:12px;background:#3B7A32;border:2px solid #2F6328;box-shadow:0 3px 0 #2F6328;text-align:center;font-family:'Jua',sans-serif;font-size:14px;line-height:26px;color:#FFFDF5">꺼내기</button>
             </sc-if>
             <sc-if value="{{kn.locked}}" hint-placeholder-val="{{false}}">
-              <span aria-hidden="true" style="position:absolute;left:0;right:0;top:52px;text-align:center;font-size:24px">🔒</span>
+              <span aria-hidden="true" style="position:absolute;left:0;right:0;top:44px;text-align:center;font-size:24px">🔒</span>
               <sc-if value="{{kn.unlockOn}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{kn.unlock}}" aria-label="가마 열기 {{kn.price}}" style="all:unset;cursor:pointer;position:absolute;left:10px;right:10px;bottom:8px;height:28px;border-radius:12px;background:#E3B23C;border:2px solid #8A6A1E;text-align:center;font-family:'Jua',sans-serif;font-size:13px;line-height:26px;color:#2B1A0F">열기 {{kn.price}}</button></sc-if>
             </sc-if>
           </div>
@@ -557,148 +667,37 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="3" style="position:absolute;left:1170px;top:0;width:390px;height:650px;overflow:hidden">
-      <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:27px;top:0;width:390px;height:754px;transform:scale(.862);transform-origin:0 0">
-<div class="navdrop" data-zst="Counter" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
-<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#E3C9A3;color:#2B1A0F">
-
-  <img src="_blob/c34a05dab38452d9ce4a40ffc6f3e5dd.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-35px;top:0;width:461px;height:922px;pointer-events:none;user-select:none">
-  <img src="_blob/43d55c767a5aa363eaff2cb8c2f845b9.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;right:14px;top:148px;width:83px;height:100px;pointer-events:none">
-
-  <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
-    <a href="Main.dc.html" onClick="{{ct.backToCounter}}" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
-      <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
-    </a>
-    <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">카운터</div>
-    <a href="Commission.dc.html" style="flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24;text-decoration:none">
-      <span style="width:18px;height:18px;box-sizing:border-box;border-radius:4px;font-size:4.5px;font-weight:900;display:flex;align-items:center;justify-content:center"><img src="_blob/1d0e1bb40ced0631fa158d238843ac20.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>의뢰 내역서
-    </a>
-  </div>
-
-  <div role="tablist" aria-label="손님 분류" style="position:absolute;left:12px;right:12px;top:64px;display:flex;gap:8px">
-    <sc-for list="{{ct.ctabs}}" as="ct" hint-placeholder-count="2">
-      <button type="button" role="tab" aria-selected="{{ct.on}}" onClick="{{ct.pick}}" style="{{ct.style}}"><span style="font-size:16px">{{ct.label}}</span><span style="{{ct.subStyle}}">{{ct.sub}}</span></button>
-    </sc-for>
-  </div>
-  <div style="{{ct.queueRow}}">
-    <div style="flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:5px;overflow-x:auto">
-      <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:12px;color:#5B3A24">줄 선 순서</span>
-      <sc-for list="{{ct.queue}}" as="qq" hint-placeholder-count="3">
-        <span style="{{qq.style}}">{{qq.name}}</span>
-      </sc-for>
-    </div>
-  </div>
-  <sc-if value="{{ct.delOpen}}" hint-placeholder-val="{{false}}">
-    <div role="region" aria-label="납품 대기" style="position:absolute;left:12px;right:12px;top:126px;z-index:20;max-height:560px;overflow-y:auto;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
-      <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">납품할 수 있는 의뢰 · 「부르기」로 손님을 불러 건네요</span>
-      <sc-for list="{{ct.delList}}" as="dl" hint-placeholder-count="2">
-        <button type="button" onClick="{{dl.call}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:#F3E3C4;border:3px solid #3B7A32">
-          <sc-if value="{{dl.hasP}}" hint-placeholder-val="{{false}}"><img dc-src="{{dl.pimg}}" alt="" aria-hidden="true" style="flex:0 0 40px;width:40px;height:40px;object-fit:cover;object-position:50% 20%;border-radius:10px;border:2px solid #8A6440;box-sizing:border-box"></sc-if><sc-if value="{{dl.noP}}" hint-placeholder-val="{{true}}"><span style="flex:0 0 40px;height:40px;box-sizing:border-box;border:2px dashed #8A6440;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:900;color:#5B3A24">{{dl.res}}</span></sc-if>
-          <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">{{dl.name}}</span><span style="font-size:11px;color:#5B3A24">{{dl.title}}</span></span>
-          <span style="font-family:'Jua',sans-serif;font-size:13px;color:#2F6328">부르기 →</span>
-        </button>
-      </sc-for>
-      <sc-if value="{{ct.delEmpty}}" hint-placeholder-val="{{false}}">
-        <span style="font-size:12.5px;color:#7A5434;text-align:center;line-height:1.6">조건을 채운 의뢰가 없어요<br>작품이 준비되면 여기서 손님을 부를 수 있어요</span>
-      </sc-if>
-    </div>
-  </sc-if>
-
-  <sc-if value="{{ct.hasGuest}}" hint-placeholder-val="{{true}}">
-    <div style="{{ct.guestWrap}}">
-      <sc-if value="{{ct.guest.hasImg}}" hint-placeholder-val="{{false}}">
-        <img class="bob" dc-src="{{ct.guest.img}}" alt="{{ct.guest.name}}" draggable="false" style="position:absolute;left:95px;top:0;width:200px;height:300px;object-fit:contain;object-position:50% 100%;pointer-events:none">
-      </sc-if>
-      <sc-if value="{{ct.guest.noImg}}" hint-placeholder-val="{{true}}">
-      <div class="bob" style="position:absolute;left:95px;top:0;width:200px;height:300px;box-sizing:border-box;border:3px dashed {{ct.guest.tone}};border-radius:24px 24px 12px 12px;background:rgba(255,248,235,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#3E2616;text-align:center">
-        <img src="ui/guest_silhouette.webp" alt="" aria-hidden="true" style="width:150px;height:164px;object-fit:contain;opacity:.85">
-        <span style="font-family:Jua,sans-serif;font-size:16px">{{ct.guest.name}}</span>
-      </div>
-      </sc-if>
-    </div>
-  </sc-if>
-  <sc-if value="{{ct.noGuest}}" hint-placeholder-val="{{false}}">
-    <div style="position:absolute;left:40px;right:40px;top:200px;box-sizing:border-box;padding:18px;border-radius:18px;background:rgba(255,244,222,.92);border:3px solid #5B3A24;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
-      <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{ct.emptyTitle}}</span>
-      <span style="font-size:12px;color:#7A5434">{{ct.nextGuest}}</span>
-      <a href="Wheel.dc.html" style="padding:9px 18px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5;text-decoration:none">물레로</a>
-    </div>
-  </sc-if>
-
-  <img src="_blob/afa5b1b61c1caeaf1edef99c030ed1ea.webp" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:20px;top:380px;width:350px;height:130px;pointer-events:none;filter:drop-shadow(0 4px 3px rgba(43,26,15,.4))">
-
-
-  <sc-if value="{{ct.hasGuest}}" hint-placeholder-val="{{true}}">
-    <div style="position:absolute;left:12px;right:12px;bottom:16px;z-index:6">
-      <sc-if value="{{ct.meOn}}" hint-placeholder-val="{{false}}"><img dc-src="{{ct.meImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-6px;bottom:100%;margin-bottom:-34px;width:176px;height:209px;object-fit:contain;object-position:50% 100%;pointer-events:none;z-index:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));animation:meIn .28s ease-out both"></sc-if>
-    <section style="position:relative;min-height:200px;box-sizing:border-box;padding:16px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
-      <button type="button" onClick="{{ct.advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>
-      <span style="position:absolute;left:4px;top:-40px;z-index:2;padding:4px 14px;border-radius:10px;background:{{ct.whoBg}};border:3px solid #3E2616;font-family:'Jua',sans-serif;font-size:15px;color:#FFE7A8">{{ct.whoName}}</span>
-      <span style="position:absolute;right:4px;top:-34px;z-index:2;max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 10px;border-radius:9px;border:2px solid #3E2616;background:{{ct.guest.tagBg}};font-family:'Jua',sans-serif;font-size:11.5px;color:#FFFDF5">{{ct.guest.tag}}</span>
-      <span style="font-size:15px;line-height:1.7;color:#2B1A0F">{{ct.line}}</span>
-      <sc-if value="{{ct.showCard}}" hint-placeholder-val="{{false}}">
-        <span style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:14px;background:#F3E3C4;border:2px solid #8A6440">
-          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#B9533A">{{ct.card.title}}</span>
-          <span style="display:flex;flex-wrap:wrap;gap:5px">
-            <sc-for list="{{ct.card.conds}}" as="cd" hint-placeholder-count="2">
-              <span style="padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;font-size:11.5px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
-            </sc-for>
-          </span>
-          <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{ct.card.reward}}</span>
-        </span>
-      </sc-if>
-      <sc-if value="{{ct.showChoices}}" hint-placeholder-val="{{false}}">
-        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px">
-          <sc-for list="{{ct.choices}}" as="ch" hint-placeholder-count="2">
-            <sc-if value="{{ch.isLink}}" hint-placeholder-val="{{false}}">
-              <a href="{{ch.href}}" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</a>
-            </sc-if>
-            <sc-if value="{{ch.isBtn}}" hint-placeholder-val="{{true}}">
-              <button type="button" onClick="{{ch.run}}" style="{{ch.style}}">{{ch.label}}</button>
-            </sc-if>
-          </sc-for>
-        </div>
-      </sc-if>
-      <span style="{{ct.moreStyle}}">{{ct.moreLabel}}</span>
-    </section>
-    </div>
-  </sc-if>
-
-  <sc-if value="{{ct.toastOn}}" hint-placeholder-val="{{false}}">
-    <p role="status" style="margin:0;height:auto;position:absolute;left:30px;right:30px;top:110px;z-index:30;padding:12px 14px;border-radius:16px;background:rgba(47,99,40,.95);border:3px solid #E4F5D8;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5;text-align:center;pointer-events:none">{{ct.toast}}</p>
-  </sc-if>
-</div>
-</div>
-  </div>
-
-      </sc-if>
-    </div>
-    <sc-for list="{{signs}}" as="sg" hint-placeholder-count="4"><span style="{{sg.st}}">{{sg.t}}<span style="{{sg.bSt}}">{{sg.n}}</span></span></sc-for>
-    <div data-swipe="1" aria-hidden="true" style="position:absolute;left:0;top:650px;width:1560px;height:42px;touch-action:pan-x;background:repeating-linear-gradient(90deg,#4A2F1E 0 40px,#43291A 40px 80px);border-top:3px solid #2B1A0F"></div>
+    <span aria-hidden="true" style="{{pb0}}">{{pbn0}}</span>
+    <span aria-hidden="true" style="{{pb1}}">{{pbn1}}</span>
+    <span aria-hidden="true" style="{{pb2}}">{{pbn2}}</span>
+    <span aria-hidden="true" style="{{pb3}}">{{pbn3}}</span>
    </div>
   </div>
-  <div style="position:absolute;left:0;top:0;width:390px;height:62px;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:30">
-    <span aria-hidden="true" style="position:absolute;left:3px;top:6px;width:14px;height:50px;writing-mode:vertical-rl;font-family:'Jua',sans-serif;font-size:10.5px;color:#FFE7A8;text-align:center">대기함</span>
-    <div role="list" aria-label="대기함 {{qN}}" style="position:absolute;left:20px;top:3px;display:flex;gap:4px">
+  <div style="position:absolute;left:0;top:0;width:390px;height:56px;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:30">
+    <div role="list" aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:5px;right:92px;height:46px;display:flex;gap:4px">
+      <sc-for list="{{qCards}}" as="qc" hint-placeholder-count="3">
+        <button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}"><span style="{{qc.dot}}"></span><span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.15;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qc.t}}</span><span style="font-size:10px;font-weight:700;line-height:1.15;white-space:nowrap;color:{{qc.subCol}}">{{qc.sub}}</span></button>
+      </sc-for>
+    </div>
+    <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:4px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{gold}}</a>
+    <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:29px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{jade}}</a>
+  </div>
+  <div style="position:absolute;left:0;top:556px;width:390px;height:64px;z-index:30;box-sizing:border-box;padding:4px 6px;background:linear-gradient(rgba(62,38,22,.88),rgba(62,38,22,.95));border-top:3px solid #2B1A0F;border-bottom:3px solid #2B1A0F;display:flex;align-items:center;gap:4px">
+    <span aria-hidden="true" style="flex:0 0 14px;writing-mode:vertical-rl;font-family:'Jua',sans-serif;font-size:10.5px;color:#FFE7A8;text-align:center">대기함</span>
+    <div role="list" aria-label="대기함 {{qN}}" style="flex:1 1 auto;display:flex;gap:4px;justify-content:space-between">
       <sc-for list="{{qSlots}}" as="qs" hint-placeholder-count="6">
         <div role="listitem" data-q="{{qs.id}}" onPointerDown="{{qs.down}}" aria-label="{{qs.aria}}" style="{{qs.st}}">
-          <sc-if value="{{qs.has}}" hint-placeholder-val="{{false}}"><svg width="30" height="30" viewBox="{{qs.pot.vb}}" aria-hidden="true"><path d="{{qs.pot.d}}" fill="{{qs.pot.fill}}"></path><path d="{{qs.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{qs.pot.d}}" fill="none" stroke="{{qs.pot.edge}}" stroke-width="{{qs.pot.sw}}"></path><ellipse cx="0" cy="{{qs.pot.rimY}}" rx="{{qs.pot.rimRx}}" ry="{{qs.pot.rimRy}}" fill="{{qs.pot.inner}}" stroke="{{qs.pot.edge}}" stroke-width="{{qs.pot.sw}}"></ellipse></svg><span style="font-family:'Jua',sans-serif;font-size:9.5px;line-height:1.05;color:#2B1A0F;white-space:nowrap">{{qs.l1}}</span><span style="font-size:8.5px;font-weight:700;line-height:1.05;color:#8A6440;white-space:nowrap">{{qs.l2}}</span></sc-if>
+          <sc-if value="{{qs.has}}" hint-placeholder-val="{{false}}"><svg width="30" height="28" viewBox="{{qs.pot.vb}}" aria-hidden="true"><path d="{{qs.pot.d}}" fill="{{qs.pot.fill}}"></path><path d="{{qs.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{qs.pot.d}}" fill="none" stroke="{{qs.pot.edge}}" stroke-width="{{qs.pot.sw}}"></path><ellipse cx="0" cy="{{qs.pot.rimY}}" rx="{{qs.pot.rimRx}}" ry="{{qs.pot.rimRy}}" fill="{{qs.pot.inner}}" stroke="{{qs.pot.edge}}" stroke-width="{{qs.pot.sw}}"></ellipse></svg><span style="font-family:'Jua',sans-serif;font-size:10px;line-height:1.05;color:#2B1A0F;white-space:nowrap">{{qs.l1}}</span><span style="font-size:9px;font-weight:700;line-height:1.05;color:#8A6440;white-space:nowrap">{{qs.l2}}</span></sc-if>
           <span style="{{qs.dot}}"></span><span style="{{qs.moreSt}}">{{qs.more}}</span>
         </div>
       </sc-for>
     </div>
-    <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:6px;width:76px;height:24px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:22px;height:22px;object-fit:contain">{{gold}}</a>
-    <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:33px;width:76px;height:24px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:13px">💎</span>{{jade}}</a>
   </div>
-  <div style="position:absolute;left:4px;top:68px;z-index:40;display:flex;flex-direction:column;gap:6px;align-items:flex-start">
-    <sc-for list="{{leftS}}" as="ls" hint-placeholder-count="0"><button type="button" onClick="{{ls.tap}}" style="{{ls.st}}">◀ {{ls.t}}</button></sc-for>
+  <div style="position:absolute;left:0;top:250px;z-index:40;display:flex;flex-direction:column;gap:6px;align-items:flex-start">
+    <sc-for list="{{leftS}}" as="ls" hint-placeholder-count="0"><button type="button" onClick="{{ls.tap}}" style="{{ls.st}}" aria-label="{{ls.aria}}">◀ {{ls.t}}</button></sc-for>
   </div>
-  <div style="position:absolute;right:4px;top:68px;z-index:40;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-    <sc-for list="{{rightS}}" as="rs" hint-placeholder-count="0"><button type="button" onClick="{{rs.tap}}" style="{{rs.st}}">{{rs.t}} ▶</button></sc-for>
-  </div>
-  <div role="tablist" aria-label="공방 위치" style="position:absolute;left:0;right:0;top:722px;z-index:35;display:flex;justify-content:center;gap:6px;pointer-events:none">
-    <sc-for list="{{bandDots}}" as="bd" hint-placeholder-count="4"><button type="button" role="tab" onClick="{{bd.tap}}" style="{{bd.st}};pointer-events:auto">{{bd.n}}</button></sc-for>
+  <div style="position:absolute;right:0;top:250px;z-index:40;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+    <sc-for list="{{rightS}}" as="rs" hint-placeholder-count="0"><button type="button" onClick="{{rs.tap}}" style="{{rs.st}}" aria-label="{{rs.aria}}">{{rs.t}} ▶</button></sc-for>
   </div>
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:24px;right:24px;top:300px;z-index:120;padding:10px 14px;border-radius:16px;background:rgba(43,26,15,.93);border:3px solid #FFE7A8;font-family:Jua,sans-serif;font-size:14.5px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none;animation:pop .25s ease both">{{toast}}</div>
@@ -1128,7 +1127,7 @@ class Ctl_w extends StationBase {
     var tAvg = 0;
     for (var tt = 0; tt < 12; tt++) { tAvg += s.t[tt]; }
     tAvg = tAvg / 12;
-    var tOut = Math.max(0, tAvg - tg.T[1], tg.T[0] - tAvg);
+    var tOut = 0; /* 두께는 판정하지 않는다 (높이·넓이만) */
     // 비선형 일치율: 목표에 가까울수록 같은 손질에도 크게 오른다 (지수 곡선) · 95% 이상은 100%로 스냅
     var eS = 0;
     for (var e2 = 0; e2 < 12; e2++) { eS += Math.max(0, Math.abs(s.r[e2] - tr[e2]) / tr[e2] - 0.03); }
@@ -1150,8 +1149,8 @@ class Ctl_w extends StationBase {
       issues.push({ mag: Math.abs(herr), kind: herr > 0 ? 'down' : 'up', ci: 11, text: '높이 ' + (herr > 0 ? '높음 ↓' : '낮음 ↑') + ' ' + Math.round(Math.abs(herr) * 100) + '%' });
     }
     issues.sort(function (x, y) { return y.mag - x.mag; });
-    if (tAvg > tg.T[1] + 0.2) { issues.push({ mag: (tAvg - tg.T[1]) / 5, kind: 'thin', ci: 5.5, text: '두께 두꺼움 ' + tAvg.toFixed(1) + 'mm' }); }
-    else if (tAvg < tg.T[0] - 0.2) { issues.push({ mag: (tg.T[0] - tAvg) / 5, kind: 'thick', ci: 5.5, text: '두께 얇음 ' + tAvg.toFixed(1) + 'mm' }); }
+    if (false) { issues.push({ mag: (tAvg - tg.T[1]) / 5, kind: 'thin', ci: 5.5, text: '두께 두꺼움 ' + tAvg.toFixed(1) + 'mm' }); }
+    else if (false) { issues.push({ mag: (tg.T[0] - tAvg) / 5, kind: 'thick', ci: 5.5, text: '두께 얇음 ' + tAvg.toFixed(1) + 'mm' }); }
     issues.sort(function (x, y) { return y.mag - x.mag; });
     if (fit < 100 && !issues.length) {
       var wj = -1, wd = 0.03;
@@ -1401,7 +1400,7 @@ class Ctl_w extends StationBase {
     else if (s.squeezePrep) { hint = '그대로 꾸욱 · 양손을 떼지 말기'; }
     else if (!shaping) { hint = s.touchUI ? '양손으로 흙 양옆을 동시에 꾸욱 누르고 있기 · 흔들림이 가라앉아요' : '흙을 꾹 누르고 있기 · 손으로 감싸 흔들림을 가라앉혀요'; }
     else if (this.drag && this.drag.axis) { hint = this.drag.axis === 'v' ? (s.grab && s.grab.mode === 'w' ? '위로 쓸면 얇게, 아래로 쓸면 두껍게 · 쓴 자리는 매끈하게 다듬어져요' : '높이 손잡이를 올리면 높아지고, 내리면 낮아져요 · 두께는 그대로') : '바깥으로 밀면 넓어지고, 안으로 모으면 좁아져요'; }
-    else { hint = '좌우로 밀어 모양 · 벽을 위아래로 쓸어 두께 · 위의 높이 손잡이로 높이' ; }
+    else { hint = '좌우로 밀어 넓이 · 위의 높이 손잡이로 높이' ; }
 
     function pid(e) { return String(e.pointerId); }
 
@@ -1442,7 +1441,7 @@ class Ctl_w extends StationBase {
         var t = self.shapes()[k], on = s.target === k, isG = k === 'goal', isQ = /^q:/.test(k);
         var gc = self.goalChip(self.goalList(g).filter(function (x) { return isG ? x.stage : (!x.stage && x.sk === k); }));
         return {
-          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm · 두께 ' + t.T[0] + '~' + t.T[1] + 'mm', img: '', imgStyle: 'display:none', svgStyle: 'position:relative;z-index:1', pedStyle: 'width:76px;height:22px;object-fit:contain;margin-top:-12px', icon: self.iconOf(t),
+          name: t.n, meta: '높이 ' + Math.round(t.H) + 'mm', img: '', imgStyle: 'display:none', svgStyle: 'position:relative;z-index:1', pedStyle: 'width:76px;height:22px;object-fit:contain;margin-top:-12px', icon: self.iconOf(t),
           on: on ? 'true' : 'false', aria: t.n + (isG ? ' · 스테이지 목표' : (isQ ? ' · 의뢰 기물' : '')),
           goal: isG ? '' : gc.text, goalStyle: isG ? 'display:none' : gc.style,
           tag: isQ ? (on ? '선택 중 · ' : '') + '📋 의뢰' + (t.full ? ' ✓' : ' ' + t.left + '점') : (isG ? (on ? '선택 중 · ' : '') + '★ ' + g.goal.num + '스테이지 목표' : (on ? '선택 중' : '')),
@@ -1505,7 +1504,7 @@ class Ctl_w extends StationBase {
         var act = !shaping ? '' : (ax === 'h' ? 'shape' : (ax === 'v' ? (md === 'w' ? 'thick' : (md === 'h' ? 'height' : 'thick')) : ''));
         var L = shaping ? [
           { k: 'shape', t: '모양', d: 'M3 11h16M7 7l-4 4 4 4M15 7l4 4-4 4' },
-          { k: 'thick', t: '두께', d: 'M5 3v16M14 3v16M11 6l3-3 3 3M11 16l3 3 3-3' },
+          
           { k: 'height', t: '높이', d: 'M6 11h10M11 2v5M8 5l3-3 3 3M11 15v5M8 17l3 3 3-3' }
         ] : [{ k: 'press', t: s.wrapping ? '감싸는 중' : '양손 꾹', d: 'M4 6v10M18 6v10M7 11h3M15 11h-3' }];
         return L.map(function (o) {
@@ -1516,7 +1515,7 @@ class Ctl_w extends StationBase {
         });
       })(),
       hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
-      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+      finishStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
       toast: s.toast,
       toastOn: s.toast !== '',
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
@@ -1591,10 +1590,11 @@ class Ctl_w extends StationBase {
           if (Math.abs(tx) + Math.abs(ty) < 10 * d.k) { return; }
           d.axis = Math.abs(tx) >= Math.abs(ty) ? 'h' : 'v';
           if (d.axis === 'v') { d.sub = 'wall'; }
+          if (d.sub === 'wall' && !d.hdl) { d.axis = 'h'; d.sub = ''; } /* 두께 조작 없앰 : 위아래로 쓸어도 두께는 바뀌지 않는다 */
           clearTimeout(self.holdT);
         } else if (d.sub !== 'rim') {
           d.ax = d.ax * 0.8 + Math.abs(dx); d.ay = d.ay * 0.8 + Math.abs(dy);
-          if (d.axis === 'h' && d.ay > 10 && d.ay > 2.2 * d.ax) { d.axis = 'v'; d.sub = 'wall'; }
+          if (false) { d.axis = 'v'; d.sub = 'wall'; }
           else if (d.axis === 'v' && d.ax > 10 && d.ax > 2.2 * d.ay) { d.axis = 'h'; d.sub = ''; }
         }
         var p = self.toView(d.el, e.clientX, e.clientY);
@@ -2189,7 +2189,7 @@ class Ctl_gz extends StationBase {
       pvPct: (function () { var c = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0; return c < 0.03 ? self.angName(s.ang) : '담금 ' + Math.round(Math.min(1, c) * 100) + '%'; })(),
       pvPctSt: 'font-family:Jua,sans-serif;font-size:12px;color:' + ((s.drag || s.holding) ? '#2F6328' : '#8A6440'),
       pvAria: '완성 미리보기 · ' + self.angName(s.ang) + ' 담금',
-      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : '위 대기함에서 기물 고르기',
+      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : (window.__pano ? '아래 대기함에서 끌어 와요' : '위 대기함에서 기물 고르기'),
       potDown: function (e) { if (!cur) { self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : (s.drag && (self.curCov || 0) > 0 ? '담금 ' + Math.round((self.curCov || 0) * 100) + '% · 조금 더 ↓' : '유약 수면 · 깊이 담글수록 빨리 ↓'),
@@ -4018,7 +4018,7 @@ class Component extends DCLogic {
     window.__panoPay = function (pay, m0, items) { return self.payMul(pay, m0, items); };
     window.__panoGuests = function (ctl, list, g2) { return self.counterGuests(ctl, list, g2); };
     this.sl = 0;
-    this.P = [['Wheel', 'w', '물레'], ['Glaze', 'gz', '유약'], ['Kilns', '', '가마'], ['Counter', 'ct', '카운터']];
+    this.P = [['Counter', 'ct', '카운터'], ['Wheel', 'w', '물레'], ['Glaze', 'gz', '유약'], ['Kilns', '', '가마']];
     this.ctls = {};
     var C = window.__studioCtl || {};
     ['Wheel', 'Glaze', 'Counter'].forEach(function (pg) { try { self.ctls[pg] = new C[pg](self); } catch (e) { try { console.error('ctl ' + pg, e); } catch (e2) {} } });
@@ -4044,7 +4044,7 @@ class Component extends DCLogic {
     } finally { this.syncing = false; }
     this.bump();
   }
-  panelOf(c) { if (c === this.ctls.Wheel) { return 0; } if (c === this.ctls.Glaze) { return 1; } if (c === this.ctls.Counter) { return 3; } return -1; }
+  panelOf(c) { if (c === this.ctls.Counter) { return 0; } if (c === this.ctls.Wheel) { return 1; } if (c === this.ctls.Glaze) { return 2; } return -1; }
   isLive(c) { var i = this.panelOf(c); if (i < 0) { return false; } var a = Math.floor(this.sl / 390 + 0.02), b = Math.ceil(this.sl / 390 - 0.02); return i >= a && i <= b; }
   near(i) { return Math.abs(i - this.sl / 390) < 1.6; }
   inView(i) { var c = this.sl / 390; return Math.abs(i - c) < 0.55; }
@@ -4060,7 +4060,7 @@ class Component extends DCLogic {
     this.onNavClick = function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a) { return; }
       var to = (a.getAttribute('href') || '').replace('.dc.html', '').split(/[?#]/)[0];
-      var IDX = { Main: 0, Wheel: 0, Glaze: 1, Dry: 1, Queue: 1, Kiln: 2, KilnOpen: 2, Counter: 3 };
+      var IDX = { Main: 0, Counter: 0, Wheel: 1, Glaze: 2, Dry: 2, Queue: 2, Kiln: 3, KilnOpen: 3 };
       if (IDX[to] === undefined) { return; }
       e.preventDefault(); e.stopPropagation();
       self.goPanel(IDX[to]);
@@ -4070,16 +4070,19 @@ class Component extends DCLogic {
     (function attach() {
       var el = document.querySelector('[data-strip]'); if (!el) { if (tries++ < 40) { setTimeout(attach, 50); } return; }
       self.stripEl = el;
-      el.addEventListener('scroll', function () { var o = self.liveKey(); self.sl = el.scrollLeft; if (self.liveKey() !== o || Math.abs(self.sl - (self.slR || 0)) > 60) { self.slR = self.sl; self.bump(); } }, { passive: true });
+      el.addEventListener('scroll', function () { var o = self.liveKey(); self.sl = el.scrollLeft; if (self.liveKey() !== o || Math.abs(self.sl - (self.slR || 0)) > 60) { self.slR = self.sl; self.bump(); } clearTimeout(self.snapT); self.snapT = setTimeout(function () { self.snap(); }, 160); }, { passive: true });
+      /* 손을 뗀 뒤 설비 사이에 멈춰 있으면 가장 가까운 설비로 붙인다 */
+      ['pointerup', 'touchend', 'pointercancel'].forEach(function (t) { el.addEventListener(t, function () { clearTimeout(self.snapT); self.snapT = setTimeout(function () { self.snap(); }, 220); }, { passive: true }); });
       el.addEventListener('wheel', function (e) { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { el.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
       var op = ''; try { op = sessionStorage.getItem('studioOpen') || ''; sessionStorage.removeItem('studioOpen'); } catch (e) {}
-      var IDX0 = { Wheel: 0, Glaze: 1, Kiln: 2, KilnOpen: 2, Counter: 3 };
+      var IDX0 = { Counter: 0, Wheel: 1, Glaze: 2, Kiln: 3, KilnOpen: 3 };
       if (op && IDX0[op] !== undefined) { el.scrollLeft = IDX0[op] * 390; self.sl = el.scrollLeft; self.bump(); }
     })();
     this.tick = setInterval(function () { self.kilnTick(); }, 1000);
   }
   componentWillUnmount() { clearInterval(this.tick); try { document.removeEventListener('click', this.onNavClick, true); } catch (e) {} this.allCtls().forEach(function (c) { try { c.componentWillUnmount && c.componentWillUnmount(); } catch (e) {} }); }
   liveKey() { var s = this.sl / 390; return Math.floor(s + 0.02) + ':' + Math.ceil(s - 0.02); }
+  snap() { var el = this.stripEl; if (!el || this.dragging) { return; } var x = el.scrollLeft, i = Math.round(x / 390); if (Math.abs(x - i * 390) > 1) { this.goPanel(i); } }
   goPanel(i) { var el = this.stripEl; if (!el) { return; } i = Math.max(0, Math.min(3, i)); try { el.scrollTo({ left: i * 390, behavior: 'smooth' }); } catch (e) { el.scrollLeft = i * 390; } }
   bump() { this.setState({ t: Date.now() }); }
   say(msg) { var self = this; clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2600); }
@@ -4205,7 +4208,7 @@ class Component extends DCLogic {
   kilnTick() {
     var g = this.loadG(), K = this.kState(g), now = Date.now(), ch = false, self = this;
     K.k.forEach(function (k, i) { if (k && k.it && !k.done && self.kAt(k, now).p >= 1) { var d = self.kDone(k); k.done = true; k.avg = Math.round(d.avg); ch = true; } });
-    if (ch) { this.setPk(g, K); this.sfx('ok'); if (!this.inView(2)) { this.say('🔥 가마에서 다 구워졌어요'); } }
+    if (ch) { this.setPk(g, K); this.sfx('ok'); if (!this.inView(3)) { this.say('🔥 가마에서 다 구워졌어요'); } }
     this.bump();
   }
   kPlace(i, id) {
@@ -4276,7 +4279,7 @@ class Component extends DCLogic {
         if (svg) { var c = svg.cloneNode(true); c.setAttribute('width', rect.width); c.setAttribute('height', rect.height); ghost.appendChild(c); }
         document.body.appendChild(ghost); el.style.opacity = '.25'; self.dragging = true; mark(true); self.sfx('tap');
         /* 화면 끝으로 끌면 그쪽으로 넘어간다 */
-        sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k; if (xx < 36) { self.stripEl.scrollLeft -= 14; } else if (xx > 354) { self.stripEl.scrollLeft += 14; } }, 30);
+        var edgeT = 0; sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k, d = xx < 36 ? -1 : (xx > 354 ? 1 : 0); if (!d) { edgeT = 0; return; } edgeT += 50; if (edgeT === 400) { self.goPanel(Math.round(self.stripEl.scrollLeft / 390) + d); } if (edgeT >= 1400) { edgeT = 350; } }, 50); /* 화면 끝에 잠깐 머물면 옆 설비로 한 칸 넘어간다 */
       }
       ghost.style.left = (rect.left + dx) + 'px'; ghost.style.top = (rect.top + dy) + 'px';
     }
@@ -4300,7 +4303,7 @@ class Component extends DCLogic {
     var g = this.loadG(), it = (st === 'g' ? g.glazeList : g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return; }
     var qc = this.qColor(g, it);
     this.say(this.pName(st === 'k' ? it : { shape: it.shape, prof: it.prof, sk: it.sk }) + (st === 'g' ? ' · 시유 전 → 유약으로 끌어 와요' : ' · 소성 전 → 빈 가마로 끌어 와요') + (qc ? ' · 의뢰 「' + qc.t + '」' : ''));
-    this.goPanel(st === 'g' ? 1 : 2);
+    this.goPanel(st === 'g' ? 2 : 3);
   }
   renderVals() {
     var self = this, s = this.state, g = s.g || {}, Q = this.qlib(), now = Date.now();
@@ -4310,7 +4313,7 @@ class Component extends DCLogic {
     v.commBadge = act.length; v.commBadgeOn = act.length > 0;
     v.gold = (g.gold || 0).toLocaleString(); v.jade = (g.jadeV === 2 && g.jade != null ? g.jade : 0).toLocaleString();
     /* 설비 화면 (보이는 곳 근처만 그린다) */
-    var NS = [['Wheel', 'w'], ['Glaze', 'gz'], ['', ''], ['Counter', 'ct']];
+    var NS = [['Counter', 'ct'], ['Wheel', 'w'], ['Glaze', 'gz'], ['', '']];
     for (var i = 0; i < 4; i++) {
       v['pv' + i] = this.near(i);
       var c = this.ctls[NS[i][0]]; if (!c || !v['pv' + i]) { continue; }
@@ -4326,13 +4329,13 @@ class Component extends DCLogic {
     for (var j = 0; j < 6; j++) {
       (function (j) {
         var q = qi[j];
-        if (!q) { v.qSlots.push({ has: false, id: 'qe' + j, pot: EMPTY, l1: '', l2: '', down: function () {}, aria: '빈 칸', st: 'position:relative;flex:0 0 44px;height:56px;box-sizing:border-box;border-radius:10px;border:2px dashed rgba(255,231,168,.35)', dot: 'display:none', more: '', moreSt: 'display:none' }); return; }
+        if (!q) { v.qSlots.push({ has: false, id: 'qe' + j, pot: EMPTY, l1: '', l2: '', down: function () {}, aria: '빈 칸', st: 'position:relative;flex:1 1 0;height:52px;box-sizing:border-box;border-radius:10px;border:2px dashed rgba(255,231,168,.35)', dot: 'display:none', more: '', moreSt: 'display:none' }); return; }
         var it = q.it, qc = self.qColor(g, it), sn = (Q.shapeN ? Q.shapeN(it) : '') || '그릇';
         v.qSlots.push({ has: true, id: it.id, pot: self.potOf(it, self.fillOf(it, q.st === 'g' ? (it.recoat ? 'glazed' : 'dry') : 'glazed')),
           l1: sn, l2: q.st === 'g' ? (it.recoat ? '덧시유' : '시유 전') : (GN[it.glaze] || '소성 전'),
           aria: sn + ' · ' + (q.st === 'g' ? '시유 전' : '소성 전') + (qc ? ' · 의뢰 ' + qc.t : '') + ' · 끌어서 옮기기',
           down: function (e) { self.qDown(e, it.id, q.st); },
-          st: 'position:relative;flex:0 0 44px;height:56px;box-sizing:border-box;border-radius:10px;background:' + (q.st === 'g' ? 'rgba(255,244,222,.92)' : 'rgba(255,226,190,.95)') + ';border:2px solid ' + (q.st === 'g' ? '#8A6440' : '#C0582E') + ';display:flex;flex-direction:column;align-items:center;justify-content:flex-start;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden',
+          st: 'position:relative;flex:1 1 0;min-width:0;height:52px;box-sizing:border-box;border-radius:10px;background:' + (q.st === 'g' ? 'rgba(255,244,222,.92)' : 'rgba(255,226,190,.95)') + ';border:2px solid ' + (q.st === 'g' ? '#8A6440' : '#C0582E') + ';display:flex;flex-direction:column;align-items:center;justify-content:flex-start;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden',
           dot: qc ? 'position:absolute;right:2px;top:2px;width:8px;height:8px;border-radius:50%;background:' + qc.c + ';border:1px solid #FFF4DE' : 'display:none',
           more: j === 5 && qi.length > 6 ? '+' + (qi.length - 5) : '', moreSt: j === 5 && qi.length > 6 ? 'position:absolute;left:2px;top:2px;padding:0 3px;border-radius:5px;background:#5B3A24;color:#FFE7A8;font-family:Jua,sans-serif;font-size:9px' : 'display:none' });
       })(j);
@@ -4347,14 +4350,14 @@ class Component extends DCLogic {
         var nextLock = !open && k === K.open;
         kv.push({ idx: k, open: open, locked: !open, has: !!(kk && kk.it), done: done, firing: !!(kk && kk.it && !done), free: open && !(kk && kk.it) ? '1' : '0',
           pot: kk && kk.it ? self.potOf(kk.it, self.fillOf(kk.it, 'glazed')) : EMPTY,
-          fireSt: 'position:absolute;left:8px;right:8px;bottom:30px;height:8px;border-radius:4px;background:rgba(43,26,15,.55);overflow:hidden',
+          fireSt: 'position:absolute;left:8px;right:8px;bottom:28px;height:7px;border-radius:4px;background:rgba(43,26,15,.55);overflow:hidden',
           fireBar: 'height:100%;width:' + Math.round(f) + '%;background:linear-gradient(90deg,#F2A93B,#E2562B);transition:width .4s',
-          progSt: 'position:absolute;left:8px;right:8px;bottom:42px;height:5px;border-radius:3px;background:rgba(43,26,15,.4);overflow:hidden',
+          progSt: 'position:absolute;left:8px;right:8px;bottom:38px;height:5px;border-radius:3px;background:rgba(43,26,15,.4);overflow:hidden',
           progBar: 'height:100%;width:' + Math.round(p * 100) + '%;background:#FFE27A',
           stat: done ? '다 구웠어요!' : (kk && kk.it ? '불 ' + Math.round(f) + ' · ' + Math.ceil(left / 60 * 10) / 10 + '분' : (open ? '비어 있음' : '')),
-          glow: done ? 'position:absolute;inset:0;border-radius:40px 40px 8px 8px;box-shadow:inset 0 0 22px 6px rgba(255,226,122,.85);animation:bob 1.2s ease-in-out infinite;pointer-events:none' : (kk && kk.it ? 'position:absolute;left:16px;right:16px;top:40px;height:60px;border-radius:30px 30px 6px 6px;background:radial-gradient(ellipse at 50% 90%,rgba(255,160,50,' + (0.25 + 0.6 * f / 100).toFixed(2) + '),rgba(0,0,0,0) 75%);pointer-events:none' : 'display:none'),
-          box: 'position:relative;width:112px;height:176px;box-sizing:border-box;border-radius:40px 40px 8px 8px;' + (open ? 'background:linear-gradient(#B4633F,#86452B);border:3px solid #5B2E1A;box-shadow:0 4px 0 #3E2010' : 'background:linear-gradient(#8B8178,#5E5650);border:3px dashed #3E3832'),
-          mouth: 'position:absolute;left:16px;right:16px;top:30px;height:74px;border-radius:30px 30px 6px 6px;background:' + (open ? 'radial-gradient(ellipse at 50% 80%,#3A1A0C,#1E0D06)' : 'rgba(30,26,22,.5)') + ';display:flex;align-items:flex-end;justify-content:center;overflow:hidden',
+          glow: done ? 'position:absolute;inset:0;border-radius:40px 40px 8px 8px;box-shadow:inset 0 0 22px 6px rgba(255,226,122,.85);animation:bob 1.2s ease-in-out infinite;pointer-events:none' : (kk && kk.it ? 'position:absolute;left:16px;right:16px;top:26px;height:58px;border-radius:30px 30px 6px 6px;background:radial-gradient(ellipse at 50% 90%,rgba(255,160,50,' + (0.25 + 0.6 * f / 100).toFixed(2) + '),rgba(0,0,0,0) 75%);pointer-events:none' : 'display:none'),
+          box: 'position:relative;width:112px;height:148px;box-sizing:border-box;border-radius:40px 40px 8px 8px;' + (open ? 'background:linear-gradient(#B4633F,#86452B);border:3px solid #5B2E1A;box-shadow:0 4px 0 #3E2010' : 'background:linear-gradient(#8B8178,#5E5650);border:3px dashed #3E3832'),
+          mouth: 'position:absolute;left:16px;right:16px;top:24px;height:62px;border-radius:30px 30px 6px 6px;background:' + (open ? 'radial-gradient(ellipse at 50% 80%,#3A1A0C,#1E0D06)' : 'rgba(30,26,22,.5)') + ';display:flex;align-items:flex-end;justify-content:center;overflow:hidden',
           wood: function () { self.kWood(k); }, collect: function () { self.kCollect(k); },
           unlockOn: nextLock, unlock: function () { self.kUnlock(); }, price: nextLock && cost != null ? cost.toLocaleString() + 'G' : '',
           aria: !open ? '잠긴 가마' : (done ? '다 구운 가마 · 눌러서 꺼내기' : (kk && kk.it ? '굽는 중 · 장작 넣기' : '빈 가마 · 대기함에서 끌어 넣기')) });
@@ -4365,24 +4368,33 @@ class Component extends DCLogic {
     /* 알림 : 화면 밖이면 그쪽 가장자리 스티커 · 화면 안이면 설비 배지 */
     var cDel = 0, cOffer = false; try { var A = Q.alloc(g, act); act.forEach(function (a) { var r = A[a.id]; if (r && r.deliverable > 0 && r.items.every(function (x) { return x.ok; })) { cDel++; } }); } catch (e) {}
     cOffer = act.length < 3;
-    var ev = [{ i: 2, n: doneN, t: '🔥 가마 완료 ' + doneN }, { i: 3, n: cDel, t: '📦 납품 가능 ' + cDel }, { i: 3, n: cDel ? 0 : (cOffer ? 1 : 0), t: '🛎 손님 대기' }];
+    var ev = [{ i: 3, n: doneN, t: '🔥' + doneN, a: '가마 완료 ' + doneN }, { i: 0, n: cDel, t: '📦' + cDel, a: '납품 가능 ' + cDel }, { i: 0, n: cDel ? 0 : (cOffer ? 1 : 0), t: '🛎', a: '손님 대기' }];
     var cur = this.sl / 390;
     v.leftS = []; v.rightS = [];
     ev.forEach(function (e) {
       if (!e.n) { return; }
       var vis = Math.abs(e.i - cur) < 0.55; if (vis) { return; }
-      var it = { t: e.t, tap: function () { self.goPanel(e.i); }, st: 'all:unset;cursor:pointer;box-sizing:border-box;padding:5px 8px;border-radius:12px;background:#FFF4DE;border:2px solid #C0582E;box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:Jua,sans-serif;font-size:11.5px;color:#7A2E1A;white-space:nowrap;animation:bob 1.6s ease-in-out infinite' };
+      var it = { t: e.t, aria: e.a + ' · ' + ['카운터', '물레', '유약', '가마'][e.i] + '로 이동', tap: function () { self.goPanel(e.i); }, st: 'all:unset;cursor:pointer;box-sizing:border-box;padding:6px 6px;border-radius:' + (e.i < cur ? '0 12px 12px 0' : '12px 0 0 12px') + ';background:#FFF4DE;border:2px solid #C0582E;box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:Jua,sans-serif;font-size:11.5px;color:#7A2E1A;white-space:nowrap;animation:bob 1.6s ease-in-out infinite' };
       (e.i < cur ? v.leftS : v.rightS).push(it);
     });
-    function badge(n) { return n ? 'position:absolute;right:-8px;top:-8px;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;font-size:11px;line-height:16px;text-align:center;color:#FFF' : 'display:none'; }
-    v.signs = [
-      { t: '물레', n: '', bSt: badge(0) },
-      { t: '유약', n: '', bSt: badge(0) },
-      { t: '가마', n: doneN || '', bSt: badge(doneN) },
-      { t: '카운터', n: cDel || (cOffer ? '!' : ''), bSt: badge(cDel || (cOffer ? 1 : 0)) }
-    ].map(function (x, i) { x.st = 'position:absolute;left:' + (i * 390 + 150) + 'px;top:4px;width:90px;height:24px;border-radius:12px;background:#5B3A24;border:2px solid #3E2616;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:13px;color:#FFE7A8;z-index:6'; return x; });
-    v.bandDots = this.P.map(function (p, j) { var on = Math.abs(j - cur) < 0.5; return { n: p[2], tap: function () { self.goPanel(j); }, st: 'all:unset;cursor:pointer;padding:2px 10px;border-radius:10px;font-family:Jua,sans-serif;font-size:12px;' + (on ? 'background:#FFD66B;color:#2B1A0F' : 'background:rgba(43,26,15,.45);color:#F6E7CC') }; });
-    v.bandX = 'position:absolute;top:8px;display:flex;gap:6px;left:' + Math.round(this.sl + 195) + 'px;transform:translateX(-50%);pointer-events:auto';
+    /* 화면 안에 들어온 설비에는 오른쪽 위 배지 */
+    var bn = [cDel || (cOffer ? '!' : ''), '', '', doneN || ''];
+    bn.forEach(function (n, i) { v['pbn' + i] = n; v['pb' + i] = n ? 'position:absolute;left:' + (i * 390 + 354) + 'px;top:6px;z-index:8;min-width:24px;height:24px;box-sizing:border-box;padding:0 6px;border-radius:12px;background:#D0452B;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:13px;line-height:20px;text-align:center;color:#FFF;pointer-events:none;animation:bob 1.4s ease-in-out infinite' : 'display:none'; });
+    /* 위쪽 : 받은 의뢰 요약 (최대 3개) */
+    var A2 = {}; try { A2 = Q.alloc(g, act); } catch (e) {}
+    var COL = ['#C0582E', '#3E6B8A', '#7A3E8E'], KEYS = { main: 'mq', dok: 'dq', season: 'sq' };
+    v.qcN = act.length + '/3';
+    v.qCards = act.slice(0, 3).map(function (a, i) {
+      var r = A2[a.id] || {}, at = a.at || ((g[KEYS[a.id]] || {}).at), its = a.items || (a.def && a.def.items) || [];
+      if (!its.length) { var ls = {}; try { ls = Q.lineState(g, a.id); } catch (e) {} its = (ls.def && ls.def.items) || []; }
+      var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + self.durOf(its) : 0), left = due ? due - now : 0; /* 기한은 이야기 의뢰(메인·도깨비·시즌)와 일반 의뢰에만 */
+      var sub = (r.need ? (r.ready || 0) + '/' + r.need : '') + (due ? (r.need ? ' · ' : '') + (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '');
+      return { t: a.title || a.who || '의뢰', sub: sub || (a.who || ''), subCol: due && left <= 0 ? '#A3442C' : (due && left < 600000 ? '#C0582E' : '#5B3A24'),
+        aria: (a.title || '') + ' · ' + sub, tap: function () { self.say((a.who ? a.who + ' · ' : '') + (a.title || '') + (sub ? ' · ' + sub : '') + (due && left > 0 ? ' · 기한 안이면 보상 2배' : '')); },
+        dot: 'position:absolute;left:4px;top:4px;width:8px;height:8px;border-radius:50%;background:' + COL[i % 3],
+        st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;min-width:0;box-sizing:border-box;padding:4px 6px 3px 15px;border-radius:10px;background:#FFF4DE;border:2px solid ' + COL[i % 3] + ';display:flex;flex-direction:column;justify-content:center;overflow:hidden' };
+    });
+    if (!v.qCards.length) { v.qCards = [{ t: '받은 의뢰가 없어요', sub: '카운터에서 손님을 맞아요', subCol: '#8A6440', aria: '받은 의뢰 없음', tap: function () { self.goPanel(0); }, dot: 'display:none', st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;box-sizing:border-box;padding:4px 8px;border-radius:10px;background:rgba(255,244,222,.85);border:2px dashed #8A6440;display:flex;flex-direction:column;justify-content:center' }]; }
     return v;
   }
   loadG() {
