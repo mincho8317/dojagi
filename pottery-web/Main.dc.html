@@ -4298,6 +4298,13 @@ class Component extends DCLogic {
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
   qTap(id, st) {
+    var cur = Math.round(this.sl / 390);
+    if (st === 'g' && cur === 2 && this.ctls.Glaze) { this.ctls.Glaze.setState({ sel: id, pkOpen: false, potHide: 0 }); this.sfx('ok'); return; } /* 유약 화면에서 누르면 바로 올린다 */
+    if (st === 'k' && cur === 3) { /* 가마 화면에서 누르면 빈 가마에 바로 넣는다 */
+      var K0 = this.kState(this.loadG()), fi = -1; for (var i = 0; i < K0.open; i++) { if (!(K0.k[i] && K0.k[i].it)) { fi = i; break; } }
+      if (fi < 0) { this.say(K0.open < 9 ? '빈 가마가 없어요 · 골드로 가마를 더 열 수 있어요' : '빈 가마가 없어요 · 다 구워지면 꺼내요'); return; }
+      this.kPlace(fi, id); this.bump(); return;
+    }
     var g = this.loadG(), it = (st === 'g' ? g.glazeList : g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return; }
     var qc = this.qColor(g, it);
     this.say(this.pName(st === 'k' ? it : { shape: it.shape, prof: it.prof, sk: it.sk }) + (st === 'g' ? ' · 시유 전 → 유약으로 끌어 와요' : ' · 소성 전 → 빈 가마로 끌어 와요') + (qc ? ' · 의뢰 「' + qc.t + '」' : ''));

@@ -540,7 +540,7 @@
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var dk = lineState(g, 'dok'); if (dk.open && dk.acc && !dk.thanks && dk.def.type !== 'visit') { var d2 = dk.def; out.push({ id: 'dok', mid: d2.id, kind: 'dok', tag: '도깨비', who: d2.who, role: d2.role, res: d2.res, title: d2.title, items: d2.items, reward: d2.reward, dl: dk.dl, unlock: d2.unlock, unlockNote: d2.unlockNote, chapter: d2.ch, idx: d2.idx }); }
-      (g.nq || []).forEach(function (o) { out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: null, dl: o.dl || {}, at: o.at, due: o.due }); });
+      (g.nq || []).forEach(function (o) { var po = payout({ items: o.items }, { mig: {} }); out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: { gold: po.gold, shards: po.shards, fame: po.fame, text: po.gold.toLocaleString() + 'G · 파편 ' + po.shards + ' · 명성 +' + po.fame + ' · 기한 안에 납품하면 2배' }, dl: o.dl || {}, at: o.at, due: o.due }); });
       return out.concat(sideQuests(g));
     }
     var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
