@@ -413,16 +413,6 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       <a href="StudioTrial.dc.html" aria-label="새 방식 시험 공방 열기" style="position:absolute;left:8px;top:130px;z-index:6;padding:4px 9px;border-radius:10px;background:#7A3E8E;border:2px solid #4E2460;box-shadow:0 2px 0 #4E2460;text-decoration:none;font-family:'Jua',sans-serif;font-size:12px;color:#FFF4DE">🧪 시험 공방</a>
       <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:118px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></button>
-      <button type="button" onClick="{{sackTap}}" aria-label="원토 자루 · {{rawN}} · 눌러서 토련판에 올리기" style="all:unset;cursor:pointer;position:absolute;left:4px;top:574px;width:62px;height:80px;z-index:6">
-        <svg width="62" height="66" viewBox="0 0 84 84" aria-hidden="true"><path d="M14 30 Q8 80 42 82 Q76 80 70 30 Q66 18 42 22 Q18 18 14 30Z" fill="#C9A77A" stroke="#5B3A24" stroke-width="3"></path><path d="M24 22 Q42 4 60 22" fill="none" stroke="#5B3A24" stroke-width="3"></path><ellipse cx="42" cy="28" rx="20" ry="6" fill="#8A6440"></ellipse></svg>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:2px;top:64px">{{rawN}}</span>
-      </button>
-      <div onPointerDown="{{knDown}}" role="button" aria-label="토련판 · {{knTxt}}" style="position:absolute;left:70px;top:600px;width:132px;height:62px;z-index:6;touch-action:none;user-select:none;-webkit-user-select:none;cursor:ew-resize">
-        <div style="position:absolute;left:0;right:0;top:22px;height:22px;border-radius:6px;background:linear-gradient(#B98A5E,#8A5E3A);border:3px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.35);pointer-events:none"></div>
-        <div style="{{knLump}}"></div>
-        <div style="position:absolute;left:0;right:0;top:4px;display:flex;justify-content:center;gap:3px;pointer-events:none"><sc-if value="{{knOn}}" hint-placeholder-val="{{false}}"><sc-for list="{{knDots}}" as="d" hint-placeholder-count="5"><span style="{{d.st}}"></span></sc-for></sc-if></div>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:50%;top:52px;transform:translateX(-50%)">{{knTxt}}</span>
-      </div>
       <div style="position:absolute;left:206px;top:562px;width:100px;height:110px;z-index:6">
         <img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:14px;width:100px;height:80px;object-fit:contain;pointer-events:none">
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="2"><button type="button" onClick="{{lp.pick}}" aria-label="{{lp.aria}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:44px;height:36px;object-fit:contain"></button></sc-for>
@@ -657,20 +647,6 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       <div style="position:absolute;left:4px;top:574px;width:230px;height:100px;z-index:6">
         <sc-for list="{{buckets}}" as="bk" hint-placeholder-count="3"><button type="button" onClick="{{bk.pick}}" aria-label="{{bk.aria}}" style="{{bk.st}}"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:6px;width:56px;height:50px;object-fit:contain"><span style="{{bk.liq}}"></span><span style="{{bk.tagSt}}">{{bk.tag}}</span><span style="{{bk.subSt}}">{{bk.sub}}</span></button></sc-for>
-      </div>
-      <button type="button" onClick="{{pileTap}}" aria-label="유약석 · {{stoneN}} · 눌러서 절구에 넣기" style="all:unset;cursor:pointer;position:absolute;left:236px;top:612px;width:52px;height:64px;z-index:6">
-        <span style="position:absolute;left:4px;top:22px;width:28px;height:20px;border-radius:45% 55% 40% 60%;background:#9C9A92;border:2px solid #3E2616"></span>
-        <span style="position:absolute;left:22px;top:14px;width:24px;height:26px;border-radius:45% 55% 40% 60%;background:#B7B2A6;border:2px solid #3E2616"></span>
-        <span style="position:absolute;left:12px;top:2px;width:22px;height:18px;border-radius:45% 55% 40% 60%;background:#8F8A80;border:2px solid #3E2616"></span>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:0;top:46px">{{stoneN}}</span>
-      </button>
-      <div onClick="{{mtTap}}" role="button" aria-label="절구 · {{mtTxt}}" style="position:absolute;left:290px;top:560px;width:96px;height:118px;z-index:6;cursor:pointer;user-select:none;-webkit-user-select:none">
-        <sc-if value="{{mtOn}}" hint-placeholder-val="{{false}}">
-          <div style="position:absolute;left:8px;right:8px;top:0;height:10px;border-radius:5px;border:2px solid #2B1A0F;background:linear-gradient(90deg,#C9A27A 0 25%,#9FE08F 25% 41%,#FFD66B 41% 59%,#9FE08F 59% 75%,#C9A27A 75%)"><span style="{{mtNeedle}}"></span></div>
-          <div style="position:absolute;left:0;right:0;top:15px;display:flex;justify-content:center;gap:3px"><sc-for list="{{mtDots}}" as="d" hint-placeholder-count="5"><span style="{{d.st}}"></span></sc-for></div>
-        </sc-if>
-        <svg width="96" height="92" viewBox="0 0 110 100" aria-hidden="true" style="position:absolute;left:0;top:18px;overflow:visible"><g style="{{pestle}};transform-origin:68px 40px;transition:transform .12s"><rect x="62" y="-6" width="12" height="62" rx="6" fill="#A97B52" stroke="#5B3A24" stroke-width="3"></rect></g><path d="M14 46 Q16 96 55 96 Q94 96 96 46 Z" fill="#9C978C" stroke="#3E2616" stroke-width="3"></path><ellipse cx="55" cy="46" rx="41" ry="11" fill="#6E6A62" stroke="#3E2616" stroke-width="3"></ellipse><ellipse cx="55" cy="47" rx="26" ry="6" fill="#E3E0D6"></ellipse></svg>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:50%;top:100px;transform:translateX(-50%)">{{mtTxt}}</span>
       </div>
 
       </sc-if>

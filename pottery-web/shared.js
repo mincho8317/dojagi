@@ -12,6 +12,8 @@
   try { if (window.__embedMode) { document.documentElement.setAttribute('data-embed', '1'); } } catch (e) {}
   // 건조 공정 삭제(2026-11) : 빚은 그릇·건조 중이던 그릇은 마른 상태로 유약 대기로 옮긴다 (사라지지 않게)
   try { var _k3 = 'pottery-proto-v1', _g3 = JSON.parse(localStorage.getItem(_k3) || 'null'); if (_g3 && ((_g3.formedList || []).length || (_g3.dryList || []).length)) { var _mv = (_g3.formedList || []).concat(_g3.dryList || []).map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } if (!y.dry || y.dry === 'early') { y.dry = 'ok'; } delete y.start; return y; }); _g3.glazeList = (_g3.glazeList || []).concat(_mv); _g3.formedList = []; _g3.dryList = []; localStorage.setItem(_k3, JSON.stringify(_g3)); } } catch (e) {}
+  // 다듬기 삭제(2026-11) : 채집물이 바로 흙·유약이 된다 · 남은 원토·유약석은 5개당 2개 비율로 흙·유약으로 바꾼다
+  try { var _k4 = 'pottery-proto-v1', _g4 = JSON.parse(localStorage.getItem(_k4) || 'null'), _R4 = { ry: 'cy1', rr: 'cr1', rw: 'cw1', rk: 'ck1', ow: 'gw1', oc: 'gc1', ob: 'gb1', oj: 'gj1' }, _c4 = false; if (_g4 && _g4.mats) { Object.keys(_R4).forEach(function (k) { if (k in _g4.mats) { var n = Math.round((_g4.mats[k] || 0) * 0.4); if (n) { _g4.mats[_R4[k]] = (_g4.mats[_R4[k]] || 0) + n; } delete _g4.mats[k]; _c4 = true; } }); if (_c4) { localStorage.setItem(_k4, JSON.stringify(_g4)); } } } catch (e) {}
   // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
   S.qlib = function () {
     if (this._ql) { return this._ql; }
@@ -59,7 +61,7 @@
       clayKeep: { t: '성형', l: '흙 아끼기 확률', b: 0, m: 100, u: '%' },
       clayLv: { t: '재료', l: '흙 정제 단계', b: 0, m: 1, u: '단계' },
       glazeLv: { t: '재료', l: '유약 발색 보너스', b: 6, m: 3, u: '%' },
-      refineUp: { t: '재료', l: '다듬기 1개 더 얻을 확률', b: 0, m: 100, u: '%' },
+      refineUp: { t: '재료', l: '채집 때 1개 더 얻을 확률', b: 0, m: 100, u: '%' },
       matKeep: { t: '재료', l: '유약 원료 아끼기 확률', b: 0, m: 100, u: '%' },
       dryRack: { t: '건조', l: '건조대 칸', b: 3, m: 1, u: '칸' },
       kilnSlot: { t: '소성', l: '소성가마 칸', b: 6, m: 1, u: '칸' },
@@ -91,7 +93,7 @@
     var RROW = {
       mat: [
         ['r00', 0, 1, '재료 감각', [], { refineUp: 0.1 }, 20, 0],
-        ['r10', 1, 0, '흙 정제 I', ['r00'], { clayLv: 1 }, 40, 400], ['r11', 1, 1, '다듬기 요령', ['r00'], { refineUp: 0.15 }, 40, 300], ['r12', 1, 2, '유약 정제 I', ['r00'], { glazeLv: 1 }, 40, 400],
+        ['r10', 1, 0, '흙 정제 I', ['r00'], { clayLv: 1 }, 40, 400], ['r11', 1, 1, '채집 요령', ['r00'], { refineUp: 0.15 }, 40, 300], ['r12', 1, 2, '유약 정제 I', ['r00'], { glazeLv: 1 }, 40, 400],
         ['r20', 2, 0, '흙 정제 II', ['r10'], { clayLv: 1 }, 90, 1500], ['r21', 2, 1, '재료 아끼기', ['r11'], { clayKeep: 0.15, matKeep: 0.15 }, 70, 800], ['r22', 2, 2, '유약 정제 II', ['r12'], { glazeLv: 1 }, 90, 1500],
         ['r30', 3, 0, '흙 장인', ['r20', 'r21'], { refineUp: 0.2, clayKeep: 0.15 }, 150, 3000], ['r32', 3, 2, '유약 장인', ['r21', 'r22'], { refineUp: 0.15, matKeep: 0.15 }, 150, 3000]
       ],
@@ -1267,7 +1269,7 @@
       }
     }
     // ── 채집 안내 : 기초 튜토리얼 뒤 처음으로 흙이 다 떨어지면 한 번 ──
-    // tutG : 없음 → 1(흙 파기) → r(돌 부수기) → 2(손 토련) → g(절구질) → m(메밀묵 안내) → bye(배웅 컷신) → 'done'
+    // tutG : 없음 → 1(흙 파기) → r(돌 부수기) → m(메밀묵 안내) → bye(배웅 컷신) → 'done'  (다듬기 단계 2·g 는 삭제 · 예전 저장은 m 으로)
     function gW(v) { try { localStorage.setItem('tutG', String(v)); } catch (e) {} }
     var CLAYK = ['cw1', 'cw2', 'cw3', 'cy1', 'cy2', 'cy3', 'cr1', 'cr2', 'cr3', 'ck1', 'ck2', 'ck3', 'spring'];
     function clayN(g) { var M = g.mats || {}, n = 0; CLAYK.forEach(function (k) { n += M[k] || 0; }); return n; }
@@ -1298,19 +1300,20 @@
       var mukEl = qsel('[aria-label^="메밀묵 "]');
       var seen = function (k) { try { return !!localStorage.getItem('tutGs_' + k); } catch (e) { return false; } }, mark = function (k) { try { localStorage.setItem('tutGs_' + k, '1'); } catch (e) {} };
       if (st === '1') {
-        if (rawC >= 5) { gW('r'); return; }
+        if (clayN(g) > 0) { gW('r'); return; }
         if (gotoTab('채집', 'tgTab1', '「채집」 탭으로 가요')) { return; }
         if (!seen('muk0')) { act('tgMuk0', true, mukEl, '🥣 메밀묵은 도깨비 골짜기에 들어가는 값이에요 · 채집 한 판에 한 그릇 · 오늘은 두두리가 그냥 들여보내 줬어요', function () { mark('muk0'); }); return; }
         act('tgDig', true, qsel('button[aria-label="흙 파기 시작"]'), '「흙 파기」로 땅을 파서 흙 원료를 캐요');
         return;
       }
       if (st === 'r') {
-        if (rawG >= 5) { gW(2); return; }
+        if (glN > 0) { gW('m'); return; }
         if (gotoTab('채집', 'tgTabR', '「채집」 탭으로 가요')) { return; }
         act('tgRock', true, qsel('button[aria-label="돌 부수기 시작"]'), '이번엔 「돌 부수기」! 돌을 쓸어 부수면 유약 원석이 나와요');
         return;
       }
-      if (st === '2' || st === 'g') {
+      if (st === '2' || st === 'g') { gW('m'); return; }
+      if (false) {
         var clay = st === '2';
         if (clay && clayN(g) > 0) { gW('g'); return; }
         if (!clay && glN > 0) { gW('m'); return; }
