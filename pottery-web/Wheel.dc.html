@@ -69,7 +69,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+  <div style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;">
     
 
     <svg style="position:absolute;left:27px;top:0;overflow:visible" width="312" height="343" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
@@ -163,7 +163,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </svg>
 
 
-    <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:0;right:0;top:0;bottom:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
+    <div data-work="1" onPointerDown="{{pDown}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pUp}}" onContextMenu="{{noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:40px;right:40px;top:40px;height:300px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.16);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
     <sc-if value="{{fxFail}}" hint-placeholder-val="{{false}}">
       <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{fx.flash}}"></div>
@@ -603,8 +603,8 @@ class Component extends DCLogic {
   toView(el, cx, cy) {
     var rect = el.getBoundingClientRect();
     var k = rect.width / (el.offsetWidth || rect.width) || 1;
-    var sx = ((cx - rect.left) / k - 27) / 1.04; /* 물레 그림(300×330)이 작업 영역 안 27,0 에 1.04배로 놓여 있다 · 손가락보다 조금 위를 잡는다 */
-    var sy = ((cy - rect.top) / k) / 1.04 - 26;
+    var sx = ((cx - rect.left) / k + 40 - 27) / 1.04; /* 성형 영역(점선)은 큰 상자 안 40,40 · 물레 그림(300×330)은 27,0 에 1.04배로 놓여 있다 · 손가락보다 조금 위를 잡는다 */
+    var sy = ((cy - rect.top) / k + 40) / 1.04 - 26;
     return { x: sx, y: sy, k: k };
   }
   rAt(ci) {

@@ -216,7 +216,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+  <div style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;">
     
 
     <svg style="position:absolute;left:27px;top:0;overflow:visible" width="312" height="343" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
@@ -310,7 +310,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </svg>
 
 
-    <div data-work="1" onPointerDown="{{w.pDown}}" onPointerMove="{{w.pMove}}" onPointerUp="{{w.pUp}}" onPointerCancel="{{w.pUp}}" onContextMenu="{{w.noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:0;right:0;top:0;bottom:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
+    <div data-work="1" onPointerDown="{{w.pDown}}" onPointerMove="{{w.pMove}}" onPointerUp="{{w.pUp}}" onPointerCancel="{{w.pUp}}" onContextMenu="{{w.noMenu}}" aria-label="흙을 드래그해서 빚는 영역" style="position:absolute;left:40px;right:40px;top:40px;height:300px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.16);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab"></div>
 
     <sc-if value="{{w.fxFail}}" hint-placeholder-val="{{false}}">
       <div aria-hidden="true" style="position:absolute;inset:0;border-radius:14px;pointer-events:none;background:radial-gradient(circle at 50% 60%,rgba(208,69,43,.0) 20%,rgba(208,69,43,.55) 100%);opacity:{{w.fx.flash}}"></div>
@@ -414,7 +414,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 <div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Glaze" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-glaze" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
-  <div aria-label="담그기 조작 영역" data-area="1" data-work="1" onPointerDown="{{gz.potDown}}" style="position:absolute;left:12px;right:12px;top:100px;height:494px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab"></div>
+  <div aria-hidden="true" data-area="1" style="position:absolute;left:104px;top:190px;width:182px;height:298px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.16);pointer-events:none"></div>
 
   <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
     <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
@@ -500,7 +500,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </sc-if>
   <div aria-hidden="true" style="{{gz.subGuide}}">{{gz.subGuideText}}</div>
   <sc-if value="{{gz.dirOn}}" hint-placeholder-val="{{true}}">
-    <div role="meter" aria-label="{{gz.angAria}}" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="{{gz.angVal}}" style="position:absolute;left:30px;top:200px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none">
+    <div role="meter" aria-label="{{gz.angAria}}" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="{{gz.angVal}}" style="position:absolute;left:14px;top:200px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none">
       <span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440">기울기</span>
       <svg width="62" height="62" viewBox="-35 -35 70 70" aria-hidden="true" style="{{gz.boxInSt}}">
         <circle cx="0" cy="0" r="30" fill="#F3E3C4" stroke="#C9A27A" stroke-width="2"></circle>
@@ -512,7 +512,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </sc-if>
   <sc-if value="{{gz.pvOn}}" hint-placeholder-val="{{true}}">
-    <div role="img" aria-label="{{gz.pvAria}}" style="position:absolute;right:38px;top:204px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px">
+    <div role="img" aria-label="{{gz.pvAria}}" style="position:absolute;right:20px;top:204px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px">
       <span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440">완성 미리보기</span>
       <svg width="60" height="62" viewBox="{{gz.pv.vb}}" aria-hidden="true" style="{{gz.boxInSt}}"><path d="{{gz.pv.d}}" fill="{{gz.pv.fill}}"></path><path d="{{gz.pv.d}}" fill="url(#potShade)" opacity=".7"></path><ellipse cx="0" cy="{{gz.pv.rimY}}" rx="{{gz.pv.rimRx}}" ry="{{gz.pv.rimRy}}" fill="{{gz.pv.inner}}" stroke="{{gz.pv.edge}}" stroke-width="{{gz.pv.sw}}"></ellipse></svg>
       <span style="{{gz.pvPctSt}}">{{gz.pvPct}}</span>
@@ -633,7 +633,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="3" style="position:absolute;left:1170px;top:0;width:390px;height:632px;overflow:hidden">
       <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
-      <div aria-hidden="true" style="position:absolute;left:8px;right:8px;top:8px;height:540px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);pointer-events:none"></div>
+      <div aria-hidden="true" style="position:absolute;left:6px;right:6px;top:14px;height:518px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);pointer-events:none"></div>
       <div style="position:absolute;left:12px;right:12px;top:566px;height:56px;box-sizing:border-box;padding:6px 10px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 4px 0 #3E2616;display:flex;align-items:center;justify-content:space-between">
         <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{kHead}}</span>
         <button type="button" onClick="{{woodAll}}" aria-label="굽는 가마 모두에 장작 넣기" style="all:unset;cursor:pointer;padding:8px 14px;border-radius:14px;background:#C0582E;border:3px solid #7A2E1A;box-shadow:0 3px 0 #7A2E1A;font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE">🪵 모두 장작</button>
@@ -1042,8 +1042,8 @@ class Ctl_w extends StationBase {
   toView(el, cx, cy) {
     var rect = el.getBoundingClientRect();
     var k = rect.width / (el.offsetWidth || rect.width) || 1;
-    var sx = ((cx - rect.left) / k - 27) / 1.04; /* 물레 그림(300×330)이 작업 영역 안 27,0 에 1.04배로 놓여 있다 · 손가락보다 조금 위를 잡는다 */
-    var sy = ((cy - rect.top) / k) / 1.04 - 26;
+    var sx = ((cx - rect.left) / k + 40 - 27) / 1.04; /* 성형 영역(점선)은 큰 상자 안 40,40 · 물레 그림(300×330)은 27,0 에 1.04배로 놓여 있다 · 손가락보다 조금 위를 잡는다 */
+    var sy = ((cy - rect.top) / k + 40) / 1.04 - 26;
     return { x: sx, y: sy, k: k };
   }
   rAt(ci) {
@@ -4111,10 +4111,11 @@ class Component extends DCLogic {
     var self = this, Q = ctl.qlib(), act = Q.active(g), full = act.length >= 3, cq = g.cq || { i: 0, n: 0, sp: 0.1 };
     var PAT = ['main', 'norm', 'norm', 'main', 'norm', 'norm', 'dok', 'norm', 'norm'], STORY = { main: 1, dok: 1, season: 1, min: 1 };
     var req = [], dels = [];
+    function goWheel(x) { var y = {}, k; for (k in x) { y[k] = x[k]; } y.choices = (x.choices || []).map(function (c) { if (c.tone !== 'go' || !c.run) { return c; } return { label: c.label, tone: c.tone, run: function () { c.run(); setTimeout(function () { self.goPanel(1); }, 700); } }; }); return y; } /* 의뢰를 받으면 물레로 넘어간다 */
     list.forEach(function (x) {
       if (x.kind === 'deliver' || x.kind === 'wait') { if (STORY[x.id]) { dels.push(x); } return; }
       if (x.kind === 'thanks' && STORY[x.id]) { req.push(x); }
-      if (x.id === 'min' && x.kind === 'offer') { req.push(x); }
+      if (x.id === 'min' && x.kind === 'offer' && !full) { req.push(goWheel(x)); }
     });
     (g.nq || []).forEach(function (o) { dels.push(self.normalDel(ctl, g, o)); });
     function advance(kind) { var g2 = ctl.loadG(), c0 = g2.cq || { i: 0, n: 0, sp: 0.1 }; return { i: (c0.i || 0) + 1, n: (c0.n || 0) + 1, sp: kind === 'season' ? 0.1 : (c0.sp || 0.1) }; }
@@ -4128,12 +4129,13 @@ class Component extends DCLogic {
           c.run && c.run();
           var g2 = ctl.loadG(), p = { cq: advance(LN) };
           if (c.tone === 'go' && KEY && g2[KEY] && g2[KEY].acc && !g2[KEY].at) { var m = {}, k2; for (k2 in g2[KEY]) { m[k2] = g2[KEY][k2]; } m.at = Date.now(); p[KEY] = m; }
+          if (c.tone === 'go' && md.type !== 'visit') { setTimeout(function () { self.goPanel(1); }, 700); }
           ctl.setG(p);
         } };
       });
       return y;
     }
-    if (!req.some(function (x) { return x.kind === 'offer' || x.kind === 'thanks'; })) {
+    if (!full && !req.some(function (x) { return x.kind === 'offer' || x.kind === 'thanks'; })) { /* 의뢰가 3개 차면 새 손님이 오지 않는다 */
       var slot = PAT[(cq.i || 0) % PAT.length], vis = null;
       if (slot !== 'norm') {
         var LS = Q.lineState(g, slot), x0 = list.filter(function (x) { return x.id === slot && x.kind === 'offer'; })[0];
@@ -4155,7 +4157,7 @@ class Component extends DCLogic {
       card: { title: d.title, conds: d.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') }; }), reward: po.gold.toLocaleString() + 'G · 파편 ' + po.shards + ' (기한 안 ×2)' },
       choices: [
         full ? { label: '의뢰가 가득 찼어요 (3/3)', tone: '', run: function () { ctl.say('받은 의뢰를 먼저 끝내요 · 최대 3개'); } } :
-        { label: '맡을게요', tone: 'go', run: function () { var g2 = ctl.loadG(), now = Date.now(); ctl.setG({ nq: (g2.nq || []).concat([{ id: 'n' + seed + '_' + now, who: d.who, res: d.res, title: d.title, items: d.items, at: now, due: now + dur, dl: {} }]), cq: advance('norm') }); ctl.say('「' + d.title + '」 의뢰를 받았어요 · 기한 ' + self.fmtDur(dur)); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } },
+        { label: '맡을게요', tone: 'go', run: function () { var g2 = ctl.loadG(), now = Date.now(); ctl.setG({ nq: (g2.nq || []).concat([{ id: 'n' + seed + '_' + now, who: d.who, res: d.res, title: d.title, items: d.items, at: now, due: now + dur, dl: {} }]), cq: advance('norm') }); ctl.say('「' + d.title + '」 의뢰를 받았어요 · 기한 ' + self.fmtDur(dur)); setTimeout(function () { self.goPanel(1); }, 700); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } },
         { label: '다음에요', tone: '', run: function () { ctl.setG({ cq: advance('norm') }); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } }
       ] };
   }

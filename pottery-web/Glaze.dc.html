@@ -57,7 +57,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <div onPointerDownCapture="{{navDown}}" onPointerMoveCapture="{{navMove}}" onPointerUpCapture="{{navUp}}" onPointerCancelCapture="{{navUp}}" onClickCapture="{{navClickCap}}" style="{{navStage}}">
     <div class="navdrop" style="{{navDropStyle}}">
 <div class="bg-bg-glaze" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
-  <div aria-label="담그기 조작 영역" data-area="1" data-work="1" onPointerDown="{{potDown}}" style="position:absolute;left:12px;right:12px;top:100px;height:494px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab"></div>
+  <div aria-hidden="true" data-area="1" style="position:absolute;left:104px;top:190px;width:182px;height:298px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.16);pointer-events:none"></div>
 
   <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
     <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
@@ -143,7 +143,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </sc-if>
   <div aria-hidden="true" style="{{subGuide}}">{{subGuideText}}</div>
   <sc-if value="{{dirOn}}" hint-placeholder-val="{{true}}">
-    <div role="meter" aria-label="{{angAria}}" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="{{angVal}}" style="position:absolute;left:30px;top:200px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none">
+    <div role="meter" aria-label="{{angAria}}" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="{{angVal}}" style="position:absolute;left:14px;top:200px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none">
       <span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440">기울기</span>
       <svg width="62" height="62" viewBox="-35 -35 70 70" aria-hidden="true" style="{{boxInSt}}">
         <circle cx="0" cy="0" r="30" fill="#F3E3C4" stroke="#C9A27A" stroke-width="2"></circle>
@@ -155,7 +155,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </sc-if>
   <sc-if value="{{pvOn}}" hint-placeholder-val="{{true}}">
-    <div role="img" aria-label="{{pvAria}}" style="position:absolute;right:38px;top:204px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px">
+    <div role="img" aria-label="{{pvAria}}" style="position:absolute;right:20px;top:204px;z-index:4;width:84px;box-sizing:border-box;padding:4px 4px 5px;border-radius:12px;background:rgba(255,248,235,.92);border:2px solid #8A6440;display:flex;flex-direction:column;align-items:center;gap:1px">
       <span style="font-family:'Jua',sans-serif;font-size:10.5px;color:#8A6440">완성 미리보기</span>
       <svg width="60" height="62" viewBox="{{pv.vb}}" aria-hidden="true" style="{{boxInSt}}"><path d="{{pv.d}}" fill="{{pv.fill}}"></path><path d="{{pv.d}}" fill="url(#potShade)" opacity=".7"></path><ellipse cx="0" cy="{{pv.rimY}}" rx="{{pv.rimRx}}" ry="{{pv.rimRy}}" fill="{{pv.inner}}" stroke="{{pv.edge}}" stroke-width="{{pv.sw}}"></ellipse></svg>
       <span style="{{pvPctSt}}">{{pvPct}}</span>
