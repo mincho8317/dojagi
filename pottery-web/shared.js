@@ -7,6 +7,11 @@
   try { var _k2 = 'pottery-proto-v1', _g2 = JSON.parse(localStorage.getItem(_k2) || 'null'), _ch = false; if (_g2 && _g2.mats) { Object.keys(_g2.mats).forEach(function (k) { var m = /^([cg][wyrkcbj])([23])$/.exec(k); if (m && _g2.mats[k]) { _g2.mats[m[1] + '1'] = (_g2.mats[m[1] + '1'] || 0) + _g2.mats[k]; delete _g2.mats[k]; _ch = true; } else if (m) { delete _g2.mats[k]; _ch = true; } }); if (_ch) { localStorage.setItem(_k2, JSON.stringify(_g2)); } } } catch (e) {}
   // 초벌 공정 삭제(2026-11) : 초벌 대기·초벌 중이던 기물은 유약 대기로 옮긴다 · 화면이 저장 상태를 읽기 전에 실행
   try { var _k = 'pottery-proto-v1', _g = JSON.parse(localStorage.getItem(_k) || 'null'); if (_g && ((_g.bisqueList || []).length || ((_g.bisque || {}).items || []).length || _g.mainFocus === 'bisque')) { _g.glazeList = (_g.glazeList || []).concat(_g.bisqueList || [], (_g.bisque || {}).items || []); _g.bisqueList = []; _g.bisque = { state: 'idle', start: 0, items: [] }; if (_g.mainFocus === 'bisque') { _g.mainFocus = 'glaze'; } localStorage.setItem(_k, JSON.stringify(_g)); } } catch (e) {}
+  // 공방 확대 화면(iframe) 모드 : 정면 공방에서 물레·유약·가마를 확대해 띄울 때 · 웹 실행기에서만
+  try { window.__embedMode = window.top !== window.self && /(^|[?&])embed=1/.test(location.search); } catch (e) { window.__embedMode = false; }
+  try { if (window.__embedMode) { document.documentElement.setAttribute('data-embed', '1'); } } catch (e) {}
+  // 건조 공정 삭제(2026-11) : 빚은 그릇·건조 중이던 그릇은 마른 상태로 유약 대기로 옮긴다 (사라지지 않게)
+  try { var _k3 = 'pottery-proto-v1', _g3 = JSON.parse(localStorage.getItem(_k3) || 'null'); if (_g3 && ((_g3.formedList || []).length || (_g3.dryList || []).length)) { var _mv = (_g3.formedList || []).concat(_g3.dryList || []).map(function (x) { var y = {}; for (var k in x) { y[k] = x[k]; } if (!y.dry || y.dry === 'early') { y.dry = 'ok'; } delete y.start; return y; }); _g3.glazeList = (_g3.glazeList || []).concat(_mv); _g3.formedList = []; _g3.dryList = []; localStorage.setItem(_k3, JSON.stringify(_g3)); } } catch (e) {}
   // <qlib> 의뢰 공용 라이브러리 · 이 블록은 scratchpad/src/qlib.js 에서 주입된다 (모든 화면 동일)
   S.qlib = function () {
     if (this._ql) { return this._ql; }
@@ -658,7 +663,7 @@
       items.forEach(function (x, i) {
         if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
         var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', covAng: x.covAng, g2: x.g2 || '', g2col: x.g2col || '', cov2: x.cov2, ang2: x.ang2, value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
+        pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', covAng: x.covAng, g2: x.g2 || '', g2col: x.g2col || '', brush: x.brush || null, cov2: x.cov2, ang2: x.ang2, value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: item.sk || '' };
         order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
         log.push({ name: x.name, action: x.grade + ' · 대기함' });
       });
@@ -674,7 +679,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { BOARD: 4, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
@@ -854,10 +859,10 @@
     var STEPS = [
       { goal: '카운터에서 첫 의뢰 받기', hint: '카운터에 찾아온 민 씨의 사연을 듣고 의뢰를 맡아 보세요', next: 'Counter' },
       { goal: '물레에서 찻잔 빚기', hint: '의뢰받은 찻잔 모양으로 흙을 빚어 보세요 · 모양 고를 때 「의뢰」 배지를 확인해요', next: 'Wheel' },
-      { goal: '건조대에서 말리고 꺼내기', hint: '빚은 그릇을 건조대에 올리고, 완전 건조가 되면 빼 주세요 · 초록 칸에 맞춰 부채질하면 빨리 마르고, 💎옥으로 바로 말릴 수도 있어요', next: 'Dry' },
-      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 마른 찻잔을 끌어내려 담가 보세요', next: 'Glaze' }, // (옛 초벌 단계 · 건조를 마치면 바로 건너뜀)
-      { goal: '청자 유약 바르기', hint: '민 씨가 원한 청자유를 골라 마른 찻잔을 끌어내려 담가 보세요', next: 'Glaze' },
-      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 그릇을 가마에 넣고 불을 지핀 뒤 꺼내 보세요 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료', next: 'Kiln' },
+      { goal: '청자 유약 바르기', hint: '물레 옆 작업대의 찻잔을 유약통으로 끌어 옮긴 뒤, 청자유를 골라 끌어내려 담가 보세요', next: 'Glaze' }, // (옛 건조 단계 · 건조 공정이 없어져 빚으면 바로 넘어감)
+      { goal: '청자 유약 바르기', hint: '물레 옆 작업대의 찻잔을 유약통으로 끌어 옮긴 뒤, 청자유를 골라 끌어내려 담가 보세요', next: 'Glaze' }, // (옛 초벌 단계 · 건조를 마치면 바로 건너뜀)
+      { goal: '청자 유약 바르기', hint: '물레 옆 작업대의 찻잔을 유약통으로 끌어 옮긴 뒤, 청자유를 골라 끌어내려 담가 보세요', next: 'Glaze' },
+      { goal: '가마에서 굽고 꺼내기', hint: '유약 바른 찻잔을 가마로 끌어 넣고 「굽기 시작」 · 풀무질로 시간을 줄이거나 💎옥으로 바로 완료한 뒤 가마를 눌러 꺼내요', next: 'Kiln' },
       { goal: '민 씨에게 찻잔 납품하기', hint: '완성된 청자 찻잔을 카운터에서 민 씨에게 건네 보세요', next: 'Counter' }
     ];
     function stepNo(t) { return t >= 3 ? t : t + 1; } // 3번(옛 초벌)은 건너뛰므로 화면 번호는 1~6
@@ -1507,7 +1512,7 @@
       [o, o2, lfo].forEach(function (x) { x.start(t); x.stop(t + 2.4); });
     }
     function startBgm() {
-      if (bgmOn) { return; } bgmOn = true;
+      if (bgmOn || window.__embedMode) { return; } bgmOn = true;
       var SC = [50, 52, 55, 57, 59, 62, 64, 67, 69, 71, 74];
       var dr = [ac.createOscillator(), ac.createOscillator()], dg = ac.createGain(), dl = ac.createOscillator(), dlg = ac.createGain();
       dr[0].frequency.value = mf(43); dr[1].frequency.value = mf(50); dr[0].type = dr[1].type = 'sine';
@@ -1560,6 +1565,7 @@
     }
     function kickBgm() { var c = BF.cur; if (!c || !c.a.paused || BF.dead) { return; } c.a.play().catch(function () {}); bgmFade(c.g, 1, 1.5); }
     function startFileBgm() {
+      if (window.__embedMode) { return; } /* 공방 확대 화면(iframe) 안에서는 배경음악을 겹쳐 틀지 않는다 */
       var key = bgmWant(), at = 0;
       try { var sp = JSON.parse(sessionStorage.getItem('bgmPos') || 'null'); if (sp && sp.k) { key = sp.k; at = sp.t || 0; } } catch (e) {}
       if (!BF.dead) { BF.cur = bgmPlayer(key, at, at ? 1.2 : 2.5, 0); }
@@ -1655,6 +1661,26 @@
   };
   // 덧시유 : 첫 층 채색 위에 두 번째 층(it.g2col · it.cov2 · it.ang2)을 반투명으로 겹친 패턴 하나로 칠한다
   S.covFillAng = function (glz, clay, it, geo) {
+    var f0 = this.covFillTwo(glz, clay, it, geo);
+    if (!it || !it.brush || !it.brush.length) { return f0; }
+    try { /* 붓 무늬 : 유약 위에 그린 선을 그릇 좌표 그대로 겹쳐 칠한다 */
+      var key = JSON.stringify(it.brush), h = 0;
+      for (var i = 0; i < key.length; i++) { h = (h * 31 + key.charCodeAt(i)) | 0; }
+      var pid = 'cvb_' + String(f0).replace(/[^a-zA-Z0-9_]/g, '') + '_' + (h >>> 0).toString(36);
+      if (!document.getElementById(pid)) {
+        var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
+        if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
+        var defs = host.querySelector('defs') || host.firstChild || host;
+        var pt = document.createElementNS(NS, 'pattern'); pt.setAttribute('id', pid); pt.setAttribute('patternUnits', 'userSpaceOnUse'); pt.setAttribute('x', '-2000'); pt.setAttribute('y', '-2000'); pt.setAttribute('width', '4000'); pt.setAttribute('height', '4000');
+        var gw = document.createElementNS(NS, 'g'); gw.setAttribute('transform', 'translate(2000 2000)');
+        var rc = document.createElementNS(NS, 'rect'); rc.setAttribute('x', '-2000'); rc.setAttribute('y', '-2000'); rc.setAttribute('width', '4000'); rc.setAttribute('height', '4000'); rc.setAttribute('fill', f0); gw.appendChild(rc);
+        it.brush.forEach(function (b) { if (!b || !b.p) { return; } var pa = document.createElementNS(NS, 'path'); pa.setAttribute('d', String(b.p)); pa.setAttribute('fill', 'none'); pa.setAttribute('stroke', String(b.c || '#3A2A20')); pa.setAttribute('stroke-width', String(b.w || 4)); pa.setAttribute('stroke-linecap', 'round'); pa.setAttribute('stroke-linejoin', 'round'); pa.setAttribute('opacity', '.92'); gw.appendChild(pa); });
+        pt.appendChild(gw); defs.appendChild(pt);
+      }
+      return 'url(#' + pid + ')';
+    } catch (e) { return f0; }
+  };
+  S.covFillTwo = function (glz, clay, it, geo) {
     var base = this.covFillOne(glz, clay, it, geo);
     if (!it || !it.g2 || !it.g2col) { return base; }
     try {
@@ -2056,6 +2082,21 @@
         an.onfinish = function (el) { return function () { el.remove(); }; }(s);
       }
     };
+  })();
+  /* ── 정면 공방 한 화면 : 물레·유약·가마·가마 열기는 공방(Main) 안에서 확대해 연다 ──
+     공정 화면 주소로 직접 들어오면 공방으로 보내 그 설비를 확대해 연다 (웹 실행기에서만 · 디자인 미리보기는 기존 화면 유지) */
+  (function () {
+    if (typeof window === 'undefined' || typeof document === 'undefined' || window.__studioBooted) { return; }
+    window.__studioBooted = true;
+    var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';
+    var WEB = typeof window.morphdom === 'function';
+    if (!window.__studioPost) { window.__studioPost = function () {}; }
+    if (!WEB || window.top !== window.self) { return; }
+    var ZOOM = { Wheel: 1, Glaze: 1, Kiln: 1, KilnOpen: 1 };
+    if (ZOOM[PAGE] || PAGE === 'Dry' || PAGE === 'Queue') {
+      try { if (ZOOM[PAGE]) { sessionStorage.setItem('studioOpen', PAGE); } } catch (e) {}
+      try { location.replace('Main.dc.html'); } catch (e) {}
+    }
   })();
   // ── 이야기 : 컷신 · 이름 입력 · 챕터/해금 연출 · 공방 이야기 카드 ──
   // 컷신 = 장면 그림(CG) 위에 말하는 사람 흉상 + 대사 상자. 그림이 생기면 ART / step.img 에 경로만 넣으면 교체된다

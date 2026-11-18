@@ -210,7 +210,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       </div>
       <button type="button" onClick="{{finish}}" style="{{finishStyle}}">
         <span style="font-family:'Jua',sans-serif;font-size:19px">완성</span>
-        <span style="font-size:11px;font-weight:700;opacity:.9">성형 대기로 · 새 흙</span>
+        <span style="font-size:11px;font-weight:700;opacity:.9">작업대에 놓기 · 새 흙</span>
       </button>
     </div>
   </div>
@@ -240,6 +240,13 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     </div>
   </sc-if>
 
+  <sc-if value="{{boardFull}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:44px;right:44px;top:250px;z-index:6;box-sizing:border-box;padding:12px 14px 13px;border-radius:16px;background:rgba(255,248,235,.96);border:3px solid #8A6440;box-shadow:0 4px 0 rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
+      <span style="font-family:'Jua',sans-serif;font-size:18px;color:#A3442C">{{boardTxt}}</span>
+      <span style="font-size:12.5px;line-height:1.45;color:#5B3A24">다 빚은 기물을 유약통으로 옮기면<br>자리가 생겨 새로 빚을 수 있어요.</span>
+      <a href="Main.dc.html" style="all:unset;cursor:pointer;margin-top:2px;padding:6px 14px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">← 공방에서 옮기기</a>
+    </div>
+  </sc-if>
   <sc-if value="{{noClay}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:44px;right:44px;top:250px;z-index:6;box-sizing:border-box;padding:12px 14px 13px;border-radius:16px;background:rgba(255,248,235,.96);border:3px solid #8A6440;box-shadow:0 4px 0 rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
       <span style="font-family:'Jua',sans-serif;font-size:19px;color:#A3442C">흙 없음 · 보유 0</span>
@@ -971,7 +978,7 @@ class Component extends DCLogic {
 
     return {
       clays: claysOut,
-      dropTf: dropA.tf, dropOp: s.clay ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
+      dropTf: dropA.tf, dropOp: s.clay && !((g.glazeList || []).length >= (self.qlib().BOARD || 4) && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
       fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
       chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
       fx: fxV,
@@ -979,6 +986,8 @@ class Component extends DCLogic {
       clayCnt: (function () { if (self.qlib().isTut(g)) { return ''; } var n = s.clay ? ((g.mats || {})[s.clay] || 0) : 0; return n > 0 ? '×' + n : '0'; })(),
       clayCntSt: 'font-size:12px;' + (s.clay ? 'color:#8A6440' : 'color:#C0392B;font-weight:700'),
       noClay: !s.clay,
+      boardFull: (function () { var B = self.qlib().BOARD || 4; return (g.glazeList || []).length >= B && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
+      boardTxt: '물레 옆 작업대가 가득 찼어요 (' + (g.glazeList || []).length + '/' + (self.qlib().BOARD || 4) + ')',
       tgIcon: self.iconOf(tg),
       tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
@@ -1182,14 +1191,15 @@ class Component extends DCLogic {
       },
       finish: function () {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
-        if (dryCount >= 6) { self.say('성형 대기 선반이 가득 찼어요 · 건조대에 먼저 올려요', 'fail'); return; }
+        if ((g.glazeList || []).length >= (self.qlib().BOARD || 4) && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say('물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
         var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
         var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
         if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }
         if (self._cq > 1) { item.cq = self._cq; }
-        var up = { formedList: (g.formedList || []).concat([item]), mats: mats, matsQ: self._mq || {} };
+        item.dry = 'ok'; /* 건조 공정 없음 : 빚은 그릇은 물레 옆 작업대에 놓이고 바로 유약을 바를 수 있다 */
+        var up = { glazeList: (g.glazeList || []).concat([item]), mats: mats, matsQ: self._mq || {} };
         if (qUp) { up.goalQ = Qw; if (nxG) { up.goal = nxG; } }
         self.setG(up);
         self.resetPointers();
@@ -1202,6 +1212,7 @@ class Component extends DCLogic {
         nf.fx = { kind: 'ok', k: Date.now(), path: self.profile(s.r, s.H, 0).path, H: s.H, stars: stars };
         self.setState(nf);
         self.clearFx(nf.fx.k, 1800);
+        try { window.__studioPost && window.__studioPost('formed', { id: item.id }); } catch (e) {}
         if (nxG) { self.say(tg.n + ' ' + stars + ' 완성 · 다음 목표 ' + nxG.num + '스테이지 ' + (nxG.shapeN || nxG.name) + ' (남은 ' + Qw.length + ')'); } else if (qUp) { self.say(tg.n + ' ' + stars + ' 완성 · 담은 목표를 모두 빚었어요! 건조대로 가요'); } else { self.say(tg.n + ' ' + stars + ' 성형 대기로 · 건조대에서 골라 올려요'); }
       }
     };

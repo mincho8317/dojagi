@@ -219,7 +219,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
         <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">예상 평가액 합계</span>
         <span style="font-family:'Jua',sans-serif;font-size:19px;color:#B5851C">{{rs.total}} G</span>
       </div>
-      <button type="button" onClick="{{rs.confirm}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;width:100%;text-align:center;padding:14px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">확인 · 대기함에 넣기</button>
+      <button type="button" onClick="{{rs.confirm}}" style="all:unset;cursor:pointer;box-sizing:border-box;display:block;width:100%;text-align:center;padding:14px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:20px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">확인 · 보관함에 넣기</button>
     </div>
   </sc-if>
 
@@ -239,7 +239,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <sc-if value="{{noLog}}" hint-placeholder-val="{{false}}">
         <span style="font-size:13px;color:#5B3A24;text-align:center;line-height:1.6">가마가 비어 있어요.<br>유약 바른 기물을 넣고 불을 지펴야 해요.</span>
       </sc-if>
-      <a href="Queue.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">대기함 보기</a>
+      <a href="Main.dc.html" data-q="1" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">공방으로</a>
       <a href="Kiln.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:12px 0;background:#C8601E;border:3px solid #8A3D10;box-shadow:0 4px 0 #8A3D10;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #8A3D10">가마 채우러 가기</a>
       <a href="Main.dc.html" style="box-sizing:border-box;width:100%;text-align:center;padding:11px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;text-decoration:none;font-family:'Jua',sans-serif;font-size:17px;color:#5B3A24">공방으로</a>
     </div>
@@ -469,7 +469,7 @@ class Component extends DCLogic {
     var sf = {}; for (var a in g.shapesFound) { sf[a] = g.shapesFound[a]; }
     var gf = {}; for (var b in g.glazesFound) { gf[b] = g.glazesFound[b]; }
     if (!item.broken) {
-      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, cov: item.cov, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay, pattern: item.pattern || '', spot: item.spot || '', covDir: item.covDir || '', covAng: item.covAng, g2: item.g2 || '', g2col: item.g2col || '', cov2: item.cov2, ang2: item.ang2, form: item.form, fit: item.fit, skill: item.skill, colorPct: item.colorPct, color: item.color, tint: item.tint, yohen: !!item.yohen, goalSid: item.goalSid || '', sk: item.sk || '' };
+      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, cov: item.cov, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay, pattern: item.pattern || '', spot: item.spot || '', covDir: item.covDir || '', covAng: item.covAng, g2: item.g2 || '', g2col: item.g2col || '', brush: item.brush || null, cov2: item.cov2, ang2: item.ang2, form: item.form, fit: item.fit, skill: item.skill, colorPct: item.colorPct, color: item.color, tint: item.tint, yohen: !!item.yohen, goalSid: item.goalSid || '', sk: item.sk || '' };
       order.push(id);
       sf[item.shape] = true;
       gf[item.glaze] = true;
@@ -510,9 +510,9 @@ class Component extends DCLogic {
     items.forEach(function (x, i) {
       if (x.broken) { shards += 3; broken += 1; log.push({ name: x.name, action: '파편 +3' }); return; }
       var id = 'k' + (g.firings || 38) + '_' + i + '_' + now;
-      pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', covAng: x.covAng, g2: x.g2 || '', g2col: x.g2col || '', cov2: x.cov2, ang2: x.ang2, value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: x.sk || '' };
+      pieces[id] = { name: x.name, grade: x.grade, shape: x.shape, glaze: x.glaze, cov: x.cov, where: 'store', fresh: true, pattern: x.pattern || '', spot: x.spot || '', covDir: x.covDir || '', covAng: x.covAng, g2: x.g2 || '', g2col: x.g2col || '', brush: x.brush || null, cov2: x.cov2, ang2: x.ang2, value: x.value, prof: x.prof, H: x.H, clay: x.clay, form: x.form, fit: x.fit, skill: x.skill, colorPct: x.colorPct, color: x.color, tint: x.tint, yohen: !!x.yohen, goalSid: x.goalSid || '', sk: x.sk || '' };
       order.push(id); sf[x.shape] = true; gf[x.glaze] = true;
-      log.push({ name: x.name, action: x.grade + ' · 대기함' });
+      log.push({ name: x.name, action: x.grade + ' · 보관함' });
       pots.push(self.potOf(x, LB[x.glaze] || LB.white)); froms.push(self.rootPt('kres-' + i) || self.stagePt(195, 300));
     });
     this.flyStart(pots, froms);
@@ -522,7 +522,7 @@ class Component extends DCLogic {
     this.setG({ pieces: pieces, order: order, openLog: log, openIdx: items.length, kiln: 'empty', kilnFilled: {}, kilnStart: 0, batchItems: [], shards: shards, broken: broken, shapesFound: sf, glazesFound: gf, kilnSeen: 0 });
     this.setState({ shownIdx: -1, ph: '', leaving: true });
   }
-  goKiln() { try { var a = document.getElementById('goKiln'); if (a) { a.click(); } } catch (e) {} }
+  goKiln() { if (window.__embedMode) { try { window.__studioPost('collected'); } catch (e0) {} return; } try { var a = document.getElementById('goKiln'); if (a) { a.click(); } } catch (e) {} }
   fame(g, xp) {
     var lv = g.fameLv, x = g.fameXp + xp;
     while (x >= 100) { lv++; x -= 100; }
@@ -767,7 +767,7 @@ class Component extends DCLogic {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
