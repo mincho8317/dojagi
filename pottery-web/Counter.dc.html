@@ -119,7 +119,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
 
   <sc-if value="{{hasGuest}}" hint-placeholder-val="{{true}}">
-    <div style="position:absolute;left:12px;right:12px;top:300px;z-index:6">
+    <div style="position:absolute;left:12px;right:12px;bottom:74px;z-index:6">
       <sc-if value="{{meOn}}" hint-placeholder-val="{{false}}"><img dc-src="{{meImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-6px;bottom:100%;margin-bottom:-34px;width:176px;height:209px;object-fit:contain;object-position:50% 100%;pointer-events:none;z-index:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));animation:meIn .28s ease-out both"></sc-if>
     <section style="position:relative;min-height:170px;box-sizing:border-box;padding:16px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
       <button type="button" onClick="{{advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>

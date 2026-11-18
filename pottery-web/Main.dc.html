@@ -72,11 +72,11 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 <clipPath id="potDrip" clipPathUnits="objectBoundingBox"><path d="M0 .87C.07 .845 .11 .915 .19 .885C.26 .855 .3 .935 .38 .9C.46 .865 .51 .93 .6 .89C.68 .855 .72 .92 .8 .885C.88 .855 .93 .91 1 .87L1 .9C.93 .935 .88 .885 .8 .91C.72 .945 .68 .88 .6 .92C.51 .955 .46 .89 .38 .93C.3 .96 .26 .88 .19 .915C.11 .945 .07 .875 0 .9Z"></path></clipPath>
 <filter id="potGrain" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="3" seed="7" result="n"></feTurbulence><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .09  0 0 0 0 .04  0 0 0 -1.6 1.05"></feColorMatrix><feComposite operator="in" in2="SourceGraphic"></feComposite></filter>
 </defs></svg>
-  <div data-strip="1" style="position:absolute;left:0;top:56px;width:390px;height:696px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch">
-   <div style="position:relative;width:1560px;height:696px;background:repeating-linear-gradient(90deg,rgba(91,58,36,.5) 0 8px,transparent 8px 390px) 0 0/1560px 420px no-repeat,linear-gradient(#EBD6B3,#D8BA8E) 0 0/1560px 420px no-repeat,linear-gradient(#5B3A24,#5B3A24) 0 420px/1560px 8px no-repeat,repeating-linear-gradient(90deg,#9A6A44 0 64px,#93633F 64px 128px) 0 428px/1560px 268px no-repeat,#3E2616">
-    <div data-panel="0" style="position:absolute;left:0px;top:0;width:390px;height:500px;overflow:hidden">
+  <div data-strip="1" style="position:absolute;left:0;top:56px;width:390px;height:632px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch">
+   <div style="position:relative;width:1560px;height:632px;background:repeating-linear-gradient(90deg,rgba(91,58,36,.5) 0 8px,transparent 8px 390px) 0 0/1560px 470px no-repeat,linear-gradient(#EBD6B3,#D8BA8E) 0 0/1560px 470px no-repeat,linear-gradient(#5B3A24,#5B3A24) 0 470px/1560px 8px no-repeat,repeating-linear-gradient(90deg,#9A6A44 0 64px,#93633F 64px 128px) 0 478px/1560px 154px no-repeat,#3E2616">
+    <div data-panel="0" style="position:absolute;left:0px;top:0;width:390px;height:632px;overflow:hidden">
       <sc-if value="{{pv0}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:7.5px;top:-53.8px;width:390px;height:754px;transform:scale(0.9615);transform-origin:0 0">
+<div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Counter" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div style="position:relative;width:390px;height:844px;overflow:hidden;background:#E3C9A3;color:#2B1A0F">
 
@@ -147,7 +147,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
 
   <sc-if value="{{ct.hasGuest}}" hint-placeholder-val="{{true}}">
-    <div style="position:absolute;left:12px;right:12px;top:300px;z-index:6">
+    <div style="position:absolute;left:12px;right:12px;bottom:74px;z-index:6">
       <sc-if value="{{ct.meOn}}" hint-placeholder-val="{{false}}"><img dc-src="{{ct.meImg}}" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:-6px;bottom:100%;margin-bottom:-34px;width:176px;height:209px;object-fit:contain;object-position:50% 100%;pointer-events:none;z-index:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));animation:meIn .28s ease-out both"></sc-if>
     <section style="position:relative;min-height:170px;box-sizing:border-box;padding:16px 4px 0;border:20px solid transparent;border-image:url(ui/dialogue_frame.webp) 40 fill / 20px stretch;filter:drop-shadow(0 6px 0 rgba(43,26,15,.35));display:flex;flex-direction:column;gap:10px;z-index:1">
       <button type="button" onClick="{{ct.advance}}" aria-label="대화 넘기기" style="all:unset;cursor:pointer;position:absolute;inset:0;border-radius:18px;z-index:0"></button>
@@ -191,9 +191,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="1" style="position:absolute;left:390px;top:0;width:390px;height:500px;overflow:hidden">
+    <div data-panel="1" style="position:absolute;left:390px;top:0;width:390px;height:632px;overflow:hidden">
       <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:24.5px;top:-49.0px;width:390px;height:754px;transform:scale(0.8741);transform-origin:0 0">
+<div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Wheel" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -204,7 +204,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">{{w.targetName}} 빚기</div>
   </div>
 
-  <div style="position:absolute;left:12px;right:156px;top:134px;display:flex;align-items:stretch;gap:6px">
+  <div style="position:absolute;left:12px;right:12px;top:522px;display:flex;align-items:stretch;gap:6px">
     <button type="button" onClick="{{w.openClay}}" aria-label="흙 바꾸기 · 지금 {{w.clayName}}" style="all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24">
       <img dc-src="{{w.clayImg}}" alt="" aria-hidden="true" style="width:30px;height:24px;object-fit:contain">
       <span style="display:flex;flex-direction:column;line-height:1.05"><span style="font-size:11px;font-weight:700;color:#A3442C">흙</span><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap">{{w.clayName}} <span style="{{w.clayCntSt}}">{{w.clayCnt}}</span> ▾</span></span>
@@ -215,7 +215,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </button>
   </div>
 
-  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{w.fitPct}}" style="position:absolute;left:12px;right:156px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
+  <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{w.fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
       <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{w.fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{w.fitPct}}<span style="font-size:18px">%</span></span>
@@ -226,10 +226,10 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:188px;height:440px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
+  <div style="position:absolute;left:12px;right:12px;top:134px;height:380px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18)">
     
 
-    <svg style="position:absolute;left:8px;top:18px;overflow:visible" width="350" height="384" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
+    <svg style="position:absolute;left:52px;top:4px;overflow:visible" width="261" height="287" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
       <defs>
         <linearGradient id="clayShade" x1="0" x2="1" y1="0" y2="0">
           <stop offset="0" stop-color="{{w.clayDark}}"></stop>
@@ -332,7 +332,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </sc-if>
   </div>
 
-  <div style="position:absolute;right:12px;top:64px;width:136px;box-sizing:border-box;padding:6px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
+  <div style="position:absolute;left:12px;right:12px;top:568px;box-sizing:border-box;padding:8px 10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:10px">
     <div style="display:none;align-items:center;gap:10px">
       <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24;flex:0 0 auto">흔들림</span>
       <div style="position:relative;flex:1 1 auto;height:18px;box-sizing:border-box;border:3px solid #3E2616;border-radius:10px;background:#3E2616;overflow:hidden" role="img" aria-label="흔들림 게이지 · 가득 차면 무너짐">
@@ -341,7 +341,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       </div>
       <span style="{{w.wLabelStyle}}">{{w.wLabel}}</span>
     </div>
-    <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="display:flex;gap:8px">
       <div style="flex:1 1 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:3px solid #5B3A24;border-radius:14px;overflow:hidden">
         <sc-for list="{{w.speeds}}" as="sp" hint-placeholder-count="3">
           <button type="button" aria-pressed="{{sp.on}}" onClick="{{sp.pick}}" style="{{sp.style}}">{{sp.label}}</button>
@@ -416,11 +416,12 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="2" data-drop="glaze" style="position:absolute;left:780px;top:0;width:390px;height:500px;overflow:hidden">
+    <div data-panel="2" data-drop="glaze" style="position:absolute;left:780px;top:0;width:390px;height:632px;overflow:hidden">
       <sc-if value="{{pv2}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:0.0px;top:-48.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
+<div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Glaze" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-glaze" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
+  <div aria-hidden="true" data-area="1" style="position:absolute;left:12px;right:12px;top:100px;height:494px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);pointer-events:none"></div>
 
   <div style="position:absolute;left:12px;top:12px;right:12px;display:flex;align-items:center;gap:10px">
     <a href="Main.dc.html" aria-label="공방으로 돌아가기" style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;color:#5B3A24">
@@ -547,7 +548,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
   <div style="{{gz.condStyle}}">{{gz.condText}}</div>
 
-  <div style="position:absolute;left:12px;right:12px;top:52px;box-sizing:border-box;padding:6px 10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:11px">
+  <div style="position:absolute;left:12px;right:12px;top:604px;box-sizing:border-box;padding:8px 12px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:24px;box-shadow:inset 0 0 0 3px #F0D9AE,0 6px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;gap:11px">
 
 
     <div style="display:flex;gap:7px">
@@ -637,13 +638,14 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
       </sc-if>
     </div>
-    <div data-panel="3" style="position:absolute;left:1170px;top:0;width:390px;height:500px;overflow:hidden">
+    <div data-panel="3" style="position:absolute;left:1170px;top:0;width:390px;height:632px;overflow:hidden">
       <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
-      <div style="position:absolute;left:12px;right:12px;top:6px;height:30px;display:flex;align-items:center;justify-content:space-between">
-        <span style="padding:2px 10px;border-radius:10px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">{{kHead}}</span>
-        <button type="button" onClick="{{woodAll}}" aria-label="굽는 가마 모두에 장작 넣기" style="all:unset;cursor:pointer;padding:4px 10px;border-radius:12px;background:#8A5A36;border:2px solid #3E2616;box-shadow:0 3px 0 #3E2616;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE">🪵 모두 장작</button>
+      <div aria-hidden="true" style="position:absolute;left:8px;right:8px;top:8px;height:540px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.18);pointer-events:none"></div>
+      <div style="position:absolute;left:12px;right:12px;top:566px;height:56px;box-sizing:border-box;padding:6px 10px;border-radius:18px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 4px 0 #3E2616;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{kHead}}</span>
+        <button type="button" onClick="{{woodAll}}" aria-label="굽는 가마 모두에 장작 넣기" style="all:unset;cursor:pointer;padding:8px 14px;border-radius:14px;background:#C0582E;border:3px solid #7A2E1A;box-shadow:0 3px 0 #7A2E1A;font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE">🪵 모두 장작</button>
       </div>
-      <div style="position:absolute;left:12px;top:40px;width:366px;display:grid;grid-template-columns:repeat(3,112px);gap:8px 15px">
+      <div style="position:absolute;left:12px;top:22px;width:366px;display:grid;grid-template-columns:repeat(3,112px);gap:8px 15px">
         <sc-for list="{{kilns}}" as="kn" hint-placeholder-count="9">
           <div data-kiln="{{kn.idx}}" data-kfree="{{kn.free}}" role="group" aria-label="{{kn.aria}}" style="{{kn.box}}">
             <div style="{{kn.mouth}}"><sc-if value="{{kn.has}}" hint-placeholder-val="{{false}}"><svg width="58" height="62" viewBox="{{kn.pot.vb}}" aria-hidden="true"><path d="{{kn.pot.d}}" fill="{{kn.pot.fill}}"></path><path d="{{kn.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{kn.pot.d}}" fill="none" stroke="{{kn.pot.edge}}" stroke-width="{{kn.pot.sw}}"></path><ellipse cx="0" cy="{{kn.pot.rimY}}" rx="{{kn.pot.rimRx}}" ry="{{kn.pot.rimRy}}" fill="{{kn.pot.inner}}" stroke="{{kn.pot.edge}}" stroke-width="{{kn.pot.sw}}"></ellipse></svg></sc-if></div>
@@ -682,8 +684,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:4px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{gold}}</a>
     <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:29px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{jade}}</a>
   </div>
-  <div style="position:absolute;left:0;top:556px;width:390px;height:64px;z-index:30;box-sizing:border-box;padding:4px 6px;background:linear-gradient(rgba(62,38,22,.88),rgba(62,38,22,.95));border-top:3px solid #2B1A0F;border-bottom:3px solid #2B1A0F;display:flex;align-items:center;gap:4px">
-    <span aria-hidden="true" style="flex:0 0 14px;writing-mode:vertical-rl;font-family:'Jua',sans-serif;font-size:10.5px;color:#FFE7A8;text-align:center">대기함</span>
+  <div style="position:absolute;left:0;top:688px;width:390px;height:64px;z-index:30;box-sizing:border-box;padding:6px 6px 8px;background:linear-gradient(#A97B52,#8A5E3A);border-top:4px solid #5B3A24;box-shadow:inset 0 -6px 0 #6B4429,0 -3px 6px rgba(43,26,15,.3);display:flex;align-items:center;gap:4px">
+    <span aria-hidden="true" style="flex:0 0 14px;writing-mode:vertical-rl;font-family:'Jua',sans-serif;font-size:10.5px;color:#FFF4DE;text-align:center;text-shadow:0 1px 0 #3E2616">대기함</span>
     <div role="list" aria-label="대기함 {{qN}}" style="flex:1 1 auto;display:flex;gap:4px;justify-content:space-between">
       <sc-for list="{{qSlots}}" as="qs" hint-placeholder-count="6">
         <div role="listitem" data-q="{{qs.id}}" onPointerDown="{{qs.down}}" aria-label="{{qs.aria}}" style="{{qs.st}}">
@@ -1046,9 +1048,9 @@ class Ctl_w extends StationBase {
   toView(el, cx, cy) {
     var rect = el.getBoundingClientRect();
     var k = rect.width / (el.offsetWidth || rect.width) || 1;
-    var sx = (cx - rect.left) / k + 44;
-    var sy = (cy - rect.top) / k - 44;
-    return { x: sx * 300 / 350, y: sy * 330 / 384, k: k };
+    var sx = ((cx - rect.left) / k - 52) / 0.87; /* 물레 그림(300×330)이 작업 영역 안 52,4 에 0.87배로 놓여 있다 · 손가락보다 조금 위를 잡는다 */
+    var sy = ((cy - rect.top) / k - 4) / 0.87 - 26;
+    return { x: sx, y: sy, k: k };
   }
   rAt(ci) {
     var r = this.state.r;
@@ -1515,7 +1517,7 @@ class Ctl_w extends StationBase {
         });
       })(),
       hintBg: s.wrapping ? 'rgba(47,99,40,.9)' : (shaping ? 'rgba(43,26,15,.78)' : 'rgba(185,83,58,.92)'),
-      finishStyle: 'all:unset;cursor:pointer;flex:0 0 auto;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
+      finishStyle: 'all:unset;cursor:pointer;flex:0 0 120px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;padding:5px 0;border-radius:16px;' + (shaping ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#CFC5B4;border:3px solid #8E8473;color:#5E5547;'),
       toast: s.toast,
       toastOn: s.toast !== '',
       toastStyle: "position:absolute;left:30px;right:30px;top:232px;padding:11px 14px;border-radius:16px;font-family:'Jua',sans-serif;font-size:14px;text-align:center;" + (s.toastKind === 'fail' ? 'background:rgba(43,26,15,.92);border:3px solid #C9705A;color:#FFF4DE' : 'background:rgba(47,99,40,.94);border:3px solid #E4F5D8;color:#FFFDF5'),
@@ -1598,7 +1600,7 @@ class Ctl_w extends StationBase {
           else if (d.axis === 'v' && d.ax > 10 && d.ax > 2.2 * d.ay) { d.axis = 'h'; d.sub = ''; }
         }
         var p = self.toView(d.el, e.clientX, e.clientY);
-        self.shapeMove(p, dx * 300 / 350, dy * 330 / 384, d.axis, d.sub);
+        self.shapeMove(p, dx / 0.87, dy / 0.87, d.axis, d.sub);
       },
       pUp: function (e) {
         var wasTouch = self.ptrs[pid(e)] && self.ptrs[pid(e)].touch;
@@ -4356,7 +4358,7 @@ class Component extends DCLogic {
           progBar: 'height:100%;width:' + Math.round(p * 100) + '%;background:#FFE27A',
           stat: done ? '다 구웠어요!' : (kk && kk.it ? '불 ' + Math.round(f) + ' · ' + Math.ceil(left / 60 * 10) / 10 + '분' : (open ? '비어 있음' : '')),
           glow: done ? 'position:absolute;inset:0;border-radius:40px 40px 8px 8px;box-shadow:inset 0 0 22px 6px rgba(255,226,122,.85);animation:bob 1.2s ease-in-out infinite;pointer-events:none' : (kk && kk.it ? 'position:absolute;left:16px;right:16px;top:26px;height:58px;border-radius:30px 30px 6px 6px;background:radial-gradient(ellipse at 50% 90%,rgba(255,160,50,' + (0.25 + 0.6 * f / 100).toFixed(2) + '),rgba(0,0,0,0) 75%);pointer-events:none' : 'display:none'),
-          box: 'position:relative;width:112px;height:148px;box-sizing:border-box;border-radius:40px 40px 8px 8px;' + (open ? 'background:linear-gradient(#B4633F,#86452B);border:3px solid #5B2E1A;box-shadow:0 4px 0 #3E2010' : 'background:linear-gradient(#8B8178,#5E5650);border:3px dashed #3E3832'),
+          box: 'position:relative;width:112px;height:162px;box-sizing:border-box;border-radius:40px 40px 8px 8px;' + (open ? 'background:linear-gradient(#B4633F,#86452B);border:3px solid #5B2E1A;box-shadow:0 4px 0 #3E2010' : 'background:linear-gradient(#8B8178,#5E5650);border:3px dashed #3E3832'),
           mouth: 'position:absolute;left:16px;right:16px;top:24px;height:62px;border-radius:30px 30px 6px 6px;background:' + (open ? 'radial-gradient(ellipse at 50% 80%,#3A1A0C,#1E0D06)' : 'rgba(30,26,22,.5)') + ';display:flex;align-items:flex-end;justify-content:center;overflow:hidden',
           wood: function () { self.kWood(k); }, collect: function () { self.kCollect(k); },
           unlockOn: nextLock, unlock: function () { self.kUnlock(); }, price: nextLock && cost != null ? cost.toLocaleString() + 'G' : '',
