@@ -2092,7 +2092,7 @@
     var WEB = typeof window.morphdom === 'function';
     if (!window.__studioPost) { window.__studioPost = function () {}; }
     if (!WEB || window.top !== window.self) { return; }
-    var ZOOM = { Wheel: 1, Glaze: 1, Kiln: 1, KilnOpen: 1 };
+    var ZOOM = { Wheel: 1, Glaze: 1, Kiln: 1, KilnOpen: 1, Display: 1, Counter: 1 };
     if (ZOOM[PAGE] || PAGE === 'Dry' || PAGE === 'Queue') {
       try { if (ZOOM[PAGE]) { sessionStorage.setItem('studioOpen', PAGE); } } catch (e) {}
       try { location.replace('Main.dc.html'); } catch (e) {}
