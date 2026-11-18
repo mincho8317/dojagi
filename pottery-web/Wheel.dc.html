@@ -328,8 +328,8 @@ class Component extends DCLogic {
     this.ptrs = {};
     this.drag = null;
   }
-  qCnt(g) { return (g.glazeList || []).length + (window.__pano ? (g.kilnList || []).length : 0); }
-  qCap() { return window.__pano ? 6 : (this.qlib().BOARD || 4); }
+  qCnt(g) { return (g.glazeList || []).length; }
+  qCap() { return window.__pano ? 4 : (this.qlib().BOARD || 4); }
   fresh() {
     var r = [], t = [];
     for (var i = 0; i < 12; i++) { r.push(40 + (i < 2 ? 3 : 0)); t.push(8); }
@@ -1177,7 +1177,7 @@ class Component extends DCLogic {
       },
       finish: function () {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
-        if (self.qCnt(g) >= self.qCap() && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say(window.__pano ? '대기함이 가득 찼어요 · 시유하거나 가마에 넣어 자리를 비워요' : '물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
+        if (self.qCnt(g) >= self.qCap() && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say(window.__pano ? '빚은 기물 선반이 가득 찼어요 (4/4) · 유약을 발라 자리를 비워요' : '물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
         var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();

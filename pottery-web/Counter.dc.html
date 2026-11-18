@@ -743,6 +743,10 @@ class Component extends DCLogic {
     var atEnd = atEnd0 && typed;
     var choices = (cur && atEnd ? cur.choices : []).map(function (c) {
       var st = 'all:unset;cursor:pointer;flex:1 1 40%;box-sizing:border-box;display:block;text-align:center;padding:10px 6px;border-radius:14px;font-family:Jua,sans-serif;font-size:15.5px;text-decoration:none;' + (c.tone === 'go' ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;color:#FFFDF5;' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;color:#5B3A24;');
+      if (window.__pano) { /* 공방 : 의뢰서에 도장 찍기 */
+        var go = c.tone === 'go', col = go ? '#2F7A2A' : '#A3442C';
+        st = 'all:unset;cursor:pointer;flex:0 1 auto;box-sizing:border-box;display:block;text-align:center;padding:9px 18px;border-radius:50%;font-family:Jua,sans-serif;font-size:15.5px;text-decoration:none;background:radial-gradient(circle,rgba(255,250,240,.9),rgba(255,244,222,.6));border:3px double ' + col + ';box-shadow:0 0 0 2px ' + col + ';color:' + col + ';transform:rotate(' + (go ? -6 : 5) + 'deg);margin:2px 4px';
+      }
       return { label: c.label, style: st, isLink: !!c.href, isBtn: !c.href, href: c.href || '', run: c.run || function () {} };
     });
     var ordered = list.slice(gi).concat(list.slice(0, gi));
