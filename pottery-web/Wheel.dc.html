@@ -284,7 +284,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
     <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
   </sc-if>
-  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:90px;box-sizing:border-box;padding:0 6px 10px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end">
+  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:90px;box-sizing:border-box;padding:0 6px 10px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
     <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">공방</span>
@@ -296,6 +296,10 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Display.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/03a328d4ea7622f6949c549414b9dd47.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">전시</span>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
@@ -339,6 +343,8 @@ class Component extends DCLogic {
     this.ptrs = {};
     this.drag = null;
   }
+  qCnt(g) { return (g.glazeList || []).length + (window.__pano ? (g.kilnList || []).length : 0); }
+  qCap() { return window.__pano ? 6 : (this.qlib().BOARD || 4); }
   fresh() {
     var r = [], t = [];
     for (var i = 0; i < 12; i++) { r.push(40 + (i < 2 ? 3 : 0)); t.push(8); }
@@ -972,7 +978,7 @@ class Component extends DCLogic {
 
     return {
       clays: claysOut,
-      dropTf: dropA.tf, dropOp: s.clay && !((g.glazeList || []).length >= (self.qlib().BOARD || 4) && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
+      dropTf: dropA.tf, dropOp: s.clay && !(self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
       fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
       chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
       fx: fxV,
@@ -980,8 +986,8 @@ class Component extends DCLogic {
       clayCnt: (function () { if (self.qlib().isTut(g)) { return ''; } var n = s.clay ? ((g.mats || {})[s.clay] || 0) : 0; return n > 0 ? '×' + n : '0'; })(),
       clayCntSt: 'font-size:12px;' + (s.clay ? 'color:#8A6440' : 'color:#C0392B;font-weight:700'),
       noClay: !s.clay,
-      boardFull: (function () { var B = self.qlib().BOARD || 4; return (g.glazeList || []).length >= B && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
-      boardTxt: '물레 옆 작업대가 가득 찼어요 (' + (g.glazeList || []).length + '/' + (self.qlib().BOARD || 4) + ')',
+      boardFull: (function () { return self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
+      boardTxt: (window.__pano ? '대기함이 가득 찼어요 (' : '물레 옆 작업대가 가득 찼어요 (') + self.qCnt(g) + '/' + self.qCap() + ')',
       tgIcon: self.iconOf(tg),
       tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
@@ -1185,7 +1191,7 @@ class Component extends DCLogic {
       },
       finish: function () {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
-        if ((g.glazeList || []).length >= (self.qlib().BOARD || 4) && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say('물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
+        if (self.qCnt(g) >= self.qCap() && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say(window.__pano ? '대기함이 가득 찼어요 · 시유하거나 가마에 넣어 자리를 비워요' : '물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
         var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();

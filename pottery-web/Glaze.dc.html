@@ -280,7 +280,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   <sc-if value="{{navLocked}}" hint-placeholder-val="{{false}}">
     <span role="status" style="position:absolute;left:4px;right:4px;top:6px;height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;white-space:nowrap;padding:0 12px;border-radius:12px;background:rgba(43,26,15,.92);border:2px solid #FFD66B;font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8;pointer-events:none;animation:navPulse 1s ease-in-out infinite">작업 중 · 스와이프 잠김 · 화살표로 이동</span>
   </sc-if>
-  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:90px;box-sizing:border-box;padding:0 6px 10px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end">
+  <nav aria-label="주 메뉴" style="{{navMenuHide}}position:absolute;left:0;bottom:0;width:390px;height:90px;box-sizing:border-box;padding:0 6px 10px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
     <a href="Main.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">공방</span>
@@ -292,6 +292,10 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
     <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">의뢰</span>
+    </a>
+    <a href="Display.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
+      <img src="_blob/03a328d4ea7622f6949c549414b9dd47.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:13px;white-space:nowrap;color:#F6E7CC">전시</span>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:42px;height:42px;object-fit:contain">
@@ -438,7 +442,7 @@ class Component extends DCLogic {
   current() {
     var list = this.state.g.glazeList || [];
     for (var i = 0; i < list.length; i++) { if (list[i].id === this.state.sel) { return list[i]; } }
-    return list[0] || null;
+    return window.__pano ? null : (list[0] || null); /* 가로 공방 : 대기함에서 끌어 온 기물만 */
   }
   dtune() { return { maxDip: 1.5, startCov: 0.06, liftCov: 0.02, full: 0.6, maxMs: 2400 }; }
   // 끌어내린 정도(dip) → 그릇이 유약에 잠긴 높이 비율 (0~1) · 그릇 위쪽 208px에서 시작, 수면은 390px
@@ -511,7 +515,7 @@ class Component extends DCLogic {
     var cur = this.current();
     if (!cur) { this.say('유약 바를 기물이 없어요', 'fail'); return; }
     var QG = this.qlib();
-    var QB = this.qlib(), cur0 = this.current(); if (cur0 && !cur0.recoat && (this.state.g.kilnList || []).length >= (QB.BOARD || 4) && !QB.isTut(this.state.g)) { this.say('유약통 옆 자리가 가득 찼어요 · 유약 바른 기물을 가마에 넣어 주세요', 'fail'); return; }
+    var QB = this.qlib(), cur0 = this.current(); if (!window.__pano && cur0 && !cur0.recoat && (this.state.g.kilnList || []).length >= (QB.BOARD || 4) && !QB.isTut(this.state.g)) { this.say('유약통 옆 자리가 가득 찼어요 · 유약 바른 기물을 가마에 넣어 주세요', 'fail'); return; }
     if (this.noMat(this.state.g, this.gz())) { this.say(QG.GMATN[this.gz()] + '이(가) 없어요 · ' + (this.gz() === 'sakura' ? '축제 채집지에서 모아요' : '채집 「돌 부수기」 후 다듬거나 상점에서 사요'), 'fail'); return; }
     var self = this;
     this.t0 = Date.now(); this.effMs = 0; this.lastT = Date.now(); this.maxCov = viaDrag ? (this.curCov || 0) : 1; if (!viaDrag) { this.curCov = 1; }
@@ -564,7 +568,7 @@ class Component extends DCLogic {
     if (rest.length) { this.flyIn([this.potOf(rest[0], this.fillOf(rest[0], 'bisque'))], [gp], 0.6); }
     try { window.__sfx && window.__sfx('drip'); if (zone === 'ok') { setTimeout(function () { try { window.__sfx('ok'); } catch (e) {} }, 60); } else if (zone === 'drip') { window.__sfx('fail'); } } catch (e) {}
     this.liftFx(zone, ms);
-    this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: rest.length ? rest[0].id : '', potHide: rest.length ? Date.now() + 1450 : 0, lastId: cur.recoat ? '' : item.id });
+    this.setState({ holding: false, holdMs: ms, lastMs: ms, sel: !window.__pano && rest.length ? rest[0].id : '', potHide: !window.__pano && rest.length ? Date.now() + 1450 : 0, lastId: cur.recoat ? '' : item.id });
     try { window.__studioPost && window.__studioPost('glazed', { id: item.id }); } catch (e) {}
     var label = cur.recoat ? '덧시유를 입혔어요 · 담금 ' + Math.round((item.cov2 || 0) * 100) + '%' : '유약을 입혔어요 · 담금 ' + Math.round(item.cov * 100) + '%';
     this.say(label + ' · 소성 대기로' + (rest.length ? ' · 다음 기물' : ''), 'ok');
@@ -746,7 +750,7 @@ class Component extends DCLogic {
       potWrap: 'position:absolute;left:135px;top:' + potTop + 'px;width:120px;height:140px;transition:' + (s.drag ? 'none' : 'top .18s ease-out') + ';clip-path:inset(-40px -30px ' + Math.max(0, potTop + 140 - 390) + 'px -30px);' + ((s.potHide || 0) > Date.now() ? 'opacity:0;' : ''),
       tubColor: 'rgba(255,248,235,.35)',
       glzEmpty: !!cur && self.noMat(g, EG),
-      shelfFull: !!cur && !cur.recoat && (g.kilnList || []).length >= (self.qlib().BOARD || 4) && !self.qlib().isTut(g),
+      shelfFull: !window.__pano && !!cur && !cur.recoat && (g.kilnList || []).length >= (self.qlib().BOARD || 4) && !self.qlib().isTut(g),
       shelfTxt: '유약통 옆 자리가 가득 찼어요 (' + (g.kilnList || []).length + '/' + (self.qlib().BOARD || 4) + ')',
       glzAlt: (function () { return ['white', 'celadon', 'black', 'jinsa', 'sakura'].some(function (z) { return z !== EG && !self.noMat(g, z) && (z !== 'jinsa' || (g.glazesFound || {}).jinsa) && (z !== 'sakura' || (g.glazesFound || {}).sakura); }); })(),
       glzAltTxt: '원료가 있는 다른 유약 고르기 ›',

@@ -37,7 +37,7 @@
       colorRange: { '정합': [70, 100], '근접': [45, 85], '불일치': [15, 55] },
       colorThick: { ok: 10, thin: -5, thick: 0, drip: -15 },
       colorValue: [0.75, 1.3], // 발색 0% → ×0.75 · 100% → ×1.3
-      yohen: { heat: 'high', minPct: 92, chance: 0.5, valueMul: 2 }, // 요변 = 발색 특수 결과(등급 아님)
+      yohen: { heat: 'none', minPct: 92, chance: 0, valueMul: 2 }, // 요변 = 발색 특수 결과(등급 아님)
       // 가마 칸 온도 = 화도 기준 + 칸별 오프셋 · 중화도는 모든 유약의 적정 칸을 보장
       kilnBase: { low: 1180, mid: 1240, high: 1300 },
       kilnOff: [-50, -10, -60, -20, 0, -30, -70, -40, -80],
@@ -531,7 +531,7 @@
     // 제작 안내를 켠 의뢰들 (여러 개 가능) · 예전 저장(track 하나)은 그대로 읽고, 아무것도 안 정했으면 첫 의뢰
     function tracked(g, act) {
       act = act || active(g); var ids = act.map(function (x) { return x.id; });
-      if (Array.isArray(g.tracks)) { return g.tracks.filter(function (id) { return ids.indexOf(id) >= 0; }); }
+      return ids; /* 받은 의뢰(최대 3개)를 모두 제작 목표로 */
       if (g.track && ids.indexOf(g.track) >= 0) { return [g.track]; }
       return ids.length ? [ids[0]] : [];
     }
@@ -540,6 +540,7 @@
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var dk = lineState(g, 'dok'); if (dk.open && dk.acc && !dk.thanks && dk.def.type !== 'visit') { var d2 = dk.def; out.push({ id: 'dok', mid: d2.id, kind: 'dok', tag: '도깨비', who: d2.who, role: d2.role, res: d2.res, title: d2.title, items: d2.items, reward: d2.reward, dl: dk.dl, unlock: d2.unlock, unlockNote: d2.unlockNote, chapter: d2.ch, idx: d2.idx }); }
+      (g.nq || []).forEach(function (o) { out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: null, dl: o.dl || {}, at: o.at, due: o.due }); });
       return out.concat(sideQuests(g));
     }
     var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
@@ -2092,7 +2093,7 @@
     var WEB = typeof window.morphdom === 'function';
     if (!window.__studioPost) { window.__studioPost = function () {}; }
     if (!WEB || window.top !== window.self) { return; }
-    var ZOOM = { Wheel: 1, Glaze: 1, Kiln: 1, KilnOpen: 1, Display: 1, Counter: 1 };
+    var ZOOM = { Wheel: 1, Glaze: 1, Kiln: 1, KilnOpen: 1, Counter: 1 };
     if (ZOOM[PAGE] || PAGE === 'Dry' || PAGE === 'Queue') {
       try { if (ZOOM[PAGE]) { sessionStorage.setItem('studioOpen', PAGE); } } catch (e) {}
       try { location.replace('Main.dc.html'); } catch (e) {}
