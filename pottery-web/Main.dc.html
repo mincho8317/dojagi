@@ -653,6 +653,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </sc-if>
   </div>
 
+      <sc-if value="{{rcOn}}" hint-placeholder-val="{{false}}">
+        <div style="position:absolute;left:24px;right:24px;top:318px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">↓ 끌어내리면 한 번 더 시유<br>↑ 들어 올려 오른쪽 위 선반에 놓으면 끝</span></div>
+      </sc-if>
       <sc-if value="{{gwOn}}" hint-placeholder-val="{{false}}">
         <div data-gwait="1" role="button" aria-label="{{gwAria}}" onPointerDown="{{gwDown}}" style="position:absolute;left:135px;top:166px;width:120px;height:140px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 0 6px #FFE27A)"><svg width="120" height="140" viewBox="{{gwP.pot.vb}}" aria-hidden="true"><path d="{{gwP.pot.d}}" fill="{{gwP.pot.fill}}"></path><path d="{{gwP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{gwP.pot.d}}" fill="none" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></path><ellipse cx="0" cy="{{gwP.pot.rimY}}" rx="{{gwP.pot.rimRx}}" ry="{{gwP.pot.rimRy}}" fill="{{gwP.pot.inner}}" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></ellipse></svg></div>
         <div style="position:absolute;left:30px;right:30px;top:316px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">시유 완료 · 한 번 더 담그거나<br>끌어서 오른쪽 위 선반에 ↗</span></div>
@@ -1958,7 +1961,7 @@ class Ctl_gz extends StationBase {
     var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
     this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     this.setState({ sel: id, lastId: '', glazeManual: '' });
-    this.say('한 번 더 담가요 · 유약과 기울기를 골라 덧입혀요', 'ok');
+    this.say(window.__pano ? '바로 한 번 더 담글 수 있어요 · 위로 들어 올려 선반에 놓으면 끝' : '한 번 더 담가요 · 유약과 기울기를 골라 덧입혀요', 'ok');
   }
   // 기울기 정규화 : -180 ~ 180 · 15° 단위
   angN(a) { a = Math.round((+a || 0) / 15) * 15; a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a; }
@@ -1977,8 +1980,13 @@ class Ctl_gz extends StationBase {
     var k = el ? el.getBoundingClientRect().height / 140 : 1;
     var y0 = e.clientY, x0 = e.clientX, a0 = this.state.ang != null ? this.state.ang : 0, t0 = Date.now(), moved = 0, T = this.dtune();
     this.setState({ drag: true, dragDip: 0 });
+    var curP = this.current();
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
+      if (window.__pano && window.__glzCarry && curP && curP.recoat && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 */
+        window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+        self.offDrag = null; self.setState({ drag: false, dragDip: null, ang: a0 }); window.__glzCarry(ev, curP.id); return;
+      }
       if (!self.state.holding) { var dx = (ev.clientX - x0) / (k || 1), na = Math.round((a0 + dx * 1.1) / 15) * 15; if (na !== self.state.ang) { self.setState({ ang: na }); try { window.__buzz && window.__buzz(6); window.__sfx && window.__sfx('tap'); } catch (e2) {} } }
       var dip = Math.max(0, Math.min(T.maxDip, dy / 125)), cv = self.covOf(dip);
       var s = self.state; self.curCov = cv;
@@ -4068,6 +4076,7 @@ class Component extends DCLogic {
     window.__studioPost = function (ev, data) { self.stationEv(ev, data || {}); };
     window.__panoPay = function (pay, m0, items) { return self.payMul(pay, m0, items); };
     window.__panoGuests = function (ctl, list, g2) { return self.counterGuests(ctl, list, g2); };
+    window.__glzCarry = function (ev, id) { self.glzCarry(ev, id); };
     window.__wEmpty = g.wEmpty === true; /* 예전 저장(값 없음)은 흙이 올라간 상태로 시작 */ window.__mainHost = this;
     window.__wEmptyTap = function () { self.say('물레가 비었어요 · 아래 흙판의 흙을 골라 올려요'); self.sfx('fail'); };
     this.sl = 0;
@@ -4144,7 +4153,13 @@ class Component extends DCLogic {
   sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
   stationEv(ev, data) {
     if (ev === 'formed' && data.id) { window.__wEmpty = true; this.setG2({ onWheel: data.id, wEmpty: true }); this.flyToShelf(data.id); }
-    else if (ev === 'glazed' && data.id) { window.__glzWait = true; this.setG2({ glzWait: data.id }); }
+    else if (ev === 'glazed' && data.id) {
+      var it = (this.loadG().kilnList || []).filter(function (x) { return x.id === data.id; })[0], G = this.ctls.Glaze;
+      window.__glzWait = true; this.setG2({ glzWait: data.id });
+      if (it && !it.g2 && G && G.recoat) { /* 첫 층을 입히면 그대로 시유그릇에 둔 채 바로 덧시유 가능한 상태로 */
+        var self2 = this; setTimeout(function () { try { G.setState({ lastId: data.id }); G.recoat(); } catch (e) {} self2.bump(); }, 1150);
+      }
+    }
   }
   /* ── 의뢰 : 기한·보상 ── */
   durOf(items) { var n = 0; (items || []).forEach(function (it) { if (!it.mat) { n += it.n || 1; } }); return (3600 + 1800 * Math.max(0, n - 1)) * 1000; }
@@ -4560,7 +4575,7 @@ class Component extends DCLogic {
   }
   /* 실로 잘라 낸 기물이 물레에서 선반으로 날아간다 */
   flyToShelf(id) {
-    var self = this;
+    var self = this; this.flyingId = id;
     setTimeout(function () {
       var src = document.querySelector('[data-onwheel]'), dst = document.querySelector('[data-rail="rf"]');
       if (src && dst) {
@@ -4574,9 +4589,43 @@ class Component extends DCLogic {
       } else { self.shelvePiece(id); }
     }, 900);
   }
+  /* 덧시유 대기 중인 기물을 위로 들어 올렸을 때 : 그 손가락 그대로 이어서 끈다 */
+  glzCarry(ev, id) {
+    var self = this, pid = ev.pointerId, g = this.loadG(), it = (g.glazeList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return; }
+    var gp = document.getElementById('gpot'), R0 = gp ? gp.getBoundingClientRect() : { left: ev.clientX - 60, top: ev.clientY - 70, width: 120, height: 140 };
+    var P = this.potOf(it, this.fillOf(it, 'glazed')), html = '<svg width="120" height="140" viewBox="' + P.vb + '"><path d="' + P.d + '" fill="' + P.fill + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/><ellipse cx="0" cy="' + P.rimY + '" rx="' + P.rimRx + '" ry="' + P.rimRy + '" fill="' + P.inner + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/></svg>';
+    var R = (this.stripEl || document.body).getBoundingClientRect(), k = R.width / 390, LF = this.lift();
+    var gh = document.createElement('div'); gh.setAttribute('aria-hidden', 'true');
+    gh.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:120px;height:140px;margin-left:-60px;margin-top:-70px;transform:scale(' + (k * 0.9) + ');filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))';
+    gh.innerHTML = html; document.body.appendChild(gh); var Gc = this.ctls.Glaze; function hidePot(on) { try { Gc && Gc.setState({ potHide: on ? Date.now() + 60000 : 0 }); } catch (er) {} } hidePot(true);
+    var shelf = document.querySelector('[data-rail="rg"]'); this.dragging = true; this.sfx('tap');
+    function pos(x, y) { gh.style.left = x + 'px'; gh.style.top = (y - LF) + 'px'; if (shelf) { var r = shelf.getBoundingClientRect(), on = x >= r.left - 12 && x <= r.right + 12 && y - LF >= r.top - 12 && y - LF <= r.bottom + 12; shelf.style.outline = '3px dashed #FFD54A'; shelf.style.background = on ? 'rgba(255,226,122,.22)' : ''; return on; } return false; }
+    pos(ev.clientX, ev.clientY);
+    function mv(e) { if (e.pointerId !== pid) { return; } if (e.cancelable) { e.preventDefault(); } pos(e.clientX, e.clientY); }
+    function up(e) {
+      if (e.pointerId !== pid) { return; }
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      var on = e.type !== 'pointercancel' && pos(e.clientX, e.clientY); self.dragging = false;
+      if (shelf) { shelf.style.outline = ''; shelf.style.background = ''; }
+      var ok = on && self.shelveGlazed(id);
+      if (ok) { gh.style.transition = 'opacity .16s'; gh.style.opacity = '0'; setTimeout(function () { gh.remove(); hidePot(false); }, 180); }
+      else { gh.style.transition = 'left .25s,top .25s'; gh.style.left = (R0.left + R0.width / 2) + 'px'; gh.style.top = (R0.top + R0.height / 2) + 'px'; setTimeout(function () { gh.remove(); hidePot(false); }, 260); if (!on) { self.say('오른쪽 위 시유한 기물 선반에 놓아요'); } }
+      self.bump();
+    }
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
   /* 시유를 마치고 시유그릇에서 기다리는 기물 → 선반으로 */
   shelveGlazed(id) {
-    var g = this.loadG(); if (g.glzWait !== id) { return false; }
+    var g = this.loadG(), G = this.ctls.Glaze;
+    var rc = (g.glazeList || []).filter(function (x) { return x.id === id && x.recoat; })[0];
+    if (rc) { /* 덧시유 대기 중이던 기물 : 한 층만 입힌 채로 선반에 */
+      var it = {}, k; for (k in rc) { if (k !== 'recoat') { it[k] = rc[k]; } }
+      if ((g.kilnList || []).length >= this.KB().cap) { this.say('시유한 기물 선반이 가득 찼어요'); this.sfx('fail'); return false; }
+      this.setG2({ glazeList: (g.glazeList || []).filter(function (x) { return x.id !== id; }), kilnList: (g.kilnList || []).concat([it]), glzWait: '' });
+      try { G && G.setState({ sel: '', lastId: '' }); } catch (e) {}
+      window.__glzWait = false; this.sfx('ok'); this.say('시유한 기물 선반에 올렸어요 · 가마 쪽으로 넘기면 선반이 따라와요'); return true;
+    }
+    if (g.glzWait !== id) { return false; }
     window.__glzWait = false; this.setG2({ glzWait: '' }); this.sfx('ok');
     try { var G = this.ctls.Glaze; G && G.setState({ lastId: '' }); } catch (e) {}
     this.say('시유한 기물 선반에 올렸어요 · 가마 쪽으로 넘기면 선반이 따라와요'); return true;
@@ -4684,6 +4733,8 @@ class Component extends DCLogic {
     if (gw && !gwIt) { setTimeout(function () { self.setG2({ glzWait: '' }); }, 0); }
     v.rg = shelf((g.kilnList || []).filter(function (x) { return x.id !== gw; }), 'k', R.g, '시유한 기물'); v.rg.dz = 'gshelf';
     if (window.__glzWait !== !!gwIt) { window.__glzWait = !!gwIt; var Gz = this.ctls.Glaze; if (Gz) { Gz.dirty = true; } }
+    var Gs = this.ctls.Glaze && this.ctls.Glaze.state, rcIt = Gs && Gs.sel ? (g.glazeList || []).filter(function (x) { return x.id === Gs.sel && x.recoat; })[0] : null;
+    v.rcOn = !!rcIt && !Gs.holding && !Gs.drag;
     v.gwOn = !!gwIt; v.gwP = { pot: gwIt ? this.potOf(gwIt, this.fillOf(gwIt, 'glazed')) : EMPTY };
     v.gwAria = gwIt ? this.pName(gwIt) + ' · 시유 완료 · 끌어서 시유한 기물 선반에' : '';
     v.gwDown = function (e) { if (!gwIt) { return; } var el = e.currentTarget.querySelector('svg'); self.carryStart(e, 'gpiece', { id: gwIt.id }, el ? el.outerHTML : '', 120, 140, function () { self.say('기물을 끌어서 오른쪽 위 선반에 올려요'); }); };
@@ -4703,6 +4754,8 @@ class Component extends DCLogic {
         down: function (e) { if (own === 0) { self.say(c.n + ' 흙이 없어요 · 채집에서 캐 와요'); self.sfx('fail'); return; } self.carryStart(e, 'clay', c, html, 60, 52, function () { self.say(c.n + ' 흙을 끌어서 물레에 올려요'); }); } };
     });
     v.wEmpty = wEmpty && !it0; v.wEmptyA = wEmpty ? '1' : '0';
+    if (it0 && this.flyingId !== it0.id) { this.flyingId = it0.id; setTimeout(function () { self.flyToShelf(it0.id); }, 0); }
+    if (onWid && !it0) { setTimeout(function () { self.setG2({ onWheel: '' }); }, 0); }
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     v.onAria = it0 ? this.pName({ shape: it0.shape, prof: it0.prof, sk: it0.sk }) + ' · 집어서 선반에 올리기' : '';
     v.onDown = function () {};

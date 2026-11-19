@@ -454,7 +454,7 @@ class Component extends DCLogic {
     var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
     this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     this.setState({ sel: id, lastId: '', glazeManual: '' });
-    this.say('한 번 더 담가요 · 유약과 기울기를 골라 덧입혀요', 'ok');
+    this.say(window.__pano ? '바로 한 번 더 담글 수 있어요 · 위로 들어 올려 선반에 놓으면 끝' : '한 번 더 담가요 · 유약과 기울기를 골라 덧입혀요', 'ok');
   }
   // 기울기 정규화 : -180 ~ 180 · 15° 단위
   angN(a) { a = Math.round((+a || 0) / 15) * 15; a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a; }
@@ -473,8 +473,13 @@ class Component extends DCLogic {
     var k = el ? el.getBoundingClientRect().height / 140 : 1;
     var y0 = e.clientY, x0 = e.clientX, a0 = this.state.ang != null ? this.state.ang : 0, t0 = Date.now(), moved = 0, T = this.dtune();
     this.setState({ drag: true, dragDip: 0 });
+    var curP = this.current();
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
+      if (window.__pano && window.__glzCarry && curP && curP.recoat && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 */
+        window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+        self.offDrag = null; self.setState({ drag: false, dragDip: null, ang: a0 }); window.__glzCarry(ev, curP.id); return;
+      }
       if (!self.state.holding) { var dx = (ev.clientX - x0) / (k || 1), na = Math.round((a0 + dx * 1.1) / 15) * 15; if (na !== self.state.ang) { self.setState({ ang: na }); try { window.__buzz && window.__buzz(6); window.__sfx && window.__sfx('tap'); } catch (e2) {} } }
       var dip = Math.max(0, Math.min(T.maxDip, dy / 125)), cv = self.covOf(dip);
       var s = self.state; self.curCov = cv;
