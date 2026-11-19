@@ -67,7 +67,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 [data-wempty="1"] [data-zst="Wheel"] [role="meter"]{visibility:hidden}
 [data-wempty="1"] [data-zst="Wheel"] svg>:not(defs):not(image){display:none}
 @keyframes rvFade{from{opacity:0}to{opacity:1}}@keyframes rvDoor{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.6)}}@keyframes rvGlow{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}@keyframes rvRays{to{rotate:360deg}}@keyframes rvRise{0%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}20%{opacity:1}65%{transform:translate(0,-12px) scale(1.08)}100%{transform:translate(0,0) scale(1)}}@keyframes rvCard{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}@keyframes kDone{0%,100%{box-shadow:0 0 4px 1px rgba(255,213,74,.5)}50%{box-shadow:0 0 14px 5px rgba(255,213,74,.95)}}@keyframes mtNeedle{from{left:0}to{left:100%}}
-@keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
+@keyframes wireSlit2{0%{transform:scaleX(.2);opacity:1}40%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1.05);opacity:0}}@keyframes cutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
 </style>
 </helmet>
 <div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F">
@@ -427,20 +427,30 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       </sc-if>
       <sc-if value="{{cutOn}}" hint-placeholder-val="{{false}}">
         <div aria-hidden="true" style="position:absolute;left:0;top:352px;width:390px;height:70px;z-index:9;pointer-events:none;overflow:hidden">
-          <div style="position:absolute;left:120px;top:30px;width:150px;height:4px;border-radius:2px;background:#FFF4DE;box-shadow:0 0 8px 2px rgba(255,231,168,.9);animation:wireSlit .62s ease-out both"></div>
-          <div style="position:absolute;left:85px;top:0;width:220px;height:70px;animation:wireCut .62s cubic-bezier(.5,0,.3,1) both">
-            <svg width="220" height="70" viewBox="0 0 220 70"><path d="M10 32 Q110 38 210 32" fill="none" stroke="rgba(43,26,15,.45)" stroke-width="6"></path><path d="M10 32 Q110 38 210 32" fill="none" stroke="#FFF4DE" stroke-width="3.5"></path><rect x="0" y="10" width="20" height="40" rx="8" fill="#A97B52" stroke="#5B3A24" stroke-width="3"></rect><rect x="200" y="10" width="20" height="40" rx="8" fill="#A97B52" stroke="#5B3A24" stroke-width="3"></rect></svg>
-          </div>
+          <div style="position:absolute;left:110px;top:28px;width:170px;height:4px;border-radius:2px;background:#FFF4DE;box-shadow:0 0 10px 3px rgba(255,231,168,.95);animation:wireSlit2 .5s ease-out both"></div>
         </div>
+      </sc-if>
+      <sc-if value="{{cutMode}}" hint-placeholder-val="{{false}}">
+        <div role="application" aria-label="실 자르기 · 실 손잡이를 잡고 점선을 따라 오른쪽 끝까지 당기기" onPointerDown="{{cg.down}}" style="position:absolute;left:0;top:300px;width:390px;height:150px;z-index:10;touch-action:none;cursor:grab"></div>
+        <svg aria-hidden="true" width="390" height="696" viewBox="0 0 390 696" style="position:absolute;left:0;top:0;z-index:11;pointer-events:none;overflow:visible">
+          <line x1="{{cg.x0}}" y1="{{cg.y}}" x2="{{cg.x1}}" y2="{{cg.y}}" stroke="{{cg.guide}}" stroke-width="3" stroke-dasharray="8 6" stroke-linecap="round" style="filter:drop-shadow(0 0 3px rgba(43,26,15,.8))"></line>
+          <line data-cuttrail="1" x1="{{cg.x0}}" y1="{{cg.y}}" x2="{{cg.tx}}" y2="{{cg.y}}" stroke="#FFF4DE" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px rgba(255,231,168,.95))"></line>
+          <g transform="translate({{cg.fx}} {{cg.fy}})"><rect x="0" y="0" width="2.5" height="26" fill="#5B3A24"></rect><path d="M2.5 1 L18 6 L2.5 11 Z" fill="#E0573A" stroke="#7A2A10" stroke-width="1.2"></path></g>
+          <rect x="{{cg.lx}}" y="{{cg.y}}" width="14" height="30" rx="6" transform="translate(-7 -15)" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect>
+          <line data-cutline="1" x1="{{cg.lx}}" y1="{{cg.y}}" x2="{{cg.hx}}" y2="{{cg.hy}}" stroke="#F3E3C4" stroke-width="2.5" style="filter:drop-shadow(0 1px 1px rgba(43,26,15,.7))"></line>
+          <g data-cuthand="1" transform="{{cg.hand}}"><g style="{{cg.pulse}}"><circle cx="0" cy="0" r="22" fill="rgba(255,226,122,.25)" stroke="#FFE27A" stroke-width="2"></circle><rect x="-7" y="-15" width="14" height="30" rx="6" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect></g></g>
+        </svg>
+        <div style="{{cg.hintSt}}"><span style="display:inline-block;padding:5px 11px;border-radius:11px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">실 손잡이를 잡고 점선을 따라 → 끝까지</span></div>
+        <button type="button" onClick="{{cg.cancel}}" aria-label="실 내려놓기" style="all:unset;cursor:pointer;position:absolute;right:8px;top:520px;z-index:11;padding:4px 9px;border-radius:10px;background:#FFF4DE;border:2px solid #8A6440;font-family:'Jua',sans-serif;font-size:12px;color:#5B3A24">✕ 실 내려놓기</button>
       </sc-if>
       <div aria-hidden="true" style="position:absolute;left:6px;top:650px;width:296px;height:20px;border-radius:7px;background:linear-gradient(#B98A5E,#8A5E3A);border:3px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.35)"></div>
       <div role="group" aria-label="흙판 · 흙을 골라 물레에 올려요" style="position:absolute;left:12px;top:596px;width:290px;height:100px;z-index:6">
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="3"><div role="button" aria-label="{{lp.aria}}" onPointerDown="{{lp.down}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:52px;height:46px;object-fit:contain;pointer-events:none"></div><span style="{{lp.tagSt}}">{{lp.tag}}</span></sc-for>
       </div>
       <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
-      <div role="button" aria-label="실 · 끌어서 물레 위 기물 밑동에 대면 잘라 떼요" onPointerDown="{{wireDown}}" style="position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center">
+      <div role="button" aria-label="실 · 물레에 끌어다 대고 점선을 따라 당겨 자르기" onPointerDown="{{wireDown}}" style="{{wireBoardSt}}">
         <svg width="70" height="70" viewBox="0 0 62 70" aria-hidden="true"><path d="M31 0 L10 30 M31 0 L52 30" stroke="#5B3A24" stroke-width="1.5"></path><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><path d="M10 30 Q31 66 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"></path></svg>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;position:relative;margin-top:2px">실 · 끌어서 자르기</span>
+        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;position:relative;margin-top:2px">실 · 물레에 대기</span>
       </div>
 
       </sc-if>
@@ -691,6 +701,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <span style="{{kn.hole}}"></span><span style="{{kn.knob}}"></span><span style="{{kn.gdot}}"></span>
             <sc-if value="{{kn.coneOn}}" hint-placeholder-val="{{false}}"><svg width="20" height="26" aria-hidden="true" style="{{kn.coneSt}}"><rect x="2" y="22" width="16" height="4" rx="1" fill="#2B1A0F"></rect><g transform="{{kn.cone}}"><path d="M7 22 L10 2 L13 22 Z" fill="{{kn.coneFill}}" stroke="#2B1A0F" stroke-width="1.5"></path></g></svg></sc-if>
             <span style="{{kn.spark}}">✨</span>
+            <span aria-hidden="true" style="{{kn.pgBg}}"><span style="{{kn.pgFill}}"></span></span>
             <span style="{{kn.lockSt}}">{{kn.lockTxt}}</span><span style="{{kn.emptySt}}">{{kn.emptyTxt}}</span>
             <sc-if value="{{kn.tipOn}}" hint-placeholder-val="{{false}}"><div role="status" style="{{kn.tipSt}}"><span>{{kn.tip}}</span><sc-if value="{{kn.outOn}}" hint-placeholder-val="{{false}}"><button type="button" onPointerDown="{{kn.stop}}" onClick="{{kn.out}}" aria-label="이 칸에서 꺼내기" style="all:unset;cursor:pointer;padding:5px 10px;border-radius:9px;background:#C0582E;border:2px solid #8A3A1C;font-family:'Jua',sans-serif;font-size:13px;color:#FFF">꺼내기</button></sc-if></div></sc-if>
           </div>
@@ -957,14 +968,10 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
    </div>
   </div>
   <div style="position:absolute;left:0;top:0;width:390px;height:56px;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:30">
-    <div role="list" aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:3px;right:92px;height:24px;display:flex;gap:4px">
+    <div role="list" aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:5px;right:92px;height:44px;display:flex;gap:4px">
       <sc-for list="{{qCards}}" as="qc" hint-placeholder-count="3">
-        <button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}"><span style="{{qc.dot}}"></span><span style="font-family:'Jua',sans-serif;font-size:10px;line-height:1.05;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qc.t}}</span><span style="font-size:9.5px;font-weight:700;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{qc.subCol}}">{{qc.sub}}</span></button>
+        <button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}"><span style="{{qc.dot}}"></span><span style="font-family:'Jua',sans-serif;font-size:13px;line-height:1.2;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qc.t}}</span><span style="font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{qc.subCol}}">{{qc.sub}}</span></button>
       </sc-for>
-    </div>
-    <div role="tablist" aria-label="공방 위치" style="position:absolute;left:6px;top:30px;width:292px;height:24px;border-radius:8px;background:rgba(0,0,0,.28);display:flex">
-      <sc-for list="{{mm}}" as="m" hint-placeholder-count="4"><button type="button" role="tab" onClick="{{m.tap}}" aria-label="{{m.aria}}" style="all:unset;cursor:pointer;flex:1 1 0;text-align:center;font-family:'Jua',sans-serif;font-size:12px;line-height:24px;color:#F3E3C4;border-right:1px solid rgba(255,231,168,.25)">{{m.n}}</button></sc-for>
-      <span data-mmview="1" style="{{mmView}}"></span>
     </div>
     <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:4px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{gold}}</a>
     <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:29px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{jade}}</a>
@@ -978,7 +985,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:16px;right:16px;top:62px;z-index:120;padding:10px 14px;border-radius:16px;background:rgba(43,26,15,.93);border:3px solid #FFE7A8;font-family:Jua,sans-serif;font-size:14.5px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none;animation:pop .25s ease both">{{toast}}</div>
   </sc-if>
-  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end">
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end">
     <a href="Main.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">공방</span>
@@ -991,10 +998,6 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
       <sc-if value="{{commBadgeOn}}" hint-placeholder-val="{{true}}"><span data-cb="1" style="position:absolute;right:10px;top:0;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:'Jua',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center">{{commBadge}}</span></sc-if>
-    </a>
-    <a href="Display.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/03a328d4ea7622f6949c549414b9dd47.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">전시</span>
     </a>
     <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
@@ -5605,17 +5608,60 @@ class Component extends DCLogic {
   cutWire() {
     var g = this.loadG(), W = this.ctls.Wheel, self = this;
     if (this.cutAt && Date.now() - this.cutAt < 900) { return true; }
+    if (this.cutMode) { this.say('실 손잡이를 잡고 점선을 따라 끝까지 당겨요'); return true; }
     if (window.__wEmpty) { this.say(g.onWheel ? '이미 잘라 냈어요 · 기물을 들어 선반에 올려요' : '물레에 흙부터 올려요'); return false; }
     if (!W || W.state.stage !== 'shape') { this.say('중심부터 잡고 모양을 낸 뒤에 잘라요'); this.sfx('fail'); return false; }
     var tut = false; try { tut = this.qlib().isTut(g); } catch (e) {}
     if (!tut && (g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 (4/4) · 유약을 발라 자리를 비워요'); this.sfx('fail'); return false; }
+    /* 실을 물레에 대면 자르기 자세로 : 점선이 나오고, 손가락으로 실을 잡아 점선을 따라 끝까지 당겨야 잘린다 */
+    this.cutMode = true; this.cutPx = null; this.sfx('tap'); this.say('실 손잡이를 잡고 점선을 따라 끝까지 당겨요'); this.bump();
+    return true;
+  }
+  cutGeom() { var W = this.ctls.Wheel, r = (W && W.state && W.state.r) || [40], mx = Math.max.apply(null, r.concat([20])), half = Math.round(mx * 1.04 + 26); return { x0: 195 - half, x1: 195 + half, y: 382, tol: 22 }; }
+  cutDown(e) {
+    if (!this.cutMode) { return; }
+    var self = this, pnl = document.querySelector('[data-panel="1"]'); if (!pnl) { return; }
+    var R = pnl.getBoundingClientRect(), k = R.width / 390, G = this.cutGeom(), pid = e.pointerId;
+    function P(ev) { return { x: (ev.clientX - R.left) / k, y: (ev.clientY - R.top) / k }; }
+    var p0 = P(e);
+    if (p0.x > G.x0 + 44 || Math.abs(p0.y - G.y) > 44) { this.say('점선 왼쪽 끝의 실 손잡이를 잡고 당겨요'); this.sfx('fail'); return; }
+    if (e.cancelable) { e.preventDefault(); }
+    this.dragging = true; this.cutFail = 0;
+    function draw(x, y) {
+      self.cutPx = x; self.cutPy = y;
+      var ln = document.querySelector('[data-cutline]'), hd = document.querySelector('[data-cuthand]'), tr = document.querySelector('[data-cuttrail]');
+      if (ln) { ln.setAttribute('x2', x.toFixed(1)); ln.setAttribute('y2', y.toFixed(1)); }
+      if (hd) { hd.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')'); }
+      if (tr) { tr.setAttribute('x2', Math.max(G.x0, x).toFixed(1)); }
+    }
+    function end(ok, msg) {
+      window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
+      self.dragging = false;
+      if (ok) { self.cutMode = false; self.cutPx = null; self.finishCut(); return; }
+      self.cutPx = null; if (msg) { self.say(msg); self.sfx('fail'); try { window.__buzz && window.__buzz(30); } catch (er) {} self.cutFail = Date.now(); }
+      self.bump();
+    }
+    function mv(ev) {
+      if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); }
+      var q = P(ev);
+      if (Math.abs(q.y - G.y) > G.tol) { end(false, '점선을 벗어났어요 · 왼쪽 끝부터 다시 당겨요'); return; }
+      if (q.x < (self.cutPx || G.x0) - 30) { end(false, '실은 한 방향으로 쭉 당겨요'); return; }
+      draw(Math.max(G.x0, q.x), q.y);
+      if (q.x >= G.x1) { end(true); }
+    }
+    function up(ev) { if (ev.pointerId !== pid) { return; } end(false, (self.cutPx || G.x0) > G.x0 + 10 ? '끝까지 당겨야 잘려요 · 다시 당겨요' : ''); }
+    draw(Math.max(G.x0, p0.x), p0.y);
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
+  cutCancel() { this.cutMode = false; this.cutPx = null; this.say('실을 내려놓았어요'); this.bump(); }
+  finishCut() {
+    var W = this.ctls.Wheel, self = this;
     this.cutAt = Date.now(); this.sfx('tap'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {} this.bump();
     setTimeout(function () {
       var v = W._v || (W.renderVals0 ? W.renderVals0() : W.renderVals());
       if (v && v.finish) { v.finish(); }
       self.bump();
-    }, 620);
-    return true;
+    }, 380);
   }
   shelvePiece(id) {
     var g = this.loadG(); if (g.onWheel !== id) { return false; }
@@ -5757,7 +5803,15 @@ class Component extends DCLogic {
     });
     v.wEmpty = wEmpty && !it0; v.wEmptyA = wEmpty ? '1' : '0';
     if (onWid && !it0) { setTimeout(function () { self.setG2({ onWheel: '' }); }, 0); }
-    v.cutOn = !!(this.cutAt && now - this.cutAt < 700);
+    v.cutOn = !!(this.cutAt && now - this.cutAt < 500);
+    if (this.cutMode && (wEmpty || !Wc || !Wc.state || Wc.state.stage !== 'shape')) { this.cutMode = false; }
+    v.cutMode = !!this.cutMode;
+    var CG = this.cutGeom(), cpx = this.cutPx != null ? this.cutPx : CG.x0, cpy = this.cutPx != null ? this.cutPy : CG.y;
+    v.cg = { x0: CG.x0, x1: CG.x1, y: CG.y, lx: CG.x0 - 24, hx: cpx.toFixed(1), hy: cpy.toFixed(1), tx: Math.max(CG.x0, cpx).toFixed(1), hand: 'translate(' + cpx.toFixed(1) + ' ' + cpy.toFixed(1) + ')',
+      fx: CG.x1 + 4, fy: CG.y - 26, hintSt: 'position:absolute;left:0;right:0;top:' + (CG.y + 24) + 'px;z-index:11;text-align:center;pointer-events:none', pulse: this.cutPx == null ? 'animation:cutPulse 1s ease-in-out infinite;transform-origin:center;transform-box:fill-box' : '',
+      guide: this.cutFail && now - this.cutFail < 500 ? '#FF6B4A' : '#FFE27A',
+      down: function (e) { self.cutDown(e); }, cancel: function () { self.cutCancel(); } };
+    v.wireBoardSt = 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
     v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
@@ -5779,7 +5833,7 @@ class Component extends DCLogic {
     v.onAria = it0 ? this.pName({ shape: it0.shape, prof: it0.prof, sk: it0.sk }) + ' · 집어서 선반에 올리기' : '';
     v.onDown = function (e) { if (!it0) { return; } var gw = ob.w, gh = ob.h, gH = v.onGhost || ''; self.carryStart(e, 'piece', { id: it0.id }, gH, gw, gh, function () { self.say('기물을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? it0.id : ''; self.bump(); } }); };
     var WIREH = '<svg width="70" height="70" viewBox="0 0 62 70"><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><path d="M10 30 Q31 46 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"/></svg>';
-    v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레 위 기물 밑동에 대요'); }); };
+    v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레에 대면 자를 점선이 나와요'); }); };
     v.tgTap = function () { if (W.openTarget) { W.openTarget(); } };
     v.tgName = W.targetName || '';
     /* 유약 쪽 : 유약통 · 유약석 · 절구 */
@@ -5807,6 +5861,8 @@ class Component extends DCLogic {
         kv.push({ idx: k, free: open && !has ? '1' : '0', locked: !open, empty: open && !has, has: has, done: done, run: run,
           down: function (e) { self.kDown(e, k); },
           aria: !open ? (nextLock ? '잠긴 칸 · 눌러서 ' + (cost || 0).toLocaleString() + 'G로 열기' : '잠긴 칸') : (done ? nm + ' · 다 구웠어요 · 눌러서 꺼내기' : (run ? nm + ' · 굽는 중 ' + Math.round(x.p * 100) + '% · 꾹 누르면 남은 시간 · 누르면 꺼내기' : '빈 칸 · 선반의 기물을 끌어 넣어요')),
+          pgBg: has ? 'position:absolute;left:10px;top:61px;width:64px;height:7px;box-sizing:border-box;border-radius:4px;background:rgba(20,10,4,.75);border:1.5px solid #2B1A0F;overflow:hidden;pointer-events:none' : 'display:none',
+          pgFill: has ? 'display:block;height:100%;width:' + (done ? 100 : Math.max(3, Math.round(x.p * 100))) + '%;border-radius:3px;background:' + (done ? '#FFD54A' : (inB ? 'linear-gradient(90deg,#6FCF5A,#B8F07A)' : 'linear-gradient(90deg,#E07A2A,#F2B24A)')) + ';transition:width .9s linear' : 'display:none',
           box: 'position:relative;width:84px;height:74px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none',
           door: 'position:absolute;left:4px;top:6px;width:76px;height:64px;box-sizing:border-box;border-radius:30px 30px 4px 4px;border:3px solid #2B1A0F;' + (!open ? 'background:#5A4A40' : (done ? 'background:linear-gradient(#B5AE9E,#7D776E);animation:kDone 1.3s ease-in-out infinite' : has ? 'background:linear-gradient(#9C978C,#6B6660)' : 'background:radial-gradient(ellipse at 50% 85%,#4A2414,#1E0D06)')),
           leaf: open && !has ? 'position:absolute;left:-8px;top:10px;width:14px;height:58px;border-radius:4px;background:linear-gradient(90deg,#6B6660,#8F8A80);border:2px solid #2B1A0F;transform:skewY(-14deg)' : 'display:none',
@@ -5877,7 +5933,7 @@ class Component extends DCLogic {
       var sub = (r.need ? (r.ready || 0) + '/' + r.need : '') + (due ? (r.need ? ' · ' : '') + (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '');
       return { t: a.title || a.who || '의뢰', sub: sub || (a.who || ''), subCol: due && left <= 0 ? '#A3442C' : (due && left < 600000 ? '#C0582E' : '#5B3A24'),
         aria: (a.title || '') + ' · ' + sub, tap: function () { self.say((a.who ? a.who + ' · ' : '') + (a.title || '') + (sub ? ' · ' + sub : '') + (due && left > 0 ? ' · 기한 안이면 보상 2배' : '')); },
-        dot: 'position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:50%;background:' + COL[i % 3],
+        dot: 'position:absolute;left:5px;top:17px;width:8px;height:8px;border-radius:50%;background:' + COL[i % 3],
         st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;min-width:0;box-sizing:border-box;padding:1px 5px 1px 14px;border-radius:8px;background:#FFF4DE;border:2px solid ' + COL[i % 3] + ';display:flex;flex-direction:column;justify-content:center;overflow:hidden' };
     });
     if (!v.qCards.length) { v.qCards = [{ t: '받은 의뢰가 없어요', sub: '카운터에서 손님을 맞아요', subCol: '#8A6440', aria: '받은 의뢰 없음', tap: function () { self.goPanel(0); }, dot: 'display:none', st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;box-sizing:border-box;padding:1px 8px;border-radius:8px;background:rgba(255,244,222,.85);border:2px dashed #8A6440;display:flex;flex-direction:column;justify-content:center' }]; }
