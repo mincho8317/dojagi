@@ -701,7 +701,7 @@ class Component extends DCLogic {
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
       curMeta: cur ? CLAY[cur.clay] + ' · ' + (DRY[cur.dry] || DRY.ok).t : '',
       openPick: function () { if (!s.holding) { self.setState({ pkOpen: true }); } },
-      dirOn: !!cur || !!window.__pano, boxInSt: cur ? '' : 'visibility:hidden', /* 가로 공방 : 기물이 없어도 기울기·미리보기 틀은 보인다 (내용 없음) */
+      dirOn: !!cur, boxInSt: cur ? '' : 'visibility:hidden', /* 가로 공방 : 기물이 없어도 기울기·미리보기 틀은 보인다 (내용 없음) */
       angVal: self.angN(s.ang), angAria: '담그는 기울기 ' + self.angN(s.ang) + '도 · ' + self.angName(s.ang),
       angRot: 'rotate(' + self.angN(s.ang) + ')',
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
@@ -725,7 +725,7 @@ class Component extends DCLogic {
         });
         return out;
       })(),
-      pvOn: !!cur || !!window.__pano,
+      pvOn: !!cur,
       pv: (function () {
         if (!cur) { return self.potOf({ shape: 'cup' }, '#EAD8C4'); }
         var cvP = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0;
@@ -738,13 +738,13 @@ class Component extends DCLogic {
       pvPctSt: 'font-family:Jua,sans-serif;font-size:12px;color:' + ((s.drag || s.holding) ? '#2F6328' : '#8A6440'),
       pvAria: '완성 미리보기 · ' + self.angName(s.ang) + ' 담금',
       potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : (window.__pano ? '왼쪽 위 선반에서 기물을 끌어와요' : '위 대기함에서 기물 고르기'),
-      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('왼쪽 위 빚은 기물 선반에서 기물을 눌러 올려요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
+      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('왼쪽 위 빚은 기물 선반에서 기물을 끌어와요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : (s.drag && (self.curCov || 0) > 0 ? '담금 ' + Math.round((self.curCov || 0) * 100) + '% · 조금 더 ↓' : '유약 수면 · 깊이 담글수록 빨리 ↓'),
       liftOn: !!s.lift,
       liftText: s.lift ? '✓ 유약을 입혔어요' : '',
       liftSub: s.lift ? '담금 ' + Math.round(Math.min(1, s.lift.cov || 0) * 100) + '%' : '',
-      liftStyle: s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
+      liftStyle: s.lift && window.__pano ? 'display:none' : s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
       liftStars: s.lift && s.lift.zone === 'ok' ? [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { var a = i / 8 * Math.PI * 2, r = 70 + (i % 2) * 22; return { s: 'position:absolute;left:187px;top:316px;font-size:' + (14 + (i % 3) * 4) + 'px;color:#FFE27A;text-shadow:0 0 6px #fff;--dx:' + Math.round(Math.cos(a) * r) + 'px;--dy:' + Math.round(Math.sin(a) * r) + 'px;animation:liftStar .75s ease-out ' + (i * 0.02).toFixed(2) + 's both' }; }) : [],
       liftDrops: s.lift ? [0, 1, 2, 3, 4].map(function (i) { return { s: 'position:absolute;left:' + (160 + i * 17) + 'px;top:' + (330 + (i % 2) * 6) + 'px;width:7px;height:11px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:' + selG.raw + ';animation:dropFall .7s ease-in ' + (i * 0.07).toFixed(2) + 's both' }; }) : [],
       potHintStyle: (window.__pano && (cur || window.__glzWait) ? 'display:none;' : '') + 'position:absolute;left:50%;top:' + (window.__pano ? '46px' : '-34px') + ';z-index:3;transform:translateX(-50%);white-space:nowrap;padding:3px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;pointer-events:none;' + (cur ? 'background:rgba(43,26,15,.82);color:#FFE7A8' : 'background:#FFF4DE;color:#5B3A24;border:2px dashed #8A6440'),

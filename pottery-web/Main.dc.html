@@ -65,7 +65,7 @@ body:has([data-zoom]) a[aria-label^="이야기 진행"],body:has([aria-modal="tr
 body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 [data-wempty="1"] [data-zst="Wheel"] [role="meter"]{visibility:hidden}
 [data-wempty="1"] [data-zst="Wheel"] svg>:not(defs):not(image){display:none}
-@keyframes mtNeedle{from{left:0}to{left:100%}}
+@keyframes rvFade{from{opacity:0}to{opacity:1}}@keyframes rvDoor{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.6)}}@keyframes rvGlow{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}@keyframes rvRays{to{rotate:360deg}}@keyframes rvRise{0%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}20%{opacity:1}65%{transform:translate(0,-12px) scale(1.08)}100%{transform:translate(0,0) scale(1)}}@keyframes rvCard{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}@keyframes kDone{0%,100%{box-shadow:0 0 4px 1px rgba(255,213,74,.5)}50%{box-shadow:0 0 14px 5px rgba(255,213,74,.95)}}@keyframes mtNeedle{from{left:0}to{left:100%}}
 @keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
 </style>
 </helmet>
@@ -420,8 +420,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:60px;right:60px;top:250px;z-index:7;text-align:center;pointer-events:none"><span style="display:inline-block;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.82);border:2px dashed #FFE7A8;font-family:'Jua',sans-serif;font-size:15px;line-height:1.4;color:#FFF4DE">물레가 비었어요<br>아래 흙판의 흙을 골라 올려요</span></div>
       </sc-if>
       <sc-if value="{{onW}}" hint-placeholder-val="{{false}}">
-        <div data-onwheel="1" role="button" aria-label="{{onAria}}" onPointerDown="{{onDown}}" style="position:absolute;left:135px;top:290px;width:120px;height:132px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;{{onPop}}"><svg width="120" height="132" viewBox="{{onP.pot.vb}}" aria-hidden="true"><path d="{{onP.pot.d}}" fill="{{onP.pot.fill}}"></path><path d="{{onP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{onP.pot.d}}" fill="none" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></path><ellipse cx="0" cy="{{onP.pot.rimY}}" rx="{{onP.pot.rimRx}}" ry="{{onP.pot.rimRy}}" fill="{{onP.pot.inner}}" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></ellipse></svg></div>
-        <div style="position:absolute;left:60px;right:60px;top:236px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.82);font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8">기물을 들어 오른쪽 위 선반에 ↗</span></div>
+        <svg aria-hidden="true" width="312" height="343" viewBox="0 0 300 330" style="{{onSvgSt}}"><defs><linearGradient id="owG" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="{{os.c0}}"></stop><stop offset="0.38" stop-color="{{os.c1}}"></stop><stop offset="0.62" stop-color="{{os.c2}}"></stop><stop offset="1" stop-color="{{os.c0}}"></stop></linearGradient></defs><ellipse cx="150" cy="291" rx="{{os.rx}}" ry="6" fill="#2B1A0F" opacity="0.25"></ellipse><path d="{{os.path}}" fill="url(#owG)" stroke="{{os.edge}}" stroke-width="2"></path><ellipse cx="150" cy="{{os.rcy}}" rx="{{os.rx}}" ry="{{os.ry}}" fill="{{os.c2}}" stroke="{{os.edge}}" stroke-width="2"></ellipse><ellipse cx="150" cy="{{os.rcy}}" rx="{{os.irx}}" ry="{{os.iry}}" fill="#3E2616" opacity="0.55"></ellipse></svg>
+        <div data-onwheel="1" role="button" aria-label="{{onAria}}" onPointerDown="{{onDown}}" style="{{onBox}}"></div>
+        <div style="{{onHintSt}}"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.82);font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8">기물을 들어 오른쪽 위 선반에 ↗</span></div>
       </sc-if>
       <sc-if value="{{cutOn}}" hint-placeholder-val="{{false}}">
         <div aria-hidden="true" style="position:absolute;left:0;top:352px;width:390px;height:70px;z-index:9;pointer-events:none;overflow:hidden">
@@ -667,7 +668,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:24px;right:24px;top:318px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">↓ 끌어내리면 한 번 더 시유<br>↑ 들어 올려 오른쪽 위 선반에 놓으면 끝</span></div>
       </sc-if>
       <sc-if value="{{gwOn}}" hint-placeholder-val="{{false}}">
-        <div data-gwait="1" role="button" aria-label="{{gwAria}}" onPointerDown="{{gwDown}}" style="position:absolute;left:135px;top:166px;width:120px;height:140px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 0 6px #FFE27A)"><svg width="120" height="140" viewBox="{{gwP.pot.vb}}" aria-hidden="true"><path d="{{gwP.pot.d}}" fill="{{gwP.pot.fill}}"></path><path d="{{gwP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{gwP.pot.d}}" fill="none" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></path><ellipse cx="0" cy="{{gwP.pot.rimY}}" rx="{{gwP.pot.rimRx}}" ry="{{gwP.pot.rimRy}}" fill="{{gwP.pot.inner}}" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></ellipse></svg></div>
+        <div data-gwait="1" role="button" aria-label="{{gwAria}}" onPointerDown="{{gwDown}}" style="position:absolute;left:135px;top:166px;width:120px;height:140px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 0 6px #FFE27A);{{gwHid}}"><svg width="120" height="140" viewBox="{{gwP.pot.vb}}" aria-hidden="true"><path d="{{gwP.pot.d}}" fill="{{gwP.pot.fill}}"></path><path d="{{gwP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{gwP.pot.d}}" fill="none" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></path><ellipse cx="0" cy="{{gwP.pot.rimY}}" rx="{{gwP.pot.rimRx}}" ry="{{gwP.pot.rimRy}}" fill="{{gwP.pot.inner}}" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></ellipse></svg></div>
         <div style="position:absolute;left:30px;right:30px;top:316px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">시유 완료 · 한 번 더 담그거나<br>끌어서 오른쪽 위 선반에 ↗</span></div>
       </sc-if>
       <div data-dz="basin" aria-hidden="true" style="position:absolute;left:40px;top:150px;width:310px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
@@ -694,6 +695,15 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           </div>
         </sc-for>
       </div>
+      <sc-if value="{{rvOn}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="{{rv.aria}}" onClick="{{rv.close}}" style="position:absolute;inset:0;z-index:30;cursor:pointer;background:rgba(30,15,5,.6);animation:rvFade .3s ease-out both">
+          <div style="{{rv.door}}"></div>
+          <div style="{{rv.rays}}"></div><div style="{{rv.glow}}"></div>
+          <div style="{{rv.potSt}}"><svg width="150" height="170" viewBox="{{rv.pot.vb}}" aria-hidden="true"><path d="{{rv.pot.d}}" fill="{{rv.pot.fill}}"></path><path d="{{rv.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{rv.pot.d}}" fill="none" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></path><ellipse cx="0" cy="{{rv.pot.rimY}}" rx="{{rv.pot.rimRx}}" ry="{{rv.pot.rimRy}}" fill="{{rv.pot.inner}}" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></ellipse></svg></div>
+          <div role="status" style="{{rv.card}}"><span style="{{rv.ribbon}}">{{rv.grade}}</span><div style="margin-top:6px;font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{rv.name}}</div><div style="margin-top:2px;font-family:'Jua',sans-serif;font-size:13px;color:#8A6440">{{rv.sub}}</div></div>
+          <div style="position:absolute;left:0;right:0;top:500px;text-align:center;animation:rvCard .4s 1.2s both"><span style="display:inline-block;padding:4px 12px;border-radius:10px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">눌러서 닫기</span></div>
+        </div>
+      </sc-if>
       <button type="button" onClick="{{woodTap}}" aria-label="아궁이에 장작 넣기 · {{woodTxt}} · 지금 {{kTemp}} {{kZone}}" style="all:unset;cursor:pointer;position:absolute;left:0;top:0;width:0;height:0"></button>
       <div onClick="{{woodTap}}" aria-hidden="true" style="{{fireGlow}};cursor:pointer;z-index:4"></div>
       <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:178px;top:528px">아궁이 · 눌러서 장작</span>
@@ -711,7 +721,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <span style="position:absolute;left:22px;top:26px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#9A6A44,#6B4429);border:2px solid #3E2616"></span><span style="position:absolute;left:12px;top:12px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#A97B52,#7A5434);border:2px solid #3E2616"></span>
         <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:6px;top:62px;background:#7A2A10;color:#FFE7A8">🪵 {{woodTxt}}</span>
       </button>
-      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}<br>빈 칸 누르기 = 넣기 · 굽는 칸 누르기 = 꺼내기<br>꾹 = 남은 시간 · 콘이 다 누우면 완성 ✨</div>
+      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}<br>끌어서 빈 칸에 · 누르면 남은 시간<br>콘이 다 누우면 완성 ✨ 눌러서 꺼내기</div>
 
       </sc-if>
     </div>
@@ -1389,10 +1399,11 @@ class Ctl_w extends StationBase {
     }
     function sc(cx, cy, sx, sy, tx, ty) { return 'translate(' + (tx || 0).toFixed(1) + ' ' + (ty || 0).toFixed(1) + ') translate(' + cx + ' ' + cy + ') scale(' + sx.toFixed(3) + ' ' + sy.toFixed(3) + ') translate(' + (-cx) + ' ' + (-cy) + ')'; }
     var dt0 = (NOW - (s.dropT || 0)) / 1000 - (s.dropDelay || 0);
-    var dk = kf(dt0, [[0, { y: -330, sx: .9, sy: 1.1, o: 0 }], [0.06, { y: -300, sx: .9, sy: 1.1, o: 1 }], [0.38, { y: 0, sx: 1.16, sy: .8, o: 1 }], [0.52, { y: -14, sx: .96, sy: 1.05, o: 1 }], [0.66, { y: 0, sx: 1.05, sy: .96, o: 1 }], [0.8, { y: 0, sx: 1, sy: 1, o: 1 }]]);
-    if (dt0 > 0 && dt0 < 0.38) { dk.y = -330 * (1 - Math.pow(dt0 / 0.38, 2)); }
+    var PANO = !!window.__pano; /* 공방 : 손으로 놓은 흙덩이가 그 자리에서 철퍽 눌리며 앉는다 (위에서 떨어지지 않음) */
+    var dk = PANO ? kf(dt0, [[0, { y: -26, sx: .7, sy: .5, o: 1 }], [0.14, { y: 0, sx: 1.3, sy: .45, o: 1 }], [0.34, { y: 0, sx: .92, sy: 1.08, o: 1 }], [0.5, { y: 0, sx: 1.03, sy: .97, o: 1 }], [0.62, { y: 0, sx: 1, sy: 1, o: 1 }]]) : kf(dt0, [[0, { y: -330, sx: .9, sy: 1.1, o: 0 }], [0.06, { y: -300, sx: .9, sy: 1.1, o: 1 }], [0.38, { y: 0, sx: 1.16, sy: .8, o: 1 }], [0.52, { y: -14, sx: .96, sy: 1.05, o: 1 }], [0.66, { y: 0, sx: 1.05, sy: .96, o: 1 }], [0.8, { y: 0, sx: 1, sy: 1, o: 1 }]]);
+    if (!PANO && dt0 > 0 && dt0 < 0.38) { dk.y = -330 * (1 - Math.pow(dt0 / 0.38, 2)); }
     var dropA = { tf: dt0 >= 0.8 ? '' : sc(150, 290, dk.sx, dk.sy, 0, dk.y), op: dt0 < 0 ? 0 : dk.o.toFixed(2) };
-    var du = dt0 - 0.36;
+    var du = dt0 - (PANO ? 0.1 : 0.36);
     var dustA = { tf: sc(150, 292, du <= 0 ? .3 : .3 + 1.3 * Math.min(1, du / 0.6), du <= 0 ? .3 : .3 + 1.3 * Math.min(1, du / 0.6)), op: du <= 0 || du > 0.6 ? 0 : (0.85 * (1 - du / 0.6)).toFixed(2) };
     var F = s.fx, ft = F ? (NOW - F.k) / 1000 : 9;
     var chipS = F && F.kind === 'ok' && ft > 1.3 && ft < 1.75 ? 1 + 0.3 * Math.sin(Math.PI * (ft - 1.3) / 0.45) : 1;
@@ -1466,7 +1477,7 @@ class Ctl_w extends StationBase {
     return {
       clays: claysOut,
       dropTf: dropA.tf, dropOp: s.clay && !window.__wEmpty && !(self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g)) ? dropA.op : 0, /* 흙이 없으면 물레 위에 흙덩이를 올리지 않는다 */ dustTf: dustA.tf, dustOp: dustA.op,
-      fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !!(s.fx && s.fx.kind === 'ok'),
+      fxFail: !!(s.fx && s.fx.kind === 'fail'), fxOk: !window.__pano && !!(s.fx && s.fx.kind === 'ok'),
       chipTf: chipS === 1 ? 'none' : 'scale(' + chipS.toFixed(3) + ')',
       fx: fxV,
       clayName: cur.n, clayImg: cur.img,
@@ -2218,7 +2229,7 @@ class Ctl_gz extends StationBase {
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
       curMeta: cur ? CLAY[cur.clay] + ' · ' + (DRY[cur.dry] || DRY.ok).t : '',
       openPick: function () { if (!s.holding) { self.setState({ pkOpen: true }); } },
-      dirOn: !!cur || !!window.__pano, boxInSt: cur ? '' : 'visibility:hidden', /* 가로 공방 : 기물이 없어도 기울기·미리보기 틀은 보인다 (내용 없음) */
+      dirOn: !!cur, boxInSt: cur ? '' : 'visibility:hidden', /* 가로 공방 : 기물이 없어도 기울기·미리보기 틀은 보인다 (내용 없음) */
       angVal: self.angN(s.ang), angAria: '담그는 기울기 ' + self.angN(s.ang) + '도 · ' + self.angName(s.ang),
       angRot: 'rotate(' + self.angN(s.ang) + ')',
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
@@ -2242,7 +2253,7 @@ class Ctl_gz extends StationBase {
         });
         return out;
       })(),
-      pvOn: !!cur || !!window.__pano,
+      pvOn: !!cur,
       pv: (function () {
         if (!cur) { return self.potOf({ shape: 'cup' }, '#EAD8C4'); }
         var cvP = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0;
@@ -2255,13 +2266,13 @@ class Ctl_gz extends StationBase {
       pvPctSt: 'font-family:Jua,sans-serif;font-size:12px;color:' + ((s.drag || s.holding) ? '#2F6328' : '#8A6440'),
       pvAria: '완성 미리보기 · ' + self.angName(s.ang) + ' 담금',
       potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : (window.__pano ? '왼쪽 위 선반에서 기물을 끌어와요' : '위 대기함에서 기물 고르기'),
-      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('왼쪽 위 빚은 기물 선반에서 기물을 눌러 올려요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
+      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('왼쪽 위 빚은 기물 선반에서 기물을 끌어와요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : (s.drag && (self.curCov || 0) > 0 ? '담금 ' + Math.round((self.curCov || 0) * 100) + '% · 조금 더 ↓' : '유약 수면 · 깊이 담글수록 빨리 ↓'),
       liftOn: !!s.lift,
       liftText: s.lift ? '✓ 유약을 입혔어요' : '',
       liftSub: s.lift ? '담금 ' + Math.round(Math.min(1, s.lift.cov || 0) * 100) + '%' : '',
-      liftStyle: s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
+      liftStyle: s.lift && window.__pano ? 'display:none' : s.lift ? 'position:absolute;left:50%;top:296px;transform:translateX(-50%);white-space:nowrap;text-align:center;padding:9px 18px;border-radius:18px;font-family:Jua,sans-serif;font-size:21px;animation:liftPop 1.05s ease-out both;' + (s.lift.zone === 'ok' ? 'background:#2F6328;color:#FFFDF5;border:3px solid #E4F5D8;box-shadow:0 0 22px 6px rgba(255,231,120,.75)' : (s.lift.zone === 'drip' ? 'background:#A33B22;color:#FFFDF5;border:3px solid #F3C9BC' : 'background:#8A6410;color:#FFFDF5;border:3px solid #F5E2B0')) : 'display:none',
       liftStars: s.lift && s.lift.zone === 'ok' ? [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { var a = i / 8 * Math.PI * 2, r = 70 + (i % 2) * 22; return { s: 'position:absolute;left:187px;top:316px;font-size:' + (14 + (i % 3) * 4) + 'px;color:#FFE27A;text-shadow:0 0 6px #fff;--dx:' + Math.round(Math.cos(a) * r) + 'px;--dy:' + Math.round(Math.sin(a) * r) + 'px;animation:liftStar .75s ease-out ' + (i * 0.02).toFixed(2) + 's both' }; }) : [],
       liftDrops: s.lift ? [0, 1, 2, 3, 4].map(function (i) { return { s: 'position:absolute;left:' + (160 + i * 17) + 'px;top:' + (330 + (i % 2) * 6) + 'px;width:7px;height:11px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:' + selG.raw + ';animation:dropFall .7s ease-in ' + (i * 0.07).toFixed(2) + 's both' }; }) : [],
       potHintStyle: (window.__pano && (cur || window.__glzWait) ? 'display:none;' : '') + 'position:absolute;left:50%;top:' + (window.__pano ? '46px' : '-34px') + ';z-index:3;transform:translateX(-50%);white-space:nowrap;padding:3px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;pointer-events:none;' + (cur ? 'background:rgba(43,26,15,.82);color:#FFE7A8' : 'background:#FFF4DE;color:#5B3A24;border:2px dashed #8A6440'),
@@ -4292,7 +4303,7 @@ class Component extends DCLogic {
         ghost = document.createElement('div'); ghost.setAttribute('aria-hidden', 'true');
         ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;left:' + rect.left + 'px;top:' + rect.top + 'px;width:' + rect.width + 'px;height:' + rect.height + 'px;transform:scale(1.4);filter:drop-shadow(0 8px 6px rgba(0,0,0,.4))';
         if (svg) { var c = svg.cloneNode(true); c.setAttribute('width', rect.width); c.setAttribute('height', rect.height); ghost.appendChild(c); }
-        document.body.appendChild(ghost); el.style.opacity = '.25'; self.dragging = true; mark(true); self.sfx('tap');
+        document.body.appendChild(ghost); el.style.opacity = '0'; self.dragging = true; mark(true); self.sfx('tap');
         /* 화면 끝으로 끌면 그쪽으로 넘어간다 */
         var edgeT = 0; sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k, d = xx < 36 ? -1 : (xx > 354 ? 1 : 0); if (!d) { edgeT = 0; return; } edgeT += 50; if (edgeT === 400) { self.goPanel(Math.round(self.stripEl.scrollLeft / 390) + d); } if (edgeT >= 1400) { edgeT = 350; } }, 50); /* 화면 끝에 잠깐 머물면 옆 설비로 한 칸 넘어간다 */
       }
@@ -4439,7 +4450,9 @@ class Component extends DCLogic {
     c.pieces = ps; c.order = (c.order || []).concat([pid]); c.shapesFound = sf; c.glazesFound = gf; c.firedTotal = (c.firedTotal || 0) + 1;
     try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
     this.sfx(p.grade === '명작' ? 'gMaster' : (p.grade === '수작' ? 'gGood' : 'gPlain'));
-    this.say(p.grade + ' · ' + (p.name || this.pName(p)) + ' · 발색 ' + (p.colorPct || 0) + '% (적정 유지 ' + Math.round(r * 100) + '%)');
+    /* 꺼내는 순간 : 칸 문이 열리고 완성품이 떠올라 등급을 보여 준다 */
+    var self = this, rv = { i: i, t: Date.now(), p: p, band: Math.round(r * 100) }; this.reveal = rv;
+    clearTimeout(this.rvT); this.rvT = setTimeout(function () { if (self.reveal === rv) { self.reveal = null; self.bump(); } }, 4200);
   }
   /* 칸 누르기 : 짧게 = 넣기·꺼내기·열기 · 꾹 = 남은 시간 */
   kDown(e, i) {
@@ -4603,9 +4616,10 @@ class Component extends DCLogic {
     var self = this, pid = ev.pointerId, g = this.loadG(), it = (g.glazeList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return; }
     var gp = document.getElementById('gpot'), R0 = gp ? gp.getBoundingClientRect() : { left: ev.clientX - 60, top: ev.clientY - 70, width: 120, height: 140 };
     var P = this.potOf(it, this.fillOf(it, 'glazed')), html = '<svg width="120" height="140" viewBox="' + P.vb + '"><path d="' + P.d + '" fill="' + P.fill + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/><ellipse cx="0" cy="' + P.rimY + '" rx="' + P.rimRx + '" ry="' + P.rimRy + '" fill="' + P.inner + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/></svg>';
-    var R = (this.stripEl || document.body).getBoundingClientRect(), k = R.width / 390, LF = this.lift();
+    var LF = this.lift(), GW = Math.round(R0.width) || 120, GH = Math.round(R0.height) || 140;
+    html = html.replace('width="120" height="140"', 'width="100%" height="100%"');
     var gh = document.createElement('div'); gh.setAttribute('aria-hidden', 'true');
-    gh.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:120px;height:140px;margin-left:-60px;margin-top:-70px;transform:scale(' + (k * 0.9) + ');filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))';
+    gh.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:' + GW + 'px;height:' + GH + 'px;margin-left:' + (-GW / 2) + 'px;margin-top:' + (-GH / 2) + 'px;transform:scale(1.04);filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))';
     gh.innerHTML = html; document.body.appendChild(gh); var Gc = this.ctls.Glaze; function hidePot(on) { try { Gc && Gc.setState({ potHide: on ? Date.now() + 60000 : 0 }); } catch (er) {} } hidePot(true);
     var shelf = document.querySelector('[data-rail="rg"]'); this.dragging = true; this.sfx('tap');
     function pos(x, y) { gh.style.left = x + 'px'; gh.style.top = (y - LF) + 'px'; if (shelf) { var r = shelf.getBoundingClientRect(), on = x >= r.left - 12 && x <= r.right + 12 && y - LF >= r.top - 12 && y - LF <= r.bottom + 12; shelf.style.outline = '3px dashed #FFD54A'; shelf.style.background = on ? 'rgba(255,226,122,.22)' : ''; return on; } return false; }
@@ -4617,7 +4631,7 @@ class Component extends DCLogic {
       var on = e.type !== 'pointercancel' && pos(e.clientX, e.clientY); self.dragging = false;
       if (shelf) { shelf.style.outline = ''; shelf.style.background = ''; }
       var ok = on && self.shelveGlazed(id);
-      if (ok) { gh.style.transition = 'opacity .16s'; gh.style.opacity = '0'; setTimeout(function () { gh.remove(); hidePot(false); }, 180); }
+      if (ok) { hidePot(false); self.flyGhostTo(gh, '[data-rail="rg"]', GH); }
       else { gh.style.transition = 'left .25s,top .25s'; gh.style.left = (R0.left + R0.width / 2) + 'px'; gh.style.top = (R0.top + R0.height / 2) + 'px'; setTimeout(function () { gh.remove(); hidePot(false); }, 260); if (!on) { self.say('오른쪽 위 시유한 기물 선반에 놓아요'); } }
       self.bump();
     }
@@ -4663,7 +4677,8 @@ class Component extends DCLogic {
     this.say('빚은 기물 선반에 올렸어요 (' + n + '/' + this.KB().cap + ') · 유약 쪽으로 넘기면 선반이 따라와요');
     return true;
   }
-  carryStart(e, kind, data, html, w, h, tap) {
+  carryStart(e, kind, data, html, w, h, tap, opt) {
+    opt = opt || {};
     if (e && e.preventDefault) { e.preventDefault(); }
     var self = this, pid = e.pointerId, x0 = e.clientX, y0 = e.clientY, moved = false, ghost = null, src = e.currentTarget;
     try { src.setPointerCapture && src.setPointerCapture(pid); } catch (er) {}
@@ -4675,8 +4690,8 @@ class Component extends DCLogic {
         moved = true; self.dragging = true; self.sfx('tap');
         var R = (self.stripEl || document.body).getBoundingClientRect(), k = R.width / 390;
         ghost = document.createElement('div'); ghost.setAttribute('aria-hidden', 'true');
-        ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:' + w + 'px;height:' + h + 'px;transform:scale(' + (k * 1.1) + ');filter:drop-shadow(0 10px 8px rgba(0,0,0,.35));margin-left:' + (-w / 2) + 'px;margin-top:' + (-h / 2) + 'px';
-        ghost.innerHTML = html; document.body.appendChild(ghost); hot(true);
+        ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:' + w + 'px;height:' + h + 'px;transform:scale(' + (k * (opt.sc || 1.1)) + ');filter:drop-shadow(0 10px 8px rgba(0,0,0,.35));margin-left:' + (-w / 2) + 'px;margin-top:' + (-h / 2) + 'px';
+        ghost.innerHTML = html; document.body.appendChild(ghost); hot(true); if (opt.hide) { opt.hide(true); }
       }
       var LF = self.lift(); ghost.style.left = ev.clientX + 'px'; ghost.style.top = (ev.clientY - LF) + 'px';
       var dz0 = self.dropAt(ev.clientX, ev.clientY - LF, kind), els = document.querySelectorAll('[data-dz]');
@@ -4689,13 +4704,28 @@ class Component extends DCLogic {
       if (!moved) { if (ev.type !== 'pointercancel' && tap) { tap(); } self.bump(); return; }
       var dz = ev.type === 'pointercancel' ? null : self.dropAt(ev.clientX, ev.clientY - self.lift(), kind), ok = false;
       if (dz) { ok = self.drop(kind, data); }
+      if (opt.hide) { opt.hide(false); }
       if (ghost) {
-        if (ok) { ghost.style.transition = 'opacity .16s'; ghost.style.opacity = '0'; setTimeout(function () { ghost.remove(); }, 180); }
+        if (ok && opt.to) { self.flyGhostTo(ghost, opt.to, h); }
+        else if (ok) { ghost.style.transition = 'opacity .16s'; ghost.style.opacity = '0'; setTimeout(function () { ghost.remove(); }, 180); }
         else { var r0 = src.getBoundingClientRect(); ghost.style.transition = 'left .25s,top .25s,opacity .25s'; ghost.style.left = (r0.left + r0.width / 2) + 'px'; ghost.style.top = (r0.top + r0.height * 0.7) + 'px'; ghost.style.opacity = '.3'; setTimeout(function () { ghost.remove(); }, 260); if (!dz) { self.sfx('fail'); } }
       }
       self.bump();
     }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
+  /* 놓은 물건이 선반의 제자리로 쏙 들어가 앉는다 : 크기도 선반 칸에 맞춰 줄어든다 */
+  flyGhostTo(gh, sel, h) {
+    var self = this; this.bump();
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      var box = document.querySelector(sel), its = box ? box.querySelectorAll('[role=listitem]') : [], t = its.length ? its[its.length - 1] : box;
+      if (!t) { gh.remove(); return; }
+      var r = t.getBoundingClientRect(), svg = t.querySelector('svg'), rr = svg ? svg.getBoundingClientRect() : r;
+      if (svg) { svg.style.opacity = '0'; }
+      gh.style.transition = 'left .24s cubic-bezier(.3,.1,.3,1),top .24s cubic-bezier(.3,-.3,.4,1),transform .24s';
+      gh.style.left = (rr.left + rr.width / 2) + 'px'; gh.style.top = (rr.top + rr.height / 2) + 'px'; gh.style.transform = 'scale(' + (rr.height / h).toFixed(3) + ')';
+      setTimeout(function () { if (svg) { svg.style.opacity = ''; } gh.remove(); }, 250);
+    }); });
   }
   accepts(kind, dz) { return { clay: 'wheel', wire: 'wheel', piece: 'shelf', glaze: 'basin', gpiece: 'gshelf' }[kind] === dz; }
   dropAt(x, y, kind) {
@@ -4736,7 +4766,7 @@ class Component extends DCLogic {
       var items = list.slice(0, CAP).map(function (it) {
         var qc = self.qColor(g, it), sn = (Q.shapeN ? Q.shapeN(it) : '') || '그릇';
         return { id: it.id, pot: self.potOf(it, self.fillOf(it, st === 'g' ? (it.recoat ? 'glazed' : 'dry') : 'glazed')),
-          aria: sn + (st === 'g' ? ' · 시유 전' : ' · ' + (GN[it.glaze] || '') + (it.kp ? ' · ' + Math.round(it.kp * 100) + '% 익음' : '')) + (qc ? ' · 의뢰 ' + qc.t : '') + ' · 누르거나 끌어서 옮기기',
+          aria: sn + (st === 'g' ? ' · 시유 전' : ' · ' + (GN[it.glaze] || '') + (it.kp ? ' · ' + Math.round(it.kp * 100) + '% 익음' : '')) + (qc ? ' · 의뢰 ' + qc.t : '') + ' · 끌어서 옮기기',
           down: function (e) { self.qDown(e, it.id, st); },
           dot: qc ? 'position:absolute;right:0;top:0;width:11px;height:11px;border-radius:50%;background:' + qc.c + ';border:1.5px solid #FFF4DE' : 'display:none',
           kp: it.kp >= 0.01 ? Math.round(it.kp * 100) + '%' : '', kpSt: it.kp >= 0.01 ? 'position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);padding:0 4px;border-radius:6px;background:#C0582E;font-family:Jua,sans-serif;font-size:11px;line-height:14px;color:#FFF' : 'display:none',
@@ -4753,9 +4783,9 @@ class Component extends DCLogic {
     if (window.__glzWait !== !!gwIt) { window.__glzWait = !!gwIt; var Gz = this.ctls.Glaze; if (Gz) { Gz.dirty = true; } }
     var Gs = this.ctls.Glaze && this.ctls.Glaze.state, rcIt = Gs && Gs.sel ? (g.glazeList || []).filter(function (x) { return x.id === Gs.sel && x.recoat; })[0] : null;
     v.rcOn = !!rcIt && !Gs.holding && !Gs.drag;
-    v.gwOn = !!gwIt; v.gwP = { pot: gwIt ? this.potOf(gwIt, this.fillOf(gwIt, 'glazed')) : EMPTY };
+    v.gwOn = !!gwIt; v.gwHid = gwIt && this.carryId === gwIt.id ? 'visibility:hidden;' : ''; v.gwP = { pot: gwIt ? this.potOf(gwIt, this.fillOf(gwIt, 'glazed')) : EMPTY };
     v.gwAria = gwIt ? this.pName(gwIt) + ' · 시유 완료 · 끌어서 시유한 기물 선반에' : '';
-    v.gwDown = function (e) { if (!gwIt) { return; } var el = e.currentTarget.querySelector('svg'); self.carryStart(e, 'gpiece', { id: gwIt.id }, el ? el.outerHTML : '', 120, 140, function () { self.say('기물을 끌어서 오른쪽 위 선반에 올려요'); }); };
+    v.gwDown = function (e) { if (!gwIt) { return; } var el = e.currentTarget.querySelector('svg'); var bx = e.currentTarget.getBoundingClientRect(), RR = (self.stripEl || document.body).getBoundingClientRect(), kk = RR.width / 390 || 1; self.carryStart(e, 'gpiece', { id: gwIt.id }, el ? el.outerHTML.replace(/width="[0-9.]+" height="[0-9.]+"/, 'width="100%" height="100%"') : '', bx.width / kk, bx.height / kk, function () { self.say('기물을 끌어서 오른쪽 위 선반에 올려요'); }, { sc: 1.04, to: '[data-rail="rg"]', hide: function (on) { self.carryId = on ? gwIt.id : ''; self.bump(); } }); };
     /* 미니맵 */
     v.mmView = 'position:absolute;top:0;left:' + this.mmLeft() + 'px;width:' + Math.round((this.MMW || 292) / 4) + 'px;height:16px;box-sizing:border-box;border:2px solid #FFD66B;border-radius:6px;background:rgba(255,214,107,.18);pointer-events:none;transition:none';
     v.mm = ['카운터', '물레', '유약', '가마'].map(function (n, i) { return { n: n, tap: function () { self.goPanel(i); }, aria: n + '로 이동' }; });
@@ -4766,7 +4796,7 @@ class Component extends DCLogic {
     var it0 = onWid ? (g.glazeList || []).filter(function (x) { return x.id === onWid; })[0] : null;
     v.lumps = lumps.slice(0, 5).map(function (c, i) {
       var own = tut ? '∞' : (M[c.id] || 0), on = !wEmpty && curC === c.id, html = '<img src="' + c.img + '" alt="" style="width:60px;height:52px;object-fit:contain">';
-      return { img: c.img, tag: c.n + ' ' + own, aria: c.n + ' 흙 ' + own + '개 · ' + (on ? '물레 위에 올라간 흙' : '누르거나 끌어서 물레에 올리기'),
+      return { img: c.img, tag: c.n + ' ' + own, aria: c.n + ' 흙 ' + own + '개 · ' + (on ? '물레 위에 올라간 흙' : '끌어서 물레에 올리기'),
         st: 'position:absolute;left:' + (i * 58) + 'px;top:' + (on ? -14 : 0) + 'px;width:52px;height:46px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (on ? 'filter:drop-shadow(0 0 5px #FFE27A) drop-shadow(0 0 2px #FFE27A)' : 'filter:drop-shadow(0 2px 2px rgba(43,26,15,.4))') + (own === 0 ? ';opacity:.45' : ''),
         tagSt: 'position:absolute;left:' + (i * 58 - 4) + 'px;top:76px;width:60px;box-sizing:border-box;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:18px;border-radius:9px;background:rgba(43,26,15,.82);white-space:nowrap;pointer-events:none;color:' + (on ? '#FFE27A' : '#FFF4DE'),
         down: function (e) { if (own === 0) { self.say(c.n + ' 흙이 없어요 · 채집에서 캐 와요'); self.sfx('fail'); return; } self.carryStart(e, 'clay', c, html, 60, 52, function () { self.say(c.n + ' 흙을 끌어서 물레에 올려요'); }); } };
@@ -4776,8 +4806,24 @@ class Component extends DCLogic {
     v.cutOn = !!(this.cutAt && now - this.cutAt < 700);
     v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
+    /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
+    var OS = { path: 'M0 0', rcx: 0, rcy: 0, rx: 0, ry: 0, irx: 0, iry: 0, c0: '#B48A58', c1: '#E2C79E', c2: '#D2AE7C', edge: '#5B3A24' }, ob = { l: 0, t: 0, w: 0, h: 0 };
+    if (it0 && Wc && Wc.profile) {
+      var pr = it0.prof && it0.prof.length > 2 ? it0.prof : [34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34], pH = it0.H || 110, PF = Wc.profile(pr, pH, 0);
+      var cc = '#D2AE7C'; try { (Wc.claysDef() || []).forEach(function (c) { if (c.id === it0.clay) { cc = c.c; } }); } catch (e) {}
+      function shd(h, k) { var n = parseInt((h || '#D2AE7C').slice(1), 16), r = Math.min(255, Math.round(((n >> 16) & 255) * k)), gg = Math.min(255, Math.round(((n >> 8) & 255) * k)), b = Math.min(255, Math.round((n & 255) * k)); return '#' + ((1 << 24) + (r << 16) + (gg << 8) + b).toString(16).slice(1); }
+      var tr = pr[pr.length - 1], topY = 290 - pH, mx = Math.max.apply(null, pr);
+      OS = { path: PF.path, rcx: 150, rcy: topY.toFixed(1), rx: tr.toFixed(1), ry: (tr * 0.17 + 2).toFixed(1), irx: Math.max(3, tr - 6).toFixed(1), iry: Math.max(1, (tr - 6) * 0.17).toFixed(1), c0: shd(cc, 0.72), c1: shd(cc, 1.15), c2: cc, edge: shd(cc, 0.55) };
+      /* 물레 화면 svg : 패널 좌표 left 39 · top 78 · 1.04배 */
+      ob = { l: 39 + (150 - mx - 8) * 1.04, t: 78 + (topY - 10) * 1.04, w: (mx * 2 + 16) * 1.04, h: (pH + 26) * 1.04 };
+      v.onGhost = '<svg width="100%" height="100%" viewBox="' + (150 - mx - 8) + ' ' + (topY - 10) + ' ' + (mx * 2 + 16) + ' ' + (pH + 26) + '"><defs><linearGradient id="ogG" x1="0" x2="1"><stop offset="0" stop-color="' + OS.c0 + '"/><stop offset=".38" stop-color="' + OS.c1 + '"/><stop offset=".62" stop-color="' + OS.c2 + '"/><stop offset="1" stop-color="' + OS.c0 + '"/></linearGradient></defs><path d="' + OS.path + '" fill="url(#ogG)" stroke="' + OS.edge + '" stroke-width="2"/><ellipse cx="150" cy="' + OS.rcy + '" rx="' + OS.rx + '" ry="' + OS.ry + '" fill="' + OS.c2 + '" stroke="' + OS.edge + '" stroke-width="2"/><ellipse cx="150" cy="' + OS.rcy + '" rx="' + OS.irx + '" ry="' + OS.iry + '" fill="#3E2616" opacity=".55"/></svg>';
+    }
+    v.os = OS; var onHid = it0 && this.carryId === it0.id;
+    v.onBox = 'position:absolute;left:' + ob.l.toFixed(1) + 'px;top:' + ob.t.toFixed(1) + 'px;width:' + ob.w.toFixed(1) + 'px;height:' + ob.h.toFixed(1) + 'px;z-index:8;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (onHid ? 'visibility:hidden;' : '');
+    v.onSvgSt = 'position:absolute;left:39px;top:78px;z-index:7;pointer-events:none;overflow:visible;' + (onHid ? 'visibility:hidden;' : '') + (it0 && this.liftAt && now - this.liftAt < 600 ? 'transform-origin:195px 380px;animation:pop .35s ease both;' : '');
+    v.onHintSt = 'position:absolute;left:60px;right:60px;top:' + Math.max(96, Math.round(ob.t - 40)) + 'px;z-index:8;text-align:center;pointer-events:none;' + (onHid ? 'display:none' : '');
     v.onAria = it0 ? this.pName({ shape: it0.shape, prof: it0.prof, sk: it0.sk }) + ' · 집어서 선반에 올리기' : '';
-    v.onDown = function (e) { if (!it0) { return; } var el = e.currentTarget.querySelector('svg'); self.carryStart(e, 'piece', { id: it0.id }, el ? el.outerHTML : '', 120, 132, function () { self.say('기물을 들어서 오른쪽 위 선반에 올려요'); }); };
+    v.onDown = function (e) { if (!it0) { return; } var gw = ob.w, gh = ob.h, gH = v.onGhost || ''; self.carryStart(e, 'piece', { id: it0.id }, gH, gw, gh, function () { self.say('기물을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? it0.id : ''; self.bump(); } }); };
     var WIREH = '<svg width="70" height="70" viewBox="0 0 62 70"><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><path d="M10 30 Q31 46 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"/></svg>';
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레 위 기물 밑동에 대요'); }); };
     v.tgTap = function () { if (W.openTarget) { W.openTarget(); } };
@@ -4788,7 +4834,7 @@ class Component extends DCLogic {
       var none = /원료 없음/.test(b.price || '') ;
       var BN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' }[b.id] || b.name;
       var bh = '<div style="position:relative;width:56px;height:56px"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" style="width:56px;height:50px;object-fit:contain"><span style="position:absolute;left:10px;top:11px;width:36px;height:9px;border-radius:50%;background:' + (GC[b.id] || '#ECE8DE') + ';border:1.5px solid #3E2616"></span></div>';
-      return { name: BN, aria: b.name + ' · ' + (b.price || '') + (b.on ? ' · 시유그릇에 들어간 유약' : ' · 누르거나 끌어서 시유그릇에'), pick: b.pick,
+      return { name: BN, aria: b.name + ' · ' + (b.price || '') + (b.on ? ' · 시유그릇에 들어간 유약' : ' · 끌어서 시유그릇에'), pick: b.pick,
         down: function (e) { self.carryStart(e, 'glaze', b, bh, 56, 56, function () { self.say('유약통을 끌어서 시유그릇에 부어요'); }); },
         st: 'position:absolute;left:' + (4 + i * 64) + 'px;top:' + (b.on ? 0 : 10) + 'px;width:56px;height:84px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (none ? 'opacity:.55;' : '') + (b.on ? 'filter:drop-shadow(0 0 5px #FFE27A)' : ''),
         liq: 'position:absolute;left:10px;top:' + (b.on ? 17 : 17) + 'px;width:36px;height:9px;border-radius:50%;background:' + (GC[b.id] || '#ECE8DE') + ';border:1.5px solid #3E2616',
@@ -4806,9 +4852,9 @@ class Component extends DCLogic {
         var nm = has ? self.pName(x.it) : '';
         kv.push({ idx: k, free: open && !has ? '1' : '0', locked: !open, empty: open && !has, has: has, done: done, run: run,
           down: function (e) { self.kDown(e, k); },
-          aria: !open ? (nextLock ? '잠긴 칸 · 눌러서 ' + (cost || 0).toLocaleString() + 'G로 열기' : '잠긴 칸') : (done ? nm + ' · 다 구웠어요 · 눌러서 꺼내기' : (run ? nm + ' · 굽는 중 ' + Math.round(x.p * 100) + '% · 꾹 누르면 남은 시간 · 누르면 꺼내기' : '빈 칸 · 누르면 선반의 기물을 넣어요')),
+          aria: !open ? (nextLock ? '잠긴 칸 · 눌러서 ' + (cost || 0).toLocaleString() + 'G로 열기' : '잠긴 칸') : (done ? nm + ' · 다 구웠어요 · 눌러서 꺼내기' : (run ? nm + ' · 굽는 중 ' + Math.round(x.p * 100) + '% · 꾹 누르면 남은 시간 · 누르면 꺼내기' : '빈 칸 · 선반의 기물을 끌어 넣어요')),
           box: 'position:relative;width:84px;height:74px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none',
-          door: 'position:absolute;left:4px;top:6px;width:76px;height:64px;box-sizing:border-box;border-radius:30px 30px 4px 4px;border:3px solid #2B1A0F;' + (!open ? 'background:#5A4A40' : (has ? 'background:linear-gradient(#9C978C,#6B6660)' : 'background:radial-gradient(ellipse at 50% 85%,#4A2414,#1E0D06)')),
+          door: 'position:absolute;left:4px;top:6px;width:76px;height:64px;box-sizing:border-box;border-radius:30px 30px 4px 4px;border:3px solid #2B1A0F;' + (!open ? 'background:#5A4A40' : (done ? 'background:linear-gradient(#B5AE9E,#7D776E);animation:kDone 1.3s ease-in-out infinite' : has ? 'background:linear-gradient(#9C978C,#6B6660)' : 'background:radial-gradient(ellipse at 50% 85%,#4A2414,#1E0D06)')),
           leaf: open && !has ? 'position:absolute;left:-8px;top:10px;width:14px;height:58px;border-radius:4px;background:linear-gradient(90deg,#6B6660,#8F8A80);border:2px solid #2B1A0F;transform:skewY(-14deg)' : 'display:none',
           hole: has ? 'position:absolute;left:12px;top:44px;width:20px;height:13px;border-radius:7px;border:2px solid #2B1A0F;' + (done ? 'background:radial-gradient(circle,#FFF,#CFC8B8)' : 'background:radial-gradient(circle,#FFE07A,#E0702A);box-shadow:0 0 ' + (inB ? 12 : 6) + 'px ' + (inB ? 4 : 2) + 'px rgba(255,150,50,.7)') : 'display:none',
           knob: has ? 'position:absolute;left:62px;top:40px;width:8px;height:8px;border-radius:50%;background:#2B1A0F' : 'display:none',
@@ -4824,6 +4870,21 @@ class Component extends DCLogic {
       })(k);
     }
     v.kilns = kv;
+    /* 꺼내기 연출 */
+    var RV = this.reveal; v.rvOn = !!RV;
+    if (RV) {
+      var rp = RV.p, gr = rp.grade || '', GCOL = { '명작': ['#FFD54A', '#7A4A00', 'rgba(255,213,74,.75)'], '수작': ['#BFE3F2', '#1F4E63', 'rgba(150,210,240,.6)'] }[gr] || ['#F3E3C4', '#5B3A24', 'rgba(255,231,168,.45)'];
+      var sx = 84 + (RV.i % 3) * 99 + 42, sy = 204 + Math.floor(RV.i / 3) * 80 + 37;
+      v.rv = { pot: this.potOf(rp, this.fillOf(rp, 'glazed')), grade: gr || '완성', name: rp.name || this.pName(rp), sub: '발색 ' + (rp.colorPct || 0) + '% · 적정 온도 유지 ' + RV.band + '%' + (rp.value ? ' · ' + rp.value.toLocaleString() + 'G' : ''),
+        aria: (gr || '완성') + ' · ' + (rp.name || this.pName(rp)) + ' · 눌러서 닫기',
+        close: function () { self.reveal = null; self.bump(); },
+        door: 'position:absolute;left:' + (sx - 42) + 'px;top:' + (sy - 37) + 'px;width:84px;height:74px;border-radius:30px 30px 4px 4px;background:radial-gradient(ellipse at 50% 70%,#FFF6D0,' + GCOL[2] + ' 55%,rgba(255,200,90,0) 75%);animation:rvDoor .7s ease-out both;pointer-events:none',
+        glow: 'position:absolute;left:75px;top:170px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,' + GCOL[2] + ' 0%,rgba(255,231,168,0) 68%);animation:rvGlow .9s .25s ease-out both;pointer-events:none',
+        rays: 'position:absolute;left:55px;top:150px;width:280px;height:280px;border-radius:50%;background:repeating-conic-gradient(' + GCOL[2] + ' 0 8deg,rgba(255,255,255,0) 8deg 24deg);-webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%);animation:rvRays 6s linear infinite,rvGlow .9s .3s ease-out both;pointer-events:none',
+        potSt: 'position:absolute;left:120px;top:200px;width:150px;height:170px;--dx:' + (sx - 195) + 'px;--dy:' + (sy - 285) + 'px;animation:rvRise .8s .15s cubic-bezier(.3,.1,.3,1) both;filter:drop-shadow(0 10px 10px rgba(0,0,0,.45));pointer-events:none',
+        card: 'position:absolute;left:40px;right:40px;top:392px;text-align:center;padding:10px 12px 12px;border-radius:18px;background:#FFF4DE;border:4px solid ' + GCOL[1] + ';box-shadow:0 5px 0 rgba(43,26,15,.4);animation:rvCard .45s .75s cubic-bezier(.3,1.5,.5,1) both;pointer-events:none',
+        ribbon: 'display:inline-block;margin-top:-26px;padding:3px 18px;border-radius:12px;background:' + GCOL[0] + ';border:3px solid ' + GCOL[1] + ';font-family:Jua,sans-serif;font-size:22px;line-height:1.2;color:' + GCOL[1] };
+    }
     var cT = Math.round(800 + T * 5);
     v.kTemp = cT.toLocaleString() + '℃';
     v.kZone = T > B.hi ? '과열' : (inB ? '적정 · 빠르게' : '낮음 · 느리게');
