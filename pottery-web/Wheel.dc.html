@@ -916,7 +916,7 @@ class Component extends DCLogic {
           fxV.sparks.push({ x: (150 + Math.cos(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), y: (fcy + Math.sin(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), fs: ((14 + (si % 3) * 5) * (st2 < 0.3 ? st2 / 0.3 * 1.2 : 1.2 - 0.6 * (st2 - 0.3) / 0.7)).toFixed(1), op: st2 <= 0 ? 0 : (st2 < 0.3 ? 1 : 1 - (st2 - 0.3) / 0.7).toFixed(2) });
         }
         var fl = kf(ft, [[0, { x: 0, y: 0, s: 1, o: 1 }], [0.3, { x: 0, y: -18, s: 1.08, o: 1 }], [0.55, { x: 0, y: -18, s: 1.08, o: 1 }], [1.4, { x: -164, y: -229 - fcy, s: .12, o: .95 }]]);
-        fxV.flyTf = sc(150, fcy, fl.s, fl.s, fl.x, fl.y); fxV.flyOp = ft > 1.4 ? 0 : fl.o.toFixed(2);
+        fxV.flyTf = sc(150, fcy, fl.s, fl.s, fl.x, fl.y); fxV.flyOp = window.__pano || ft > 1.4 ? 0 : fl.o.toFixed(2); /* 공방 : 날아가지 않고 물레 위에 남는다 */
       }
     }
     var claysOut = clays.map(function (c) {

@@ -707,7 +707,7 @@ class Component extends DCLogic {
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
-      recoatOn: (function () { if (!s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
+      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
       recoatTap: function () { self.recoat(); },
       condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
       conds: (function () {

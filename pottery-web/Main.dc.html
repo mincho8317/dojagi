@@ -66,6 +66,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 [data-wempty="1"] [data-zst="Wheel"] [role="meter"]{visibility:hidden}
 [data-wempty="1"] [data-zst="Wheel"] svg>:not(defs):not(image){display:none}
 @keyframes mtNeedle{from{left:0}to{left:100%}}
+@keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
 </style>
 </helmet>
 <div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F">
@@ -419,7 +420,16 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:60px;right:60px;top:250px;z-index:7;text-align:center;pointer-events:none"><span style="display:inline-block;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.82);border:2px dashed #FFE7A8;font-family:'Jua',sans-serif;font-size:15px;line-height:1.4;color:#FFF4DE">물레가 비었어요<br>아래 흙판의 흙을 골라 올려요</span></div>
       </sc-if>
       <sc-if value="{{onW}}" hint-placeholder-val="{{false}}">
-        <div data-onwheel="1" aria-hidden="true" style="position:absolute;left:135px;top:290px;width:120px;height:132px;z-index:8;display:flex;align-items:flex-end;justify-content:center;pointer-events:none"><svg width="120" height="132" viewBox="{{onP.pot.vb}}" aria-hidden="true"><path d="{{onP.pot.d}}" fill="{{onP.pot.fill}}"></path><path d="{{onP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{onP.pot.d}}" fill="none" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></path><ellipse cx="0" cy="{{onP.pot.rimY}}" rx="{{onP.pot.rimRx}}" ry="{{onP.pot.rimRy}}" fill="{{onP.pot.inner}}" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></ellipse></svg></div>
+        <div data-onwheel="1" role="button" aria-label="{{onAria}}" onPointerDown="{{onDown}}" style="position:absolute;left:135px;top:290px;width:120px;height:132px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;{{onPop}}"><svg width="120" height="132" viewBox="{{onP.pot.vb}}" aria-hidden="true"><path d="{{onP.pot.d}}" fill="{{onP.pot.fill}}"></path><path d="{{onP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{onP.pot.d}}" fill="none" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></path><ellipse cx="0" cy="{{onP.pot.rimY}}" rx="{{onP.pot.rimRx}}" ry="{{onP.pot.rimRy}}" fill="{{onP.pot.inner}}" stroke="{{onP.pot.edge}}" stroke-width="{{onP.pot.sw}}"></ellipse></svg></div>
+        <div style="position:absolute;left:60px;right:60px;top:236px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.82);font-family:'Jua',sans-serif;font-size:14px;color:#FFE7A8">기물을 들어 오른쪽 위 선반에 ↗</span></div>
+      </sc-if>
+      <sc-if value="{{cutOn}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" style="position:absolute;left:0;top:352px;width:390px;height:70px;z-index:9;pointer-events:none;overflow:hidden">
+          <div style="position:absolute;left:120px;top:30px;width:150px;height:4px;border-radius:2px;background:#FFF4DE;box-shadow:0 0 8px 2px rgba(255,231,168,.9);animation:wireSlit .62s ease-out both"></div>
+          <div style="position:absolute;left:85px;top:0;width:220px;height:70px;animation:wireCut .62s cubic-bezier(.5,0,.3,1) both">
+            <svg width="220" height="70" viewBox="0 0 220 70"><path d="M10 32 Q110 38 210 32" fill="none" stroke="rgba(43,26,15,.45)" stroke-width="6"></path><path d="M10 32 Q110 38 210 32" fill="none" stroke="#FFF4DE" stroke-width="3.5"></path><rect x="0" y="10" width="20" height="40" rx="8" fill="#A97B52" stroke="#5B3A24" stroke-width="3"></rect><rect x="200" y="10" width="20" height="40" rx="8" fill="#A97B52" stroke="#5B3A24" stroke-width="3"></rect></svg>
+          </div>
+        </div>
       </sc-if>
       <div aria-hidden="true" style="position:absolute;left:6px;top:650px;width:296px;height:20px;border-radius:7px;background:linear-gradient(#B98A5E,#8A5E3A);border:3px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.35)"></div>
       <div role="group" aria-label="흙판 · 흙을 골라 물레에 올려요" style="position:absolute;left:12px;top:596px;width:290px;height:100px;z-index:6">
@@ -1408,7 +1418,7 @@ class Ctl_w extends StationBase {
           fxV.sparks.push({ x: (150 + Math.cos(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), y: (fcy + Math.sin(a2) * rr * (0.6 + 0.5 * st2)).toFixed(1), fs: ((14 + (si % 3) * 5) * (st2 < 0.3 ? st2 / 0.3 * 1.2 : 1.2 - 0.6 * (st2 - 0.3) / 0.7)).toFixed(1), op: st2 <= 0 ? 0 : (st2 < 0.3 ? 1 : 1 - (st2 - 0.3) / 0.7).toFixed(2) });
         }
         var fl = kf(ft, [[0, { x: 0, y: 0, s: 1, o: 1 }], [0.3, { x: 0, y: -18, s: 1.08, o: 1 }], [0.55, { x: 0, y: -18, s: 1.08, o: 1 }], [1.4, { x: -164, y: -229 - fcy, s: .12, o: .95 }]]);
-        fxV.flyTf = sc(150, fcy, fl.s, fl.s, fl.x, fl.y); fxV.flyOp = ft > 1.4 ? 0 : fl.o.toFixed(2);
+        fxV.flyTf = sc(150, fcy, fl.s, fl.s, fl.x, fl.y); fxV.flyOp = window.__pano || ft > 1.4 ? 0 : fl.o.toFixed(2); /* 공방 : 날아가지 않고 물레 위에 남는다 */
       }
     }
     var claysOut = clays.map(function (c) {
@@ -2214,7 +2224,7 @@ class Ctl_gz extends StationBase {
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
-      recoatOn: (function () { if (!s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
+      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
       recoatTap: function () { self.recoat(); },
       condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
       conds: (function () {
@@ -4152,13 +4162,12 @@ class Component extends DCLogic {
   say(msg) { var self = this; clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2600); }
   sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
   stationEv(ev, data) {
-    if (ev === 'formed' && data.id) { window.__wEmpty = true; this.setG2({ onWheel: data.id, wEmpty: true }); this.flyToShelf(data.id); }
+    if (ev === 'formed' && data.id) { window.__wEmpty = true; this.setG2({ onWheel: data.id, wEmpty: true }); this.liftAt = Date.now(); }
     else if (ev === 'glazed' && data.id) {
       var it = (this.loadG().kilnList || []).filter(function (x) { return x.id === data.id; })[0], G = this.ctls.Glaze;
-      window.__glzWait = true; this.setG2({ glzWait: data.id });
-      if (it && !it.g2 && G && G.recoat) { /* 첫 층을 입히면 그대로 시유그릇에 둔 채 바로 덧시유 가능한 상태로 */
-        var self2 = this; setTimeout(function () { try { G.setState({ lastId: data.id }); G.recoat(); } catch (e) {} self2.bump(); }, 1150);
-      }
+      if (it && !it.g2 && G && G.recoat) { /* 첫 층을 입히면 그대로 시유그릇에 둔 채 바로 덧시유 가능한 상태로 (버튼·대기 없이) */
+        var self2 = this; setTimeout(function () { try { G.setState({ lastId: data.id }); G.recoat(); } catch (e) {} self2.bump(); }, 0);
+      } else { window.__glzWait = true; this.setG2({ glzWait: data.id }); }
     }
   }
   /* ── 의뢰 : 기한·보상 ── */
@@ -4631,18 +4640,27 @@ class Component extends DCLogic {
     this.say('시유한 기물 선반에 올렸어요 · 가마 쪽으로 넘기면 선반이 따라와요'); return true;
   }
   putGlaze(b) { if (b.on) { this.say(b.name + '이 이미 시유그릇에 들어 있어요'); return false; } if (b.pick) { b.pick(); } this.sfx('ok'); this.say(b.name + '을 시유그릇에 부었어요 · 시유 준비'); return true; }
+  /* 실을 물레에 대면 : 실이 밑동을 가로지르는 연출 → 잘라 낸 기물이 물레 위에 남는다 */
   cutWire() {
-    var g = this.loadG(), W = this.ctls.Wheel;
-    if (window.__wEmpty) { this.say(g.onWheel ? '이미 잘라 냈어요 · 기물을 선반에 올려요' : '물레에 흙부터 올려요'); return false; }
-    var v = W && (W._v || (W.renderVals0 ? W.renderVals0() : W.renderVals()));
-    if (v && v.finish) { v.finish(); }
-    return !!window.__wEmpty;
+    var g = this.loadG(), W = this.ctls.Wheel, self = this;
+    if (this.cutAt && Date.now() - this.cutAt < 900) { return true; }
+    if (window.__wEmpty) { this.say(g.onWheel ? '이미 잘라 냈어요 · 기물을 들어 선반에 올려요' : '물레에 흙부터 올려요'); return false; }
+    if (!W || W.state.stage !== 'shape') { this.say('중심부터 잡고 모양을 낸 뒤에 잘라요'); this.sfx('fail'); return false; }
+    var tut = false; try { tut = this.qlib().isTut(g); } catch (e) {}
+    if (!tut && (g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 (4/4) · 유약을 발라 자리를 비워요'); this.sfx('fail'); return false; }
+    this.cutAt = Date.now(); this.sfx('tap'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {} this.bump();
+    setTimeout(function () {
+      var v = W._v || (W.renderVals0 ? W.renderVals0() : W.renderVals());
+      if (v && v.finish) { v.finish(); }
+      self.bump();
+    }, 620);
+    return true;
   }
   shelvePiece(id) {
     var g = this.loadG(); if (g.onWheel !== id) { return false; }
     this.setG2({ onWheel: '' }); this.sfx('ok'); try { window.__buzz && window.__buzz(10); } catch (e) {}
     var n = (this.loadG().glazeList || []).length;
-    this.say('성형 완료 · 빚은 기물 선반에 올렸어요 (' + n + '/' + this.KB().cap + ')');
+    this.say('빚은 기물 선반에 올렸어요 (' + n + '/' + this.KB().cap + ') · 유약 쪽으로 넘기면 선반이 따라와요');
     return true;
   }
   carryStart(e, kind, data, html, w, h, tap) {
@@ -4754,11 +4772,12 @@ class Component extends DCLogic {
         down: function (e) { if (own === 0) { self.say(c.n + ' 흙이 없어요 · 채집에서 캐 와요'); self.sfx('fail'); return; } self.carryStart(e, 'clay', c, html, 60, 52, function () { self.say(c.n + ' 흙을 끌어서 물레에 올려요'); }); } };
     });
     v.wEmpty = wEmpty && !it0; v.wEmptyA = wEmpty ? '1' : '0';
-    if (it0 && this.flyingId !== it0.id) { this.flyingId = it0.id; setTimeout(function () { self.flyToShelf(it0.id); }, 0); }
     if (onWid && !it0) { setTimeout(function () { self.setG2({ onWheel: '' }); }, 0); }
+    v.cutOn = !!(this.cutAt && now - this.cutAt < 700);
+    v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     v.onAria = it0 ? this.pName({ shape: it0.shape, prof: it0.prof, sk: it0.sk }) + ' · 집어서 선반에 올리기' : '';
-    v.onDown = function () {};
+    v.onDown = function (e) { if (!it0) { return; } var el = e.currentTarget.querySelector('svg'); self.carryStart(e, 'piece', { id: it0.id }, el ? el.outerHTML : '', 120, 132, function () { self.say('기물을 들어서 오른쪽 위 선반에 올려요'); }); };
     var WIREH = '<svg width="70" height="70" viewBox="0 0 62 70"><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><path d="M10 30 Q31 46 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"/></svg>';
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레 위 기물 밑동에 대요'); }); };
     v.tgTap = function () { if (W.openTarget) { W.openTarget(); } };
