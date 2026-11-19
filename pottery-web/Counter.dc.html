@@ -542,7 +542,7 @@ class Component extends DCLogic {
       var hits2 = self.find(g, function (pp) { return pp.shape === o.want.shape && (!o.want.sk || self.qlib().shapeKeyOf(pp) === o.want.sk) && (!o.want.glaze || pp.glaze === o.want.glaze); });
       var node2 = { id: o.id, cat: 'req', kind: hits2.length ? 'deliver' : 'wait', name: o.name, res: o.res, tone: '#6B5A45', tag: '주문 손님', tagBg: '#C8601E', qt: wantT2 };
       if (hits2.length) {
-        var op = g.pieces[hits2[hits2.length - 1]], oprice = self.priceOf(g, op, 1.4);
+        var op = g.pieces[hits2[hits2.length - 1]], oprice = self.priceOf(g, op, 2.5);
         node2.face = '반가움'; node2.lines = ['연락 받고 왔어요! ' + wantT2 + ' 다 됐다고요?', '(' + op.name + '을(를) 꺼내 보인다)', '생각했던 그대로예요. 약속한 대로 드릴게요.'];
         node2.choices = [
           { label: op.name + ' 건네기 · ' + oprice.toLocaleString() + 'G', tone: 'go', run: function () {
@@ -608,7 +608,7 @@ class Component extends DCLogic {
         var hits = self.find(g, function (pp) { return pp.shape === w.want.shape && (!w.want.sk || self.qlib().shapeKeyOf(pp) === w.want.sk) && (!w.want.glaze || pp.glaze === w.want.glaze); });
         node.card = { title: wantT + ' 찾는 손님', conds: [{ t: SN[w.want.sk || w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '진열 · 보관 모두 가능' }], reward: '시세 +40%' };
         if (hits.length) {
-          var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 1.4);
+          var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 2.5);
           node.face = '반가움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '(' + (hp.where === 'shelf' ? '진열대' : '보관함') + '에서 ' + hp.name + '을(를) 꺼내 보인다)', '바로 이거예요! 값은 넉넉히 드릴게요.'];
           node.choices = [
             { label: '판매하기 · ' + hprice.toLocaleString() + 'G', tone: 'go', run: function () { self.sellWalk(w, hits[hits.length - 1], hprice); } },

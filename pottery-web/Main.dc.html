@@ -693,7 +693,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
       <div aria-hidden="true" style="position:absolute;left:206px;top:118px;width:40px;height:50px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;border:3px solid #3E2616;pointer-events:none"></div>
       <div aria-hidden="true" style="position:absolute;left:66px;top:150px;width:318px;height:390px;box-sizing:border-box;border-radius:130px 130px 10px 10px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;border:4px solid #3E2616;box-shadow:inset 0 -10px 0 rgba(0,0,0,.18),0 8px 0 rgba(43,26,15,.25);pointer-events:none"></div>
-      <div role="group" aria-label="가마 칸 9개 · {{kHead}}" style="position:absolute;left:84px;top:204px;width:282px;display:grid;grid-template-columns:repeat(3,84px);gap:6px 15px;z-index:4">
+      <div role="group" aria-label="가마 칸 6개 · {{kHead}}" style="position:absolute;left:84px;top:232px;width:282px;display:grid;grid-template-columns:repeat(3,84px);gap:26px 15px;z-index:4">
         <sc-for list="{{kilns}}" as="kn" hint-placeholder-count="9">
           <div data-kiln="{{kn.idx}}" data-kfree="{{kn.free}}" role="button" aria-label="{{kn.aria}}" onPointerDown="{{kn.down}}" style="{{kn.box}}">
             <div style="{{kn.door}}"></div>
@@ -771,6 +771,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
               <span style="{{sl.badge}}">{{sl.grade}}</span>
               <span aria-hidden="true" style="{{sl.spk}}">✦</span>
               <span aria-hidden="true" style="{{sl.chk}}">✓</span>
+              <span style="{{sl.qTag}}">📜 의뢰</span>
             </button>
           </sc-if>
           <sc-if value="{{sl.empty}}" hint-placeholder-val="{{false}}">
@@ -824,6 +825,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <sc-for list="{{ds.stores}}" as="st" hint-placeholder-count="4">
         <button type="button" data-work="1" onPointerDown="{{st.down}}" onClick="{{st.tap}}" aria-pressed="{{st.on}}" aria-label="{{st.name}}" style="{{st.style}}">
           <span aria-hidden="true" style="{{st.chk}}">✓</span>
+          <span style="{{st.qTag}}">📜 의뢰</span>
           <svg width="44" height="44" viewBox="{{st.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{st.pot.shCy}}" rx="{{st.pot.shRx}}" ry="{{st.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{st.pot.d}}" fill="{{st.pot.fill}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.tex}}" opacity="{{st.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{st.pot.d}}" fill="url(#potTopLight)"></path><path d="{{st.pot.d}}" fill="{{st.pot.rings}}"></path><path d="{{st.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{st.pot.grainOp}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.foot}}" fill-opacity="{{st.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{st.pot.d}}" fill="{{st.pot.drip}}" fill-opacity="{{st.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{st.pot.dX}}" y="{{st.pot.dY}}" width="{{st.pot.dW}}" height="{{st.pot.dH}}" fill="{{st.pot.dCol}}" mask="{{st.pot.dMask}}" opacity="{{st.pot.dOp}}"></rect><path d="{{st.pot.d}}" fill="url(#potShade)"></path><path d="{{st.pot.d}}" fill="none" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{st.pot.rimY}}" rx="{{st.pot.rimRx}}" ry="{{st.pot.rimRy}}" fill="{{st.pot.inner}}" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}"></ellipse></svg>
           <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:11px;color:#2B1A0F">{{st.name}}</span>
           <span style="{{st.badge}}">{{st.grade}}</span>
@@ -890,9 +892,16 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">받을 골드</span>
           <span style="font-family:'Jua',sans-serif;font-size:21px;color:#8A6410">+{{ds.cf.sum}}G</span>
         </div>
+        <sc-if value="{{ds.cf.qOn}}" hint-placeholder-val="{{false}}">
+          <div role="note" style="display:flex;flex-direction:column;gap:3px;padding:8px 12px;border-radius:12px;background:#F1E6F6;border:2px solid #7A3E8E">
+            <span style="font-family:'Jua',sans-serif;font-size:14px;color:#4A2458">📜 의뢰에 납품할 수 있는 작품이에요</span>
+            <sc-for list="{{ds.cf.qs}}" as="qq" hint-placeholder-count="1"><span style="font-size:12px;font-weight:700;line-height:1.45;color:#4A2458">· {{qq}}</span></sc-for>
+            <span style="font-size:11px;color:#6A4A78">판매하면 의뢰에는 쓸 수 없어요 · 납품은 카운터 손님에게</span>
+          </div>
+        </sc-if>
         <span style="text-align:center;font-size:11px;color:#7A5434">판매해도 도감 기록은 남아요</span>
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
-          <button type="button" onClick="{{ds.cf.no}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24">취소</button>
+          <button type="button" onClick="{{ds.cf.no}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 #5B3A24;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#5B3A24">{{ds.cf.noTxt}}</button>
           <button type="button" onClick="{{ds.cf.yes}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:12px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 4px 0 #2F6328;border-radius:16px;font-family:'Jua',sans-serif;font-size:18px;color:#FFFDF5;text-shadow:0 2px 0 #2F6328">판매하기</button>
         </div>
       </div>
@@ -3122,7 +3131,7 @@ class Ctl_ct extends StationBase {
       var hits2 = self.find(g, function (pp) { return pp.shape === o.want.shape && (!o.want.sk || self.qlib().shapeKeyOf(pp) === o.want.sk) && (!o.want.glaze || pp.glaze === o.want.glaze); });
       var node2 = { id: o.id, cat: 'req', kind: hits2.length ? 'deliver' : 'wait', name: o.name, res: o.res, tone: '#6B5A45', tag: '주문 손님', tagBg: '#C8601E', qt: wantT2 };
       if (hits2.length) {
-        var op = g.pieces[hits2[hits2.length - 1]], oprice = self.priceOf(g, op, 1.4);
+        var op = g.pieces[hits2[hits2.length - 1]], oprice = self.priceOf(g, op, 2.5);
         node2.face = '반가움'; node2.lines = ['연락 받고 왔어요! ' + wantT2 + ' 다 됐다고요?', '(' + op.name + '을(를) 꺼내 보인다)', '생각했던 그대로예요. 약속한 대로 드릴게요.'];
         node2.choices = [
           { label: op.name + ' 건네기 · ' + oprice.toLocaleString() + 'G', tone: 'go', run: function () {
@@ -3188,7 +3197,7 @@ class Ctl_ct extends StationBase {
         var hits = self.find(g, function (pp) { return pp.shape === w.want.shape && (!w.want.sk || self.qlib().shapeKeyOf(pp) === w.want.sk) && (!w.want.glaze || pp.glaze === w.want.glaze); });
         node.card = { title: wantT + ' 찾는 손님', conds: [{ t: SN[w.want.sk || w.want.shape] }, { t: w.want.glaze ? GN[w.want.glaze] + '유' : '유약 무관' }, { t: '진열 · 보관 모두 가능' }], reward: '시세 +40%' };
         if (hits.length) {
-          var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 1.4);
+          var hp = g.pieces[hits[hits.length - 1]], hprice = self.priceOf(g, hp, 2.5);
           node.face = '반가움'; node.lines = ['혹시 ' + wantT + ' 있나요? 꼭 찾던 게 있어서요.', '(' + (hp.where === 'shelf' ? '진열대' : '보관함') + '에서 ' + hp.name + '을(를) 꺼내 보인다)', '바로 이거예요! 값은 넉넉히 드릴게요.'];
           node.choices = [
             { label: '판매하기 · ' + hprice.toLocaleString() + 'G', tone: 'go', run: function () { self.sellWalk(w, hits[hits.length - 1], hprice); } },
@@ -3884,6 +3893,10 @@ class Ctl_ds extends StationBase {
       if (p.where === 'store') { storeIds.push(id); }
     });
     var QLd = this.qlib();
+    /* 받은 의뢰에 맞는 작품 : 판매 대신 납품할 수 있다 (작품 하나는 판매·납품 중 한 번만) */
+    var RQ = {};
+    try { var actQ = QLd.active(g), AQ = QLd.alloc(g, actQ); actQ.forEach(function (q) { var rq = AQ[q.id]; if (!rq) { return; } var rwT = (q.reward && (q.reward.gold ? q.reward.gold.toLocaleString() + 'G' : q.reward.text)) || ''; rq.items.forEach(function (row) { (row.ready || []).forEach(function (pid) { if (!RQ[pid]) { RQ[pid] = { t: q.title || q.who || '의뢰', rw: rwT, n: row.n, have: row.dl + row.readyN }; } }); }); }); } catch (eQ) {}
+    var qTag = function (pid) { return RQ[pid] ? 'position:absolute;left:3px;top:3px;padding:0 5px;border-radius:7px;background:#7A3E8E;border:1.5px solid #FFF4DE;font-family:Jua,sans-serif;font-size:10px;line-height:15px;color:#FFF;pointer-events:none;z-index:2' : 'display:none'; };
     function badgeOf(gr, extra) { return 'padding:0 8px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + (GR[gr] || '#6A5D4A') + (extra || ''); }
     var slots = [];
     for (var i = 0; i < 6; i++) {
@@ -3892,7 +3905,7 @@ class Ctl_ds extends StationBase {
         var p = g.pieces[id];
         var on = self.state.sel === id;
         slots.push({
-          pid: id, filled: true, empty: false, name: p.name, grade: p.grade,
+          pid: id, filled: true, empty: false, name: p.name, grade: p.grade, qTag: qTag(id),
           pot: self.potOf(p, p.tint || GC[p.glaze] || '#F2EFE6'),
           box: 'all:unset;cursor:pointer;position:relative;touch-action:none;user-select:none;-webkit-user-select:none;' + (self.state.drag && self.state.drag.on && self.state.drag.sid === id ? 'opacity:.3;' : '') + 'height:96px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;padding-bottom:4px;border-radius:12px;' + (on ? 'background:rgba(255,231,168,.18);box-shadow:inset 0 0 0 2px #FFE7A8' : ''),
           badge: badgeOf(p.grade),
@@ -3911,7 +3924,7 @@ class Ctl_ds extends StationBase {
     var stores = storeIds.map(function (sid) {
       var p = g.pieces[sid], pickOn = !!(self.state.sellMode && (self.state.sellPick || {})[sid]), dragging = self.state.drag && self.state.drag.on && self.state.drag.sid === sid, on = pickOn;
       return {
-        name: p.name, grade: p.grade, on: on ? 'true' : 'false', pot: self.potOf(p, p.tint || GC[p.glaze] || '#F2EFE6'), badge: badgeOf(p.grade, ';font-size:10px;padding:0 6px'),
+        name: p.name, grade: p.grade, on: on ? 'true' : 'false', pot: self.potOf(p, p.tint || GC[p.glaze] || '#F2EFE6'), badge: badgeOf(p.grade, ';font-size:10px;padding:0 6px'), qTag: qTag(sid),
         style: 'all:unset;cursor:pointer;aspect-ratio:1 / 1;box-sizing:border-box;padding:4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;' + (on ? 'background:#EAF5E4;border:3px solid #3B7A32;box-shadow:0 0 0 2px #A9D69E' : 'background:#FFFDF5;border:2px solid #C9A27A;box-shadow:0 2px 0 #C9A27A') + ';position:relative;touch-action:none;user-select:none;-webkit-user-select:none' + (dragging ? ';opacity:.3' : ''),
         chk: self.state.sellMode ? 'position:absolute;right:3px;top:3px;width:20px;height:20px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:12px;' + (pickOn ? 'background:#3B7A32;color:#FFFDF5;border:2px solid #2F6328' : 'background:#FFF4DE;color:transparent;border:2px solid #C9A27A') : 'display:none',
         down: function (e) { self.dragDown(e, sid, 'store'); },
@@ -3954,6 +3967,7 @@ class Ctl_ds extends StationBase {
     (g.order || []).forEach(function (pid) { var pp = g.pieces[pid]; if (SP[pid] && pp && (pp.where === 'store' || pp.where === 'shelf')) { sellIds.push(pid); sellSum += pp.value || 0; } });
     var D = this.state.drag && this.state.drag.on ? this.state.drag : null, Dp = D ? g.pieces[D.sid] : null;
     var cfIds = this.state.cfIds || [], cfRows = [], cfSum = 0;
+    var cfQs = []; cfIds.forEach(function (pid) { var r0 = RQ[pid], pp0 = g.pieces[pid]; if (r0 && pp0) { cfQs.push(pp0.name + ' → 「' + r0.t + '」 준비 ' + r0.have + '/' + r0.n + (r0.rw ? ' · 보상 ' + r0.rw : '')); } });
     cfIds.forEach(function (pid) { var pp = g.pieces[pid]; if (!pp) { return; } cfSum += pp.value || 0; cfRows.push({ name: pp.name, grade: pp.grade, value: (pp.value || 0).toLocaleString(), badge: badgeOf(pp.grade, ';font-size:10px;padding:0 6px'), pot: self.potOf(pp, GC[pp.glaze] || '#F2EFE6') }); });
     return {
       storeArea: 'position:absolute;left:14px;right:14px;top:494px;bottom:14px;box-sizing:border-box;padding:10px;border-radius:18px;display:flex;flex-direction:column;gap:8px;' + (D && D.from === 'shelf' ? (D.over === 'store' ? 'background:#FFF6D8;border:3px solid #E3B23C;box-shadow:0 0 0 3px #FFD66B,0 0 22px rgba(255,214,107,.9)' : 'background:rgba(255,244,222,.92);border:3px dashed #B8923F') : 'background:rgba(255,244,222,.92);border:3px solid #5B3A24'),
@@ -3985,7 +3999,7 @@ class Ctl_ds extends StationBase {
       sellZoneText: D && D.over === 'sell' ? '놓으면 판매 · ' + (Dp ? (Dp.value || 0).toLocaleString() : 0) + 'G' : '판매 상자',
       ghost: D && Dp ? { pot: self.potOf(Dp, GC[Dp.glaze] || '#F2EFE6'), style: 'position:absolute;left:' + (D.x - 34) + 'px;top:' + (D.y - 44) + 'px;width:68px;height:68px;z-index:66;pointer-events:none;filter:drop-shadow(0 6px 4px rgba(0,0,0,.45));transform:scale(1.1)' } : { pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 }, style: 'display:none' },
       cfOn: cfRows.length > 0,
-      cf: { n: cfRows.length, rows: cfRows, sum: cfSum.toLocaleString(), no: function () { self.setState({ cfIds: [] }); }, yes: function () { self.sellMany(cfIds); } },
+      cf: { n: cfRows.length, rows: cfRows, sum: cfSum.toLocaleString(), qOn: cfQs.length > 0, qs: cfQs, noTxt: cfQs.length ? '납품용으로 두기' : '취소', no: function () { self.setState({ cfIds: [] }); if (cfQs.length) { self.say('남겨 뒀어요 · 카운터에서 의뢰 손님에게 납품해요'); } }, yes: function () { self.sellMany(cfIds); } },
       tiers: tiers, pk: pk,
       stores: stores, storeEmpty: !storeIds.length, stOn: !!stP,
       stName: stP ? stP.name : '', stValue: stP ? (stP.value || 0).toLocaleString() : '0',
@@ -5276,17 +5290,18 @@ class Component extends DCLogic {
     this.say(st === 'g' ? '기물을 끌어 시유그릇에 넣어요' : '기물을 끌어 가마 빈 칸에 넣어요'); this.sfx('tap');
   }
 
-  /* ── 큰 가마 하나 · 칸 9개 (칸마다 문) · 온도는 가마 전체가 함께 쓴다 ──
+  /* ── 큰 가마 하나 · 칸 6개 (기본 3칸) (칸마다 문) · 온도는 가마 전체가 함께 쓴다 ──
      온도 T(0~100) : 장작 1개 20G → +18 · 1분에 15씩 식는다
      적정 56~86 → 굽는 속도 ×2 · 낮으면 ×0.4~2 (온도에 비례) · 86을 넘으면 과열 → 파손 위험이라 불이 10으로 뚝
      발색 = 굽는 동안 적정 구간에 머문 시간 비율 */
   KB() { return { lo: 56, hi: 86, dec: 0.25, log: 9, cost: 20, base: 180, over: 10, cap: 4 }; }
-  kCost() { return [1000, 2000, 3500, 5000, 7500, 10000]; }
+  kCost() { return [2000, 5000, 10000]; } /* 기본 3칸 → 최대 6칸 */
+  kN() { return 6; }
   kState(g) {
     var K = g.pk2;
     if (!K) { /* 예전 작은 가마 9개 → 큰 가마 칸으로 옮긴다 */
       var O = g.pk || {}, now = Date.now(), k = [];
-      (O.k || []).slice(0, 9).forEach(function (x, i) {
+      (O.k || []).slice(0, 6).forEach(function (x, i) {
         if (!x || !x.it) { k[i] = null; return; }
         var r = x.done ? ((x.avg || 0) >= 66 ? 1 : ((x.avg || 0) >= 33 ? 0.5 : 0)) : 0;
         var p = x.done ? 1 : Math.min(0.99, x.p0 || 0);
@@ -5294,8 +5309,15 @@ class Component extends DCLogic {
       });
       K = { open: O.open || 3, T: 40, at: now, k: k };
     }
-    var kk = (K.k || []).slice(0, 9); while (kk.length < 9) { kk.push(null); }
-    return { open: K.open || 3, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk.map(function (x) { return x ? { it: x.it, p: x.p || 0, tb: x.tb || 0, tt: x.tt || 0, done: !!x.done } : null; }) };
+    /* 칸 9개 → 6개 : 7~9번 칸에 있던 기물은 비어 있는 앞쪽 칸으로, 자리가 없으면 시유 선반으로 돌려놓는다 */
+    var kk = (K.k || []).slice(0, 6), extra = (K.k || []).slice(6).filter(function (x) { return x && x.it; }), op = Math.min(6, K.open || 3);
+    while (kk.length < 6) { kk.push(null); }
+    if (extra.length || (K.open || 3) > 6) {
+      var back = [];
+      extra.forEach(function (x) { var j = kk.indexOf(null); if (j >= 0) { kk[j] = x; if (j >= op) { op = j + 1; } } else { back.push(x.it); } });
+      try { var c0 = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); c0.kilnList = (c0.kilnList || []).concat(back); c0.pk2 = { open: op, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk }; localStorage.setItem('pottery-proto-v1', JSON.stringify(c0)); } catch (e) {}
+    }
+    return { open: op, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk.map(function (x) { return x ? { it: x.it, p: x.p || 0, tb: x.tb || 0, tt: x.tt || 0, done: !!x.done } : null; }) };
   }
   kMul(T) { var B = this.KB(); return T >= B.lo ? 2 : 0.4 + 1.6 * Math.max(0, T) / B.lo; }
   /* 지금까지 흐른 시간만큼 가마를 진행시킨다 (온도는 직선으로 식으므로 구간마다 정확히 적분) */
@@ -5375,7 +5397,7 @@ class Component extends DCLogic {
     if ((g.gold || 0) < cost) { this.say('골드가 모자라요 · ' + cost.toLocaleString() + 'G 필요'); this.sfx('fail'); return; }
     this.kAdv(K, Date.now()); K.open++;
     var c = this.kSave(K); c.gold = (c.gold || 0) - cost; try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
-    this.sfx('coin'); this.say('가마 칸 ' + K.open + '/9 · 새 칸을 열었어요');
+    this.sfx('coin'); this.say('가마 칸 ' + K.open + '/6 · 새 칸을 열었어요');
   }
   kCollect(i) {
     var g = this.loadG(), K = this.kState(g); this.kAdv(K, Date.now());
@@ -5849,10 +5871,10 @@ class Component extends DCLogic {
         tag: BN + ' ' + (none ? '0' : (b.price || '').split(' · ')[0].replace(/^[^0-9∞무]*/, '').replace('개', '')) + (b.on ? ' ✓' : ''), tagSt: 'position:absolute;left:-4px;right:-4px;top:58px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:18px;border-radius:9px;background:rgba(43,26,15,.82);color:' + (b.on ? '#FFE27A' : '#FFF4DE') + ';white-space:nowrap',
         sub: '', subSt: 'display:none;position:absolute;left:0;right:0;top:69px;text-align:center;font-size:9.5px;font-weight:700;color:#F3E3C4;white-space:nowrap' };
     });
-    /* 큰 가마 · 칸 9개 */
+    /* 큰 가마 · 칸 6개 */
     var K = this.kState(g); this.kAdv(K, now);
     var B = this.KB(), T = K.T, inB = T >= B.lo, kv = [], doneN = 0, fireN = 0, cost = this.kCost()[K.open - 3], tip = this.kTip && now - this.kTip.t < 4500 ? this.kTip.i : -1;
-    for (var k = 0; k < 9; k++) {
+    for (var k = 0; k < 6; k++) {
       (function (k) {
         var x = K.k[k], open = k < K.open, has = !!(x && x.it), done = !!(x && x.done), run = has && !done;
         if (done) { doneN++; } else if (run) { fireN++; }
@@ -5884,7 +5906,7 @@ class Component extends DCLogic {
     var RV = this.reveal; v.rvOn = !!RV;
     if (RV) {
       var rp = RV.p, gr = rp.grade || '', GCOL = { '명작': ['#FFD54A', '#7A4A00', 'rgba(255,213,74,.75)'], '수작': ['#BFE3F2', '#1F4E63', 'rgba(150,210,240,.6)'] }[gr] || ['#F3E3C4', '#5B3A24', 'rgba(255,231,168,.45)'];
-      var sx = 84 + (RV.i % 3) * 99 + 42, sy = 204 + Math.floor(RV.i / 3) * 80 + 37;
+      var sx = 84 + (RV.i % 3) * 99 + 42, sy = 232 + Math.floor(RV.i / 3) * 100 + 37;
       v.rv = { pot: this.potOf(rp, this.fillOf(rp, 'glazed')), grade: gr || '완성', name: rp.name || this.pName(rp), sub: '발색 ' + (rp.colorPct || 0) + '% · 적정 온도 유지 ' + RV.band + '%' + (rp.value ? ' · ' + rp.value.toLocaleString() + 'G' : ''),
         aria: (gr || '완성') + ' · ' + (rp.name || this.pName(rp)) + ' · 눌러서 닫기',
         close: function () { self.reveal = null; self.bump(); },
@@ -5906,7 +5928,7 @@ class Component extends DCLogic {
     v.woodDown = function (e) { self.carryStart(e, 'wood', {}, self.woodLog(), 86, 32, function () { self.say('장작을 끌어서 아궁이에 넣어요 · 1개 ' + self.KB().cost + 'G'); }, { sc: 1.1 }); };
     v.fireTap = function () { self.say('장작더미에서 장작을 끌어 와 아궁이에 넣어요'); };
     v.woodTxt = '장작 ' + B.cost + 'G';
-    v.kHead = '칸 ' + K.open + '/9 · 굽는 중 ' + fireN + (doneN ? ' · 완료 ' + doneN : '');
+    v.kHead = '칸 ' + K.open + '/6 · 굽는 중 ' + fireN + (doneN ? ' · 완료 ' + doneN : '');
     /* 알림 : 화면 밖이면 그쪽 가장자리 스티커 · 화면 안이면 설비 배지 */
     var cDel = 0, cOffer = false; try { var A = Q.alloc(g, act); act.forEach(function (a) { var r = A[a.id]; if (r && r.deliverable > 0 && r.items.every(function (x) { return x.ok; })) { cDel++; } }); } catch (e) {}
     cOffer = act.length < 3;
@@ -5930,9 +5952,10 @@ class Component extends DCLogic {
       var r = A2[a.id] || {}, at = a.at || ((g[KEYS[a.id]] || {}).at), its = a.items || (a.def && a.def.items) || [];
       if (!its.length) { var ls = {}; try { ls = Q.lineState(g, a.id); } catch (e) {} its = (ls.def && ls.def.items) || []; }
       var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + self.durOf(its) : 0), left = due ? due - now : 0; /* 기한은 이야기 의뢰(메인·도깨비·시즌)와 일반 의뢰에만 */
-      var sub = (r.need ? (r.ready || 0) + '/' + r.need : '') + (due ? (r.need ? ' · ' : '') + (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '');
+      var rwT = (a.reward && (a.reward.gold ? a.reward.gold.toLocaleString() + 'G' : a.reward.text)) || '', rows = (r.items || []).map(function (x) { return (x.it && (x.it.name || x.it.shapeN) || '') + ' ' + (x.dl + x.readyN) + '/' + x.n; }).join(' · ');
+      var sub = (r.need ? '준비 ' + (r.ready || 0) + '/' + r.need : '') + (due ? (r.need ? ' · ' : '') + (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '');
       return { t: a.title || a.who || '의뢰', sub: sub || (a.who || ''), subCol: due && left <= 0 ? '#A3442C' : (due && left < 600000 ? '#C0582E' : '#5B3A24'),
-        aria: (a.title || '') + ' · ' + sub, tap: function () { self.say((a.who ? a.who + ' · ' : '') + (a.title || '') + (sub ? ' · ' + sub : '') + (due && left > 0 ? ' · 기한 안이면 보상 2배' : '')); },
+        aria: (a.title || '') + ' · ' + sub, tap: function () { self.say((a.title || a.who || '의뢰') + (rows ? ' · ' + rows : '') + (rwT ? ' · 보상 ' + rwT : '') + (due && left > 0 ? ' · 기한 안이면 보상 2배' : '')); },
         dot: 'position:absolute;left:5px;top:17px;width:8px;height:8px;border-radius:50%;background:' + COL[i % 3],
         st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;min-width:0;box-sizing:border-box;padding:1px 5px 1px 14px;border-radius:8px;background:#FFF4DE;border:2px solid ' + COL[i % 3] + ';display:flex;flex-direction:column;justify-content:center;overflow:hidden' };
     });

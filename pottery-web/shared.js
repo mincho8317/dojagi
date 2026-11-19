@@ -20,10 +20,10 @@
     // ── 조정값 (밸런스 데이터) ─────────────────────────────
     var TUNE = {
       fitMin: 60,          // 메인 의뢰 기물 판정 · 모양/높이 일치 최소 %
-      itemGold: 600,       // 메인 의뢰 기물 1점당 골드 (기존 스테이지 ★1~3 보상 300G×3 중 일부)
+      itemGold: 750,       // 의뢰 기물 1점당 골드 · 양작 찻잔 일반 판매(약 300G)의 2.5배 안팎
       itemShards: 10,      // 메인 의뢰 기물 1점당 파편
       questFame: 15,       // 메인 의뢰 완료 시 명성 경험치
-      gradeBonus: { '수작': 0.25, '명작': 0.5, '요변': 0.5 }, // 납품 작품 등급별 골드 보너스 비율
+      gradeBonus: { '수작': 2, '명작': 7, '요변': 7 }, // 납품 작품 등급별 골드 보너스 비율 · 판매가 등급 배수(×3·×8)를 따라가 납품이 늘 판매보다 비싸게
       // 작품 등급 = 공정별 실력 점수(0~100)의 가중 평균 · 무작위 없음
       skillW: { form: 0.45, dry: 0.15, glaze: 0.2, fire: 0.2 },
       skillPart: {
@@ -508,7 +508,7 @@
       if (q.min && !q.minDone) { out.push({ id: 'min', kind: 'side', tag: '사연', who: '민 씨', role: '찻집 주인', res: 'CHAR_MIN', title: '할머님 잔을 닮은 찻잔', items: [{ key: 'a', name: '청자 찻잔', wshape: 'cup', sk: 'chatjan', glaze: 'celadon', n: 1 }], reward: { text: '400G × 등급 · 명성 +20' }, at: q.minAt }); }
       if (q.guest && !q.guestDone) { out.push({ id: 'guest', kind: 'side', tag: '일간', who: '이름 없는 손님', role: '동네 주민', res: 'CHAR_GUEST', title: '둥근 밥공기', items: [{ key: 'a', name: '사발 (유약 무관)', wshape: 'bowl', sk: 'sabal', glaze: '', n: 1 }], reward: { text: '350G' }, at: q.guestAt }); }
       if (q.week && !q.weekDone) { out.push({ id: 'week', kind: 'side', tag: '주간', who: '카페 사장', role: '골목 카페', res: 'CHAR_CAFE', title: '카페 잔 세트', items: [{ key: 'a', name: '백자 찻잔', wshape: 'cup', sk: 'chatjan', glaze: 'white', n: 3 }], reward: { text: '3,600G · 파편 20' }, at: q.weekAt }); }
-      (g.tasteOrders || []).forEach(function (o) { out.push({ id: o.id, kind: 'order', tag: '주문', who: o.name, role: '취향 손님', res: o.res, title: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SKN[o.want.sk] || SN[o.want.shape] || '그릇') + ' 주문', items: [{ key: 'a', name: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SKN[o.want.sk] || SN[o.want.shape] || '그릇') + (o.want.glaze ? '' : ' (유약 무관)'), wshape: o.want.shape, sk: o.want.sk || '', glaze: o.want.glaze || '', n: 1 }], reward: { text: '시세 ×1.4 · 명성 +5' }, at: o.at }); });
+      (g.tasteOrders || []).forEach(function (o) { out.push({ id: o.id, kind: 'order', tag: '주문', who: o.name, role: '취향 손님', res: o.res, title: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SKN[o.want.sk] || SN[o.want.shape] || '그릇') + ' 주문', items: [{ key: 'a', name: (o.want.glaze ? GP[o.want.glaze] + ' ' : '') + (SKN[o.want.sk] || SN[o.want.shape] || '그릇') + (o.want.glaze ? '' : ' (유약 무관)'), wshape: o.want.shape, sk: o.want.sk || '', glaze: o.want.glaze || '', n: 1 }], reward: { text: '시세 ×2.5 · 명성 +5' }, at: o.at }); });
       return out;
     }
     function seasonOpen() { return Date.now() <= SEASON_UNTIL; }

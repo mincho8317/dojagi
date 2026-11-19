@@ -382,7 +382,7 @@ class Component extends DCLogic {
       if (D[k].ev) { R.push({ k: k, n: n }); return; }
       var f = n * 0.4, m = Math.floor(f) + (Math.random() < f - Math.floor(f) ? 1 : 0), ex = 0;
       for (var i = 0; i < m; i++) { if (Math.random() < up) { ex++; } }
-      m = Math.max(1, m + ex); R.push({ k: k, n: m, out: D[k].out + '1' });
+      m = Math.max(1, m + ex); R.push({ k: k, n: m, raw: n, out: D[k].out + '1' });
     });
     var mats = {}; for (var m in (g.mats || {})) { mats[m] = g.mats[m]; }
     R.forEach(function (x) { var key = x.out || x.k; mats[key] = (mats[key] || 0) + x.n; });
@@ -567,13 +567,13 @@ class Component extends DCLogic {
     if (G && G.phase === 'end') {
       var R = G.R || [];
       out.rewards = R.map(function (x) {
-        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat', name: D[x.k].kind === 'glaze' ? ({ ow: '백자유', oc: '청자유', ob: '흑유', oj: '진사유' }[x.k] || D[x.k].name) : D[x.k].name, n: x.n, nS: 'font-size:16px;color:#2F6328', q: '바로 사용',
+        return { icS: 'width:34px;height:34px;background:url(' + D[x.k].img + ') center/contain no-repeat', name: D[x.k].kind === 'glaze' ? ({ ow: '백자유', oc: '청자유', ob: '흑유', oj: '진사유' }[x.k] || D[x.k].name) : D[x.k].name, n: x.n, nS: 'font-size:16px;color:#2F6328', q: x.raw ? '캔 ' + x.raw + '개 → ' + x.n + '개' : '바로 사용',
           newS: (G.newKeys || {})[x.k] ? 'position:absolute;right:-6px;top:-8px;padding:0 5px;border-radius:7px;background:#3B7A32;border:2px solid #FFF4DE;font-size:10px;line-height:15px;color:#FFFDF5' : 'display:none' };
       });
       var TT = this.tixState(g, G.ev);
       out.resTitle = R.length ? (G.mode === 'dig' ? '흙을 캤어요!' : '원석을 모았어요!') : '아쉽다…';
       out.resSub = '점수 ' + G.score; out.newBest = G.newBest ? ' · 🏆 최고 기록!' : '';
-      out.resHint = R.length ? '바로 공방에서 쓸 수 있어요' : '다음엔 조금 더 깊이 파 봐요';
+      out.resHint = R.length ? (R.some(function (x) { return x.raw; }) ? '캔 원료 5개가 흙·유약 2개꼴로 바뀌어요 · 바로 공방에서 써요' : '바로 공방에서 쓸 수 있어요') : '다음엔 조금 더 깊이 파 봐요';
       out.closeGame = function () { self.closeGame(); };
       out.again = function () { var m0 = G.mode, e0 = G.ev; self.closeGame(); setTimeout(function () { self.start(m0, e0); }, 50); };
       out.againBtn = 'all:unset;cursor:pointer;flex:1 1 0;box-sizing:border-box;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;text-align:center;' + (TT.tix > 0 ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#D8CBB4;border:3px solid #A89880;color:#7A6A55');

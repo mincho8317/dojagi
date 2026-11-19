@@ -259,11 +259,11 @@ class Component extends DCLogic {
       var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.sk || o.want.shape] || '그릇');
       var n = count(function (p) { return p.shape === o.want.shape && (!o.want.glaze || p.glaze === o.want.glaze); });
       var left = Math.max(0, 3 - Math.floor((Date.now() - o.at) / 86400000));
-      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요 · 남은 기한 ' + left + '일', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.sk || o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: '카운터에서 받은 주문 · 시세보다 40% 더 주겠다고 했어요 · 남은 기한 ' + left + '일', reward: '시세 ×2.5 · 명성 +5', conds: [{ t: '형태 · ' + (SN[o.want.sk || o.want.shape] || ''), ok: n > 0 }, { t: o.want.glaze ? '유약 · ' + GN[o.want.glaze] : '유약 무관', ok: n > 0 }, { t: '보유 ' + Math.min(1, n) + '/1', ok: n > 0 }], ready: n > 0, acc: true, done: false, thanks: false });
     });
     (g.tasteDone || []).forEach(function (o) {
       var t = (o.want.glaze ? GN[o.want.glaze] + ' ' : '') + (SN[o.want.sk || o.want.shape] || '그릇');
-      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했어요', reward: '시세 ×1.4 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
+      defs.push({ id: o.id, who: o.name, role: '취향 손님', portrait: o.res ? 'PW_' + o.res : 'PORTRAIT_WALK', tag: '주문', title: t, memo: (o.price || 0).toLocaleString() + 'G에 납품했어요', reward: '시세 ×2.5 · 명성 +5', conds: [{ t: '납품 완료', ok: true }], ready: true, acc: true, done: true, thanks: true });
     });
     var Lm = this.limits(), now = Date.now();
     defs[0].need = '청자 찻잔 ×1'; defs[0].req = 1; defs[0].hv = celCup; defs[0].at = q.minAt; defs[0].lim = Lm.min;

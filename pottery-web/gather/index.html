@@ -190,14 +190,15 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     if (CFG.event) { w.push(['rs', 0.35]); }
     return pick(w);
   }
-  function newDig() {
+  function newDig(again) {
     layoutField();
     DEP = new Uint8Array(F.gw * F.gh); NOI = buildNoise(F.gw, F.gh);
     PW = F.gw * CELL * K; PH = F.gh * CELL * K; makePatches();
     OFF = document.createElement('canvas'); OFF.width = PW; OFF.height = PH; OCX = OFF.getContext('2d'); IMG = OCX.createImageData(PW, PH); DR = null; dirty = true;
     var items = [], plan = [[1, 7], [2, 9], [3, 10], [4, 10], [5, 11], [6, 11], [7, 11]];
     plan.forEach(function (pl) { for (var i = 0; i < pl[1]; i++) { items.push({ l: pl[0], k: itemFor(pl[0]) }); } });
-    for (var t = 0; t < 6; t++) { items.push({ l: 1 + Math.floor(Math.random() * 4), k: 'time' }); }
+    /* 모래시계 : 첫 땅에 2개만 · 새로 드러난 땅에는 없음 */
+    if (!again) { for (var t = 0; t < 2; t++) { items.push({ l: 1 + Math.floor(Math.random() * 4), k: 'time' }); } }
     // 대형 흙 : 2~7층에 6덩이. 넓게 다 드러내야 캐지고, 2개로 친다
     for (var bg = 0; bg < 6; bg++) { var bl = 2 + bg; items.unshift({ l: bl, k: itemFor(bl), big: 1 }); }
     // 노다지 : 같은 흙 5~6개가 한데 몰린 자리 4곳 — 터지면 콤보가 줄줄이
@@ -587,6 +588,16 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
     S.fx = S.fx.filter(function (f) { return S.t - f.at < 0.9; });
     if (S.left <= 5 && Math.ceil(S.left) !== S.tickSec) { S.tickSec = Math.ceil(S.left); if (S.left > 0) { tone(1000, 0.05, 'square', 0.06); } }
     if (S.left <= 0 && !S.fly.length) { finish(); }
+    /* 흙 파기 : 땅의 흙을 다 캐면 남은 시간 동안 새 땅이 드러난다 */
+    if (S.mode === 'dig' && S.left > 1 && !S.fly.length && S.items.every(function (it) { return it.got || it.k === 'time'; })) { refreshDig(); }
+  }
+  try { window.__gS = function () { return S; }; } catch (e) {} /* 시험용 */
+  function refreshDig() {
+    var o = S, n = newDig(true);
+    ['t', 'left', 'got', 'score', 'taps', 'combo', 'lastGet', 'goAt'].forEach(function (k) { n[k] = o[k]; });
+    n.pre = 0; n.field = (o.field || 1) + 1; S = n;
+    S.fx.push({ x: W / 2, y: H / 2 - 40, t: '새 땅! (' + S.field + '번째)', c: '#FFD66B', at: S.t, big: true }); S.flash = S.t; S.shake = 6;
+    tone(660, 0.1, 'triangle', 0.1); setTimeout(function () { tone(990, 0.16, 'triangle', 0.1); }, 90);
   }
   function drawBg() {
     var g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#4E3A28'); g.addColorStop(1, '#3E2C1E'); cx.fillStyle = g; cx.fillRect(0, 0, W, H);
