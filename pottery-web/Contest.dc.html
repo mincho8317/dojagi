@@ -633,7 +633,7 @@ class Component extends DCLogic {
           { k: '종합 일치도', v: R.j.score + '%', vs: 'font-family:Jua,sans-serif;font-size:16px;color:#7A2F1E' }
         ],
         newOn: !!R.newShape, newName: R.newName || '',
-        reward: R.gain ? '새로 얻은 별 ' + R.gain + '개 · 골드 +' + (R.gain * 300) + ' · 파편 +' + (R.gain * 5) : (R.j.stars ? '최고 기록을 넘지 못했어요 · 보상 없음' : '별 1개는 일치도 60% 이상'),
+        reward: R.gain ? '새로 얻은 별 ' + R.gain + '개 · 골드 +' + (R.gain * 300) : (R.j.stars ? '최고 기록을 넘지 못했어요 · 보상 없음' : '별 1개는 일치도 60% 이상'),
         close: function () { self.setState({ res: null }); }
       };
     }
@@ -661,7 +661,7 @@ class Component extends DCLogic {
       var st3 = ''; for (var i = 0; i < 3; i++) { st3 += i < j.stars ? '★' : '☆'; }
       lines.push((b.st.idx + 1) + ' ' + st3);
     });
-    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300, shards: g.shards + gain * 5, goalQ: (g.goalQ || []).filter(function (q) { return !(rec[q.sid] > 0); }) });
+    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300, goalQ: (g.goalQ || []).filter(function (q) { return !(rec[q.sid] > 0); }) });
     try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
     this.say('📤 ' + lines.join(' · ') + ' · 새 별 ' + gain + '개 · 골드 +' + (gain * 300));
   }
@@ -673,7 +673,7 @@ class Component extends DCLogic {
     var sf = {}; for (var k2 in (g.shapesFound || {})) { sf[k2] = g.shapesFound[k2]; }
     var isNew = j.stars > 0 && st.newShape && !sf[st.newShape];
     if (isNew) { sf[st.newShape] = true; }
-    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300, shards: g.shards + gain * 5 });
+    this.setG({ contest: { stars: rec }, shapesFound: sf, gold: g.gold + gain * 300 });
     this.setState({ pkOpen: false, pkSel: '', det: '', res: { sid: st.id, pid: pid, p: p, j: j, gain: gain, newShape: isNew ? st.newShape : '', newName: st.newName } });
   }
 }

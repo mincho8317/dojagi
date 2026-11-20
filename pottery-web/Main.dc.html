@@ -1941,7 +1941,7 @@ class Ctl_w extends StationBase {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
@@ -2638,7 +2638,7 @@ class Ctl_gz extends StationBase {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
@@ -2953,7 +2953,7 @@ class Ctl_ct extends StationBase {
     if (MS.def && !MS.allDone && (typeof tnow !== 'number' || tnow >= 8)) {
       var md = MS.def;
       var mn = { id: LN, cat: 'req', name: md.who, res: md.res, tone: md.tone, tag: LBL + ' · ' + (md.idx + 1) + '/' + MS.defs.length + ' · ' + md.role, tagBg: LN === 'season' ? '#C2577A' : (LN === 'dok' ? '#3E6B8A' : '#7A3E8E'), qt: md.title };
-      var PO = QL.payout(md, MS), rewardTxt = PO.gold.toLocaleString() + 'G · 파편 ' + PO.shards + ' · 명성 +' + QL.TUNE.questFame + (PO.mats ? ' · ' + Object.keys(PO.mats).map(function (k) { return (QL.MATN[k] || k) + ' ' + PO.mats[k]; }).join(' · ') : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
+      var PO = QL.payout(md, MS), rewardTxt = PO.gold.toLocaleString() + 'G' + (PO.shards ? ' · 파편 ' + PO.shards : '') + ' · 명성 +' + QL.TUNE.questFame + (PO.mats ? ' · ' + Object.keys(PO.mats).map(function (k) { return (QL.MATN[k] || k) + ' ' + PO.mats[k]; }).join(' · ') : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
       var itemConds = md.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : '') }; });
       if (MS.thanks) {
         mn.kind = 'thanks'; mn.face = '기쁨'; mn.lines = TX((md.doneBy && MS.pick && md.doneBy[MS.pick]) || md.done).concat(['(의뢰 완료 · ' + rewardTxt + ')']);
@@ -3088,7 +3088,7 @@ class Ctl_ct extends StationBase {
       c.qt = '카페 잔 세트';
       if (!q.week) {
         c.face = '설렘'; c.lines = ['새로 카페를 열었어요. 창가 자리에 놓을 잔이 필요해요.', '백자 찻잔 세 점, 높고 단정한 걸로 부탁드려도 될까요?'];
-        c.card = { title: '카페 잔 세트', conds: [{ t: '찻잔 3점' }, { t: '백자유' }], reward: '3,600G · 파편 20 · 신뢰 +3' };
+        c.card = { title: '카페 잔 세트', conds: [{ t: '찻잔 3점' }, { t: '백자유' }], reward: '3,600G · 신뢰 +3' };
         c.choices = [
           { label: '맡을게요 (7일)', tone: 'go', run: function () { self.setQ({ week: true }); self.say('의뢰 내역서에 「카페 잔 세트」가 적혔어요'); } },
           { label: '다음에요', tone: '', run: function () { self.next(''); } }
@@ -3097,7 +3097,7 @@ class Ctl_ct extends StationBase {
         if (whites.length >= 3) {
           c.face = '감탄'; c.lines = ['세 점 다 되었다고요?', '(백자 찻잔 세 점을 나란히 올려둔다)', '와… 창가에 두면 정말 예쁘겠어요.'];
           c.choices = [
-            { label: '세 점 건네기 · 3,600G', tone: 'go', run: function () { self.give(whites.slice(0, 3), { gold: g.gold + 3600, shards: g.shards + 20, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.weekDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('주간 의뢰 완료 · 골드 +3,600 · 파편 +20'); } },
+            { label: '세 점 건네기 · 3,600G', tone: 'go', run: function () { self.give(whites.slice(0, 3), { gold: g.gold + 3600, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.weekDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('주간 의뢰 완료 · 골드 +3,600'); } },
             { label: '조금만 더요', tone: '', run: function () { self.next(''); } }
           ];
         } else {
@@ -3246,7 +3246,7 @@ class Ctl_ct extends StationBase {
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
       patch[KEY].grades = [];
       try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
-      this.say((LN === 'season' ? '시즌' : (LN === 'dok' ? '도깨비' : '메인')) + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + ' · 파편 +' + pay.shards + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
+      this.say((LN === 'season' ? '시즌' : (LN === 'dok' ? '도깨비' : '메인')) + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + (pay.shards ? ' · 파편 +' + pay.shards : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
     } else {
       this.say(ids.length + '점 납품 · 남은 기물은 완성되면 다시 건네요');
     }
@@ -3263,7 +3263,7 @@ class Ctl_ct extends StationBase {
     patch[KEY] = { i: m0.i || 0, acc: true, dl: {}, mig: {}, thanks: true, grades: [], log: [{ id: md.id, who: md.who, title: md.title, items: '이야기', gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30) };
     this.setG(patch);
     try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
-    this.say('이야기를 들었어요 · 골드 +' + pay.gold.toLocaleString() + ' · 파편 +' + pay.shards + (pay.mats ? ' · 재료 선물' : ''));
+    this.say('이야기를 들었어요 · 골드 +' + pay.gold.toLocaleString() + (pay.shards ? ' · 파편 +' + pay.shards : '') + (pay.mats ? ' · 재료 선물' : ''));
     this.setState({ line: 0, enterN: this.state.enterN + 1 });
     this.storyFx(md);
   }
@@ -3390,7 +3390,7 @@ class Ctl_ct extends StationBase {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
@@ -4112,7 +4112,7 @@ class Ctl_ds extends StationBase {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
@@ -4525,7 +4525,9 @@ class Ctl_k extends StationBase {
     grade = tot3 >= G2['명작'] ? '명작' : (tot3 >= G2['수작'] ? '수작' : '양작');
     var mult = TU.gradeMul[grade] || 1;
     /* 평가액 = 예전의 1/10 */
-    var vBase = Math.max(10, Math.round(sh.base * mult * cl.sell * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 10);
+    /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
+    var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || (item.brush && item.brush.length));
+    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) / 10) * 10);
     var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
@@ -4915,7 +4917,7 @@ class Ctl_k extends StationBase {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }

@@ -570,7 +570,9 @@ class Component extends DCLogic {
     grade = tot3 >= G2['명작'] ? '명작' : (tot3 >= G2['수작'] ? '수작' : '양작');
     var mult = TU.gradeMul[grade] || 1;
     /* 평가액 = 예전의 1/10 */
-    var vBase = Math.max(10, Math.round(sh.base * mult * cl.sell * (cr.yohen ? TU.yohen.valueMul : 1) * (item.pattern === 'plum' ? 1.2 : 1) * (item.glaze === 'sakura' ? 1.15 : 1) / 100) * 10);
+    /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
+    var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || (item.brush && item.brush.length));
+    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) / 10) * 10);
     var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
@@ -960,7 +962,7 @@ class Component extends DCLogic {
   navFlow() {
     var g = this.state.g || {}, st = g.stored || {}, me = this.navId();
     var defs = [
-      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' }, { id: 'dry', step: '건조', href: 'Dry.dc.html' },
+      { id: 'wheel', step: '성형', href: 'Wheel.dc.html' },
       { id: 'glaze', step: '유약', href: 'Glaze.dc.html' },
       { id: 'kiln', step: '소성', href: (g.kiln === 'firing' && Date.now() >= (g.kilnStart || 0) + (g.kilnDur || 14400000)) ? 'KilnOpen.dc.html' : 'Kiln.dc.html' },
       { id: 'counter', step: '손님', href: 'Counter.dc.html' }, { id: 'shelf', step: '진열', href: 'Display.dc.html' }
