@@ -362,7 +362,7 @@ class Component extends DCLogic {
     if (!pids.length || document.querySelector('.sm-ov')) { return; }
     var GC = { white: '#F2EFE6', celadon: '#8FB3A9', black: '#3A3530', cheonmok: '#5A3A22', jinsa: '#A8443A', sakura: '#E9A3B5' };
     var CLAYC = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
-    var BASEG = { '범작': 2, '양작': 2, '수작': 4, '명작': 8, '요변': 12 };
+    var BASEG = { '범작': 2, '양작': 2, '수작': 3, '명작': 3, '요변': 3 }; /* 파편은 메인 의뢰가 주 공급원 · 부수기는 2~3개만 */
     var vibOn = ((g0.settings || {}).vib !== false) && navigator.vibrate;
     function buzz(ms) { try { if (vibOn) { navigator.vibrate(ms); } } catch (e) {} }
     var ov = document.createElement('div'); ov.className = 'sm-ov';
@@ -543,7 +543,7 @@ class Component extends DCLogic {
       if (st.ph === 'spawn' || st.ph === 'idle' || st.ph === 'drag') {
         var g2 = ctx.createLinearGradient(0, 0, 0, 74); g2.addColorStop(0, 'rgba(20,10,5,.92)'); g2.addColorStop(1, 'rgba(20,10,5,.6)'); ctx.fillStyle = g2; ctx.fillRect(0, 0, W, 74);
         text('위로 휙! 던져서 과녁을 맞혀 보세요', 195, 24, 17, '#FFE7A8');
-        var C2 = cur(); if (C2) { text(C2.P.p.name + ' · ' + C2.P.p.grade + ' · 기본 파편 ' + C2.P.base, 195, 50, 12.5, '#E8D3B5'); }
+        var C2 = cur(); if (C2) { text(C2.P.p.name + ' · ' + C2.P.p.grade + ' · 파편 ' + C2.P.base, 195, 50, 12.5, '#E8D3B5'); }
         if (queue.length > 1) { panel(316, 84, 64, 28, 14, 'rgba(43,26,15,.85)', '#FFD66B', 2); text((qi + 1) + ' / ' + queue.length, 348, 98, 15, '#FFE7A8'); }
         if (total) { panel(10, 84, 96, 28, 14, 'rgba(30,94,72,.9)', '#9ED9C0', 2); text('파편 +' + total, 58, 98, 14, '#E6FFF4'); }
         panel(145, 790, 100, 36, 14, 'rgba(255,244,222,.94)', '#5B3A24', 2); text(hits.length ? '여기까지' : '그만두기', 195, 808, 15, '#5B3A24');
@@ -589,8 +589,8 @@ class Component extends DCLogic {
       hx = Math.max(30, Math.min(360, hx)); hy = Math.max(110, Math.min(500, hy));
       var dist = Math.hypot(hx - TGT.x, hy - TGT.y);
       st.mult = dist < TGT.r * 0.2 ? 2 : (dist < TGT.r ? 1.5 : 1);
-      st.msg = st.mult === 2 ? '정중앙 명중! ×2' : (st.mult > 1 ? '명중! ×1.5' : '');
-      st.gain = Math.round(cur().P.base * st.mult * (1 + (self.qlib().fx(self.state.g || {}).shard || 0)));
+      st.msg = st.mult === 2 ? '정중앙 명중!' : (st.mult > 1 ? '명중!' : '');
+      st.gain = cur().P.base; /* 부수기 파편 = 작품 하나에 2~3개 (솜씨·연구 배율 없음) */
       st.fx = st.x; st.fy = st.y; st.hx = hx; st.hy = hy; st.T = 0.5; st.spin = vx / 120 + 0.15; st.t0 = performance.now(); st.ph = 'fly';
       buzz(20);
     }
@@ -764,7 +764,7 @@ class Component extends DCLogic {
       sellN: sellIds.length, sellSum: sellSum.toLocaleString(),
       sellCancel: function () { self.setState({ sellMode: false, sellPick: {}, pickKind: '' }); },
       pkTitle: (this.state.pickKind === 'smash' ? '와장창할 작품 고르기 · ' : '판매할 작품 고르기 · ') + sellIds.length + '점',
-      pkSub: this.state.pickKind === 'smash' ? '진열대·보관함에서 여러 점 선택 · 기본 파편 +' + sellIds.reduce(function (a, id) { return a + ({ '범작': 2, '양작': 2, '수작': 4, '명작': 8, '요변': 12 }[g.pieces[id].grade] || 2); }, 0) : '진열대·보관함에서 여러 점 선택 · 합계 ' + sellSum.toLocaleString() + 'G',
+      pkSub: this.state.pickKind === 'smash' ? '진열대·보관함에서 여러 점 선택 · 파편 +' + sellIds.reduce(function (a, id) { return a + ({ '범작': 2, '양작': 2, '수작': 3, '명작': 3, '요변': 3 }[g.pieces[id].grade] || 2); }, 0) : '진열대·보관함에서 여러 점 선택 · 합계 ' + sellSum.toLocaleString() + 'G',
       pkBar: 'position:absolute;left:14px;right:14px;top:420px;height:62px;box-sizing:border-box;padding:8px 10px;border-radius:16px;display:flex;align-items:center;gap:8px;box-shadow:0 3px 0 rgba(43,26,15,.4);color:#FFFDF5;' + (this.state.pickKind === 'smash' ? 'background:#7A2F1E;border:3px solid #4E1A10' : 'background:#2F6328;border:3px solid #1E4419'),
       smashBtnText: this.state.sellMode && this.state.pickKind === 'smash' ? (sellIds.length ? '💥 와장창 ' + sellIds.length + '점' : '닫기') : '💥 와장창',
       smashBtnStyle: 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 11px;border-radius:12px;font-family:Jua,sans-serif;font-size:13.5px;' + (this.state.sellMode && this.state.pickKind === 'smash' && sellIds.length ? 'background:#A3442C;border:3px solid #7A2F1E;box-shadow:0 3px 0 #7A2F1E;color:#FFFDF5;animation:navPulse 1s ease-in-out infinite' : 'background:#FFF4DE;border:3px solid #A3442C;box-shadow:0 3px 0 #7A2F1E;color:#A3442C') + (this.state.sellMode && this.state.pickKind !== 'smash' ? ';display:none' : ''),

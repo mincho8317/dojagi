@@ -649,7 +649,8 @@ class Component extends DCLogic {
     var all = md.items.every(function (it) { return (dl[it.key] || 0) >= it.n; });
     var m0 = g[KEY] || {}, patch = { pieces: pieces }; if (mats) { patch.mats = mats; } patch[KEY] = { i: m0.i || 0, acc: true, dl: dl, mig: m0.mig || {}, thanks: all, grades: grades, log: m0.log || [], pick: pick };
     if (all) {
-      var pay = QL.payout(md, MS, grades); if (window.__panoPay) { pay = window.__panoPay(pay, g[KEY] || {}, md.items); }
+      var dVals = []; for (var pv in pieces) { if (pieces[pv].deliveredTo === md.id && pieces[pv].where === 'sold') { dVals.push(pieces[pv].value || 0); } }
+      var pay = QL.payout(md, MS, grades, null, dVals); if (window.__panoPay) { pay = window.__panoPay(pay, g[KEY] || {}, md.items); }
       var lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
       patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards; patch.fameLv = lv; patch.fameXp = x;
       if (pay.mats) { var mm = patch.mats || (function () { var o = {}; for (var mk in (g.mats || {})) { o[mk] = g.mats[mk]; } return o; })(); for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }

@@ -36,6 +36,7 @@
       gradeCut2: { '명작': 287, '수작': 250 }, /* 발색은 무작위 없음 · 연구 전부 + 최고 궁합 = 발색 100 → 실력 187+ 이면 명작 */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
       colorTemp: { '정합': 55, '근접': 25, '불일치': 0 }, colorRnd: 0, /* 운 요소 없음 · 발색 = 온도 정합 55 + 고른 유약 10 + 연구 12 + 흙·유약 궁합 최대 24 (100에서 자름) */ // 발색 · 온도 정합 몫(%)
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
+      deliverMul: 2.5,    // 납품가 = 작품 가치 × 2.5 (같은 작품을 일반 판매하면 × 1)
       valueK: 5,          // 기물 가치 = 재료값 × 5 × 등급 배율 × 발색 (양작 기본 찻잔 약 300G)
       g2Bonus: 0.25,      // 이중 시유 +25%
       patternBonus: 0.4,  // 무늬(매화 도장·붓 무늬) +40%
@@ -456,7 +457,7 @@
         var unlock = '', unlocks = []; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; if (unlocks.indexOf(it.newShape) < 0) { unlocks.push(it.newShape); } } });
         var cnt = items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n); }, 0);
         var sameCh = story.filter(function (x) { return x.ch === q.ch; }), inCh = sameCh.indexOf(q);
-        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: cnt * TUNE.itemGold, shards: cnt * TUNE.itemShards, fame: TUNE.questFame } };
+        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n * Math.round(estVal(it) * TUNE.deliverMul / 10) * 10); }, 0), shards: 0, fame: TUNE.questFame } };
       });
     }
     var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
@@ -641,15 +642,23 @@
       }
       return MSH[id] || 0;
     }
-    function payout(def, ms, grades, g) {
+    /* 아직 만들기 전 · 조건대로 만든 양작(발색 60%)의 예상 가치 */
+    function estVal(it) {
+      var mv = matValue({ clay: (it && it.clay) || 'cy1', glaze: (it && (it.glaze || (it.glazeAny && it.glazeAny[0]))) || 'white', g2: it && it.g2 && it.g2 !== true ? it.g2 : '' });
+      var cv = TUNE.colorValue, cm = cv[0] + (cv[1] - cv[0]) * 0.6;
+      return Math.round(mv.total * TUNE.valueK * cm / 10) * 10;
+    }
+    function payout(def, ms, grades, g, vals) {
       var cnt = 0, bonus = 0, G = g; if (!G) { try { G = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { G = {}; } }
       var F = fx(G), gm = 1 + (F.questGold || 0);
       var shM = def.kind === 'main' ? mainShards(def.id) : 0;
       if (def.rw) { return { gold: Math.round((def.rw.gold || 0) * gm), base: def.rw.gold || 0, bonus: 0, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))), mats: def.rw.mats || null }; }
       def.items.forEach(function (it) { if (!it.mat && !(ms.mig || {})[it.key]) { cnt += it.n; } });
-      var base = cnt * TUNE.itemGold;
-      (grades || []).forEach(function (gr) { bonus += Math.round(TUNE.itemGold * (TUNE.gradeBonus[gr] || 0)); });
-      return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
+      /* 납품가 = 납품한 작품 가치 × 2.5 · 아직 안 만들었으면 예상 가치로 */
+      var D = TUNE.deliverMul || 2.5, base = 0, est = !(vals && vals.length);
+      if (!est) { vals.forEach(function (v) { base += Math.round((v || 0) * D / 10) * 10; }); }
+      else { var gi = 0; def.items.forEach(function (it) { if (it.mat || (ms.mig || {})[it.key]) { return; } for (var q = 0; q < it.n; q++) { var gm2 = grades && grades[gi] ? (TUNE.gradeMul[grades[gi]] || 1) : 1; gi++; base += Math.round(estVal(it) * gm2 * D / 10) * 10; } }); }
+      return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, est: est, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
     }
     // 소성 결과 보기를 시작했다가 다른 화면으로 가면, 남은 작품을 그대로 대기함에 넣는다
     /* 소성이 끝날 때 한 번 : 풀무로 불을 잘 다스린 만큼 발색 +0~10% · 요변 찬스 성공 수만큼 요변 굴림 → 등급·값 다시 계산 */
@@ -698,7 +707,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { BOARD: 4, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { BOARD: 4, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
