@@ -36,7 +36,7 @@
       gradeCut2: { '명작': 287, '수작': 250 }, /* 발색은 무작위 없음 · 연구 전부 + 최고 궁합 = 발색 100 → 실력 187+ 이면 명작 */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
       colorTemp: { '정합': 55, '근접': 25, '불일치': 0 }, colorRnd: 0, /* 운 요소 없음 · 발색 = 온도 정합 55 + 고른 유약 10 + 연구 12 + 흙·유약 궁합 최대 24 (100에서 자름) */ // 발색 · 온도 정합 몫(%)
       gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
-      deliverMul: 2.5,    // 납품가 = 작품 가치 × 2.5 (같은 작품을 일반 판매하면 × 1)
+      deliverMul: 2.5,    // 메인 의뢰 납품가 = 작품 가치 × 2.5 · 그 밖의 의뢰는 1점당 itemGold + 등급 보너스
       valueK: 5,          // 기물 가치 = 재료값 × 5 × 등급 배율 × 발색 (양작 기본 찻잔 약 300G)
       g2Bonus: 0.25,      // 이중 시유 +25%
       patternBonus: 0.4,  // 무늬(매화 도장·붓 무늬) +40%
@@ -457,7 +457,7 @@
         var unlock = '', unlocks = []; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; if (unlocks.indexOf(it.newShape) < 0) { unlocks.push(it.newShape); } } });
         var cnt = items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n); }, 0);
         var sameCh = story.filter(function (x) { return x.ch === q.ch; }), inCh = sameCh.indexOf(q);
-        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n * Math.round(estVal(it) * TUNE.deliverMul / 10) * 10); }, 0), shards: 0, fame: TUNE.questFame } };
+        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: kind === 'main' ? items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n * Math.round(estVal(it) * TUNE.deliverMul / 10) * 10); }, 0) : cnt * TUNE.itemGold, shards: 0, fame: TUNE.questFame } };
       });
     }
     var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
@@ -656,6 +656,10 @@
       def.items.forEach(function (it) { if (!it.mat && !(ms.mig || {})[it.key]) { cnt += it.n; } });
       /* 납품가 = 납품한 작품 가치 × 2.5 · 아직 안 만들었으면 예상 가치로 */
       var D = TUNE.deliverMul || 2.5, base = 0, est = !(vals && vals.length);
+      if (def.kind !== 'main') { /* 메인 외 의뢰 = 기물 1점당 정액 + 등급 보너스 */
+        base = cnt * TUNE.itemGold; (grades || []).forEach(function (gr) { bonus += Math.round(TUNE.itemGold * (TUNE.gradeBonus[gr] || 0)); });
+        return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, est: false, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
+      }
       if (!est) { vals.forEach(function (v) { base += Math.round((v || 0) * D / 10) * 10; }); }
       else { var gi = 0; def.items.forEach(function (it) { if (it.mat || (ms.mig || {})[it.key]) { return; } for (var q = 0; q < it.n; q++) { var gm2 = grades && grades[gi] ? (TUNE.gradeMul[grades[gi]] || 1) : 1; gi++; base += Math.round(estVal(it) * gm2 * D / 10) * 10; } }); }
       return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, est: est, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
