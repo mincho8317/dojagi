@@ -416,7 +416,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </div>
 
       <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:118px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></button>
-      <div data-dz="wheel" aria-hidden="true" style="position:absolute;left:46px;top:150px;width:298px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
+      <div data-dz="{{wheelDz}}" aria-hidden="true" style="position:absolute;left:46px;top:150px;width:298px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
       <sc-if value="{{wEmpty}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;left:60px;right:60px;top:250px;z-index:7;text-align:center;pointer-events:none"><span style="display:inline-block;padding:8px 14px;border-radius:14px;background:rgba(43,26,15,.82);border:2px dashed #FFE7A8;font-family:'Jua',sans-serif;font-size:15px;line-height:1.4;color:#FFF4DE">물레가 비었어요<br>아래 흙판의 흙을 골라 올려요</span></div>
       </sc-if>
@@ -448,6 +448,46 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="3"><div role="button" aria-label="{{lp.aria}}" onPointerDown="{{lp.down}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:52px;height:46px;object-fit:contain;pointer-events:none"></div><span style="{{lp.tagSt}}">{{lp.tag}}</span></sc-for>
       </div>
       <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
+      <sc-if value="{{slabOn}}" hint-placeholder-val="{{false}}">
+        <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);"></div>
+        <div data-dz="slab" role="application" aria-label="판 성형 작업대 · {{sb.hint}}" onPointerDown="{{sb.down}}" style="position:absolute;left:50px;top:140px;width:290px;height:340px;z-index:21;touch-action:none;cursor:grab;border-radius:18px;background:#B98A5C;border:4px solid #7A5434;box-shadow:inset 0 0 0 6px rgba(255,244,222,.18),0 5px 0 #5B3A24"></div>
+        <svg aria-hidden="true" width="390" height="552" viewBox="0 0 390 552" style="position:absolute;left:0;top:0;z-index:22;pointer-events:none">
+          <sc-if value="{{sb.has}}" hint-placeholder-val="{{true}}">
+            <rect x="{{sb.sx}}" y="{{sb.sy}}" width="{{sb.sw}}" height="{{sb.sh}}" rx="22" fill="{{sb.col}}" stroke="{{sb.edge}}" stroke-width="3"></rect>
+            <rect x="{{sb.sx}}" y="{{sb.sy}}" width="{{sb.sw}}" height="10" rx="5" fill="{{sb.hi}}" opacity=".6"></rect>
+          </sc-if>
+          <sc-if value="{{sb.roll}}" hint-placeholder-val="{{true}}">
+            <g transform="translate({{sb.pinX}} {{sb.pinY}})"><rect x="-120" y="-9" width="240" height="18" rx="9" fill="#E2C08F" stroke="#5B3A24" stroke-width="3"></rect><rect x="-146" y="-6" width="28" height="12" rx="6" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><rect x="118" y="-6" width="28" height="12" rx="6" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect></g>
+          </sc-if>
+          <sc-if value="{{sb.cut}}" hint-placeholder-val="{{false}}">
+            <path d="{{sb.tmpl}}" fill="none" stroke="#FFE27A" stroke-width="3" stroke-dasharray="8 6" style="filter:drop-shadow(0 0 3px rgba(43,26,15,.8))"></path>
+            <path d="{{sb.seen}}" fill="none" stroke="#FFF4DE" stroke-width="4" stroke-linecap="round" style="filter:drop-shadow(0 0 4px rgba(255,231,168,.95))"></path>
+          </sc-if>
+          <sc-if value="{{sb.has}}" hint-placeholder-val="{{true}}">
+            <rect x="352" y="190" width="14" height="260" rx="7" fill="rgba(43,26,15,.55)" stroke="#2B1A0F" stroke-width="2"></rect>
+            <rect x="352" y="{{sb.bandY}}" width="14" height="{{sb.bandH}}" fill="rgba(111,207,90,.45)"></rect>
+            <rect x="355" y="{{sb.gaugeY}}" width="8" height="{{sb.gaugeH}}" rx="4" fill="{{sb.gcol}}"></rect>
+          </sc-if>
+        </svg>
+        <sc-if value="{{sb.piece}}" hint-placeholder-val="{{false}}">
+          <div data-onslab="1" role="button" aria-label="판 접시 · 들어서 오른쪽 위 선반에" onPointerDown="{{sb.pDown}}" style="position:absolute;left:115px;top:230px;width:160px;height:160px;z-index:23;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;{{sb.pHid}}"><svg width="160" height="160" viewBox="{{sb.pot.vb}}" aria-hidden="true"><path d="{{sb.pot.d}}" fill="{{sb.pot.fill}}"></path><path d="{{sb.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{sb.pot.d}}" fill="none" stroke="{{sb.pot.edge}}" stroke-width="{{sb.pot.sw}}"></path><path d="{{sb.pot.b0}}" fill="none" stroke="{{sb.pot.c0}}" stroke-width="{{sb.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{sb.pot.b1}}" fill="none" stroke="{{sb.pot.c1}}" stroke-width="{{sb.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{sb.pot.b2}}" fill="none" stroke="{{sb.pot.c2}}" stroke-width="{{sb.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{sb.pot.rimY}}" rx="{{sb.pot.rimRx}}" ry="{{sb.pot.rimRy}}" fill="{{sb.pot.inner}}" stroke="{{sb.pot.edge}}" stroke-width="{{sb.pot.sw}}"></ellipse></svg></div>
+        </sc-if>
+        <div style="position:absolute;left:0;right:0;top:494px;z-index:23;text-align:center;pointer-events:none"><span style="display:inline-block;padding:5px 11px;border-radius:11px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">{{sb.hint}}</span></div>
+        <span aria-hidden="true" style="position:absolute;left:330px;top:166px;z-index:23;font-family:'Jua',sans-serif;font-size:11px;color:#2B1A0F">두께</span>
+      </sc-if>
+      <div data-dz="{{mini.dz}}" role="button" aria-label="{{mini.aria}}" onClick="{{mini.tap}}" style="{{mini.st}}">
+        <svg width="56" height="47" viewBox="0 0 64 54" aria-hidden="true">
+          <sc-if value="{{mini.slabOn}}" hint-placeholder-val="{{true}}"><rect x="4" y="8" width="56" height="40" rx="8" fill="#B98A5C" stroke="#7A5434" stroke-width="2.5"></rect><rect x="{{mini.slabX}}" y="18" width="{{mini.slabW}}" height="20" rx="5" fill="{{mini.slabC}}" stroke="#5B3A24" stroke-width="1.5" style="{{mini.slabR}}"></rect><rect x="10" y="41" width="44" height="5" rx="2.5" fill="#E2C08F" stroke="#5B3A24" stroke-width="1.2"></rect></sc-if>
+          <sc-if value="{{mini.wheelOn}}" hint-placeholder-val="{{false}}"><ellipse cx="32" cy="42" rx="26" ry="8" fill="#9C8F7E" stroke="#4A3E33" stroke-width="2"></ellipse><ellipse cx="32" cy="39" rx="22" ry="6" fill="#C9BBA6" stroke="#4A3E33" stroke-width="1.5"></ellipse><rect x="22" y="14" width="20" height="25" rx="4" fill="#C9A27A" stroke="#5B3A24" stroke-width="1.5" style="{{mini.potOn}}"></rect></sc-if>
+        </svg>
+        <span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;color:#5B3A24;text-align:center">{{mini.txt}}</span>
+      </div>
+      <sc-if value="{{sw.on}}" hint-placeholder-val="{{false}}">
+        <div role="alertdialog" aria-label="{{sw.txt}}" style="position:absolute;left:30px;right:30px;top:250px;z-index:40;padding:14px;border-radius:18px;background:#FFF4DE;border:4px solid #8A6440;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:10px;align-items:center">
+          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F;text-align:center">{{sw.txt}}</span>
+          <div style="display:flex;gap:10px"><button type="button" onClick="{{sw.no}}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">그대로 둘래요</button><button type="button" onClick="{{sw.yes}}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:14px;background:#B9533A;border:3px solid #7A2F1E;font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE">바꾸기</button></div>
+        </div>
+      </sc-if>
       <div role="button" aria-label="실 · 물레에 끌어다 대고 점선을 따라 당겨 자르기" onPointerDown="{{wireDown}}" style="{{wireBoardSt}}">
         <svg width="70" height="70" viewBox="0 0 62 70" aria-hidden="true"><path d="M31 0 L10 30 M31 0 L52 30" stroke="#5B3A24" stroke-width="1.5"></path><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><path d="M10 30 Q31 66 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"></path></svg>
         <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;position:relative;margin-top:2px">실 · 물레에 대기</span>
@@ -679,10 +719,29 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:24px;right:24px;top:318px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">↓ 끌어내리면 한 번 더 시유<br>↑ 들어 올려 오른쪽 위 선반에 놓으면 끝</span></div>
       </sc-if>
       <sc-if value="{{gwOn}}" hint-placeholder-val="{{false}}">
-        <div data-gwait="1" role="button" aria-label="{{gwAria}}" onPointerDown="{{gwDown}}" style="position:absolute;left:135px;top:166px;width:120px;height:140px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 0 6px #FFE27A);{{gwHid}}"><svg width="120" height="140" viewBox="{{gwP.pot.vb}}" aria-hidden="true"><path d="{{gwP.pot.d}}" fill="{{gwP.pot.fill}}"></path><path d="{{gwP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{gwP.pot.d}}" fill="none" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></path><ellipse cx="0" cy="{{gwP.pot.rimY}}" rx="{{gwP.pot.rimRx}}" ry="{{gwP.pot.rimRy}}" fill="{{gwP.pot.inner}}" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></ellipse></svg></div>
+        <div data-gwait="1" role="button" aria-label="{{gwAria}}" onPointerDown="{{gwDown}}" style="position:absolute;left:135px;top:166px;width:120px;height:140px;z-index:8;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;filter:drop-shadow(0 0 6px #FFE27A);{{gwHid}}"><svg width="120" height="140" viewBox="{{gwP.pot.vb}}" aria-hidden="true"><path d="{{gwP.pot.d}}" fill="{{gwP.pot.fill}}"></path><path d="{{gwP.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{gwP.pot.d}}" fill="none" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></path><path d="{{gwP.pot.b0}}" fill="none" stroke="{{gwP.pot.c0}}" stroke-width="{{gwP.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{gwP.pot.b1}}" fill="none" stroke="{{gwP.pot.c1}}" stroke-width="{{gwP.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{gwP.pot.b2}}" fill="none" stroke="{{gwP.pot.c2}}" stroke-width="{{gwP.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{gwP.pot.rimY}}" rx="{{gwP.pot.rimRx}}" ry="{{gwP.pot.rimRy}}" fill="{{gwP.pot.inner}}" stroke="{{gwP.pot.edge}}" stroke-width="{{gwP.pot.sw}}"></ellipse></svg></div>
         <div style="position:absolute;left:30px;right:30px;top:316px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">시유 완료 · 한 번 더 담그거나<br>끌어서 오른쪽 위 선반에 ↗</span></div>
       </sc-if>
       <div data-dz="basin" aria-hidden="true" style="position:absolute;left:40px;top:150px;width:310px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
+      <div data-drop="paint" role="button" aria-label="그림 받침 · 선반의 기물을 끌어다 놓으면 유약으로 무늬를 그려요" onClick="{{paintStand}}" style="position:absolute;left:326px;top:226px;width:60px;height:96px;z-index:9;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px">
+        <svg width="56" height="64" viewBox="0 0 56 64" aria-hidden="true"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><rect x="22" y="40" width="12" height="10" fill="#7A5434"></rect><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse><ellipse cx="28" cy="49" rx="21" ry="5" fill="#E2C08F" stroke="#5B3A24" stroke-width="2"></ellipse></svg>
+        <span style="padding:1px 6px;border-radius:8px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8;white-space:nowrap">그림 받침</span>
+      </div>
+      <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="붓 무늬 그리기 · {{pt.name}}" style="position:absolute;left:0;top:0;width:390px;height:696px;z-index:60;background:rgba(30,15,5,.78);display:flex;flex-direction:column;align-items:center">
+          <span style="margin-top:70px;font-family:'Jua',sans-serif;font-size:19px;color:#FFE7A8">붓 무늬 · {{pt.name}}</span>
+          <span style="margin-top:2px;font-size:12px;color:#F1DDBD">유약을 찍어 기물 위에 그려요 · 붓 끝은 손가락 조금 위</span>
+          <div style="margin-top:10px;width:300px;height:310px;border-radius:22px;background:radial-gradient(circle at 50% 40%,#F3E3C4,#D9BE96);border:4px solid #8A6440;display:flex;align-items:center;justify-content:center">
+            <svg data-paint-svg="1" data-bw="{{pt.bw}}" width="290" height="300" viewBox="{{pt.pot.vb}}" onPointerDown="{{pt.down}}" style="touch-action:none;cursor:crosshair"><path d="{{pt.pot.d}}" fill="{{pt.pot.fill}}"></path><path d="{{pt.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{pt.pot.d}}" fill="none" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></path><path d="{{pt.pot.b0}}" fill="none" stroke="{{pt.pot.c0}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b1}}" fill="none" stroke="{{pt.pot.c1}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b2}}" fill="none" stroke="{{pt.pot.c2}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pt.pot.rimY}}" rx="{{pt.pot.rimRx}}" ry="{{pt.pot.rimRy}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></ellipse><circle data-paint-tip="1" cx="0" cy="0" r="3" fill="none" stroke="#2B1A0F" stroke-width="1.2" opacity="0"></circle></svg>
+          </div>
+          <div role="radiogroup" aria-label="유약 색" style="margin-top:14px;display:flex;gap:10px"><sc-for list="{{pt.pal}}" as="pc" hint-placeholder-count="3"><button type="button" role="radio" aria-label="{{pc.aria}}" onClick="{{pc.tap}}" style="{{pc.st}}"></button></sc-for></div>
+          <div style="margin-top:14px;display:flex;gap:8px">
+            <button type="button" onClick="{{pt.undo}}" style="all:unset;cursor:pointer;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">↶ 한 획 지우기</button>
+            <button type="button" onClick="{{pt.clear}}" style="all:unset;cursor:pointer;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">모두 지우기</button>
+            <button type="button" onClick="{{pt.save}}" style="all:unset;cursor:pointer;padding:9px 15px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5">다 그렸어요</button>
+          </div>
+        </div>
+      </sc-if>
       <div role="group" aria-label="유약통 · 골라서 시유그릇에" style="position:absolute;left:8px;top:574px;width:300px;height:110px;z-index:6">
         <sc-for list="{{buckets}}" as="bk" hint-placeholder-count="3"><div role="button" aria-label="{{bk.aria}}" onPointerDown="{{bk.down}}" style="{{bk.st}}"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:6px;width:56px;height:50px;object-fit:contain;pointer-events:none"><span style="{{bk.liq}}"></span><span style="{{bk.tagSt}}">{{bk.tag}}</span><span style="{{bk.subSt}}">{{bk.sub}}</span></div></sc-for>
       </div>
@@ -711,7 +770,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div role="dialog" aria-label="{{rv.aria}}" onClick="{{rv.close}}" style="position:absolute;inset:0;z-index:30;cursor:pointer;background:rgba(30,15,5,.6);animation:rvFade .3s ease-out both">
           <div style="{{rv.door}}"></div>
           <div style="{{rv.rays}}"></div><div style="{{rv.glow}}"></div>
-          <div style="{{rv.potSt}}"><svg width="150" height="170" viewBox="{{rv.pot.vb}}" aria-hidden="true"><path d="{{rv.pot.d}}" fill="{{rv.pot.fill}}"></path><path d="{{rv.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{rv.pot.d}}" fill="none" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></path><ellipse cx="0" cy="{{rv.pot.rimY}}" rx="{{rv.pot.rimRx}}" ry="{{rv.pot.rimRy}}" fill="{{rv.pot.inner}}" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></ellipse></svg></div>
+          <div style="{{rv.potSt}}"><svg width="150" height="170" viewBox="{{rv.pot.vb}}" aria-hidden="true"><path d="{{rv.pot.d}}" fill="{{rv.pot.fill}}"></path><path d="{{rv.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{rv.pot.d}}" fill="none" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></path><path d="{{rv.pot.b0}}" fill="none" stroke="{{rv.pot.c0}}" stroke-width="{{rv.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{rv.pot.b1}}" fill="none" stroke="{{rv.pot.c1}}" stroke-width="{{rv.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{rv.pot.b2}}" fill="none" stroke="{{rv.pot.c2}}" stroke-width="{{rv.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{rv.pot.rimY}}" rx="{{rv.pot.rimRx}}" ry="{{rv.pot.rimRy}}" fill="{{rv.pot.inner}}" stroke="{{rv.pot.edge}}" stroke-width="{{rv.pot.sw}}"></ellipse></svg></div>
           <div role="status" style="{{rv.card}}"><span style="{{rv.ribbon}}">{{rv.grade}}</span><div style="margin-top:6px;font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">{{rv.name}}</div><div style="margin-top:2px;font-family:'Jua',sans-serif;font-size:13px;color:#8A6440">{{rv.sub}}</div></div>
           <div style="position:absolute;left:0;right:0;top:500px;text-align:center;animation:rvCard .4s 1.2s both"><span style="display:inline-block;padding:4px 12px;border-radius:10px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">눌러서 닫기</span></div>
         </div>
@@ -767,7 +826,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <sc-for list="{{tr.slots}}" as="sl" hint-placeholder-count="3">
           <sc-if value="{{sl.filled}}" hint-placeholder-val="{{true}}">
             <button type="button" data-work="1" onPointerDown="{{sl.down}}" onClick="{{sl.pick}}" aria-label="{{sl.name}}" style="{{sl.box}}">
-              <svg width="72" height="72" viewBox="{{sl.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{sl.pot.shCy}}" rx="{{sl.pot.shRx}}" ry="{{sl.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{sl.pot.d}}" fill="{{sl.pot.fill}}"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.tex}}" opacity="{{sl.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{sl.pot.d}}" fill="url(#potTopLight)"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.rings}}"></path><path d="{{sl.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{sl.pot.grainOp}}"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.foot}}" fill-opacity="{{sl.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.drip}}" fill-opacity="{{sl.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{sl.pot.dX}}" y="{{sl.pot.dY}}" width="{{sl.pot.dW}}" height="{{sl.pot.dH}}" fill="{{sl.pot.dCol}}" mask="{{sl.pot.dMask}}" opacity="{{sl.pot.dOp}}"></rect><path d="{{sl.pot.d}}" fill="url(#potShade)"></path><path d="{{sl.pot.d}}" fill="none" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{sl.pot.rimY}}" rx="{{sl.pot.rimRx}}" ry="{{sl.pot.rimRy}}" fill="{{sl.pot.inner}}" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}"></ellipse></svg>
+              <svg width="72" height="72" viewBox="{{sl.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{sl.pot.shCy}}" rx="{{sl.pot.shRx}}" ry="{{sl.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{sl.pot.d}}" fill="{{sl.pot.fill}}"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.tex}}" opacity="{{sl.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{sl.pot.d}}" fill="url(#potTopLight)"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.rings}}"></path><path d="{{sl.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{sl.pot.grainOp}}"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.foot}}" fill-opacity="{{sl.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{sl.pot.d}}" fill="{{sl.pot.drip}}" fill-opacity="{{sl.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{sl.pot.dX}}" y="{{sl.pot.dY}}" width="{{sl.pot.dW}}" height="{{sl.pot.dH}}" fill="{{sl.pot.dCol}}" mask="{{sl.pot.dMask}}" opacity="{{sl.pot.dOp}}"></rect><path d="{{sl.pot.d}}" fill="url(#potShade)"></path><path d="{{sl.pot.d}}" fill="none" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}" stroke-linejoin="round"></path><path d="{{sl.pot.b0}}" fill="none" stroke="{{sl.pot.c0}}" stroke-width="{{sl.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{sl.pot.b1}}" fill="none" stroke="{{sl.pot.c1}}" stroke-width="{{sl.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{sl.pot.b2}}" fill="none" stroke="{{sl.pot.c2}}" stroke-width="{{sl.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{sl.pot.rimY}}" rx="{{sl.pot.rimRx}}" ry="{{sl.pot.rimRy}}" fill="{{sl.pot.inner}}" stroke="{{sl.pot.edge}}" stroke-width="{{sl.pot.sw}}"></ellipse></svg>
               <span style="{{sl.badge}}">{{sl.grade}}</span>
               <span aria-hidden="true" style="{{sl.spk}}">✦</span>
               <span aria-hidden="true" style="{{sl.chk}}">✓</span>
@@ -826,7 +885,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <button type="button" data-work="1" onPointerDown="{{st.down}}" onClick="{{st.tap}}" aria-pressed="{{st.on}}" aria-label="{{st.name}}" style="{{st.style}}">
           <span aria-hidden="true" style="{{st.chk}}">✓</span>
           <span style="{{st.qTag}}">📜 의뢰</span>
-          <svg width="44" height="44" viewBox="{{st.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{st.pot.shCy}}" rx="{{st.pot.shRx}}" ry="{{st.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{st.pot.d}}" fill="{{st.pot.fill}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.tex}}" opacity="{{st.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{st.pot.d}}" fill="url(#potTopLight)"></path><path d="{{st.pot.d}}" fill="{{st.pot.rings}}"></path><path d="{{st.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{st.pot.grainOp}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.foot}}" fill-opacity="{{st.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{st.pot.d}}" fill="{{st.pot.drip}}" fill-opacity="{{st.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{st.pot.dX}}" y="{{st.pot.dY}}" width="{{st.pot.dW}}" height="{{st.pot.dH}}" fill="{{st.pot.dCol}}" mask="{{st.pot.dMask}}" opacity="{{st.pot.dOp}}"></rect><path d="{{st.pot.d}}" fill="url(#potShade)"></path><path d="{{st.pot.d}}" fill="none" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{st.pot.rimY}}" rx="{{st.pot.rimRx}}" ry="{{st.pot.rimRy}}" fill="{{st.pot.inner}}" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}"></ellipse></svg>
+          <svg width="44" height="44" viewBox="{{st.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{st.pot.shCy}}" rx="{{st.pot.shRx}}" ry="{{st.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{st.pot.d}}" fill="{{st.pot.fill}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.tex}}" opacity="{{st.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{st.pot.d}}" fill="url(#potTopLight)"></path><path d="{{st.pot.d}}" fill="{{st.pot.rings}}"></path><path d="{{st.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{st.pot.grainOp}}"></path><path d="{{st.pot.d}}" fill="{{st.pot.foot}}" fill-opacity="{{st.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{st.pot.d}}" fill="{{st.pot.drip}}" fill-opacity="{{st.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{st.pot.dX}}" y="{{st.pot.dY}}" width="{{st.pot.dW}}" height="{{st.pot.dH}}" fill="{{st.pot.dCol}}" mask="{{st.pot.dMask}}" opacity="{{st.pot.dOp}}"></rect><path d="{{st.pot.d}}" fill="url(#potShade)"></path><path d="{{st.pot.d}}" fill="none" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}" stroke-linejoin="round"></path><path d="{{st.pot.b0}}" fill="none" stroke="{{st.pot.c0}}" stroke-width="{{st.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{st.pot.b1}}" fill="none" stroke="{{st.pot.c1}}" stroke-width="{{st.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{st.pot.b2}}" fill="none" stroke="{{st.pot.c2}}" stroke-width="{{st.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{st.pot.rimY}}" rx="{{st.pot.rimRx}}" ry="{{st.pot.rimRy}}" fill="{{st.pot.inner}}" stroke="{{st.pot.edge}}" stroke-width="{{st.pot.sw}}"></ellipse></svg>
           <span style="max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:'Jua',sans-serif;font-size:11px;color:#2B1A0F">{{st.name}}</span>
           <span style="{{st.badge}}">{{st.grade}}</span>
         </button>
@@ -926,7 +985,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <sc-for list="{{ds.pk.rows}}" as="pr" hint-placeholder-count="4">
             <button type="button" onClick="{{pr.tap}}" aria-pressed="{{pr.on}}" style="{{pr.style}}">
               <span style="{{pr.checkStyle}}">{{pr.check}}</span>
-              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.tex}}" opacity="{{pr.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.rings}}"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{pr.pot.dX}}" y="{{pr.pot.dY}}" width="{{pr.pot.dW}}" height="{{pr.pot.dH}}" fill="{{pr.pot.dCol}}" mask="{{pr.pot.dMask}}" opacity="{{pr.pot.dOp}}"></rect><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="{{pr.pot.inner}}" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
+              <svg width="84" height="84" viewBox="{{pr.pot.vb}}" aria-hidden="true"><ellipse cx="0" cy="{{pr.pot.shCy}}" rx="{{pr.pot.shRx}}" ry="{{pr.pot.shRy}}" fill="rgba(30,15,5,.26)"></ellipse><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.tex}}" opacity="{{pr.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.rings}}"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.foot}}" fill-opacity="{{pr.pot.footOp}}" clip-path="url(#potFoot)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.drip}}" fill-opacity="{{pr.pot.dripOp}}" clip-path="url(#potDrip)"></path><rect x="{{pr.pot.dX}}" y="{{pr.pot.dY}}" width="{{pr.pot.dW}}" height="{{pr.pot.dH}}" fill="{{pr.pot.dCol}}" mask="{{pr.pot.dMask}}" opacity="{{pr.pot.dOp}}"></rect><path d="{{pr.pot.d}}" fill="url(#potShade)"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path><path d="{{pr.pot.b0}}" fill="none" stroke="{{pr.pot.c0}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pr.pot.b1}}" fill="none" stroke="{{pr.pot.c1}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pr.pot.b2}}" fill="none" stroke="{{pr.pot.c2}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="{{pr.pot.inner}}" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse></svg>
               <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{pr.name}}</span>
               <span style="font-size:11px;color:#7A5434">{{pr.meta}}</span>
               <span style="{{pr.tagStyle}}">{{pr.tag}}</span>
@@ -961,7 +1020,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <div data-rail="rf" data-dz="{{rf.dz}}" style="{{rf.st}}">
       <span aria-hidden="true" style="position:absolute;left:8px;top:-8px;width:3px;height:62px;background:#5B3A24"></span><span aria-hidden="true" style="position:absolute;right:8px;top:-8px;width:3px;height:62px;background:#5B3A24"></span>
       <div role="list" aria-label="{{rf.title}} 선반 {{rf.n}}" style="position:absolute;left:4px;right:4px;top:0;height:54px;display:flex;gap:2px;justify-content:center;align-items:flex-end;pointer-events:auto">
-        <sc-for list="{{rf.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="40" height="46" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
+        <sc-for list="{{rf.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="40" height="46" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
       <div aria-hidden="true" style="position:absolute;left:0;right:0;top:52px;height:12px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);box-shadow:0 4px 0 rgba(43,26,15,.35)"></div>
       <span style="{{rf.tagSt}}"><span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78)">{{rf.title}} {{rf.n}}</span></span>
@@ -969,7 +1028,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <div data-rail="rg" data-dz="{{rg.dz}}" style="{{rg.st}}">
       <span aria-hidden="true" style="position:absolute;left:8px;top:-8px;width:3px;height:62px;background:#5B3A24"></span><span aria-hidden="true" style="position:absolute;right:8px;top:-8px;width:3px;height:62px;background:#5B3A24"></span>
       <div role="list" aria-label="{{rg.title}} 선반 {{rg.n}}" style="position:absolute;left:4px;right:4px;top:0;height:54px;display:flex;gap:2px;justify-content:center;align-items:flex-end;pointer-events:auto">
-        <sc-for list="{{rg.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="40" height="46" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
+        <sc-for list="{{rg.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="40" height="46" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
       <div aria-hidden="true" style="position:absolute;left:0;right:0;top:52px;height:12px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);box-shadow:0 4px 0 rgba(43,26,15,.35)"></div>
       <span style="{{rg.tagSt}}"><span style="padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78)">{{rg.title}} {{rg.n}}</span></span>
@@ -4068,7 +4127,8 @@ class Ctl_ds extends StationBase {
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
+    var _bg = (function () { var o = { b0: '', c0: 'none', b1: '', c1: 'none', b2: '', c2: 'none' }, cols = []; ((it && it.brush) || []).forEach(function (s) { if (!s || !s.p) { return; } var k = cols.indexOf(s.c); if (k < 0 && cols.length < 3) { cols.push(s.c); k = cols.length - 1; } if (k < 0) { k = 2; } o['b' + k] += ' ' + s.p; o['c' + k] = cols[k]; }); return o; })(); /* 붓 무늬 : 색마다 한 줄 */
+    return { b0: _bg.b0 || 'M0 0', c0: _bg.c0, b1: _bg.b1 || 'M0 0', c1: _bg.c1, b2: _bg.b2 || 'M0 0', c2: _bg.c2, bw: (Math.max(2.5, (typeof side !== 'undefined' ? side : 100) / 34)).toFixed(1), inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
@@ -4872,7 +4932,8 @@ class Ctl_k extends StationBase {
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
+    var _bg = (function () { var o = { b0: '', c0: 'none', b1: '', c1: 'none', b2: '', c2: 'none' }, cols = []; ((it && it.brush) || []).forEach(function (s) { if (!s || !s.p) { return; } var k = cols.indexOf(s.c); if (k < 0 && cols.length < 3) { cols.push(s.c); k = cols.length - 1; } if (k < 0) { k = 2; } o['b' + k] += ' ' + s.p; o['c' + k] = cols[k]; }); return o; })(); /* 붓 무늬 : 색마다 한 줄 */
+    return { b0: _bg.b0 || 'M0 0', c0: _bg.c0, b1: _bg.b1 || 'M0 0', c1: _bg.c1, b2: _bg.b2 || 'M0 0', c2: _bg.c2, bw: (Math.max(2.5, (typeof side !== 'undefined' ? side : 100) / 34)).toFixed(1), inner: _dk(_f, 0.5), rings: window.__potRings ? window.__potRings(it) : (it && it.pattern === 'plum' ? 'url(#potPlum)' : 'url(#potRings)'), edge: _dk(_f, 0.42), foot: _CLF[it && it.clay] || _CLF.basic, footOp: _gl && !_part ? 1 : 0, dripOp: _gl && !_part ? 0.55 : 0, tex: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).fill, texOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).op, dX: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dX, dY: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dY, dW: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dW, dH: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dH, dMask: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dMask, dCol: _dk(_f, 0.78), dOp: window.PotteryShared.potTex.call(window.PotteryShared, it, H, r).dOp, drip: _dk(_f, 0.75), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), grainOp: _gl ? 0.1 : 0.22, d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
@@ -5252,11 +5313,11 @@ class Component extends DCLogic {
     var self = this, el = e.currentTarget, x0 = e.clientX, y0 = e.clientY, pid = e.pointerId, moved = false, ghost = null, rect = el.getBoundingClientRect(), sc = null, lastX = x0;
     try { el.setPointerCapture && el.setPointerCapture(pid); } catch (er) {}
     function hit(x, y) {
-      var t = st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]', els = document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]');
+      var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]'))); /* 그림 받침이 먼저 */
       for (var i = 0; i < els.length; i++) { var r = els[i].getBoundingClientRect(); if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) { return els[i]; } }
       return null;
     }
-    function mark(on) { var els = document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]'); for (var i = 0; i < els.length; i++) { var ok = st === 'g' || els[i].getAttribute('data-kfree') === '1'; els[i].style.outline = on && ok ? '3px solid #FFD54A' : ''; els[i].style.outlineOffset = on && ok ? '-3px' : ''; } }
+    function mark(on) { var els = document.querySelectorAll((st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]') + ',[data-drop="paint"]'); for (var i = 0; i < els.length; i++) { var ok = st === 'g' || els[i].getAttribute('data-kfree') === '1' || els[i].getAttribute('data-drop') === 'paint'; els[i].style.outline = on && ok ? '3px solid #FFD54A' : ''; els[i].style.outlineOffset = on && ok ? '-3px' : ''; } }
     function mv(ev) {
       if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); }
       var dx = ev.clientX - x0, dy = ev.clientY - y0; lastX = ev.clientX;
@@ -5271,7 +5332,7 @@ class Component extends DCLogic {
         var edgeT = 0; sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k, d = xx < 36 ? -1 : (xx > 354 ? 1 : 0); if (!d) { edgeT = 0; return; } edgeT += 50; if (edgeT === 400) { self.goSlot(Math.round(self.stripEl.scrollLeft / 390) + d); } if (edgeT >= 1400) { edgeT = 350; } }, 50); /* 화면 끝에 잠깐 머물면 옆 설비로 한 칸 넘어간다 */
       }
       var LF = self.lift(); ghost.style.left = (ev.clientX - rect.width / 2) + 'px'; ghost.style.top = (ev.clientY - LF - rect.height / 2) + 'px';
-      var h0 = hit(ev.clientX, ev.clientY) || hit(ev.clientX, ev.clientY - LF); if (h0 !== self.qHot) { if (self.qHot) { self.qHot.style.background = ''; } self.qHot = h0; if (h0 && (st === 'g' || h0.getAttribute('data-kfree') === '1')) { h0.style.background = 'rgba(255,226,122,.22)'; } }
+      var h0 = hit(ev.clientX, ev.clientY) || hit(ev.clientX, ev.clientY - LF); if (h0 !== self.qHot) { if (self.qHot) { self.qHot.style.background = ''; } self.qHot = h0; if (h0 && (st === 'g' || h0.getAttribute('data-kfree') === '1' || h0.getAttribute('data-drop') === 'paint')) { h0.style.background = 'rgba(255,226,122,.22)'; } }
     }
     function up(ev) {
       if (ev && ev.pointerId != null && ev.pointerId !== pid) { return; }
@@ -5279,7 +5340,8 @@ class Component extends DCLogic {
       clearInterval(sc); self.dragging = false; setTimeout(function () { self.snap(); }, 400); mark(false); el.style.opacity = ''; if (self.qHot) { self.qHot.style.background = ''; self.qHot = null; }
       if (!moved) { self.qTap(id, st); return; }
       var t = !ev || ev.type === 'pointercancel' ? null : (hit(ev.clientX, ev.clientY) || hit(ev.clientX, ev.clientY - self.lift())), ok = false;
-      if (t && st === 'g') { ok = self.putPiece(id); }
+      if (t && t.getAttribute('data-drop') === 'paint') { ok = self.openPaint(id, st); }
+      else if (t && st === 'g') { ok = self.putPiece(id); }
       else if (t && st === 'k') { ok = self.kPlace(+t.getAttribute('data-kiln'), id); }
       else if (moved) { self.say(st === 'g' ? '시유그릇에 놓아야 유약을 바를 수 있어요' : '가마의 빈 칸에 놓아야 구울 수 있어요'); }
       if (!ghost) { return; }
@@ -5415,7 +5477,7 @@ class Component extends DCLogic {
     if (!res) { return; }
     var pid = 'k' + Date.now() + '_' + i, p = {}, x;
     for (x in it) { p[x] = it[x]; } for (x in res) { p[x] = res[x]; }
-    delete p.recoat; p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
+    delete p.recoat; if (it.sk === 'slab') { p.name = this.pName(p); } p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
     K.k[i] = null;
     var c = this.kSave(K), ps = {}; for (x in (c.pieces || {})) { ps[x] = c.pieces[x]; } ps[pid] = p;
     var sf = {}, gf = {}; for (x in (c.shapesFound || {})) { sf[x] = c.shapesFound[x]; } for (x in (c.glazesFound || {})) { gf[x] = c.glazesFound[x]; } sf[p.shape] = true; gf[p.glaze] = true;
@@ -5558,6 +5620,8 @@ class Component extends DCLogic {
     var g = this.loadG(); if (g.onWheel) { this.say('물레 위 기물을 먼저 선반에 올려요'); this.sfx('fail'); return false; }
     var was = !window.__wEmpty;
     if (was && W.state.clay === c.id) { this.say(c.n + ' 흙이 이미 올라가 있어요'); return false; }
+    if (was && W.state.stage === 'shape' && !(this.swapOk && this.swapOk === 'wheel:' + c.id)) { this.swapAsk = { to: 'wheel', c: c }; this.bump(); return false; } /* 빚던 모양이 사라진다는 확인 한 번 */
+    this.swapOk = '';
     try { W.resetPointers(); var nf = W.fresh(); nf.clay = c.id; W.setState(nf); } catch (e) { return false; }
     window.__wEmpty = false; this.setG2({ wEmpty: false }); this.sfx('thud'); try { window.__buzz && window.__buzz(14); } catch (e) {}
     this.say(was ? c.n + ' 흙으로 바꿔 올렸어요 · 빚던 모양은 새로 시작' : c.n + ' 흙을 물레에 올렸어요');
@@ -5689,8 +5753,8 @@ class Component extends DCLogic {
     }, 380);
   }
   shelvePiece(id) {
-    var g = this.loadG(); if (g.onWheel !== id) { return false; }
-    this.setG2({ onWheel: '' }); this.sfx('ok'); try { window.__buzz && window.__buzz(10); } catch (e) {}
+    var g = this.loadG(); if (g.onWheel !== id && g.onSlab !== id) { return false; }
+    this.setG2(g.onSlab === id ? { onSlab: '' } : { onWheel: '' }); this.sfx('ok'); try { window.__buzz && window.__buzz(10); } catch (e) {}
     var n = (this.loadG().glazeList || []).length;
     this.say('빚은 기물 선반에 올렸어요 (' + n + '/' + this.KB().cap + ') · 유약 쪽으로 넘기면 선반이 따라와요');
     return true;
@@ -5721,7 +5785,7 @@ class Component extends DCLogic {
       hot(false); self.dragging = false; var els2 = document.querySelectorAll('[data-dz]'); for (var j = 0; j < els2.length; j++) { els2[j].style.background = ''; }
       if (!moved) { if (ev.type !== 'pointercancel' && tap) { tap(); } self.bump(); return; }
       var dz = ev.type === 'pointercancel' ? null : (self.dropAt(ev.clientX, ev.clientY, kind) || self.dropAt(ev.clientX, ev.clientY - self.lift(), kind)), ok = false;
-      if (dz) { ok = self.drop(kind, data); }
+      if (dz) { ok = self.drop(kind, data, dz); }
       if (opt.hide) { opt.hide(false); }
       if (ghost) {
         if (ok && opt.to) { self.flyGhostTo(ghost, opt.to, h); }
@@ -5751,14 +5815,100 @@ class Component extends DCLogic {
     return '<svg width="100%" height="100%" viewBox="0 0 70 100"><defs><linearGradient id="' + id + '" x1="0" x2="1"><stop offset="0" stop-color="' + a + '"/><stop offset=".38" stop-color="' + l + '"/><stop offset=".62" stop-color="' + m + '"/><stop offset="1" stop-color="' + a + '"/></linearGradient></defs><path d="M6 14 L6 86 Q35 97 64 86 L64 14 Z" fill="url(#' + id + ')" stroke="' + e + '" stroke-width="2.5"/><path d="M14 30 Q35 34 56 30 M14 52 Q35 56 56 52 M14 72 Q35 76 56 72" fill="none" stroke="' + e + '" stroke-width="1.2" opacity=".35"/><ellipse cx="35" cy="14" rx="29" ry="6.5" fill="' + m + '" stroke="' + e + '" stroke-width="2.5"/></svg>'; }
   /* 손에 든 장작 */
   woodLog() { return '<svg width="100%" height="100%" viewBox="0 0 90 34"><rect x="3" y="5" width="80" height="24" rx="11" fill="#9A6A44" stroke="#3E2616" stroke-width="3"/><path d="M14 13 L60 12 M20 21 L70 22" stroke="#6B4429" stroke-width="2" stroke-linecap="round"/><ellipse cx="78" cy="17" rx="8" ry="11" fill="#E2C08F" stroke="#3E2616" stroke-width="3"/><ellipse cx="78" cy="17" rx="3.5" ry="5" fill="none" stroke="#A97B52" stroke-width="1.5"/></svg>'; }
-  accepts(kind, dz) { return { clay: 'wheel', wire: 'wheel', piece: 'shelf', glaze: 'basin', gpiece: 'gshelf', wood: 'fire' }[kind] === dz; }
+  /* ── 흙 바꾸기 확인 ── */
+  swapYes() { var a = this.swapAsk; this.swapAsk = null; if (!a) { return; } this.swapOk = a.to + ':' + a.c.id; if (a.to === 'slab') { this.putSlab(a.c); } else { this.putClay(a.c); } this.swapOk = ''; this.bump(); }
+  swapNo() { this.swapAsk = null; this.say('빚던 흙을 그대로 둘게요'); this.bump(); }
+  /* ── 판 성형 : 물레 화면 구석에 떠 있는 판 · 누르면 물레와 자리를 바꾼다 ── */
+  SG() { return { x0: 60, x1: 330, y0: 150, y1: 470, cx: 195, cy: 310, tw: 170, th: 120, band: [0.3, 0.45] }; }
+  slabSet(on) { this.slabOn = !!on; this.cutMode = false; this.setG2({ slabOn: !!on }); this.sfx('tap'); this.bump(); }
+  slabTap() { if (this.dragging) { return; } this.slabSet(!this.slabOn); }
+  putSlab(c) {
+    var g = this.loadG(), sl = g.slab || null;
+    if (!this.slabOn) { this.slabSet(true); }
+    if (g.onSlab) { this.say('판 위 기물을 먼저 선반에 올려요'); this.sfx('fail'); return false; }
+    if (sl && sl.clay === c.id) { this.say(c.n + ' 흙이 이미 판 위에 있어요'); return false; }
+    if (sl && sl.th < 0.99 && !(this.swapOk === 'slab:' + c.id)) { this.swapAsk = { to: 'slab', c: c }; this.bump(); return false; }
+    this.setG2({ slab: { clay: c.id, th: 1, stage: 'roll', dev: 0, dn: 0 } }); this.sfx('thud'); try { window.__buzz && window.__buzz(14); } catch (e) {}
+    this.say(sl ? c.n + ' 흙으로 바꿨어요 · 밀대로 밀어 판을 펴요' : c.n + ' 흙을 판에 올렸어요 · 좌우로 밀어 판을 펴요');
+    return true;
+  }
+  slabPt(e) { var pnl = document.querySelector('[data-panel="1"]'); if (!pnl) { return null; } var R = pnl.getBoundingClientRect(), k = R.width / 390; return { x: (e.clientX - R.left) / k, y: (e.clientY - R.top) / k }; }
+  slabOutline() { var G = this.SG(), pts = [], w = G.tw / 2, h = G.th / 2, N = 48; for (var i = 0; i < N; i++) { var t = i / N * 2 * (G.tw + G.th), x, y; if (t < G.tw) { x = -w + t; y = -h; } else if (t < G.tw + G.th) { x = w; y = -h + (t - G.tw); } else if (t < 2 * G.tw + G.th) { x = w - (t - G.tw - G.th); y = h; } else { x = -w; y = h - (t - 2 * G.tw - G.th); } pts.push([G.cx + x, G.cy + y]); } return pts; }
+  slabDown(e) {
+    var g = this.loadG(), sl = g.slab, self = this; if (!sl || g.onSlab) { return; }
+    var p0 = this.slabPt(e); if (!p0) { return; } if (e.cancelable) { e.preventDefault(); }
+    var pid = e.pointerId, G = this.SG(), last = p0; this.dragging = true;
+    if (sl.stage === 'roll') {
+      var th = sl.th;
+      var mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev); th = Math.max(0.2, th - Math.abs(q.x - last.x) / 1400); last = q; self.slabLive = { th: th, py: Math.max(G.y0 + 10, Math.min(G.y1 - 10, q.y)), px: q.x }; self.bump(); };
+      var up = function (ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; self.slabLive = null;
+        var ns = { clay: sl.clay, th: th, stage: th <= G.band[1] ? 'cut' : 'roll', dev: 0, dn: 0, seen: [] }; self.setG2({ slab: ns });
+        if (ns.stage === 'cut') { self.sfx('ok'); self.say(th < G.band[0] ? '조금 얇아요 · 본을 따라 칼로 잘라요' : '알맞은 두께예요 · 본(점선)을 따라 칼로 잘라요'); } else { self.say('두께 ' + Math.round(th * 100) + '% · 초록 칸까지 더 밀어요'); }
+        self.bump(); };
+      window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+      return;
+    }
+    if (sl.stage === 'cut') {
+      var OL = this.slabOutline(), seen = (sl.seen || []).slice(), dev = sl.dev || 0, dn = sl.dn || 0;
+      var mark = function (q) { var best = 1e9; for (var i = 0; i < OL.length; i++) { var d = Math.hypot(OL[i][0] - q.x, OL[i][1] - q.y); if (d < best) { best = d; } if (d < 16 && seen.indexOf(i) < 0) { seen.push(i); } } dev += Math.min(best, 40); dn++; self.slabSeen = seen; self.bump(); };
+      mark(p0);
+      var mv2 = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } mark(self.slabPt(ev)); if (seen.length >= OL.length - 4) { end2(true); } };
+      var end2 = function (done) { window.removeEventListener('pointermove', mv2); window.removeEventListener('pointerup', up2); window.removeEventListener('pointercancel', up2); self.dragging = false; self.slabSeen = null;
+        if (done) { self.slabFinish(sl, dev / Math.max(1, dn)); return; }
+        self.setG2({ slab: { clay: sl.clay, th: sl.th, stage: 'cut', dev: dev, dn: dn, seen: seen } }); self.say('본을 한 바퀴 다 따라 잘라요 (' + Math.round(seen.length / OL.length * 100) + '%)'); self.bump(); };
+      var up2 = function (ev) { if (ev.pointerId !== pid) { return; } end2(false); };
+      window.addEventListener('pointermove', mv2, { passive: false }); window.addEventListener('pointerup', up2); window.addEventListener('pointercancel', up2);
+    }
+  }
+  slabFinish(sl, avgDev) {
+    var g = this.loadG(), QL = this.qlib(), G = this.SG();
+    if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 · 유약을 먼저 발라요'); this.sfx('fail'); this.setG2({ slab: { clay: sl.clay, th: sl.th, stage: 'cut', dev: 0, dn: 0, seen: [] } }); this.bump(); return; }
+    var thPen = sl.th > G.band[1] ? (sl.th - G.band[1]) * 200 : (sl.th < G.band[0] ? (G.band[0] - sl.th) * 260 : 0), fit = Math.max(30, Math.min(100, Math.round(100 - thPen - avgDev * 1.6)));
+    var t = QL.takeClay(g, sl.clay), r = [66, 68, 69, 70, 70, 70, 70, 70, 70, 70, 71, 72];
+    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: 'dish', sk: 'slab', goalName: '판 접시', clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), tmin: Math.round((3 + sl.th * 6) * 10) / 10, prof: r, H: 22, slab: true };
+    var up = { glazeList: (g.glazeList || []).concat([item]), slab: null, onSlab: item.id }; if (t && t.mats) { up.mats = t.mats; } if (t && t.matsQ) { up.matsQ = t.matsQ; }
+    this.setG2(up); this.liftAt = Date.now(); this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
+    this.say('판 접시를 잘라 세웠어요 · 맞춤 ' + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
+  }
+  /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
+  PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
+  openPaint(id, st) {
+    var g = this.loadG(), L = st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
+    var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
+    this.paint = { id: id, st: st, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: (pal[2] || pal[0])[0] }, 'glazed') };
+    this.sfx('tap'); this.say('유약을 찍어 기물에 무늬를 그려요 · 다 그리면 「다 그렸어요」'); this.bump(); return true;
+  }
+  paintItem() { var P = this.paint; if (!P) { return null; } var g = this.loadG(), L = P.st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === P.id; })[0]; return it || null; }
+  paintPt(e) { var svg = document.querySelector('[data-paint-svg]'); if (!svg || !svg.getScreenCTM) { return null; } var m = svg.getScreenCTM(); if (!m) { return null; } var p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY - 26; var q = p.matrixTransform(m.inverse()); return [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; } /* 붓 끝은 손가락보다 조금 위 */
+  paintIn(it, q) { var r = it.prof && it.prof.length > 2 ? it.prof : null, H = it.H || 110; if (!r) { return Math.abs(q[0]) < 60 && q[1] < 0 && q[1] > -H; } if (q[1] > -1 || q[1] < -H + 1) { return false; } var f = (-q[1] / H) * (r.length - 1), j = Math.floor(f), rr = r[j] + (r[Math.min(r.length - 1, j + 1)] - r[j]) * (f - j); return Math.abs(q[0]) <= rr - 1.5; }
+  paintDown(e) {
+    var P = this.paint, it = this.paintItem(), self = this; if (!P || !it) { return; } if (e.cancelable) { e.preventDefault(); }
+    var pid = e.pointerId, svg = document.querySelector('[data-paint-svg]'), q0 = this.paintPt(e); if (!svg || !q0) { return; }
+    var NS = 'http://www.w3.org/2000/svg', live = document.createElementNS(NS, 'path'), d = '', pen = false;
+    live.setAttribute('fill', 'none'); live.setAttribute('stroke', P.col); live.setAttribute('stroke-width', svg.getAttribute('data-bw') || '3'); live.setAttribute('stroke-linecap', 'round'); live.setAttribute('stroke-linejoin', 'round'); svg.appendChild(live);
+    var tip = document.querySelector('[data-paint-tip]');
+    function add(q) { if (tip) { tip.setAttribute('cx', q[0]); tip.setAttribute('cy', q[1]); tip.setAttribute('opacity', '1'); } if (!self.paintIn(it, q)) { pen = false; return; } d += (pen ? ' L' : ' M') + q[0] + ' ' + q[1]; pen = true; live.setAttribute('d', d); }
+    add(q0); this.dragging = true;
+    function mv(ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.paintPt(ev); if (q) { add(q); } }
+    function up(ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; if (tip) { tip.setAttribute('opacity', '0'); }
+      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, p: d.trim() }]).slice(-40); }
+      live.remove(); self.bump(); }
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
+  paintSave() {
+    var P = this.paint; if (!P) { return; }
+    var g = this.loadG(), key = P.st === 'g' ? 'glazeList' : 'kilnList', L = (g[key] || []).map(function (x) { if (x.id !== P.id) { return x; } var y = {}; for (var k in x) { y[k] = x[k]; } y.brush = P.strokes.slice(); return y; }), up = {}; up[key] = L;
+    this.setG2(up); this.paint = null; this.sfx('ok'); this.say(P.strokes.length ? '무늬를 그렸어요 · 소성 전이면 언제든 다시 그릴 수 있어요 (가치 +40%)' : '무늬를 지웠어요'); this.bump();
+  }
+  accepts(kind, dz) { if (kind === 'clay' && dz === 'slab') { return true; } return { clay: 'wheel', wire: 'wheel', piece: 'shelf', glaze: 'basin', gpiece: 'gshelf', wood: 'fire' }[kind] === dz; }
   dropAt(x, y, kind) {
     var els = document.querySelectorAll('[data-dz]');
     for (var i = 0; i < els.length; i++) { var dz = els[i].getAttribute('data-dz'); if (!this.accepts(kind, dz)) { continue; } var r = els[i].getBoundingClientRect(); if (r.width && x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 12 && y <= r.bottom + 12) { return dz; } }
     return null;
   }
-  drop(kind, data) {
-    if (kind === 'clay') { return this.putClay(data); }
+  drop(kind, data, dz) {
+    if (kind === 'clay' && dz === 'slab') { return this.putSlab(data); }
+    if (kind === 'clay') { if (this.slabOn) { this.slabSet(false); } return this.putClay(data); }
     if (kind === 'wood') { return this.kWood(); }
     if (kind === 'wire') { return this.cutWire(); }
     if (kind === 'piece') { return this.shelvePiece(data.id); }
@@ -5801,8 +5951,8 @@ class Component extends DCLogic {
         st: 'position:absolute;left:' + x + 'px;top:72px;width:180px;height:84px;z-index:9;pointer-events:none',
         tagSt: 'position:absolute;left:0;right:0;top:66px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:16px;white-space:nowrap;color:' + (list.length >= CAP ? '#FFE27A' : '#FFF4DE') + ';' };
     }
-    var onWid0 = g.onWheel || '';
-    v.rf = shelf((g.glazeList || []).filter(function (x) { return x.id !== onWid0; }), 'g', R.f, '빚은 기물'); v.rf.dz = 'shelf'; var gw = g.glzWait || '', gwIt = gw ? (g.kilnList || []).filter(function (x) { return x.id === gw; })[0] : null;
+    var onWid0 = g.onWheel || '', onSid0 = g.onSlab || '';
+    v.rf = shelf((g.glazeList || []).filter(function (x) { return x.id !== onWid0 && x.id !== onSid0; }), 'g', R.f, '빚은 기물'); v.rf.dz = 'shelf'; var gw = g.glzWait || '', gwIt = gw ? (g.kilnList || []).filter(function (x) { return x.id === gw; })[0] : null;
     if (gw && !gwIt) { setTimeout(function () { self.setG2({ glzWait: '' }); }, 0); }
     v.rg = shelf((g.kilnList || []).filter(function (x) { return x.id !== gw; }), 'k', R.g, '시유한 기물'); v.rg.dz = 'gshelf';
     if (window.__glzWait !== !!gwIt) { window.__glzWait = !!gwIt; var Gz = this.ctls.Glaze; if (Gz) { Gz.dirty = true; } }
@@ -5836,7 +5986,42 @@ class Component extends DCLogic {
       fx: CG.x1 + 4, fy: CG.y - 26, hintSt: 'position:absolute;left:0;right:0;top:' + (CG.y + 24) + 'px;z-index:11;text-align:center;pointer-events:none', pulse: this.cutPx == null ? 'animation:cutPulse 1s ease-in-out infinite;transform-origin:center;transform-box:fill-box' : '',
       guide: this.cutFail && now - this.cutFail < 500 ? '#FF6B4A' : '#FFE27A',
       down: function (e) { self.cutDown(e); }, cancel: function () { self.cutCancel(); } };
-    v.wireBoardSt = 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
+    /* ── 판 성형 (물레 화면 구석의 판 ↔ 큰 작업대) ── */
+    if (this.slabOn === undefined) { this.slabOn = g.slabOn === true; }
+    var SON = !!this.slabOn, SL = g.slab || null, SG = this.SG(), oSid = g.onSlab || '', oSit = oSid ? (g.glazeList || []).filter(function (x) { return x.id === oSid; })[0] : null;
+    if (oSid && !oSit) { setTimeout(function () { self.setG2({ onSlab: '' }); }, 0); }
+    var CLC = '#C9A27A'; try { (Wc.claysDef() || []).forEach(function (c) { if (SL && c.id === SL.clay) { CLC = c.c; } }); } catch (eC) {}
+    v.slabOn = SON; v.wheelDz = SON ? 'off' : 'wheel';
+    var LV = this.slabLive, thN = LV ? LV.th : (SL ? SL.th : 1), sw = 90 + (1 - thN) * 200, shh = 64 + (1 - thN) * 150;
+    var miniW = !wEmpty, miniTxt = SON ? '물레' + (miniW ? ' · 빚는 중' : '') : '판 성형' + (oSit ? ' · 완성' : (SL ? (SL.stage === 'cut' ? ' · 자르기' : ' · 밀기') : ''));
+    v.mini = { dz: SON ? 'wheel' : 'slab', txt: miniTxt, aria: (SON ? '물레로 바꾸기' : '판 성형으로 바꾸기') + ' · 흙을 끌어 놓아도 돼요', tap: function () { self.slabTap(); },
+      slabOn: !SON, wheelOn: SON, slabR: SL ? 'display:block' : 'display:none', slabC: CLC, slabW: (14 + (1 - thN) * 18).toFixed(1), slabX: (32 - (14 + (1 - thN) * 18) / 2).toFixed(1), potOn: miniW ? 'display:block' : 'display:none',
+      st: 'position:absolute;left:4px;top:128px;width:66px;height:74px;z-index:22;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box;' + (this.cutMode ? 'display:none;' : '') };
+    var OL = this.slabOutline(), seen = this.slabSeen || (SL && SL.seen) || [], segs = '';
+    seen.slice().sort(function (a, b) { return a - b; }).forEach(function (i) { var a = OL[i], b = OL[(i + 1) % OL.length]; segs += 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' L' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + ' '; });
+    v.sb = { on: SON, empty: !SL && !oSit, roll: !!SL && SL.stage === 'roll', cut: !!SL && SL.stage === 'cut', has: !!SL, piece: !!oSit,
+      slab: 'x', sx: (SG.cx - sw / 2).toFixed(1), sy: (SG.cy - shh / 2).toFixed(1), sw: sw.toFixed(1), sh: shh.toFixed(1), col: CLC, edge: this.shade(CLC, 0.62), hi: this.shade(CLC, 1.12),
+      tmpl: 'M' + (SG.cx - SG.tw / 2) + ' ' + (SG.cy - SG.th / 2) + ' h' + SG.tw + ' v' + SG.th + ' h' + (-SG.tw) + ' Z', seen: segs || 'M0 0', pct: Math.round(seen.length / OL.length * 100),
+      pinY: (LV ? LV.py : SG.cy + shh / 2 + 26).toFixed(1), pinX: (LV ? Math.max(70, Math.min(320, LV.px)) : SG.cx).toFixed(1),
+      gaugeH: Math.round(thN * 260), gaugeY: Math.round(450 - thN * 260), gcol: thN <= SG.band[1] && thN >= SG.band[0] ? '#6FCF5A' : (thN < SG.band[0] ? '#E0573A' : '#E3B23C'), bandY: Math.round(450 - SG.band[1] * 260), bandH: Math.round((SG.band[1] - SG.band[0]) * 260),
+      hint: !SL && !oSit ? '흙판에서 흙을 끌어다 판 위에 올려요' : (oSit ? '판 접시를 들어 오른쪽 위 선반에 ↗' : (SL.stage === 'roll' ? '밀대로 좌우로 밀어 초록 칸 두께까지 펴요' : '본(점선)을 따라 손가락으로 한 바퀴 잘라요 · ' + Math.round(seen.length / OL.length * 100) + '%')),
+      down: function (e) { self.slabDown(e); },
+      pot: oSit ? this.potOf(oSit, this.fillOf(oSit, 'dry')) : EMPTY, pDown: function (e) { if (!oSit) { return; } var el = e.currentTarget.querySelector('svg'); var bx = e.currentTarget.getBoundingClientRect(), RR = (self.stripEl || document.body).getBoundingClientRect(), kk = RR.width / 390 || 1; self.carryStart(e, 'piece', { id: oSit.id }, el ? el.outerHTML.replace(/width="[0-9.]+" height="[0-9.]+"/, 'width="100%" height="100%"') : '', bx.width / kk, bx.height / kk, function () { self.say('판 접시를 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? oSit.id : ''; self.bump(); } }); },
+      pHid: oSit && this.carryId === oSit.id ? 'visibility:hidden' : '' };
+    var SA = this.swapAsk; v.sw = { on: !!SA, txt: SA ? (SA.to === 'slab' ? '밀던 판이 사라져요' : '빚던 모양이 사라져요') + ' · ' + SA.c.n + ' 흙으로 바꿀까요?' : '', yes: function () { self.swapYes(); }, no: function () { self.swapNo(); } };
+    /* ── 붓 무늬 ── */
+    var PT = this.paint, pIt = PT ? this.paintItem() : null; if (PT && !pIt) { this.paint = null; PT = null; }
+    v.pt = { on: !!PT };
+    if (PT) {
+      var tmpIt = {}; for (var pk in pIt) { tmpIt[pk] = pIt[pk]; } tmpIt.brush = PT.strokes;
+      var GN0 = (g.glazesFound || {}), pal0 = this.PAL().filter(function (p) { return GN0[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
+      var ppot = this.potOf(tmpIt, PT.st === 'g' ? this.fillOf(tmpIt, 'dry') : this.fillOf(tmpIt, 'glazed'));
+      v.pt = { on: true, pot: ppot, bw: ppot.bw, name: this.pName(PT.st === 'g' ? { shape: pIt.shape, sk: pIt.sk, goalName: pIt.goalName } : pIt) + (PT.st === 'g' ? ' · 시유 전' : ' · 시유 후'), n: PT.strokes.length,
+        pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.bump(); } }; }),
+        down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); } };
+    }
+    v.paintStand = function () { self.say('선반의 기물(시유 전·후 모두)을 끌어다 놓으면 유약으로 무늬를 그려요'); };
+    v.wireBoardSt = (SON ? 'display:none;' : '') + 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
     v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
@@ -5996,7 +6181,7 @@ class Component extends DCLogic {
     if (ch) { try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); localStorage.setItem('tutProg', '99'); localStorage.setItem('tutCardSeen', '99'); localStorage.setItem('tut2', JSON.stringify({ k: 9, seen: 9, v: 3 })); } catch (e) {} }
     return g;
   }
-  pName(it) { var GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' }; var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }; return (it.glaze ? (GN[it.glaze] || '') + ' ' : '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape || '기물'); }
+  pName(it) { if (it && it.sk === 'slab') { var GNs = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃' }; return (it.glaze ? (GNs[it.glaze] || '') + ' ' : '') + '판 접시'; } var GN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' }; var SN = { dish: '종지', cup: '찻잔', bowl: '사발', jar: '항아리' }; return (it.glaze ? (GN[it.glaze] || '') + ' ' : '') + ((window.__shN ? window.__shN(it) : SN[it.shape]) || it.shape || '기물'); }
   potOf(it, fill) {
     var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
     var r = it && it.prof, H = it && it.H;
@@ -6015,7 +6200,8 @@ class Component extends DCLogic {
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
     var side = Math.max(2 * M, H) + 20;
-    return { inner: _dk(_f, 0.5), edge: _dk(_f, 0.42), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf, H: H, M: M };
+    var _bg = (function () { var o = { b0: '', c0: 'none', b1: '', c1: 'none', b2: '', c2: 'none' }, cols = []; ((it && it.brush) || []).forEach(function (s) { if (!s || !s.p) { return; } var k = cols.indexOf(s.c); if (k < 0 && cols.length < 3) { cols.push(s.c); k = cols.length - 1; } if (k < 0) { k = 2; } o['b' + k] += ' ' + s.p; o['c' + k] = cols[k]; }); return o; })(); /* 붓 무늬 : 색마다 한 줄 */
+    return { b0: _bg.b0 || 'M0 0', c0: _bg.c0, b1: _bg.b1 || 'M0 0', c1: _bg.c1, b2: _bg.b2 || 'M0 0', c2: _bg.c2, bw: (Math.max(2.5, (typeof side !== 'undefined' ? side : 100) / 34)).toFixed(1), inner: _dk(_f, 0.5), edge: _dk(_f, 0.42), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf, H: H, M: M };
   }
   fillOf(it, stage) {
     var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
