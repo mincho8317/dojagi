@@ -217,7 +217,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 
   <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{w.fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
-      <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
+      <span style="font-size:11px;font-weight:700;color:#E8D3B5">{{w.fitLbl}}</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{w.fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{w.fitPct}}<span style="font-size:18px">%</span></span>
     </div>
     <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0">
@@ -418,7 +418,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </div>
 </div>
       <sc-if value="{{tgShut}}" hint-placeholder-val="{{true}}">
-        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:{{tgZ}};max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span><sc-if value="{{tgPctOn}}" hint-placeholder-val="{{false}}"><span style="display:block;margin-top:2px;padding:1px 6px;border-radius:7px;background:#2F6328;color:#FFF4DE;font-size:11px;text-align:center">일치 {{tgPct}}%</span></sc-if></button>
+        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:{{tgZ}};max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span><sc-if value="{{tgPctOn}}" hint-placeholder-val="{{false}}"><span style="display:block;margin-top:2px;padding:1px 6px;border-radius:7px;background:#2F6328;color:#FFF4DE;font-size:11px;text-align:center">{{tgPctTx}}</span></sc-if></button>
       </sc-if>
       <sc-if value="{{tgOpen}}" hint-placeholder-val="{{false}}">
         <style>@keyframes memoOpen{from{transform:rotate(-3deg) scale(.5);opacity:.7}to{transform:rotate(-1.5deg) scale(1);opacity:1}}</style>
@@ -1325,6 +1325,7 @@ class Ctl_w extends StationBase {
     var TT = { dish: [5, 6.5], bowl: [4, 5.5], cup: [3.5, 5], jar: [5, 7] };
     QL.knownShapes(g0).forEach(function (k) { var d = QL.SHP[k], p = d.p, n = p.length; o[k] = { n: d.n, H: d.H, T: TT[QL.WSM[k]] || [4, 6], sk: k, f: function (u) { var x = u * (n - 1), lo = Math.floor(x), hi = Math.min(n - 1, lo + 1); return p[lo] + (p[hi] - p[lo]) * (x - lo); } }; });
     for (var k in qt) { o[k] = qt[k]; }
+    o.free = { n: '자유', free: true, H: 90, T: [4, 6], f: function (u) { return 44 + 14 * Math.sin(u * 5.4) + 8 * u; } }; /* 자유 : 안내선 없음 · 판정은 가장 닮은 모양 기준 */
     if (!o[this.state && this.state.target] && this.state && /^q:/.test(this.state.target)) { o[this.state.target] = o.dish; }
     if (this.state && this.state.target && !o[this.state.target]) { o[this.state.target] = o.dish; }
     return o;
@@ -1421,7 +1422,7 @@ class Ctl_w extends StationBase {
   }
   snapStep(dt) {
     var s = this.state; if (s.fx || !this.touched) { return null; }
-    var T = this.wtune(), tg = this.shapes()[s.target]; if (!tg) { return null; }
+    var T = this.wtune(), tg = this.shapes()[s.target]; if (!tg || tg.free) { return null; } /* 자유 : 손끝 보정 없음 */
     var now = Date.now(), r = s.r.slice(), H = s.H, ch = false, done = (s.segDone || []).slice(), newly = [];
     for (var i = 0; i < 12; i++) {
       var tr = tg.f(i / 11), rel = (r[i] - tr) / tr;
@@ -1538,6 +1539,12 @@ class Ctl_w extends StationBase {
     this.setState({ r: r, t: t, H: H, w: w, wOn: true, grab: grab });
   }
   analyze(s) {
+    if (s.target === 'free') { /* 자유 : 아는 모양 모두와 견줘 가장 닮은 모양의 일치율 = 성형 점수 · 손질 안내 없음 */
+      var SHf = this.shapes(), selfA = this, best = null;
+      this.qlib().knownShapes(s.g || this.loadG()).forEach(function (k) { if (!SHf[k]) { return; } var a = selfA.analyze(Object.assign({}, s, { target: k })); if (!best || a.fit > best.fit) { best = a; best.near = k; } });
+      if (!best) { best = this.analyze(Object.assign({}, s, { target: 'dish' })); best.near = 'dish'; }
+      return { fit: best.fit, tr: s.r.slice(), tg: { n: '자유', free: true, H: s.H, T: best.tg.T, f: SHf.free.f }, near: best.near, nearN: best.tg.n, tOut: best.tOut, tAvg: best.tAvg, issues: [] };
+    }
     var tg = this.shapes()[s.target];
     var tr = [];
     for (var i = 0; i < 12; i++) { tr.push(tg.f(i / 11)); }
@@ -1621,7 +1628,7 @@ class Ctl_w extends StationBase {
     var wob = s.wrapping ? 0 : Math.sin(s.phase * 3.1) * s.w * 0.07;
     var prof = this.profile(s.r, s.H, wob);
     var ghost = this.profile(an.tr, tg.H, 0);
-    var sd = s.segDone || [], segD = '', segN = 0;
+    var sd = tg.free ? [] : (s.segDone || []), segD = '', segN = 0;
     for (var si = 0; si < 11; si++) { if (sd[si] && sd[si + 1]) { segD += 'M' + ghost.R[si][0].toFixed(1) + ' ' + ghost.R[si][1].toFixed(1) + ' L' + ghost.R[si + 1][0].toFixed(1) + ' ' + ghost.R[si + 1][1].toFixed(1) + ' M' + ghost.L[si][0].toFixed(1) + ' ' + ghost.L[si][1].toFixed(1) + ' L' + ghost.L[si + 1][0].toFixed(1) + ' ' + ghost.L[si + 1][1].toFixed(1) + ' '; } }
     sd.forEach(function (x) { if (x) { segN++; } });
     var nowF = Date.now();
@@ -1654,6 +1661,7 @@ class Ctl_w extends StationBase {
     } else {
       an.issues.forEach(function (is) { tips.push({ text: is.text, style: tipBase + '#5B3A24;background:#FFF4DE;color:#5B3A24' }); });
       if (tmin < lim + 1) { tips.push({ text: '찢어짐 주의 ⚠', style: tipBase + '#A33B22;background:#F8DDD5;color:#A33B22' }); }
+      if (tg.free) { tips.push({ text: '자유 · ' + an.nearN + '을(를) 가장 닮았어요', style: tipBase + '#5B3A24;background:#FFF4DE;color:#5B3A24' }); }
       if (!tips.length) { tips.push({ text: an.fit >= 100 ? '완벽 ✓' : '부족한 곳 없음', style: tipBase + '#2F6328;background:#E1EFE4;color:#2F6328' }); }
     }
 
@@ -1838,8 +1846,8 @@ class Ctl_w extends StationBase {
       noClay: !s.clay,
       boardFull: (function () { return self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
       boardTxt: (window.__pano ? '대기함이 가득 찼어요 (' : '물레 옆 작업대가 가득 찼어요 (') + self.qCnt(g) + '/' + self.qCap() + ')',
-      tgIcon: self.iconOf(tg),
-      tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
+      tgIcon: self.iconOf(tg.free ? self.shapes().free : tg),
+      tgTag: tg.free ? '닮은 모양 · ' + an.nearN : /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
       openClay: function () { self.setState({ sheet: 'clay' }); },
       openTarget: function () { self.setState({ sheet: 'target' }); },
@@ -1873,14 +1881,14 @@ class Ctl_w extends StationBase {
         };
       }),
       targetName: tg.n,
-      fitPct: an.fit,
+      fitPct: an.fit, fitLbl: tg.free ? '자유 · ' + an.nearN + ' 닮음' : '일치율',
       fitCol: an.fit >= 88 ? '#9BE08A' : (an.fit >= 60 ? '#FFD66B' : '#FFB08A'),
       fitBar: 'height:100%;border-radius:6px;transition:width .2s;width:' + an.fit + '%;background:' + (an.fit >= 88 ? '#5FB052' : (an.fit >= 60 ? '#E3B23C' : '#D9773E')),
       fitStars: stars, fitStarList: stars.split('').map(function (c) { return c === '★' ? 'ui/rating_star_filled.webp' : 'ui/rating_star_empty.webp'; }),
       tips: tips,
       marks: marks,
       potPath: prof.path,
-      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
+      ghostPath: tg.free ? 'M0 0' : ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: tg.free ? 'M0 0' : miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
       foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1), mx: (150 + wob - 52 * 1.45).toFixed(1), mw: (52 * 2.9).toFixed(1), my: (291 - (48 * 0.24 + 4) * 1.5).toFixed(1), mh: ((48 * 0.24 + 4) * 3).toFixed(1) },
       wet: (function () { var mr = Math.max.apply(null, s.r), top = prof.R[11][1]; return { x: (150 + wob - mr * 1.05).toFixed(1), w: (mr * 2.1).toFixed(1), y: (top - 6).toFixed(1), h: (291 - top + 8).toFixed(1) }; })(),
@@ -2045,7 +2053,8 @@ class Ctl_w extends StationBase {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
         if (self.qCnt(g) >= self.qCap() && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say(window.__pano ? '빚은 기물 선반이 가득 찼어요 (4/4) · 유약을 발라 자리를 비워요' : '물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
-        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
+        var isFree = s.target === 'free';
+        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, free: isFree || undefined, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (isFree ? (self.qlib().WSM[an.near] || 'bowl') : (self.qlib().WSM[s.target] || s.target))), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : (isFree ? an.near : s.target)), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
         var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
         if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }
@@ -6054,8 +6063,8 @@ class Component extends DCLogic {
     if (tool === 'knife') {
       if (sl.stage !== 'sheet') { sl = { clay: sl.clay, stage: 'sheet' }; }
       /* 마그네틱 : 목표 점선 가까이(18px)로 칼이 지나가면 점선 쪽으로 끌려가고, 7px 안이면 딱 붙는다 */
-      var TGL = this.slabTgPoly(this.slabTg(g)).map(function (p) { return [p[0] + G.cx, p[1] + G.cy]; }), MR = 18, MS = 7;
-      function mag(q) { var bd = 1e9, bx = q.x, by = q.y; for (var i = 0; i < TGL.length; i++) { var a = TGL[i], b = TGL[(i + 1) % TGL.length], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey || 1, t = Math.max(0, Math.min(1, ((q.x - a[0]) * ex + (q.y - a[1]) * ey) / L2)), cx = a[0] + ex * t, cy = a[1] + ey * t, d = Math.hypot(q.x - cx, q.y - cy); if (d < bd) { bd = d; bx = cx; by = cy; } }
+      var TG0 = this.slabTg(g), TGL = TG0.free ? [] : this.slabTgPoly(TG0).map(function (p) { return [p[0] + G.cx, p[1] + G.cy]; }), MR = 18, MS = 7;
+      function mag(q) { if (!TGL.length) { return q; } var bd = 1e9, bx = q.x, by = q.y; for (var i = 0; i < TGL.length; i++) { var a = TGL[i], b = TGL[(i + 1) % TGL.length], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey || 1, t = Math.max(0, Math.min(1, ((q.x - a[0]) * ex + (q.y - a[1]) * ey) / L2)), cx = a[0] + ex * t, cy = a[1] + ey * t, d = Math.hypot(q.x - cx, q.y - cy); if (d < bd) { bd = d; bx = cx; by = cy; } }
         if (bd >= MR) { self.slabSnap = false; return q; } var k = bd <= MS ? 1 : 1 - (bd - MS) / (MR - MS); k = k * k * (3 - 2 * k); if (!self.slabSnap && k >= 1) { try { window.__buzz && window.__buzz(4); } catch (eb) {} } self.slabSnap = k >= 1; return { x: q.x + (bx - q.x) * k, y: q.y + (by - q.y) * k }; }
       var q00 = mag(p0), raw = [[q00.x, q00.y]]; this.slabKnife = raw;
       mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = mag(self.slabPt(ev)); q.x = Math.max(G.cx - G.sw / 2 + 4, Math.min(G.cx + G.sw / 2 - 4, q.x)); q.y = Math.max(G.cy - G.sh / 2 + 4, Math.min(G.cy + G.sh / 2 - 4, q.y)); var l = raw[raw.length - 1]; if (Math.hypot(q.x - l[0], q.y - l[1]) > 3) { raw.push([q.x, q.y]); self.bump(); } };
@@ -6112,10 +6121,12 @@ class Component extends DCLogic {
   /* ── 판 성형 목표 : 위에서 본 바닥 모양 · 크기 · 테두리 높이 · (벽) 높이와 옆선 ── */
   SLT() { var F = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     return [{ k: 'sqp', n: '네모 접시', f: 'rect', a: 88, b: 68, e: 10, H: 0 }, { k: 'rdp', n: '둥근 접시', f: 'ell', a: 82, b: 82, e: 16, H: 0 }, { k: 'ova', n: '타원 쟁반', f: 'ell', a: 110, b: 60, e: 6, H: 0 }, { k: 'lef', n: '나뭇잎 접시', f: 'leaf', a: 108, b: 58, e: 9, H: 0 },
-      { k: 'sqb', n: '네모 통', f: 'rect', a: 64, b: 64, e: 0, H: 70, sc: F }, { k: 'rdv', n: '둥근 항아리', f: 'ell', a: 56, b: 56, e: 0, H: 90, sc: [1, 1.08, 1.16, 1.22, 1.24, 1.22, 1.16, 1.06, 0.96, 0.88, 0.84, 0.84] }]; }
+      { k: 'sqb', n: '네모 통', f: 'rect', a: 64, b: 64, e: 0, H: 70, sc: F }, { k: 'rdv', n: '둥근 항아리', f: 'ell', a: 56, b: 56, e: 0, H: 90, sc: [1, 1.08, 1.16, 1.22, 1.24, 1.22, 1.16, 1.06, 0.96, 0.88, 0.84, 0.84] },
+      { k: 'free', n: '자유', f: 'blob', a: 80, b: 66, e: 0, H: 0, free: true }]; } /* 자유 : 안내선·마그네틱 없음 · 판정은 가장 닮은 목표 기준 */
   slabTg(g) { var L = this.SLT(), k = (g || this.loadG()).slabTg; return L.filter(function (t) { return t.k === k; })[0] || L[0]; }
   slabTgPoly(t) { var o = []; for (var i = 0; i < 48; i++) { var th = i / 48 * Math.PI * 2, c = Math.cos(th), s = Math.sin(th), x, y;
       if (t.f === 'rect') { x = t.a * (c < 0 ? -1 : 1) * Math.pow(Math.abs(c), 0.25); y = t.b * (s < 0 ? -1 : 1) * Math.pow(Math.abs(s), 0.25); }
+      else if (t.f === 'blob') { var rb = 1 + 0.16 * Math.sin(th * 3 + 0.6) + 0.08 * Math.cos(th * 5); x = t.a * c * rb; y = t.b * s * rb; }
       else if (t.f === 'leaf') { x = t.a * c; y = t.b * s * (0.3 + 0.7 * Math.abs(s)); } else { x = t.a * c; y = t.b * s; }
       o.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10]); } return o; }
   slabSig(poly) { /* 무게중심에서 10°마다 테두리까지 거리 */
@@ -6126,6 +6137,7 @@ class Component extends DCLogic {
       r.push(best); } return r; }
   slabMatch(sl, t) {
     if (!sl || !sl.poly || sl.poly.length < 3 || !t) { return null; }
+    if (t.free) { var bst = null, selfM = this; this.SLT().forEach(function (u) { if (u.free) { return; } var m = selfM.slabMatch(sl, u); if (m && (!bst || m.pct > bst.pct)) { bst = m; bst.near = u; } }); return bst; } /* 자유 : 가장 닮은 목표의 일치율 */
     function cl(v) { return Math.max(0, Math.min(100, v)); } function mean(a) { var s = 0; a.forEach(function (x) { s += x; }); return a.length ? s / a.length : 0; }
     var A = this.slabSig(sl.poly), B = this.slabSig(this.slabTgPoly(t)); if (!A || !B) { return null; }
     var mA = mean(A) || 1, mB = mean(B) || 1, best = 1e9; for (var s = 0; s < 36; s++) { var er = 0; for (var i = 0; i < 36; i++) { er += Math.abs(A[(i + s) % 36] / mA - B[i] / mB); } best = Math.min(best, er / 36); }
@@ -6153,10 +6165,10 @@ class Component extends DCLogic {
     var HT = Math.max(10, path[path.length - 1][1]), prof = [];
     for (var pj = 0; pj < 10; pj++) { var yy = HT * pj / 9, xx = path[0][0]; for (var pk = 1; pk < path.length; pk++) { if (path[pk][1] >= yy) { var a0 = path[pk - 1], b0 = path[pk], f = (yy - a0[1]) / Math.max(0.001, b0[1] - a0[1]); xx = a0[0] + (b0[0] - a0[0]) * Math.max(0, Math.min(1, f)); break; } xx = path[pk][0]; } prof.push(Math.round(Math.max(4, xx) * 10) / 10); }
     var K = this.slabKind(sl.poly, Htot), t = QL.takeClay(g, sl.clay);
-    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: TG.n, slabTg: TG.k, slabName: fit >= 70 ? TG.n : K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
+    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: TG.free ? '' : TG.n, slabTg: TG.k, free: TG.free || undefined, slabName: fit >= 70 ? (TG.free ? MT.near.n : TG.n) : K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
     var up = { glazeList: (g.glazeList || []).concat([item]), slab: null, onSlab: item.id }; if (t && t.mats) { up.mats = t.mats; } if (t && t.matsQ) { up.matsQ = t.matsQ; }
     this.setG2(up); this.slabTool = ''; this.slabView = 0; this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
-    this.say(item.slabName + ' 완성 · 목표 「' + TG.n + '」 일치 ' + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
+    this.say(item.slabName + ' 완성 · ' + (TG.free ? '자유 · 「' + (MT ? MT.near.n : '') + '」 닮음 ' : '목표 「' + TG.n + '」 일치 ') + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
   }
   /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
   PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
@@ -6326,7 +6338,7 @@ class Component extends DCLogic {
     }
     /* 목표 안내선 : 위에서 = 바닥 모양(점선) · 옆에서 = 목표 옆모습(점선) */
     var TG = this.slabTg(g), tgP = this.slabTgPoly(TG), tgD = 'M0 0';
-    if (SON && !oSit) {
+    if (SON && !oSit && !TG.free) {
       if (mode === 'sheet') { tgD = pd(tgP.map(function (p) { return [p[0] + SG.cx, p[1] + SG.cy]; }), true); }
       else if (mode === 'top') { var mcx = 0, mcy = 0; poly.forEach(function (p) { mcx += p[0]; mcy += p[1]; }); mcx /= Math.max(1, poly.length); mcy /= Math.max(1, poly.length); tgD = pd(tgP.map(function (p) { return [p[0] + ox + mcx, p[1] + oy + mcy]; }), true); }
       else if (mode === 'side') { var tGE = window.PotteryShared.slabGeo(tgP, tgP.map(function () { return TG.e; })), tL = 0, tR = 0; tgP.forEach(function (q, i) { if (q[0] < tgP[tL][0]) { tL = i; } if (q[0] > tgP[tR][0]) { tR = i; } });
@@ -6336,7 +6348,7 @@ class Component extends DCLogic {
     var kn = this.slabKnife, knD = kn && kn.length > 1 ? pd(kn, false) : 'M0 0';
     var TBTN = 'all:unset;cursor:pointer;box-sizing:border-box;height:40px;padding:0 9px;border-radius:12px;display:flex;align-items:center;gap:4px;font-family:Jua,sans-serif;font-size:13.5px;';
     function tb(id, label) { var en = !!TL[id], on = en && tool === id; return { label: label, aria: label + (on ? ' · 들고 있음' : (en ? '' : ' · 지금은 못 써요')), on: on ? 'true' : 'false', tap: function () { self.slabPick(id); }, st: TBTN + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F;box-shadow:0 3px 0 #B98A2E' : (en ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24;box-shadow:0 3px 0 #8A6440' : 'background:#E6DCCB;border:3px solid #B9A88E;color:#A0907A')) }; }
-    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? '🔪 점선(목표 모양)을 따라 칼로 바닥을 그려요 · 처음 자리까지 이으면 잘려요' : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 노란 띠(테두리)를 잡고 ↕ · 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 손잡이 = 벽 높이 (끝까지 내리면 벽 없앰) · 벽 어디든 잡고 ↔ = 그 높이의 폭' }[tool] || '')));
+    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? (this.slabTg(g).free ? '🔪 자유 · 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : '🔪 점선(목표 모양)을 따라 칼로 바닥을 그려요 · 처음 자리까지 이으면 잘려요') : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 노란 띠(테두리)를 잡고 ↕ · 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 손잡이 = 벽 높이 (끝까지 내리면 벽 없앰) · 벽 어디든 잡고 ↔ = 그 높이의 폭' }[tool] || '')));
     v.sb = { on: SON, empty: !SL && !oSit, has: !!SL, piece: !!oSit, sheet: mode === 'sheet', topv: mode === 'top', side: mode === 'side', rot: false, work: !!SL,
       sx: SG.cx - SG.sw / 2, sy: SG.cy - SG.sh / 2, sw: SG.sw, sh: SG.sh, col: CLC, edge: this.shade(CLC, 0.62), hi: this.shade(CLC, 1.12), inner: this.shade(CLC, 0.74),
       knD: knD, baseD: baseD, backD: backD, frontD: frontD, lipD: lipD, editD: editD, thumbD: thumbD, botY: SG.bot, wallOn: WALL,
@@ -6397,11 +6409,11 @@ class Component extends DCLogic {
       var R0 = Math.max(t.a, t.b) + 10; return { d: pd(tp, true), vb: (-R0) + ' ' + (-R0) + ' ' + (2 * R0) + ' ' + (2 * R0), sw: (R0 / 11).toFixed(2) }; };
     if (this.slabOn) { /* 판 성형대 : 판 목표 쪽지 */
       var STG = this.slabTg(g); v.tgName = STG.n; v.tgIco = slabIco(STG);
-      var MT = SL && SL.poly ? this.slabMatch(this.slabWith(SL, { e: LV.e || SL.e, H: LV.H != null ? LV.H : SL.H, sc: LV.sc || SL.sc }), STG) : null; if (MT) { v.tgPctOn = true; v.tgPct = MT.pct; } /* 만드는 동안 실시간 일치율 */
+      var MT = SL && SL.poly ? this.slabMatch(this.slabWith(SL, { e: LV.e || SL.e, H: LV.H != null ? LV.H : SL.H, sc: LV.sc || SL.sc }), STG) : null; if (MT) { v.tgPctOn = true; v.tgPct = MT.pct; v.tgPctTx = STG.free ? MT.near.n + ' 닮음 ' + MT.pct + '%' : '일치 ' + MT.pct + '%'; } /* 만드는 동안 실시간 일치율 */
       if (this.tgOpen) { v.tgRows = this.SLT().map(function (t) { var on = t.k === STG.k; return { ico: slabIco(t), name: t.n, on: on ? 'true' : 'false', aria: t.n + (on ? ' · 선택 중' : ''), tag: on ? '✓' : '', tagSt: 'flex:none;font-size:10px;font-weight:700;color:#5B3A24', st: RSTY(on), pick: function () { self.slabTgPick(t.k); } }; }); }
     }
     if (this.tgOpen && Wc && !this.slabOn) { try {
-      var QT0 = Wc.questTargets(g), SH = Wc.shapes(), keys = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(Wc.baseShapes(QT0));
+      var QT0 = Wc.questTargets(g), SH = Wc.shapes(), keys = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(Wc.baseShapes(QT0)).concat(['free']);
       v.tgRows = keys.filter(function (k) { return SH[k]; }).map(function (k) {
         var t = SH[k], on = Wc.state.target === k, isQ = /^q:/.test(k);
         var ic = { d: 'M0 0', vb: '0 0 10 10', sw: '1' }; try { ic = Wc.iconOf(t); } catch (e) {}

@@ -60,7 +60,7 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
 
   <div role="meter" aria-label="목표 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{fitPct}}" style="position:absolute;left:12px;right:12px;top:64px;height:62px;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1">
-      <span style="font-size:11px;font-weight:700;color:#E8D3B5">일치율</span>
+      <span style="font-size:11px;font-weight:700;color:#E8D3B5">{{fitLbl}}</span>
       <span style="font-family:'Jua',sans-serif;font-size:34px;color:{{fitCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{fitPct}}<span style="font-size:18px">%</span></span>
     </div>
     <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0">
@@ -457,6 +457,7 @@ class Component extends DCLogic {
     var TT = { dish: [5, 6.5], bowl: [4, 5.5], cup: [3.5, 5], jar: [5, 7] };
     QL.knownShapes(g0).forEach(function (k) { var d = QL.SHP[k], p = d.p, n = p.length; o[k] = { n: d.n, H: d.H, T: TT[QL.WSM[k]] || [4, 6], sk: k, f: function (u) { var x = u * (n - 1), lo = Math.floor(x), hi = Math.min(n - 1, lo + 1); return p[lo] + (p[hi] - p[lo]) * (x - lo); } }; });
     for (var k in qt) { o[k] = qt[k]; }
+    o.free = { n: '자유', free: true, H: 90, T: [4, 6], f: function (u) { return 44 + 14 * Math.sin(u * 5.4) + 8 * u; } }; /* 자유 : 안내선 없음 · 판정은 가장 닮은 모양 기준 */
     if (!o[this.state && this.state.target] && this.state && /^q:/.test(this.state.target)) { o[this.state.target] = o.dish; }
     if (this.state && this.state.target && !o[this.state.target]) { o[this.state.target] = o.dish; }
     return o;
@@ -553,7 +554,7 @@ class Component extends DCLogic {
   }
   snapStep(dt) {
     var s = this.state; if (s.fx || !this.touched) { return null; }
-    var T = this.wtune(), tg = this.shapes()[s.target]; if (!tg) { return null; }
+    var T = this.wtune(), tg = this.shapes()[s.target]; if (!tg || tg.free) { return null; } /* 자유 : 손끝 보정 없음 */
     var now = Date.now(), r = s.r.slice(), H = s.H, ch = false, done = (s.segDone || []).slice(), newly = [];
     for (var i = 0; i < 12; i++) {
       var tr = tg.f(i / 11), rel = (r[i] - tr) / tr;
@@ -670,6 +671,12 @@ class Component extends DCLogic {
     this.setState({ r: r, t: t, H: H, w: w, wOn: true, grab: grab });
   }
   analyze(s) {
+    if (s.target === 'free') { /* 자유 : 아는 모양 모두와 견줘 가장 닮은 모양의 일치율 = 성형 점수 · 손질 안내 없음 */
+      var SHf = this.shapes(), selfA = this, best = null;
+      this.qlib().knownShapes(s.g || this.loadG()).forEach(function (k) { if (!SHf[k]) { return; } var a = selfA.analyze(Object.assign({}, s, { target: k })); if (!best || a.fit > best.fit) { best = a; best.near = k; } });
+      if (!best) { best = this.analyze(Object.assign({}, s, { target: 'dish' })); best.near = 'dish'; }
+      return { fit: best.fit, tr: s.r.slice(), tg: { n: '자유', free: true, H: s.H, T: best.tg.T, f: SHf.free.f }, near: best.near, nearN: best.tg.n, tOut: best.tOut, tAvg: best.tAvg, issues: [] };
+    }
     var tg = this.shapes()[s.target];
     var tr = [];
     for (var i = 0; i < 12; i++) { tr.push(tg.f(i / 11)); }
@@ -753,7 +760,7 @@ class Component extends DCLogic {
     var wob = s.wrapping ? 0 : Math.sin(s.phase * 3.1) * s.w * 0.07;
     var prof = this.profile(s.r, s.H, wob);
     var ghost = this.profile(an.tr, tg.H, 0);
-    var sd = s.segDone || [], segD = '', segN = 0;
+    var sd = tg.free ? [] : (s.segDone || []), segD = '', segN = 0;
     for (var si = 0; si < 11; si++) { if (sd[si] && sd[si + 1]) { segD += 'M' + ghost.R[si][0].toFixed(1) + ' ' + ghost.R[si][1].toFixed(1) + ' L' + ghost.R[si + 1][0].toFixed(1) + ' ' + ghost.R[si + 1][1].toFixed(1) + ' M' + ghost.L[si][0].toFixed(1) + ' ' + ghost.L[si][1].toFixed(1) + ' L' + ghost.L[si + 1][0].toFixed(1) + ' ' + ghost.L[si + 1][1].toFixed(1) + ' '; } }
     sd.forEach(function (x) { if (x) { segN++; } });
     var nowF = Date.now();
@@ -786,6 +793,7 @@ class Component extends DCLogic {
     } else {
       an.issues.forEach(function (is) { tips.push({ text: is.text, style: tipBase + '#5B3A24;background:#FFF4DE;color:#5B3A24' }); });
       if (tmin < lim + 1) { tips.push({ text: '찢어짐 주의 ⚠', style: tipBase + '#A33B22;background:#F8DDD5;color:#A33B22' }); }
+      if (tg.free) { tips.push({ text: '자유 · ' + an.nearN + '을(를) 가장 닮았어요', style: tipBase + '#5B3A24;background:#FFF4DE;color:#5B3A24' }); }
       if (!tips.length) { tips.push({ text: an.fit >= 100 ? '완벽 ✓' : '부족한 곳 없음', style: tipBase + '#2F6328;background:#E1EFE4;color:#2F6328' }); }
     }
 
@@ -970,8 +978,8 @@ class Component extends DCLogic {
       noClay: !s.clay,
       boardFull: (function () { return self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
       boardTxt: (window.__pano ? '대기함이 가득 찼어요 (' : '물레 옆 작업대가 가득 찼어요 (') + self.qCnt(g) + '/' + self.qCap() + ')',
-      tgIcon: self.iconOf(tg),
-      tgTag: /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
+      tgIcon: self.iconOf(tg.free ? self.shapes().free : tg),
+      tgTag: tg.free ? '닮은 모양 · ' + an.nearN : /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
       openClay: function () { self.setState({ sheet: 'clay' }); },
       openTarget: function () { self.setState({ sheet: 'target' }); },
@@ -1005,14 +1013,14 @@ class Component extends DCLogic {
         };
       }),
       targetName: tg.n,
-      fitPct: an.fit,
+      fitPct: an.fit, fitLbl: tg.free ? '자유 · ' + an.nearN + ' 닮음' : '일치율',
       fitCol: an.fit >= 88 ? '#9BE08A' : (an.fit >= 60 ? '#FFD66B' : '#FFB08A'),
       fitBar: 'height:100%;border-radius:6px;transition:width .2s;width:' + an.fit + '%;background:' + (an.fit >= 88 ? '#5FB052' : (an.fit >= 60 ? '#E3B23C' : '#D9773E')),
       fitStars: stars, fitStarList: stars.split('').map(function (c) { return c === '★' ? 'ui/rating_star_filled.webp' : 'ui/rating_star_empty.webp'; }),
       tips: tips,
       marks: marks,
       potPath: prof.path,
-      ghostPath: ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
+      ghostPath: tg.free ? 'M0 0' : ghost.path, segDonePath: segD || 'M0 0', segSpark: segSpark, segOn: !!segD, miniTg: tg.free ? 'M0 0' : miniPath(an.tr, tg.H), miniCur: miniPath(s.r, s.H), miniTxt: '구간 ' + segN + '/12' + (s.hDone ? ' · 높이✓' : ''), miniDots: (s.segDone || []).concat([]).slice(0, 12).concat(new Array(Math.max(0, 12 - (s.segDone || []).length)).fill(false)).map(function (x) { return 'width:5px;height:9px;border-radius:2px;background:' + (x ? '#3B7A32' : '#D8CBB4'); }), miniH: 'margin-left:2px;font-family:Jua,sans-serif;font-size:11px;line-height:1;color:' + (s.hDone ? '#2F6328' : '#B9A68A'), miniCol: segN >= 12 && s.hDone ? '#3F8A35' : '#5B3A24',
       rings: rings,
       foot: { cx: (150 + wob).toFixed(1), rx: (s.r[0] + 7).toFixed(1), ry: (s.r[0] * 0.24 + 4).toFixed(1), mx: (150 + wob - 52 * 1.45).toFixed(1), mw: (52 * 2.9).toFixed(1), my: (291 - (48 * 0.24 + 4) * 1.5).toFixed(1), mh: ((48 * 0.24 + 4) * 3).toFixed(1) },
       wet: (function () { var mr = Math.max.apply(null, s.r), top = prof.R[11][1]; return { x: (150 + wob - mr * 1.05).toFixed(1), w: (mr * 2.1).toFixed(1), y: (top - 6).toFixed(1), h: (291 - top + 8).toFixed(1) }; })(),
@@ -1177,7 +1185,8 @@ class Component extends DCLogic {
         if (!shaping) { self.say('중심부터 잡아야 빚을 수 있어요', 'fail'); return; }
         if (self.qCnt(g) >= self.qCap() && !self.qlib().isTut(g) && !(self.touched && self.touched.length)) { self.say(window.__pano ? '빚은 기물 선반이 가득 찼어요 (4/4) · 유약을 발라 자리를 비워요' : '물레 옆 작업대가 가득 찼어요 · 유약통으로 먼저 옮겨요', 'fail'); return; }
         var isGoal = s.target === 'goal' && g.goal, QTf = self.questTargets(g), qtg = QTf[s.target];
-        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (self.qlib().WSM[s.target] || s.target)), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : s.target), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
+        var isFree = s.target === 'free';
+        var item = { id: 'w' + Date.now(), fit: Math.min(100, an.fit + (self.qlib().fx(g).fitBonus || 0)), fit0: an.fit, free: isFree || undefined, shape: qtg ? qtg.req.wshape : (isGoal ? (g.goal.wshape || 'bowl') : (isFree ? (self.qlib().WSM[an.near] || 'bowl') : (self.qlib().WSM[s.target] || s.target))), sk: qtg ? (qtg.req.sk || '') : (isGoal ? (g.goal.sk || '') : (isFree ? an.near : s.target)), goalSid: qtg ? qtg.tag : (isGoal ? g.goal.sid : ''), goalGlaze: qtg ? qtg.req.glaze : (isGoal ? g.goal.glaze : ''), goalName: qtg ? qtg.req.name : (isGoal ? (g.goal.shapeN || g.goal.name) : ''), goalReq: qtg && (qtg.req.ang || qtg.req.cov || qtg.req.g2 || qtg.req.ang2) ? { ang: qtg.req.ang || null, cov: qtg.req.cov || null, g2: qtg.req.g2 || null, ang2: qtg.req.ang2 || null } : null, /* 시유 조건 → 유약대 안내 */ clay: s.clay, form: formN, tmin: Math.round(tmin * 10) / 10, prof: s.r.map(function (x) { return Math.round(x * 10) / 10; }), H: Math.round(s.H) };
         var mats = self.consumeClay();
         var Qw = (g.goalQ || []).slice(), nxG = null, qUp = isGoal && Qw.length > 0;
         if (qUp) { Qw = Qw.filter(function (q) { return q.sid !== g.goal.sid; }); nxG = Qw[0] || null; }
