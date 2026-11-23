@@ -6010,8 +6010,8 @@ class Component extends DCLogic {
     if (t === 'knife' && sl.stage === 'cut') { this.setG2({ slab: { clay: sl.clay, stage: 'sheet' } }); this.say('다시 오리기 · 칼로 바닥 모양을 그려요'); }
     else if (t === 'wall' && !sl.wall) { var sc = []; for (var k = 0; k < this.SG().N; k++) { sc.push(1); } this.setG2({ slab: this.slabWith(sl, { wall: true, H: 44, sc: sc }) }); this.sfx('thud'); this.say('벽을 세웠어요 · 위 가이드 ↕ = 높이 · 벽을 잡고 ↔ = 그 높이의 폭'); }
     else if (t === 'wall') { this.say('벽 · 위 가이드 ↕ = 높이 · 벽을 잡고 ↔ = 그 높이의 폭'); }
-    else if (t === 'finger') { this.say('손가락 · 판 테두리를 잡고 ↕ 올리고 내려요 · ◀ ▶ 로 돌려 다른 쪽도'); }
-    this.slabTool = t; this.sfx('tap'); this.bump();
+    else if (t === 'finger') { this.say('손가락 · 위아래로 끌면 테두리 전체가 함께 올라가고 내려가요'); }
+    this.slabTool = t; this.slabView = 0; this.sfx('tap'); this.bump();
   }
   slabReset() { var sl = this.loadG().slab; if (!sl) { return; } this.setG2({ slab: { clay: sl.clay, stage: 'sheet' } }); this.slabTool = 'knife'; this.slabView = 0; this.say('처음부터 · 칼로 바닥 모양을 다시 그려요'); this.sfx('tap'); this.bump(); }
   slabRot(d) { this.slabView = ((this.slabView || 0) + d + 4) % 4; this.sfx('tap'); this.bump(); }
@@ -6053,11 +6053,13 @@ class Component extends DCLogic {
         self.setG2({ slab: { clay: sl.clay, stage: 'cut', poly: P.poly, ox: P.ox, oy: P.oy, q: P.q, e: e0, wall: false } }); self.slabTool = ''; self.sfx('ok'); try { window.__buzz && window.__buzz(12); } catch (e2) {}
         self.say('바닥판을 오렸어요 · 👆 손가락으로 테두리를 올리거나 🧱 벽을 세워요 · 이대로 「✓ 완성」 = 평판'); self.bump(); };
     } else if (tool === 'finger') {
-      /* 옆에서 본 판 : 손가락 가까운 앞쪽 테두리를 위아래로 · 주변도 부드럽게 */
-      var PSh = window.PotteryShared; this._liftMax = 0; var V = this.slabView || 0, ee = (sl.e || []).slice(), base = ee.slice(), rp = this.slabRims(sl).map(function (p) { return self.slabRotP(p, V); }), rp0 = sl.poly.map(function (p) { return self.slabRotP(p, V); }), lastY = p0.y;
-      var wts = rp.map(function (q, ii) { if (rp0[ii][1] < -2) { return 0; } return Math.exp(-Math.pow((q[0] + G.cx - p0.x) / 26, 2)); });
-      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev), dy = p0.y - q.y, hit = false; for (var i = 0; i < ee.length; i++) { var mx = PSh.slabLift(sl.poly[i]); ee[i] = Math.max(0, Math.min(mx, base[i] + dy * wts[i])); if (wts[i] > 0.5 && base[i] + dy * wts[i] > mx) { hit = true; } } if (hit && !self._liftMax) { self._liftMax = 1; self.say('더는 못 올려요 · 판이 휠 수 있는 만큼 올렸어요'); try { window.__buzz && window.__buzz(10); } catch (eb) {} } self.slabLive = { e: ee }; self.bump(); };
-      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabLive = null; self.setG2({ slab: self.slabWith(sl, { e: ee.map(function (x) { return Math.round(x * 10) / 10; }) }) }); self.bump(); };
+      /* 손가락 (정면 하나) : 위아래로 끌면 테두리 전체 높이가 함께 바뀐다 · 점마다 휠 수 있는 한도까지만 */
+      var PSh = window.PotteryShared, lims = sl.poly.map(function (p) { return PSh.slabLift(p); }), mxL = Math.max.apply(null, lims), h0 = sl.lift != null ? sl.lift : Math.max.apply(null, (sl.e || [0])), hN = h0, warned = false;
+      var ee = lims.map(function (l) { return Math.min(h0, l); });
+      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev); hN = Math.max(0, Math.min(mxL, h0 + (p0.y - q.y))); ee = lims.map(function (l) { return Math.min(hN, l); });
+        if (hN >= mxL && !warned) { warned = true; self.say('더는 못 올려요 · 판이 휠 수 있는 만큼 올렸어요'); try { window.__buzz && window.__buzz(10); } catch (eb) {} }
+        self.slabLive = { e: ee, lift: hN }; self.bump(); };
+      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabLive = null; self.setG2({ slab: self.slabWith(sl, { lift: Math.round(hN * 10) / 10, e: ee.map(function (x) { return Math.round(x * 10) / 10; }) }) }); self.bump(); };
     } else {
       /* 벽 (정면) : 위 가이드 근처 = 높이 · 벽 = 잡은 높이의 폭 (물레처럼 주변도 따라온다) · 바닥판은 고정 */
       var H = sl.H || 44, sc2 = (sl.sc || []).slice(), W0 = this.slabHalfW(this.slabRims(sl), 0), eF = this.slabFrontE(sl, 0), baseY = G.bot - G.T - eF, top = baseY - H, mode = Math.abs(p0.y - top) < 20 ? 'h' : 'w';
@@ -6229,7 +6231,7 @@ class Component extends DCLogic {
     /* 판 성형대 그림 : 펼친 판(오리기) · 오린 바닥판(그 자리 고정) · 옆모습(손가락 · 4방향) · 정면(벽 · 가이드) */
     function pd(pts, close) { return pts.length ? 'M' + pts.map(function (p) { return (+p[0]).toFixed(1) + ' ' + (+p[1]).toFixed(1); }).join(' L') + (close ? ' Z' : '') : 'M0 0'; }
     var TL = this.slabTools(SL), tool = this.slabTool || (ST === 'sheet' ? 'knife' : ''), LV = this.slabLive || {};
-    var VW = tool === 'wall' ? 0 : (this.slabView || 0), mode = ST === 'sheet' ? 'sheet' : (ST === 'cut' ? (tool === 'finger' || tool === 'wall' ? 'side' : 'top') : '');
+    var VW = 0, /* 정면 하나에서만 다룬다 */ mode = ST === 'sheet' ? 'sheet' : (ST === 'cut' ? (tool === 'finger' || tool === 'wall' ? 'side' : 'top') : '');
     var poly = (SL && SL.poly) || [], ox = SL && SL.ox != null ? SL.ox : SG.cx, oy = SL && SL.oy != null ? SL.oy : SG.cy;
     var ee = LV.e || (SL && SL.e) || [], WALL = !!(SL && SL.wall), Hw = WALL ? (LV.H || SL.H || 44) : 0, scs = WALL ? (LV.sc || SL.sc || [1, 1, 1, 1, 1, 1, 1, 1]) : null;
     var baseD = pd(poly.map(function (p) { return [p[0] + ox, p[1] + oy]; }), true), backD = 'M0 0', frontD = 'M0 0', lipD = 'M0 0', editD = 'M0 0', thumbD = 'M0 0', G2 = { h: false, w: false };
@@ -6245,7 +6247,7 @@ class Component extends DCLogic {
       var fc = curve(true), bc = curve(false);
       backD = pd(L.concat(bc).concat(R.slice().reverse()), true); frontD = pd(L.concat(fc).concat(R.slice().reverse()), true);
       if (WALL) { var lp = []; rr.forEach(function (q, i) { if (rp[i][1] >= 0) { lp.push([SG.cx + q[0], bot - T - GE[i].e, q[0]]); } }); lp.sort(function (a, b) { return a[2] - b[2]; }); lipD = pd(lp.map(function (p) { return [p[0], p[1]]; }), false); }
-      if (tool === 'finger') { editD = WALL ? lipD : pd(fc, false); }
+      if (tool === 'finger') { editD = WALL ? lipD : pd(fc, false); var hL0 = 0; var hL = LV.lift != null ? LV.lift : (SL.lift != null ? SL.lift : Math.max.apply(null, ee.concat([0]))); G2.h = true; G2.hy = bot - T - hL; G2.hOn = LV.lift != null; } /* 손가락 : 테두리 높이 가이드 하나 */
       var W0 = 0; rr.forEach(function (q) { W0 = Math.max(W0, Math.abs(q[0])); });
       thumbD = pd(poly.map(function (p) { var q = self.slabRotP(p, VW); return [328 + q[0] * 0.22, 186 + q[1] * 0.22]; }), true);
       if (tool === 'wall') {
@@ -6258,8 +6260,8 @@ class Component extends DCLogic {
     var kn = this.slabKnife, knD = kn && kn.length > 1 ? pd(kn, false) : 'M0 0';
     var TBTN = 'all:unset;cursor:pointer;box-sizing:border-box;height:40px;padding:0 9px;border-radius:12px;display:flex;align-items:center;gap:4px;font-family:Jua,sans-serif;font-size:13.5px;';
     function tb(id, label) { var en = !!TL[id], on = en && tool === id; return { label: label, aria: label + (on ? ' · 들고 있음' : (en ? '' : ' · 지금은 못 써요')), on: on ? 'true' : 'false', tap: function () { self.slabPick(id); }, st: TBTN + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F;box-shadow:0 3px 0 #B98A2E' : (en ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24;box-shadow:0 3px 0 #8A6440' : 'background:#E6DCCB;border:3px solid #B9A88E;color:#A0907A')) }; }
-    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? '🔪 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 앞쪽 테두리를 잡고 ↕ · ◀ ▶ 로 돌려 다른 쪽도', wall: '🧱 위 ↕ 가이드 = 벽 높이 · 벽을 잡고 ↔ = 그 높이의 폭 · 바닥판은 고정' }[tool] || '')));
-    v.sb = { on: SON, empty: !SL && !oSit, has: !!SL, piece: !!oSit, sheet: mode === 'sheet', topv: mode === 'top', side: mode === 'side', rot: mode === 'side' && tool === 'finger', work: !!SL,
+    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? '🔪 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 위아래로 끌면 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 가이드 = 벽 높이 · 벽을 잡고 ↔ = 그 높이의 폭 · 바닥판은 고정' }[tool] || '')));
+    v.sb = { on: SON, empty: !SL && !oSit, has: !!SL, piece: !!oSit, sheet: mode === 'sheet', topv: mode === 'top', side: mode === 'side', rot: false, work: !!SL,
       sx: SG.cx - SG.sw / 2, sy: SG.cy - SG.sh / 2, sw: SG.sw, sh: SG.sh, col: CLC, edge: this.shade(CLC, 0.62), hi: this.shade(CLC, 1.12), inner: this.shade(CLC, 0.74),
       knD: knD, baseD: baseD, backD: backD, frontD: frontD, lipD: lipD, editD: editD, thumbD: thumbD, botY: SG.bot, wallOn: WALL,
       gh: G2.h, ghY: (G2.hy || 0).toFixed(1), ghSt: G2.hOn ? '#FFE27A' : '#FFF4DE', gw: G2.w, gwY: (G2.wy || 0).toFixed(1), gwL: (G2.wl || 0).toFixed(1), gwR: (G2.wr || 0).toFixed(1), gwX: (G2.wx || 0).toFixed(1), gwSt: G2.wOn ? '#FFE27A' : 'rgba(255,244,222,.75)',
