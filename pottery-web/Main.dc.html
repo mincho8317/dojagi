@@ -418,7 +418,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </div>
 </div>
       <sc-if value="{{tgShut}}" hint-placeholder-val="{{true}}">
-        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span></button>
+        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:{{tgZ}};max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span><sc-if value="{{tgPctOn}}" hint-placeholder-val="{{false}}"><span style="display:block;margin-top:2px;padding:1px 6px;border-radius:7px;background:#2F6328;color:#FFF4DE;font-size:11px;text-align:center">일치 {{tgPct}}%</span></sc-if></button>
       </sc-if>
       <sc-if value="{{tgOpen}}" hint-placeholder-val="{{false}}">
         <style>@keyframes memoOpen{from{transform:rotate(-3deg) scale(.5);opacity:.7}to{transform:rotate(-1.5deg) scale(1);opacity:1}}</style>
@@ -488,6 +488,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <sc-if value="{{sb.bandOn}}" hint-placeholder-val="{{false}}">
             <rect x="40" y="{{sb.bandY}}" width="310" height="28" rx="14" fill="{{sb.bandSt}}" stroke="rgba(255,226,122,.7)" stroke-width="1.5" stroke-dasharray="5 4" style="{{sb.bandAnim}}"></rect>
           </sc-if>
+          <path d="{{sb.tgD}}" fill="none" stroke="rgba(255,248,232,.95)" stroke-width="2.5" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.7))"></path>
           <path d="{{sb.edgeD}}" fill="none" stroke="rgba(255,226,122,.85)" stroke-width="4" stroke-dasharray="3 6" stroke-linecap="round"></path>
           <sc-for list="{{sb.hands}}" as="hd" hint-placeholder-count="0"><g transform="{{hd.tr}}"><circle r="12" fill="{{hd.fill}}" stroke="{{hd.ring}}" stroke-width="2.5"></circle><path d="M-8 0 l5 -5 v10 z M8 0 l-5 -5 v10 z" fill="{{hd.ring}}"></path></g></sc-for>
           <sc-if value="{{sb.gh}}" hint-placeholder-val="{{false}}">
@@ -6104,6 +6105,34 @@ class Component extends DCLogic {
     var tall = H < 18 ? ['판 접시', 'dish'] : (H < 50 ? ['판 그릇', 'bowl'] : ['판 통', 'cup']);
     return { name: (base ? base + ' ' : '') + tall[0], shape: tall[1] };
   }
+  /* ── 판 성형 목표 : 위에서 본 바닥 모양 · 크기 · 테두리 높이 · (벽) 높이와 옆선 ── */
+  SLT() { var F = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    return [{ k: 'sqp', n: '네모 접시', f: 'rect', a: 88, b: 68, e: 10, H: 0 }, { k: 'rdp', n: '둥근 접시', f: 'ell', a: 82, b: 82, e: 16, H: 0 }, { k: 'ova', n: '타원 쟁반', f: 'ell', a: 110, b: 60, e: 6, H: 0 }, { k: 'lef', n: '나뭇잎 접시', f: 'leaf', a: 108, b: 58, e: 9, H: 0 },
+      { k: 'sqb', n: '네모 통', f: 'rect', a: 64, b: 64, e: 0, H: 70, sc: F }, { k: 'rdv', n: '둥근 항아리', f: 'ell', a: 56, b: 56, e: 0, H: 90, sc: [1, 1.08, 1.16, 1.22, 1.24, 1.22, 1.16, 1.06, 0.96, 0.88, 0.84, 0.84] }]; }
+  slabTg(g) { var L = this.SLT(), k = (g || this.loadG()).slabTg; return L.filter(function (t) { return t.k === k; })[0] || L[0]; }
+  slabTgPoly(t) { var o = []; for (var i = 0; i < 48; i++) { var th = i / 48 * Math.PI * 2, c = Math.cos(th), s = Math.sin(th), x, y;
+      if (t.f === 'rect') { x = t.a * (c < 0 ? -1 : 1) * Math.pow(Math.abs(c), 0.25); y = t.b * (s < 0 ? -1 : 1) * Math.pow(Math.abs(s), 0.25); }
+      else if (t.f === 'leaf') { x = t.a * c; y = t.b * s * (0.3 + 0.7 * Math.abs(s)); } else { x = t.a * c; y = t.b * s; }
+      o.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10]); } return o; }
+  slabSig(poly) { /* 무게중심에서 10°마다 테두리까지 거리 */
+    var A = 0, cx = 0, cy = 0, n = poly.length; for (var i = 0; i < n; i++) { var p = poly[i], q = poly[(i + 1) % n], cr = p[0] * q[1] - q[0] * p[1]; A += cr; cx += (p[0] + q[0]) * cr; cy += (p[1] + q[1]) * cr; }
+    if (Math.abs(A) < 1e-6) { return null; } cx /= 3 * A; cy /= 3 * A; var r = [];
+    for (var k = 0; k < 36; k++) { var th = k / 36 * Math.PI * 2, dx = Math.cos(th), dy = Math.sin(th), best = 0;
+      for (var j = 0; j < n; j++) { var a = poly[j], b = poly[(j + 1) % n], ex = b[0] - a[0], ey = b[1] - a[1], den = dx * ey - dy * ex; if (Math.abs(den) < 1e-9) { continue; } var ax = a[0] - cx, ay = a[1] - cy, t = (ax * ey - ay * ex) / den, u = (ax * dy - ay * dx) / den; if (t > 0 && u >= 0 && u <= 1) { best = Math.max(best, t); } }
+      r.push(best); } return r; }
+  slabMatch(sl, t) {
+    if (!sl || !sl.poly || sl.poly.length < 3 || !t) { return null; }
+    function cl(v) { return Math.max(0, Math.min(100, v)); } function mean(a) { var s = 0; a.forEach(function (x) { s += x; }); return a.length ? s / a.length : 0; }
+    var A = this.slabSig(sl.poly), B = this.slabSig(this.slabTgPoly(t)); if (!A || !B) { return null; }
+    var mA = mean(A) || 1, mB = mean(B) || 1, best = 1e9; for (var s = 0; s < 36; s++) { var er = 0; for (var i = 0; i < 36; i++) { er += Math.abs(A[(i + s) % 36] / mA - B[i] / mB); } best = Math.min(best, er / 36); }
+    var shp = cl(100 - best * 480), size = cl(100 - Math.abs(Math.log(mA / mB)) * 130), outl = shp * 0.7 + size * 0.3;
+    var eAvg = mean(sl.e || []), lift = cl(100 - Math.abs(eAvg - t.e) / Math.max(8, t.e) * 55), wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, hs = 0, ps = 0, pct;
+    if (!t.H) { pct = outl * 0.65 + lift * 0.35; if (wall) { pct *= 0.45; } }
+    else if (wall) { hs = cl(100 - Math.abs(Hw - t.H) / t.H * 130); var d = 0, sc = sl.sc || [1, 1]; for (var k = 0; k <= 11; k++) { d += Math.abs(this.slabSc(sc, k / 11) - this.slabSc(t.sc, k / 11)); } ps = cl(100 - d / 12 * 320); pct = outl * 0.45 + lift * 0.1 + hs * 0.25 + ps * 0.2; }
+    else { pct = (outl * 0.45 + lift * 0.1) * 0.6; }
+    return { pct: Math.round(pct), outl: Math.round(outl), lift: Math.round(lift), hs: Math.round(hs), ps: Math.round(ps) };
+  }
+  slabTgPick(k) { this.setG2({ slabTg: k }); this.tgOpen = false; this.sfx('tap'); this.bump(); }
   slabFinish() {
     var g = this.loadG(), sl = g.slab, QL = this.qlib(), G = this.SG(); if (!sl || !sl.poly) { this.say('먼저 칼로 바닥판을 오려요'); this.sfx('fail'); return; }
     if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 · 유약을 먼저 발라요'); this.sfx('fail'); return; }
@@ -6112,6 +6141,7 @@ class Component extends DCLogic {
     var sm = 0; for (var k = 2; k < sc.length; k++) { sm += Math.abs(sc[k] - 2 * sc[k - 1] + sc[k - 2]); }
     var er = 0; for (var i = 0; i < ee.length; i++) { er += Math.abs(ee[i] - ee[(i + 1) % ee.length]); }
     var fit = Math.max(40, Math.min(100, Math.round(64 + (sl.q || 0.6) * 30 - sm * 22 - Math.min(10, er / 40))));
+    var TG = this.slabTg(g), MT = this.slabMatch(sl, TG); if (MT) { fit = Math.max(15, Math.min(100, Math.round(MT.pct * 0.9 + fit * 0.1))); } /* 목표와 얼마나 같은가가 맞춤 점수 */
     /* 옆모습(앞에서 · 가장 오른쪽 기둥) : 굽 → 휜 띠 → 테두리 → 벽 · 높이 10칸 반폭 */
     var iR = 0; sl.poly.forEach(function (p, ii) { if (p[0] > sl.poly[iR][0]) { iR = ii; } }); var cR = GE[iR], path = [[cR.F[0], 0]];
     cR.band.forEach(function (b) { path.push([b[0], b[2]]); }); path.push([cR.R[0], cR.e + G.T]); var self2 = this;
@@ -6119,10 +6149,10 @@ class Component extends DCLogic {
     var HT = Math.max(10, path[path.length - 1][1]), prof = [];
     for (var pj = 0; pj < 10; pj++) { var yy = HT * pj / 9, xx = path[0][0]; for (var pk = 1; pk < path.length; pk++) { if (path[pk][1] >= yy) { var a0 = path[pk - 1], b0 = path[pk], f = (yy - a0[1]) / Math.max(0.001, b0[1] - a0[1]); xx = a0[0] + (b0[0] - a0[0]) * Math.max(0, Math.min(1, f)); break; } xx = path[pk][0]; } prof.push(Math.round(Math.max(4, xx) * 10) / 10); }
     var K = this.slabKind(sl.poly, Htot), t = QL.takeClay(g, sl.clay);
-    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: K.name, slabName: K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
+    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: TG.n, slabTg: TG.k, slabName: fit >= 70 ? TG.n : K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
     var up = { glazeList: (g.glazeList || []).concat([item]), slab: null, onSlab: item.id }; if (t && t.mats) { up.mats = t.mats; } if (t && t.matsQ) { up.matsQ = t.matsQ; }
     this.setG2(up); this.slabTool = ''; this.slabView = 0; this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
-    this.say(K.name + ' 완성 · 맞춤 ' + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
+    this.say(item.slabName + ' 완성 · 목표 「' + TG.n + '」 일치 ' + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
   }
   /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
   PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
@@ -6290,10 +6320,19 @@ class Component extends DCLogic {
         G2.edge = pd(eL, false) + ' ' + pd(eR, false); G2.hands = gr.u != null ? [{ x: SG.cx + gr.side * W0 * self.slabSc(scs, gr.u), y: baseY - Hw * gr.u, on: true, sg: gr.side }] : [];
       }
     }
+    /* 목표 안내선 : 위에서 = 바닥 모양(점선) · 옆에서 = 목표 옆모습(점선) */
+    var TG = this.slabTg(g), tgP = this.slabTgPoly(TG), tgD = 'M0 0';
+    if (SON && !oSit) {
+      if (mode === 'sheet') { tgD = pd(tgP.map(function (p) { return [p[0] + SG.cx, p[1] + SG.cy]; }), true); }
+      else if (mode === 'top') { var mcx = 0, mcy = 0; poly.forEach(function (p) { mcx += p[0]; mcy += p[1]; }); mcx /= Math.max(1, poly.length); mcy /= Math.max(1, poly.length); tgD = pd(tgP.map(function (p) { return [p[0] + ox + mcx, p[1] + oy + mcy]; }), true); }
+      else if (mode === 'side') { var tGE = window.PotteryShared.slabGeo(tgP, tgP.map(function () { return TG.e; })), tL = 0, tR = 0; tgP.forEach(function (q, i) { if (q[0] < tgP[tL][0]) { tL = i; } if (q[0] > tgP[tR][0]) { tR = i; } });
+        var tcol = function (i) { var c = tGE[i], o = [[SG.cx + c.F[0], SG.bot]]; c.band.forEach(function (b) { o.push([SG.cx + b[0], SG.bot - b[2]]); }); o.push([SG.cx + c.R[0], SG.bot - SG.T - c.e]); if (TG.H) { for (var k = 1; k <= 16; k++) { o.push([SG.cx + c.R[0] * self.slabSc(TG.sc, k / 16), SG.bot - SG.T - c.e - TG.H * k / 16]); } } return o; };
+        tgD = pd(tcol(tL).slice().reverse().concat(tcol(tR)), false); }
+    }
     var kn = this.slabKnife, knD = kn && kn.length > 1 ? pd(kn, false) : 'M0 0';
     var TBTN = 'all:unset;cursor:pointer;box-sizing:border-box;height:40px;padding:0 9px;border-radius:12px;display:flex;align-items:center;gap:4px;font-family:Jua,sans-serif;font-size:13.5px;';
     function tb(id, label) { var en = !!TL[id], on = en && tool === id; return { label: label, aria: label + (on ? ' · 들고 있음' : (en ? '' : ' · 지금은 못 써요')), on: on ? 'true' : 'false', tap: function () { self.slabPick(id); }, st: TBTN + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F;box-shadow:0 3px 0 #B98A2E' : (en ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24;box-shadow:0 3px 0 #8A6440' : 'background:#E6DCCB;border:3px solid #B9A88E;color:#A0907A')) }; }
-    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? '🔪 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 노란 띠(테두리)를 잡고 ↕ · 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 손잡이 = 벽 높이 (끝까지 내리면 벽 없앰) · 벽 어디든 잡고 ↔ = 그 높이의 폭' }[tool] || '')));
+    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? '🔪 점선(목표 모양)을 따라 칼로 바닥을 그려요 · 처음 자리까지 이으면 잘려요' : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 노란 띠(테두리)를 잡고 ↕ · 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 손잡이 = 벽 높이 (끝까지 내리면 벽 없앰) · 벽 어디든 잡고 ↔ = 그 높이의 폭' }[tool] || '')));
     v.sb = { on: SON, empty: !SL && !oSit, has: !!SL, piece: !!oSit, sheet: mode === 'sheet', topv: mode === 'top', side: mode === 'side', rot: false, work: !!SL,
       sx: SG.cx - SG.sw / 2, sy: SG.cy - SG.sh / 2, sw: SG.sw, sh: SG.sh, col: CLC, edge: this.shade(CLC, 0.62), hi: this.shade(CLC, 1.12), inner: this.shade(CLC, 0.74),
       knD: knD, baseD: baseD, backD: backD, frontD: frontD, lipD: lipD, editD: editD, thumbD: thumbD, botY: SG.bot, wallOn: WALL,
@@ -6306,6 +6345,7 @@ class Component extends DCLogic {
       hint: HINT,
       down: function (e) { self.slabDown(e); },
       pot: oSit ? this.potOf(oSit, this.fillOf(oSit, 'dry')) : EMPTY, pDown: function (e) { if (!oSit) { return; } var el = e.currentTarget.querySelector('svg'); var bx = e.currentTarget.getBoundingClientRect(), RR = (self.stripEl || document.body).getBoundingClientRect(), kk = RR.width / 390 || 1; self.carryStart(e, 'piece', { id: oSit.id }, el ? el.outerHTML.replace(/width="[0-9.]+" height="[0-9.]+"/, 'width="100%" height="100%"') : '', bx.width / kk, bx.height / kk, function () { self.say(oSit.slabName + '을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? oSit.id : ''; self.bump(); } }); },
+      tgD: tgD,
       pHid: oSit && this.carryId === oSit.id ? 'visibility:hidden' : '' };
     var SA = this.swapAsk; v.sw = { on: !!SA, txt: SA ? (SA.to === 'slab' ? '밀던 판이 사라져요' : '빚던 모양이 사라져요') + ' · ' + SA.c.n + ' 흙으로 바꿀까요?' : '', yes: function () { self.swapYes(); }, no: function () { self.swapNo(); } };
     /* ── 붓 무늬 ── */
@@ -6346,8 +6386,17 @@ class Component extends DCLogic {
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레에 대면 자를 점선이 나와요'); }); };
     v.tgTap = function () { self.tgOpen = true; self.bump(); }; /* 목표 모양 : 모달 대신 쪽지가 커져서 목록 */
     v.tgClose = function () { self.tgOpen = false; self.bump(); };
-    v.tgOpen = !!this.tgOpen && !this.slabOn; v.tgShut = !this.tgOpen && !this.slabOn; /* 판 성형대일 때는 물레 목표 쪽지 숨김 */ v.tgRows = [];
-    if (this.tgOpen && Wc) { try {
+    v.tgOpen = !!this.tgOpen; v.tgShut = !this.tgOpen; v.tgRows = []; v.tgZ = this.slabOn ? 26 : 6; v.tgPctOn = false; v.tgPct = '';
+    var RSTY = function (on) { return 'all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;box-sizing:border-box;min-height:32px;padding:4px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:13.5px;color:#2B1A0F;' + (on ? 'background:#FFE7A8;border:2px solid #E3B23C' : 'background:transparent;border:2px solid transparent'); };
+    var slabIco = function (t) { /* 판 목표 그림 : 벽 없는 건 위에서 본 바닥 · 벽 있는 건 옆모습 */ var tp = self.slabTgPoly(t);
+      if (t.H) { try { var o = window.PotteryShared.slabPot({ poly: tp, e: tp.map(function () { return t.e; }), wall: true, Hw: t.H, sc: t.sc }, {}); return { d: o.d, vb: o.vb, sw: o.sw }; } catch (e) {} }
+      var R0 = Math.max(t.a, t.b) + 10; return { d: pd(tp, true), vb: (-R0) + ' ' + (-R0) + ' ' + (2 * R0) + ' ' + (2 * R0), sw: (R0 / 11).toFixed(2) }; };
+    if (this.slabOn) { /* 판 성형대 : 판 목표 쪽지 */
+      var STG = this.slabTg(g); v.tgName = STG.n; v.tgIco = slabIco(STG);
+      var MT = SL && SL.poly ? this.slabMatch(this.slabWith(SL, { e: LV.e || SL.e, H: LV.H != null ? LV.H : SL.H, sc: LV.sc || SL.sc }), STG) : null; if (MT) { v.tgPctOn = true; v.tgPct = MT.pct; } /* 만드는 동안 실시간 일치율 */
+      if (this.tgOpen) { v.tgRows = this.SLT().map(function (t) { var on = t.k === STG.k; return { ico: slabIco(t), name: t.n, on: on ? 'true' : 'false', aria: t.n + (on ? ' · 선택 중' : ''), tag: on ? '✓' : '', tagSt: 'flex:none;font-size:10px;font-weight:700;color:#5B3A24', st: RSTY(on), pick: function () { self.slabTgPick(t.k); } }; }); }
+    }
+    if (this.tgOpen && Wc && !this.slabOn) { try {
       var QT0 = Wc.questTargets(g), SH = Wc.shapes(), keys = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(Wc.baseShapes(QT0));
       v.tgRows = keys.filter(function (k) { return SH[k]; }).map(function (k) {
         var t = SH[k], on = Wc.state.target === k, isQ = /^q:/.test(k);
@@ -6359,9 +6408,9 @@ class Component extends DCLogic {
           pick: function () { Wc.setState({ target: k, sheet: '' }); self.tgOpen = false; self.sfx('tap'); self.bump(); } };
       });
     } catch (eT) {} }
-    v.tgName = W.targetName || '';
+    if (!this.slabOn) { v.tgName = W.targetName || '';
     /* 목표 모양 그림 : 이름 옆에 옆모습 실루엣 */
-    v.tgIco = { d: 'M0 0', vb: '0 0 10 10', sw: '1' }; try { var SH0 = Wc && Wc.shapes(), tk = Wc && Wc.state && Wc.state.target; if (SH0 && SH0[tk]) { v.tgIco = Wc.iconOf(SH0[tk]); } } catch (e) {}
+    v.tgIco = { d: 'M0 0', vb: '0 0 10 10', sw: '1' }; try { var SH0 = Wc && Wc.shapes(), tk = Wc && Wc.state && Wc.state.target; if (SH0 && SH0[tk]) { v.tgIco = Wc.iconOf(SH0[tk]); } } catch (e) {} }
     /* 유약 쪽 : 유약통 · 유약석 · 절구 */
     var GZ = v.gz || {};
     v.buckets = (GZ.glazes || []).slice(0, 5).map(function (b, i) {
