@@ -6112,7 +6112,7 @@ class Component extends DCLogic {
     var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
     v.paintStand = function () { self.say('선반의 기물(시유 전·후 모두)을 끌어다 놓으면 유약으로 무늬를 그려요'); };
     v.wireBoardSt = (SON ? 'display:none;' : '') + 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
-    v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
+    v.onPop = '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
     var OS = { path: 'M0 0', rcx: 0, rcy: 0, rx: 0, ry: 0, irx: 0, iry: 0, c0: '#B48A58', c1: '#E2C79E', c2: '#D2AE7C', edge: '#5B3A24' }, ob = { l: 0, t: 0, w: 0, h: 0 };
@@ -6128,7 +6128,7 @@ class Component extends DCLogic {
     }
     v.os = OS; var onHid = it0 && this.carryId === it0.id;
     v.onBox = 'position:absolute;left:' + ob.l.toFixed(1) + 'px;top:' + ob.t.toFixed(1) + 'px;width:' + ob.w.toFixed(1) + 'px;height:' + ob.h.toFixed(1) + 'px;z-index:8;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (onHid ? 'visibility:hidden;' : '');
-    v.onSvgSt = 'position:absolute;left:39px;top:78px;z-index:7;pointer-events:none;overflow:visible;' + (onHid ? 'visibility:hidden;' : '') + (it0 && this.liftAt && now - this.liftAt < 600 ? 'transform-origin:195px 380px;animation:pop .35s ease both;' : '');
+    v.onSvgSt = 'position:absolute;left:39px;top:78px;z-index:7;pointer-events:none;overflow:visible;' + (onHid ? 'visibility:hidden;' : '') ; /* 실로 자른 뒤 튀는 연출 없음 : 그 자리에 그대로 남는다 */
     v.onHintSt = 'position:absolute;left:60px;right:60px;top:' + Math.max(96, Math.round(ob.t - 40)) + 'px;z-index:8;text-align:center;pointer-events:none;' + (onHid ? 'display:none' : '');
     v.onAria = it0 ? this.pName({ shape: it0.shape, prof: it0.prof, sk: it0.sk }) + ' · 집어서 선반에 올리기' : '';
     v.onDown = function (e) { if (!it0) { return; } var gw = ob.w, gh = ob.h, gH = v.onGhost || ''; self.carryStart(e, 'piece', { id: it0.id }, gH, gw, gh, function () { self.say('기물을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? it0.id : ''; self.bump(); } }); };
