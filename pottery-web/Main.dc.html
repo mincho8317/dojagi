@@ -5357,7 +5357,7 @@ class Component extends DCLogic {
     var self = this, el = e.currentTarget, x0 = e.clientX, y0 = e.clientY, pid = e.pointerId, moved = false, ghost = null, rect = el.getBoundingClientRect(), sc = null, lastX = x0, off = { x: 0, y: 0 }, ff = null, small = null, big = null, railQ = null;
     try { el.setPointerCapture && el.setPointerCapture(pid); } catch (er) {}
     function hit(x, y) {
-      var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]'))); /* 그림 받침이 먼저 */
+      var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln],[data-drop="glaze"]'))); /* 그림 받침이 먼저 · 시유한 기물은 시유그릇에 다시 올려 덧시유 */
       for (var i = 0; i < els.length; i++) { var r = els[i].getBoundingClientRect(); if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) { return els[i]; } }
       return null;
     }
@@ -5368,7 +5368,7 @@ class Component extends DCLogic {
       if (!moved && Math.abs(dx) + Math.abs(dy) < 7) { return; }
       if (!moved) {
         moved = true; var svg = el.querySelector('svg'), sr = svg ? svg.getBoundingClientRect() : rect; /* 선반의 그 기물 그림 그대로 · 크기 안 바뀜 */
-        off = { x: sr.left - x0, y: sr.top - y0 }; ff = { x: (x0 - sr.left) / (sr.width || 1), y: (y0 - sr.top) / (sr.height || 1) }; small = { w: sr.width, h: sr.height }; railQ = el.closest('[data-rail]'); var gpE = st === 'g' ? document.getElementById('gpot') : null, gpR = gpE ? gpE.getBoundingClientRect() : null; big = gpR && gpR.width > 4 ? { w: gpR.width, h: gpR.height } : small; /* 시유 쪽 : 선반에서 멀어질수록 시유그릇 위 크기로 */ ghost = self.ghostMake(sr, svg ? svg.outerHTML : '');
+        off = { x: sr.left - x0, y: sr.top - y0 }; ff = { x: (x0 - sr.left) / (sr.width || 1), y: (y0 - sr.top) / (sr.height || 1) }; small = { w: sr.width, h: sr.height }; railQ = el.closest('[data-rail]'); var gpE = st === 'g' || self.curPanel() === 2 ? document.getElementById('gpot') : null, gpR = gpE ? gpE.getBoundingClientRect() : null; big = gpR && gpR.width > 4 ? { w: gpR.width, h: gpR.height } : small; /* 시유 쪽 : 선반에서 멀어질수록 시유그릇 위 크기로 */ ghost = self.ghostMake(sr, svg ? svg.outerHTML : '');
         self.hideCss('q', '[data-q="' + id + '"] svg'); self.dragging = true; mark(true); self.sfx('tap');
         /* 화면 끝으로 끌면 그쪽으로 넘어간다 */
         var edgeT = 0; sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k, d = xx < 36 ? -1 : (xx > 354 ? 1 : 0); if (!d) { edgeT = 0; return; } edgeT += 50; if (edgeT === 400) { self.goSlot(Math.round(self.stripEl.scrollLeft / 390) + d); } if (edgeT >= 1400) { edgeT = 350; } }, 50); /* 화면 끝에 잠깐 머물면 옆 설비로 한 칸 넘어간다 */
@@ -5384,6 +5384,7 @@ class Component extends DCLogic {
       var gmu = ghost ? self.ghostMid(ghost) : { x: ev.clientX, y: ev.clientY }, t = !ev || ev.type === 'pointercancel' ? null : (hit(ev.clientX, ev.clientY) || hit(gmu.x, gmu.y)), ok = false;
       if (t && t.getAttribute('data-drop') === 'paint') { ok = self.openPaint(id, st); }
       else if (t && st === 'g') { ok = self.putPiece(id); }
+      else if (t && st === 'k' && t.getAttribute('data-drop') === 'glaze') { ok = self.recoatPiece(id); if (ok) { st = 'g'; } }
       else if (t && st === 'k') { ok = self.kPlace(+t.getAttribute('data-kiln'), id); }
       else if (moved) { self.say(st === 'g' ? '시유그릇에 놓아야 유약을 바를 수 있어요' : '가마의 빈 칸에 놓아야 구울 수 있어요'); }
       if (!ghost) { self.hideCss('q', ''); return; }
@@ -5743,6 +5744,19 @@ class Component extends DCLogic {
       self.bump();
     }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  }
+  /* 시유한 기물 선반의 기물을 시유그릇에 다시 올려 한 번 더 입힌다 (덧시유 · 두 번까지) */
+  recoatPiece(id) {
+    var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
+    var it = (g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
+    if (it.g2) { this.say('유약은 두 번까지 입혀요 · 가마에 넣어 구워요'); this.sfx('fail'); return false; }
+    if (G.state.sel || g.glzWait) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 선반에 내려놓아요'); this.sfx('fail'); return false; }
+    if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 (' + this.KB().cap + '/' + this.KB().cap + ') · 자리를 비워요'); this.sfx('fail'); return false; }
+    var ni = {}, k; for (k in it) { if (k !== 'kp' && k !== 'ktb' && k !== 'ktt') { ni[k] = it[k]; } } ni.recoat = true;
+    this.setG2({ kilnList: (g.kilnList || []).filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
+    G.setState({ sel: id, lastId: '', glazeManual: '', pkOpen: false, potHide: 0 }); this.sfx('ok');
+    this.say('한 번 더 입혀요 · 유약을 골라 담가요 (위로 들어 올리면 한 층만 입힌 채 선반으로)');
+    return true;
   }
   /* 아직 유약을 안 바른 기물을 시유그릇에서 내려 빚은 기물 선반으로 */
   unloadGlaze(id) { var G = this.ctls.Glaze; if (!G || G.state.sel !== id) { return false; } G.setState({ sel: '', pkOpen: false, potHide: 0 }); this.sfx('ok'); this.say('빚은 기물 선반으로 내려놓았어요'); return true; }
