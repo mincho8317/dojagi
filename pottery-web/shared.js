@@ -2619,15 +2619,14 @@
     return 0.6;
   };
   S.slabLift = function (P) {
-    return 0.8 * (1 - 0.6) * Math.hypot(P[0], P[1]);
+    return 90;
   };
   S.slabGeo = function (poly, ee) {
     var FT = 0.6, NT = 6;
     return (poly || []).map(function (P, i) {
-      var r = Math.hypot(P[0], P[1]) || 1, d = [P[0] / r, P[1] / r], L = (1 - FT) * r, e = Math.max(0, Math.min(0.8 * L, (ee && ee[i]) || 0));
+      var r = Math.hypot(P[0], P[1]) || 1, d = [P[0] / r, P[1] / r], L = (1 - FT) * r, e = Math.max(0, (ee && ee[i]) || 0); /* 띠 길이와 상관없이 올린 만큼 올라간다 */
       function arc(Lh) { var s = 0, px = 0, pz = 0; for (var k = 1; k <= 12; k++) { var t = k / 12, x = Lh * t, z = e * t * t; s += Math.hypot(x - px, z - pz); px = x; pz = z; } return s; }
-      var lo = 0, hi = L; for (var it = 0; it < 14; it++) { var mid = (lo + hi) / 2; if (arc(mid) > L) { hi = mid; } else { lo = mid; } }
-      var Lh = (lo + hi) / 2, F = [P[0] * FT, P[1] * FT], band = [];
+      var Lh = L, F = [P[0] * FT, P[1] * FT], band = [];
       for (var k2 = 0; k2 <= NT; k2++) { var t2 = k2 / NT; band.push([F[0] + d[0] * Lh * t2, F[1] + d[1] * Lh * t2, e * t2 * t2]); }
       return { P: P, F: F, d: d, L: L, e: e, Lh: Lh, band: band, R: band[NT] };
     });
