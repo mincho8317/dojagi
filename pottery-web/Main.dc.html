@@ -5344,7 +5344,7 @@ class Component extends DCLogic {
   qColor(g, it) { var Q = this.qlib(), act = []; try { act = Q.active(g); } catch (e) {} var C = ['#C0582E', '#3E6B8A', '#7A3E8E']; var sid = it.goalSid || ''; for (var i = 0; i < act.length; i++) { var a = act[i], tg = 'q:' + (a.mid || a.id) + ':'; if (sid.indexOf(tg) === 0) { return { c: C[i % 3], t: a.title }; } } return null; }
   qDown(e, id, st) {
     if (e && e.preventDefault) { e.preventDefault(); }
-    var self = this, el = e.currentTarget, x0 = e.clientX, y0 = e.clientY, pid = e.pointerId, moved = false, ghost = null, rect = el.getBoundingClientRect(), sc = null, lastX = x0;
+    var self = this, el = e.currentTarget, x0 = e.clientX, y0 = e.clientY, pid = e.pointerId, moved = false, ghost = null, rect = el.getBoundingClientRect(), sc = null, lastX = x0, off = { x: 0, y: 0 };
     try { el.setPointerCapture && el.setPointerCapture(pid); } catch (er) {}
     function hit(x, y) {
       var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln]'))); /* 그림 받침이 먼저 */
@@ -5357,30 +5357,31 @@ class Component extends DCLogic {
       var dx = ev.clientX - x0, dy = ev.clientY - y0; lastX = ev.clientX;
       if (!moved && Math.abs(dx) + Math.abs(dy) < 7) { return; }
       if (!moved) {
-        moved = true; var svg = el.querySelector('svg');
-        ghost = document.createElement('div'); ghost.setAttribute('aria-hidden', 'true');
-        ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;left:' + rect.left + 'px;top:' + rect.top + 'px;width:' + rect.width + 'px;height:' + rect.height + 'px;transform:scale(1.4);filter:drop-shadow(0 8px 6px rgba(0,0,0,.4))';
-        if (svg) { var c = svg.cloneNode(true); c.setAttribute('width', rect.width); c.setAttribute('height', rect.height); ghost.appendChild(c); }
-        document.body.appendChild(ghost); el.style.opacity = '0'; self.dragging = true; mark(true); self.sfx('tap');
+        moved = true; var svg = el.querySelector('svg'), sr = svg ? svg.getBoundingClientRect() : rect; /* 선반의 그 기물 그림 그대로 · 크기 안 바뀜 */
+        off = { x: sr.left - x0, y: sr.top - y0 }; ghost = self.ghostMake(sr, svg ? svg.outerHTML : '');
+        self.hideCss('q', '[data-q="' + id + '"] svg'); self.dragging = true; mark(true); self.sfx('tap');
         /* 화면 끝으로 끌면 그쪽으로 넘어간다 */
         var edgeT = 0; sc = setInterval(function () { var R = document.querySelector('[data-pano]'); if (!R || !self.stripEl) { return; } var B = R.getBoundingClientRect(), k = B.width / 390, xx = (lastX - B.left) / k, d = xx < 36 ? -1 : (xx > 354 ? 1 : 0); if (!d) { edgeT = 0; return; } edgeT += 50; if (edgeT === 400) { self.goSlot(Math.round(self.stripEl.scrollLeft / 390) + d); } if (edgeT >= 1400) { edgeT = 350; } }, 50); /* 화면 끝에 잠깐 머물면 옆 설비로 한 칸 넘어간다 */
       }
-      var LF = self.lift(); ghost.style.left = (ev.clientX - rect.width / 2) + 'px'; ghost.style.top = (ev.clientY - LF - rect.height / 2) + 'px';
-      var h0 = hit(ev.clientX, ev.clientY) || hit(ev.clientX, ev.clientY - LF); if (h0 !== self.qHot) { if (self.qHot) { self.qHot.style.background = ''; } self.qHot = h0; if (h0 && (st === 'g' || h0.getAttribute('data-kfree') === '1' || h0.getAttribute('data-drop') === 'paint')) { h0.style.background = 'rgba(255,226,122,.22)'; } }
+      ghost.style.left = (ev.clientX + off.x) + 'px'; ghost.style.top = (ev.clientY + off.y) + 'px'; var gm = self.ghostMid(ghost);
+      var h0 = hit(ev.clientX, ev.clientY) || hit(gm.x, gm.y); if (h0 !== self.qHot) { if (self.qHot) { self.qHot.style.background = ''; } self.qHot = h0; if (h0 && (st === 'g' || h0.getAttribute('data-kfree') === '1' || h0.getAttribute('data-drop') === 'paint')) { h0.style.background = 'rgba(255,226,122,.22)'; } }
     }
     function up(ev) {
       if (ev && ev.pointerId != null && ev.pointerId !== pid) { return; }
       window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
-      clearInterval(sc); self.dragging = false; setTimeout(function () { self.snap(); }, 400); mark(false); el.style.opacity = ''; if (self.qHot) { self.qHot.style.background = ''; self.qHot = null; }
-      if (!moved) { self.qTap(id, st); return; }
-      var t = !ev || ev.type === 'pointercancel' ? null : (hit(ev.clientX, ev.clientY) || hit(ev.clientX, ev.clientY - self.lift())), ok = false;
+      clearInterval(sc); self.dragging = false; setTimeout(function () { self.snap(); }, 400); mark(false); if (self.qHot) { self.qHot.style.background = ''; self.qHot = null; }
+      if (!moved) { self.hideCss('q', ''); self.qTap(id, st); return; }
+      var gmu = ghost ? self.ghostMid(ghost) : { x: ev.clientX, y: ev.clientY }, t = !ev || ev.type === 'pointercancel' ? null : (hit(ev.clientX, ev.clientY) || hit(gmu.x, gmu.y)), ok = false;
       if (t && t.getAttribute('data-drop') === 'paint') { ok = self.openPaint(id, st); }
       else if (t && st === 'g') { ok = self.putPiece(id); }
       else if (t && st === 'k') { ok = self.kPlace(+t.getAttribute('data-kiln'), id); }
       else if (moved) { self.say(st === 'g' ? '시유그릇에 놓아야 유약을 바를 수 있어요' : '가마의 빈 칸에 놓아야 구울 수 있어요'); }
-      if (!ghost) { return; }
-      if (ok) { ghost.style.transition = 'transform .18s,opacity .18s'; ghost.style.transform = 'scale(.6)'; ghost.style.opacity = '0'; setTimeout(function () { ghost.remove(); }, 200); }
-      else { ghost.style.transition = 'left .25s,top .25s,transform .25s'; ghost.style.left = rect.left + 'px'; ghost.style.top = rect.top + 'px'; ghost.style.transform = 'scale(1)'; setTimeout(function () { ghost.remove(); }, 260); }
+      if (!ghost) { self.hideCss('q', ''); return; }
+      /* 놓은 곳에 그대로 앉는다 : 시유그릇이면 그릇 자리로, 가마면 칸 안으로, 못 놓으면 선반 제자리로 미끄러져 돌아간다 */
+      if (ok && t.getAttribute('data-drop') === 'paint') { ghost.remove(); self.hideCss('q', ''); }
+      else if (ok && st === 'g') { self.hideCss('q', ''); var G0 = self.ctls.Glaze; try { G0 && G0.setState({ potHide: Date.now() + 260 }); } catch (e3) {} self.settleTo(ghost, function () { return document.getElementById('gpot'); }, null, function () { try { G0 && G0.setState({ potHide: 0 }); } catch (e4) {} }); }
+      else if (ok && st === 'k') { self.hideCss('q', ''); var ki = t.getAttribute('data-kiln'); self.settleTo(ghost, '[data-kiln="' + ki + '"]', function (r) { var w = Math.min(r.width, r.height) * 0.5; return { left: r.left + r.width / 2 - w / 2, top: r.top + r.height * 0.55 - w / 2, width: w, height: w }; }); }
+      else { self.settleTo(ghost, function () { return document.querySelector('[data-q="' + id + '"] svg'); }, null, function () { self.hideCss('q', ''); }); }
       self.bump();
     }
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
@@ -5715,11 +5716,9 @@ class Component extends DCLogic {
     var P = this.potOf(it, this.fillOf(it, 'glazed')), html = '<svg width="120" height="140" viewBox="' + P.vb + '"><path d="' + P.d + '" fill="' + P.fill + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/><ellipse cx="0" cy="' + P.rimY + '" rx="' + P.rimRx + '" ry="' + P.rimRy + '" fill="' + P.inner + '" stroke="' + P.edge + '" stroke-width="' + P.sw + '"/></svg>';
     var LF = this.lift(), GW = Math.round(R0.width) || 120, GH = Math.round(R0.height) || 140;
     html = html.replace('width="120" height="140"', 'width="100%" height="100%"');
-    var gh = document.createElement('div'); gh.setAttribute('aria-hidden', 'true');
-    gh.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:' + GW + 'px;height:' + GH + 'px;margin-left:' + (-GW / 2) + 'px;margin-top:' + (-GH / 2) + 'px;transform:scale(1.04);filter:drop-shadow(0 10px 8px rgba(0,0,0,.35))';
-    gh.innerHTML = html; document.body.appendChild(gh); var Gc = this.ctls.Glaze; function hidePot(on) { try { Gc && Gc.setState({ potHide: on ? Date.now() + 60000 : 0 }); } catch (er) {} } hidePot(true);
+    var R1 = { left: R0.left, top: R0.top, width: GW, height: GH }, off = { x: R0.left - ev.clientX, y: R0.top - ev.clientY }, gh = this.ghostMake(R1, html); /* 집은 자리 · 크기 그대로 */ var Gc = this.ctls.Glaze; function hidePot(on) { try { Gc && Gc.setState({ potHide: on ? Date.now() + 60000 : 0 }); } catch (er) {} } hidePot(true);
     var shelf = document.querySelector('[data-rail="rg"]'); this.dragging = true; this.sfx('tap');
-    function pos(x, y) { gh.style.left = x + 'px'; gh.style.top = (y - LF) + 'px'; if (shelf) { var r = shelf.getBoundingClientRect(), on = x >= r.left - 12 && x <= r.right + 12 && ((y >= r.top - 12 && y <= r.bottom + 12) || (y - LF >= r.top - 12 && y - LF <= r.bottom + 12)); /* 손가락 자리 먼저, 띄운 기물 자리도 인정 */ shelf.style.outline = '3px dashed #FFD54A'; shelf.style.background = on ? 'rgba(255,226,122,.22)' : ''; return on; } return false; }
+    function pos(x, y) { gh.style.left = (x + off.x) + 'px'; gh.style.top = (y + off.y) + 'px'; var gm = self.ghostMid(gh); if (shelf) { var r = shelf.getBoundingClientRect(), on = (x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 12 && y <= r.bottom + 12) || (gm.x >= r.left - 12 && gm.x <= r.right + 12 && gm.y >= r.top - 12 && gm.y <= r.bottom + 12); /* 손가락 자리 먼저, 띄운 기물 자리도 인정 */ shelf.style.outline = '3px dashed #FFD54A'; shelf.style.background = on ? 'rgba(255,226,122,.22)' : ''; return on; } return false; }
     pos(ev.clientX, ev.clientY);
     function mv(e) { if (e.pointerId !== pid) { return; } if (e.cancelable) { e.preventDefault(); } pos(e.clientX, e.clientY); }
     function up(e) {
@@ -5729,7 +5728,7 @@ class Component extends DCLogic {
       if (shelf) { shelf.style.outline = ''; shelf.style.background = ''; }
       var ok = on && self.shelveGlazed(id);
       if (ok) { hidePot(false); self.flyGhostTo(gh, '[data-rail="rg"]', GH); }
-      else { gh.style.transition = 'left .25s,top .25s'; gh.style.left = (R0.left + R0.width / 2) + 'px'; gh.style.top = (R0.top + R0.height / 2) + 'px'; setTimeout(function () { gh.remove(); hidePot(false); }, 260); if (!on) { self.say('오른쪽 위 시유한 기물 선반에 놓아요'); } }
+      else { self.settleTo(gh, function () { return document.body; }, function () { return R1; }, function () { hidePot(false); }); if (!on) { self.say('오른쪽 위 시유한 기물 선반에 놓아요'); } }
       self.bump();
     }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
@@ -5820,7 +5819,7 @@ class Component extends DCLogic {
   carryStart(e, kind, data, html, w, h, tap, opt) {
     opt = opt || {};
     if (e && e.preventDefault) { e.preventDefault(); }
-    var self = this, pid = e.pointerId, x0 = e.clientX, y0 = e.clientY, moved = false, ghost = null, src = e.currentTarget;
+    var self = this, pid = e.pointerId, x0 = e.clientX, y0 = e.clientY, moved = false, ghost = null, src = e.currentTarget, off = null;
     try { src.setPointerCapture && src.setPointerCapture(pid); } catch (er) {}
     function hot(on) { var els = document.querySelectorAll('[data-dz]'); for (var i = 0; i < els.length; i++) { var ok = on && self.accepts(kind, els[i].getAttribute('data-dz')); els[i].style.outline = ok ? '3px dashed #FFD54A' : ''; els[i].style.outlineOffset = ok ? '-4px' : ''; } }
     function mv(ev) {
@@ -5829,12 +5828,16 @@ class Component extends DCLogic {
       if (!moved) {
         moved = true; self.dragging = true; self.sfx('tap');
         var R = (self.stripEl || document.body).getBoundingClientRect(), k = R.width / 390;
+        if (opt.to) { var sr = src.getBoundingClientRect(); off = { x: sr.left - x0, y: sr.top - y0 }; ghost = self.ghostMake(sr, html); hot(true); if (opt.hide) { opt.hide(true); } }
+        else {
         ghost = document.createElement('div'); ghost.setAttribute('aria-hidden', 'true');
         ghost.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;width:' + w + 'px;height:' + h + 'px;transform:scale(' + (k * (opt.sc || 1.1)) + ');filter:drop-shadow(0 10px 8px rgba(0,0,0,.35));margin-left:' + (-w / 2) + 'px;margin-top:' + (-h / 2) + 'px';
         ghost.innerHTML = html; document.body.appendChild(ghost); hot(true); if (opt.hide) { opt.hide(true); }
+        }
       }
-      var LF = self.lift(); ghost.style.left = ev.clientX + 'px'; ghost.style.top = (ev.clientY - LF) + 'px';
-      var dz0 = self.dropAt(ev.clientX, ev.clientY, kind) || self.dropAt(ev.clientX, ev.clientY - LF, kind), els = document.querySelectorAll('[data-dz]');
+      var LF = self.lift(), gx = ev.clientX, gy = ev.clientY - LF;
+      if (off) { ghost.style.left = (ev.clientX + off.x) + 'px'; ghost.style.top = (ev.clientY + off.y) + 'px'; var gm = self.ghostMid(ghost); gx = gm.x; gy = gm.y; } else { ghost.style.left = ev.clientX + 'px'; ghost.style.top = (ev.clientY - LF) + 'px'; }
+      var dz0 = self.dropAt(ev.clientX, ev.clientY, kind) || self.dropAt(gx, gy, kind), els = document.querySelectorAll('[data-dz]');
       for (var i = 0; i < els.length; i++) { var on = dz0 && els[i].getAttribute('data-dz') === dz0; els[i].style.background = on ? 'rgba(255,226,122,.22)' : ''; }
     }
     function up(ev) {
@@ -5842,8 +5845,13 @@ class Component extends DCLogic {
       window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
       hot(false); self.dragging = false; var els2 = document.querySelectorAll('[data-dz]'); for (var j = 0; j < els2.length; j++) { els2[j].style.background = ''; }
       if (!moved) { if (ev.type !== 'pointercancel' && tap) { tap(); } self.bump(); return; }
-      var dz = ev.type === 'pointercancel' ? null : (self.dropAt(ev.clientX, ev.clientY, kind) || self.dropAt(ev.clientX, ev.clientY - self.lift(), kind)), ok = false;
+      var gmu = off && ghost ? self.ghostMid(ghost) : { x: ev.clientX, y: ev.clientY - self.lift() }, dz = ev.type === 'pointercancel' ? null : (self.dropAt(ev.clientX, ev.clientY, kind) || self.dropAt(gmu.x, gmu.y, kind)), ok = false;
       if (dz) { ok = self.drop(kind, data, dz); }
+      if (ghost && off) { /* 기물 : 놓은 곳에 앉거나, 못 놓으면 집은 자리로 미끄러져 돌아간다 */
+        if (ok) { if (opt.hide) { opt.hide(false); } self.flyGhostTo(ghost, opt.to, h); }
+        else { self.settleTo(ghost, function () { return src.isConnected ? src : null; }, null, function () { if (opt.hide) { opt.hide(false); } }); if (!dz) { self.sfx('fail'); } }
+        self.bump(); return;
+      }
       if (opt.hide) { opt.hide(false); }
       if (ghost) {
         if (ok && opt.to) { self.flyGhostTo(ghost, opt.to, h); }
@@ -5854,8 +5862,31 @@ class Component extends DCLogic {
     }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
-  /* 놓은 물건이 선반의 제자리로 쏙 들어가 앉는다 : 크기도 선반 칸에 맞춰 줄어든다 */
-  flyGhostTo(gh, sel, h) {
+  /* 들고 옮기기 공통 : 집은 자리 · 크기 그대로 손가락을 따라오고, 놓으면 그 자리로 미끄러져 앉는다 (커지거나 튀지 않게) */
+  hideCss(key, sel) { var st = document.getElementById('carryHide'); if (!st) { st = document.createElement('style'); st.id = 'carryHide'; document.head.appendChild(st); } this._hide = this._hide || {}; if (sel) { this._hide[key] = sel; } else { delete this._hide[key]; } var o = [], k; for (k in this._hide) { o.push(this._hide[k] + '{visibility:hidden!important}'); } st.textContent = o.join('\n'); }
+  ghostMake(r, inner) {
+    var gh = document.createElement('div'); gh.setAttribute('aria-hidden', 'true');
+    gh.style.cssText = 'position:fixed;z-index:99999;pointer-events:none;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;filter:drop-shadow(0 7px 5px rgba(0,0,0,.32))';
+    gh.innerHTML = inner || ''; var s = gh.querySelector('svg'); if (s) { s.setAttribute('width', '100%'); s.setAttribute('height', '100%'); s.style.display = 'block'; s.style.overflow = 'visible'; s.style.visibility = 'visible'; s.style.opacity = '1'; }
+    document.body.appendChild(gh); return gh;
+  }
+  ghostMid(gh) { var r = gh.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+  settleTo(gh, sel, fit, done) {
+    var self = this; this.bump();
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      var t = typeof sel === 'function' ? sel() : document.querySelector(sel);
+      if (!t) { gh.remove(); if (done) { done(); } return; }
+      var r = t.getBoundingClientRect(); if (fit) { r = fit(r); }
+      var key = 's' + Date.now() + Math.random(); if (typeof sel === 'string' && !fit) { self.hideCss(key, sel); }
+      var E = ' .2s cubic-bezier(.25,.8,.35,1)';
+      gh.style.transition = 'left' + E + ',top' + E + ',width' + E + ',height' + E + ',filter .2s';
+      gh.style.left = r.left + 'px'; gh.style.top = r.top + 'px'; gh.style.width = r.width + 'px'; gh.style.height = r.height + 'px'; gh.style.filter = 'drop-shadow(0 1px 1px rgba(0,0,0,.2))';
+      setTimeout(function () { self.hideCss(key, ''); gh.remove(); if (done) { done(); } }, 215);
+    }); });
+  }
+  /* 놓은 기물이 선반의 제자리(마지막 칸)로 미끄러져 앉는다 */
+  flyGhostTo(gh, sel, h) { return this.settleTo(gh, sel + ' [role=listitem]:last-child svg'); }
+  flyGhostToOld(gh, sel, h) {
     var self = this; this.bump();
     requestAnimationFrame(function () { requestAnimationFrame(function () {
       var box = document.querySelector(sel), its = box ? box.querySelectorAll('[role=listitem]') : [], t = its.length ? its[its.length - 1] : box;
