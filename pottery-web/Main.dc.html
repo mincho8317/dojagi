@@ -475,6 +475,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:0;right:0;top:494px;z-index:23;text-align:center;pointer-events:none"><span style="display:inline-block;padding:5px 11px;border-radius:11px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">{{sb.hint}}</span></div>
         <span aria-hidden="true" style="position:absolute;left:330px;top:166px;z-index:23;font-family:'Jua',sans-serif;font-size:11px;color:#2B1A0F">두께</span>
       </sc-if>
+      <sc-if value="{{facSlab}}" hint-placeholder-val="{{true}}">
       <div data-dz="{{mini.dz}}" role="button" aria-label="{{mini.aria}}" onClick="{{mini.tap}}" style="{{mini.st}}">
         <svg width="56" height="47" viewBox="0 0 64 54" aria-hidden="true">
           <sc-if value="{{mini.slabOn}}" hint-placeholder-val="{{true}}"><rect x="4" y="8" width="56" height="40" rx="8" fill="#B98A5C" stroke="#7A5434" stroke-width="2.5"></rect><rect x="{{mini.slabX}}" y="18" width="{{mini.slabW}}" height="20" rx="5" fill="{{mini.slabC}}" stroke="#5B3A24" stroke-width="1.5" style="{{mini.slabR}}"></rect><rect x="10" y="41" width="44" height="5" rx="2.5" fill="#E2C08F" stroke="#5B3A24" stroke-width="1.2"></rect></sc-if>
@@ -482,6 +483,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         </svg>
         <span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;color:#5B3A24;text-align:center">{{mini.txt}}</span>
       </div>
+      </sc-if>
       <sc-if value="{{sw.on}}" hint-placeholder-val="{{false}}">
         <div role="alertdialog" aria-label="{{sw.txt}}" style="position:absolute;left:30px;right:30px;top:250px;z-index:40;padding:14px;border-radius:18px;background:#FFF4DE;border:4px solid #8A6440;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:10px;align-items:center">
           <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F;text-align:center">{{sw.txt}}</span>
@@ -723,10 +725,12 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:30px;right:30px;top:316px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">시유 완료 · 한 번 더 담그거나<br>끌어서 오른쪽 위 선반에 ↗</span></div>
       </sc-if>
       <div data-dz="basin" aria-hidden="true" style="position:absolute;left:40px;top:150px;width:310px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
+      <sc-if value="{{facPaint}}" hint-placeholder-val="{{true}}">
       <div data-drop="paint" role="button" aria-label="그림 받침 · 선반의 기물을 끌어다 놓으면 유약으로 무늬를 그려요" onClick="{{paintStand}}" style="position:absolute;left:326px;top:226px;width:60px;height:96px;z-index:9;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px">
         <svg width="56" height="64" viewBox="0 0 56 64" aria-hidden="true"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><rect x="22" y="40" width="12" height="10" fill="#7A5434"></rect><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse><ellipse cx="28" cy="49" rx="21" ry="5" fill="#E2C08F" stroke="#5B3A24" stroke-width="2"></ellipse></svg>
         <span style="padding:1px 6px;border-radius:8px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8;white-space:nowrap">그림 받침</span>
       </div>
+      </sc-if>
       <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
         <div role="dialog" aria-label="붓 무늬 그리기 · {{pt.name}}" style="position:absolute;left:0;top:0;width:390px;height:696px;z-index:60;background:rgba(30,15,5,.78);display:flex;flex-direction:column;align-items:center">
           <span style="margin-top:70px;font-family:'Jua',sans-serif;font-size:19px;color:#FFE7A8">붓 무늬 · {{pt.name}}</span>
@@ -1035,16 +1039,17 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
    </div>
   </div>
-  <div style="position:absolute;left:0;top:0;width:390px;height:56px;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:30">
-    <div aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:4px;right:92px;height:48px;box-sizing:border-box;padding:2px 6px 3px;border-radius:9px;background:rgba(43,26,15,.55);border:2px solid #8A6440;display:flex;flex-direction:column;gap:2px">
-      <div style="display:flex;align-items:center;gap:6px;min-width:0;height:18px"><span aria-hidden="true" style="flex:none;font-size:12px">📋</span><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:13.5px;line-height:18px;color:#FFF4DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qT}}</span><span style="{{qDueSt}}">{{qDue}}</span></div>
+  <!--ptop--><div data-ptop="1" style="position:absolute;left:0;top:0;width:390px;height:56px;box-sizing:border-box;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:90">
+    <div aria-label="받은 의뢰 {{ptN}}" style="position:absolute;left:6px;top:4px;right:130px;height:48px;box-sizing:border-box;padding:2px 6px 3px;border-radius:9px;background:rgba(43,26,15,.55);border:2px solid #8A6440;display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0;height:18px"><span aria-hidden="true" style="flex:none;font-size:12px">📋</span><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:13.5px;line-height:18px;color:#FFF4DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ptT}}</span><span style="{{ptDueSt}}">{{ptDue}}</span></div>
       <div role="list" aria-label="요구 기물" style="display:flex;gap:4px;min-width:0">
-        <sc-for list="{{qChips}}" as="qc" hint-placeholder-count="3"><button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}">{{qc.t}}</button></sc-for>
+        <sc-for list="{{ptChips}}" as="pc" hint-placeholder-count="3"><button type="button" role="listitem" onClick="{{pc.tap}}" aria-label="{{pc.aria}}" style="{{pc.st}}">{{pc.t}}</button></sc-for>
       </div>
     </div>
-    <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:4px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{gold}}</a>
-    <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:29px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{jade}}</a>
-  </div>
+    <a href="Shop.dc.html" aria-label="골드 {{ptGold}} · 상점" style="position:absolute;right:42px;top:4px;width:82px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{ptGold}}</a>
+    <a href="Shop.dc.html" aria-label="옥 {{ptJade}}" style="position:absolute;right:42px;top:29px;width:82px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{ptJade}}</a>
+    <a href="Settings.dc.html" aria-label="설정" style="position:absolute;right:5px;top:4px;width:34px;height:48px;box-sizing:border-box;border-radius:10px;background:rgba(43,26,15,.85);border:2px solid #8A6440;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.2 4.7-1.9-.3a6.6 6.6 0 0 1-.6 1.5l1.1 1.6-1.6 1.6-1.6-1.1c-.5.3-1 .5-1.5.6l-.3 1.9h-2.2l-.3-1.9a6.6 6.6 0 0 1-1.5-.6l-1.6 1.1-1.6-1.6 1.1-1.6a6.6 6.6 0 0 1-.6-1.5l-1.9-.3v-2.2l1.9-.3c.1-.5.3-1 .6-1.5L4.6 7l1.6-1.6 1.6 1.1c.5-.3 1-.5 1.5-.6L9.6 4h2.2l.3 1.9c.5.1 1 .3 1.5.6l1.6-1.1L16.8 7l-1.1 1.6c.3.5.5 1 .6 1.5l1.9.3Z" fill="#FFE7A8" stroke="#2B1A0F" stroke-width=".8"></path></svg></a>
+  </div><!--/ptop-->
   <div style="position:absolute;left:0;top:300px;z-index:40;display:flex;flex-direction:column;gap:6px;align-items:flex-start">
     <sc-for list="{{leftS}}" as="ls" hint-placeholder-count="0"><button type="button" onClick="{{ls.tap}}" style="{{ls.st}}" aria-label="{{ls.aria}}">◀ {{ls.t}}</button></sc-for>
   </div>
@@ -5161,10 +5166,18 @@ class Component extends DCLogic {
   qlib() { return window.PotteryShared.qlib.call(this); }
   navBoot() { return window.PotteryShared.navBoot.call(this); }
   trackBoot() { return window.PotteryShared.trackBoot.call(this); }
+  pickFromOther() {
+    var raw = null; try { raw = sessionStorage.getItem('potPick'); sessionStorage.removeItem('potPick'); } catch (e) {} if (!raw) { return; }
+    var o = JSON.parse(raw), g = this.loadG(), Q = this.qlib(), act = Q.active(g), a = act[0];
+    if (o.counter || !a) { this.jumpTo(0); return; }
+    var r = ((Q.alloc(g, act)[a.id] || {}).items || []).filter(function (x) { return (o.tag && x.tag === o.tag) || (!o.tag && x.key === o.key); })[0];
+    if (r) { this.reqPick(a, r); } else { this.jumpTo(0); }
+  }
   componentDidMount() {
     var self = this;
     try { this.sndBoot(); } catch (e) {}
     setTimeout(function () { try { self.navBoot(); } catch (e) {} }, 0);
+    setTimeout(function () { try { self.pickFromOther(); } catch (e) {} }, 900); /* 다른 화면 상단 바에서 고른 요구 기물 */
     this.allCtls().forEach(function (c) { setTimeout(function () { try { c.componentDidMount && c.componentDidMount(); } catch (e) { try { console.error(e); } catch (e2) {} } }, 0); });
     this.onNavClick = function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a) { return; }
@@ -5862,8 +5875,8 @@ class Component extends DCLogic {
   /* ── 판 성형 : 물레 화면 구석에 떠 있는 판 · 누르면 물레와 자리를 바꾼다 ── */
   SG() { return { x0: 60, x1: 330, y0: 150, y1: 470, cx: 195, cy: 310, tw: 170, th: 120, band: [0.3, 0.45] }; }
   slabSet(on) { this.slabOn = !!on; this.cutMode = false; this.setG2({ slabOn: !!on }); this.sfx('tap'); this.bump(); }
-  slabTap() { if (this.dragging) { return; } this.slabSet(!this.slabOn); }
-  putSlab(c) {
+  slabTap() { if (this.dragging) { return; } if (!this.slabOn && !(this.loadG().fac || {}).slab) { this.say('판 성형대는 상점 「설비」에서 설치해요'); return; } this.slabSet(!this.slabOn); }
+  putSlab(c) { if (!(this.loadG().fac || {}).slab) { this.say('판 성형대는 상점 「설비」에서 설치해요'); return false; }
     var g = this.loadG(), sl = g.slab || null;
     if (!this.slabOn) { this.slabSet(true); }
     if (g.onSlab) { this.say('판 위 기물을 먼저 선반에 올려요'); this.sfx('fail'); return false; }
@@ -5913,7 +5926,7 @@ class Component extends DCLogic {
   }
   /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
   PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
-  openPaint(id, st) {
+  openPaint(id, st) { if (!(this.loadG().fac || {}).paint) { this.say('붓 시유대는 상점 「설비」에서 설치해요'); return false; }
     var g = this.loadG(), L = st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
     var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
     this.paint = { id: id, st: st, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: (pal[2] || pal[0])[0] }, 'glazed') };
@@ -6061,6 +6074,7 @@ class Component extends DCLogic {
         pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.bump(); } }; }),
         down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); } };
     }
+    var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
     v.paintStand = function () { self.say('선반의 기물(시유 전·후 모두)을 끌어다 놓으면 유약으로 무늬를 그려요'); };
     v.wireBoardSt = (SON ? 'display:none;' : '') + 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
     v.onPop = it0 && this.liftAt && now - this.liftAt < 600 ? 'animation:pop .35s ease both;' : '';
@@ -6173,31 +6187,9 @@ class Component extends DCLogic {
     /* 화면 안에 들어온 설비에는 오른쪽 위 배지 */
     var bn = [cDel || (cOffer ? '!' : ''), '', '', doneN || '', ''];
     bn.forEach(function (n, i) { v['pbn' + i] = n; v['pb' + i] = n ? 'position:absolute;left:' + (self.slotOf(i) * 390 + 354) + 'px;top:6px;z-index:8;min-width:24px;height:24px;box-sizing:border-box;padding:0 6px;border-radius:12px;background:#D0452B;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:13px;line-height:20px;text-align:center;color:#FFF;pointer-events:none;animation:bob 1.4s ease-in-out infinite' : 'display:none'; });
-    /* 위쪽 : 지금 받은 의뢰 (한 번에 하나) · 이름 + 요구 기물 칩 · 칩을 누르면 그 기물 작업으로 */
-    var A2 = {}; try { A2 = Q.alloc(g, act); } catch (e) {}
-    var KEYS = { main: 'mq', dok: 'dq', season: 'sq' }, a = act[0];
-    v.qcN = act.length ? '1건' : '없음';
-    if (a) {
-      var r = A2[a.id] || {}, at = a.at || ((g[KEYS[a.id]] || {}).at), its = a.items || (a.def && a.def.items) || [];
-      if (!its.length) { var ls = {}; try { ls = Q.lineState(g, a.id); } catch (e) {} its = (ls.def && ls.def.items) || []; }
-      var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + self.durOf(its) : 0), left = due ? due - now : 0;
-      v.qT = a.title || a.who || '의뢰';
-      v.qDue = due ? (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '';
-      v.qDueSt = 'flex:none;font-size:10.5px;font-weight:700;color:' + (due && left <= 0 ? '#FFB49A' : (due && left < 600000 ? '#FFD08A' : '#E8D3B5'));
-      var selT = (this.ctls.Wheel && this.ctls.Wheel.state.target) || '';
-      v.qChips = (r.items || []).slice(0, 3).map(function (x, k) {
-        var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === selT;
-        var nm = (x.it && (x.it.name || x.it.shapeN)) || '기물';
-        return { t: (done ? '✓ ' : '') + nm + ' ' + have + '/' + x.n, aria: '요구 기물 ' + (k + 1) + ' · ' + nm + ' ' + have + '/' + x.n + (done ? ' · 완료' : ' · 눌러서 작업'),
-          tap: function () { self.reqPick(a, x); },
-          st: 'all:unset;cursor:pointer;flex:1 1 0;min-width:0;box-sizing:border-box;height:20px;padding:0 5px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;'
-            + (done ? 'background:#2F6328;color:#FFFDF5;border:2px solid #2F6328' : (on ? 'background:#FFE7A8;color:#2B1A0F;border:2px solid #E3B23C' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440')) };
-      });
-      if (!v.qChips.length) { v.qChips = [{ t: a.who ? a.who + '에게 가 보기' : '카운터에서 확인', aria: '카운터로', tap: function () { self.goPanel(0); }, st: 'all:unset;cursor:pointer;flex:1 1 0;height:20px;padding:0 6px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440;text-align:center' }]; }
-    } else {
-      v.qT = '받은 의뢰가 없어요'; v.qDue = ''; v.qDueSt = 'display:none';
-      v.qChips = [{ t: '카운터에서 손님 맞기', aria: '카운터로', tap: function () { self.goPanel(0); }, st: 'all:unset;cursor:pointer;flex:1 1 0;height:20px;padding:0 6px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440;text-align:center' }];
-    }
+    /* 위쪽 : 모든 화면 공통 상단 바 (shared topVals) · 칩을 누르면 그 기물 작업으로 */
+    var TV = window.PotteryShared.topVals.call(this, g, (this.ctls.Wheel && this.ctls.Wheel.state.target) || '', function (a, x) { if (!a) { self.goPanel(0); return; } self.reqPick(a, x); });
+    for (var tk in TV) { v[tk] = TV[tk]; }
     return v;
   }
   loadG() {

@@ -20,78 +20,50 @@ button{font-family:inherit;cursor:pointer}
 </style>
 </helmet>
 <div class="bg-bg-shop" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
+  <!--ptop--><div data-ptop="1" style="position:absolute;left:0;top:0;width:390px;height:56px;box-sizing:border-box;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:90">
+    <div aria-label="받은 의뢰 {{ptN}}" style="position:absolute;left:6px;top:4px;right:130px;height:48px;box-sizing:border-box;padding:2px 6px 3px;border-radius:9px;background:rgba(43,26,15,.55);border:2px solid #8A6440;display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0;height:18px"><span aria-hidden="true" style="flex:none;font-size:12px">📋</span><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:13.5px;line-height:18px;color:#FFF4DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ptT}}</span><span style="{{ptDueSt}}">{{ptDue}}</span></div>
+      <div role="list" aria-label="요구 기물" style="display:flex;gap:4px;min-width:0">
+        <sc-for list="{{ptChips}}" as="pc" hint-placeholder-count="3"><button type="button" role="listitem" onClick="{{pc.tap}}" aria-label="{{pc.aria}}" style="{{pc.st}}">{{pc.t}}</button></sc-for>
+      </div>
+    </div>
+    <a href="Shop.dc.html" aria-label="골드 {{ptGold}} · 상점" style="position:absolute;right:42px;top:4px;width:82px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{ptGold}}</a>
+    <a href="Shop.dc.html" aria-label="옥 {{ptJade}}" style="position:absolute;right:42px;top:29px;width:82px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{ptJade}}</a>
+    <a href="Settings.dc.html" aria-label="설정" style="position:absolute;right:5px;top:4px;width:34px;height:48px;box-sizing:border-box;border-radius:10px;background:rgba(43,26,15,.85);border:2px solid #8A6440;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.2 4.7-1.9-.3a6.6 6.6 0 0 1-.6 1.5l1.1 1.6-1.6 1.6-1.6-1.1c-.5.3-1 .5-1.5.6l-.3 1.9h-2.2l-.3-1.9a6.6 6.6 0 0 1-1.5-.6l-1.6 1.1-1.6-1.6 1.1-1.6a6.6 6.6 0 0 1-.6-1.5l-1.9-.3v-2.2l1.9-.3c.1-.5.3-1 .6-1.5L4.6 7l1.6-1.6 1.6 1.1c.5-.3 1-.5 1.5-.6L9.6 4h2.2l.3 1.9c.5.1 1 .3 1.5.6l1.6-1.1L16.8 7l-1.1 1.6c.3.5.5 1 .6 1.5l1.9.3Z" fill="#FFE7A8" stroke="#2B1A0F" stroke-width=".8"></path></svg></a>
+  </div><!--/ptop-->
+  <div data-ptwrap="1" style="position:absolute;left:0;top:56px;right:0;bottom:0;">
+
 
   <div style="position:absolute;left:12px;right:12px;top:12px;bottom:100px;display:flex;flex-direction:column;gap:10px">
 
     <div style="display:flex;align-items:center;gap:10px">
       <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#B9533A;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:20px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">상점</div>
-      <div style="position:relative;display:flex;align-items:center;height:30px;box-sizing:border-box;padding:0 12px 0 34px;margin-left:8px;background:rgba(43,26,15,.85);border:2px solid #3E2616;border-radius:16px">
-        <span style="position:absolute;left:-8px;top:-5px;width:36px;height:36px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:900;color:#7A5A12"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
-        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#FFF4DE">{{goldText}}</span>
-      </div>
     </div>
 
-    <div role="tablist" aria-label="상점 분류" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 10px">
-      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="3">
+    <div role="tablist" aria-label="상점 분류" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:0 10px">
+      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" aria-selected="{{tb.on}}" onClick="{{tb.pick}}" style="{{tb.style}}">{{tb.label}}</button>
       </sc-for>
     </div>
 
     <sc-if value="{{isFac}}" hint-placeholder-val="{{true}}">
-      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:4px">
-      <div style="box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
-        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">설비 확장</span>
-        <sc-for list="{{upgs}}" as="u" hint-placeholder-count="4">
-          <div style="display:flex;align-items:center;gap:10px;padding:6px 4px;border-top:2px dashed #E2CBA2">
-            <span style="flex:0 0 46px;height:46px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;border:2px solid #E2CBA2;display:flex;align-items:center;justify-content:center;font-size:24px;padding:3px"><sc-if value="{{u.imgOn}}" hint-placeholder-val="{{true}}"><img dc-src="{{u.img}}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></sc-if><sc-if value="{{u.emojiOn}}" hint-placeholder-val="{{false}}">{{u.emoji}}</sc-if></span>
-            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
-              <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{u.name}}</span>
-              <span style="font-size:11.5px;color:#5B3A24">{{u.desc}}</span>
-            </span>
-            <button type="button" onClick="{{u.buy}}" aria-label="{{u.aria}}" style="{{u.btn}}">{{u.label}}</button>
-          </div>
+      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:236px;gap:12px;padding-bottom:4px">
+        <sc-for list="{{facs}}" as="f" hint-placeholder-count="2">
+          <article style="{{f.card}}">
+            <div style="width:96px;height:96px;display:flex;align-items:center;justify-content:center">
+              <sc-if value="{{f.imgOn}}" hint-placeholder-val="{{true}}"><img dc-src="{{f.img}}" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 0 rgba(43,26,15,.3))"></sc-if>
+              <sc-if value="{{f.slabOn}}" hint-placeholder-val="{{false}}"><svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><rect x="8" y="30" width="80" height="50" rx="10" fill="#B98A5C" stroke="#7A5434" stroke-width="3"></rect><rect x="24" y="44" width="48" height="22" rx="6" fill="#C9A27A" stroke="#5B3A24" stroke-width="2"></rect><rect x="18" y="16" width="60" height="10" rx="5" fill="#8A5A36" stroke="#5B3A24" stroke-width="2"></rect><rect x="10" y="18" width="10" height="6" rx="3" fill="#5B3A24"></rect><rect x="76" y="18" width="10" height="6" rx="3" fill="#5B3A24"></rect></svg></sc-if>
+            </div>
+            <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{f.name}}</span>
+            <span style="font-size:10.5px;color:#7A5434;text-align:center;line-height:1.35">{{f.desc}}</span>
+            <button type="button" onClick="{{f.buy}}" aria-label="{{f.aria}}" style="{{f.btn}}">{{f.label}}</button>
+          </article>
         </sc-for>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:226px;gap:12px">
-
-        <article style="position:relative;box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 0 0 3px #E3B23C,0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px">
-          <div style="width:96px;height:96px;display:flex;align-items:center;justify-content:center"><img src="_blob/9942f49883ccf2f71bd284b6369c0207.webp" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(43,26,15,.35))"></div>
-          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">굽깎이대</span>
-          <span style="font-size:10.5px;color:#7A5434;text-align:center;line-height:1.35">2차 성형 해금<br>형태 보정 · 무늬</span>
-          <button type="button" onClick="{{buyTrim}}" style="{{trimStyle}}">{{trimLabel}}</button>
-        </article>
-
-        <article style="position:relative;box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px">
-          <div style="width:96px;height:96px;display:flex;align-items:center;justify-content:center"><img src="_blob/3e347c192eea1b786ae04b3d3606b5bc.webp" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(43,26,15,.35))"></div>
-          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">붓 · 시유대</span>
-          <span style="padding:2px 8px;border-radius:8px;background:#F8DDD5;font-family:'Jua',sans-serif;font-size:11.5px;color:#A33B22">{{brushReq}}</span>
-          <button type="button" onClick="{{tryBrush}}" style="all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#CFC5B4;border:3px solid #8E8473;border-radius:13px;font-family:'Jua',sans-serif;font-size:17px;color:#453D33">{{brushLabel}}</button>
-        </article>
-
-        <article style="position:relative;box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px">
-          <div style="width:96px;height:96px;display:flex;align-items:center;justify-content:center"><img src="_blob/71a4875611b84c9990079398dc735817.webp" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(43,26,15,.35))"></div>
-          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">전기가마 3×3</span>
-          <span style="font-size:10.5px;color:#7A5434;text-align:center;line-height:1.35">온도 분포 등장<br>배치 퍼즐 시작</span>
-          <button type="button" onClick="{{tryElec}}" style="all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#CFC5B4;border:3px solid #8E8473;border-radius:13px;font-family:'Jua',sans-serif;font-size:17px;color:#A33B22">12,000</button>
-        </article>
-
-        <article style="position:relative;box-sizing:border-box;padding:10px;background:#E2D5BC;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px;overflow:hidden">
-          <div style="position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center"><img src="_blob/b3abfa357171a202798f36f7a6654994.webp" alt="" aria-hidden="true" draggable="false" style="width:96px;height:96px;object-fit:contain;filter:brightness(0) opacity(.45)">
-            <span style="position:absolute;right:-8px;bottom:-8px;width:34px;height:34px;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5.5px;color:#FFE7A8"><img src="_blob/3478e3c5f877596d8ab1d79ffa7d0f5c.webp" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
-          </div>
-          <span style="font-family:'Jua',sans-serif;font-size:16px;color:#3E2E1E">가스가마</span>
-          <a href="Research.dc.html" style="width:100%;display:flex;flex-direction:column;gap:3px;margin-top:auto;text-decoration:none">
-            <span style="display:flex;justify-content:space-between;padding:2px 8px;border-radius:7px;background:#F8DDD5;font-size:10.5px;font-weight:700;color:#A33B22"><span>명성 Lv.6</span><span>현재 3</span></span>
-            <span style="display:flex;justify-content:space-between;padding:2px 8px;border-radius:7px;background:#F8DDD5;font-size:10.5px;font-weight:700;color:#A33B22;text-decoration:underline"><span>연구 환원소성</span><span>보러 가기</span></span>
-            <span style="display:flex;justify-content:space-between;padding:2px 8px;border-radius:7px;background:#F8DDD5;font-size:10.5px;font-weight:700;color:#A33B22"><span>45,000G</span><span>부족</span></span>
-          </a>
-        </article>
-      </div>
       </div>
     </sc-if>
 
     <sc-if value="{{isMat}}" hint-placeholder-val="{{false}}">
-      <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-bottom:6px">
         <sc-for list="{{mats}}" as="m" hint-placeholder-count="5">
           <div style="box-sizing:border-box;padding:9px 10px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:16px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:10px">
             <span style="flex:0 0 52px;height:52px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;border:2px solid #E2CBA2;display:flex;align-items:center;justify-content:center;padding:4px"><img dc-src="{{m.img}}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain"></span>
@@ -105,18 +77,6 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </sc-if>
 
-    <sc-if value="{{isDeco}}" hint-placeholder-val="{{false}}">
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
-        <sc-for list="{{decos}}" as="d" hint-placeholder-count="4">
-          <div style="box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:0 5px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;gap:6px">
-            <span style="width:100%;height:96px;box-sizing:border-box;border-radius:12px;background:#F3E3C4;display:flex;align-items:center;justify-content:center;padding:6px"><img dc-src="{{d.img}}" alt="" aria-hidden="true" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))"></span>
-            <span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{d.name}}</span>
-            <span style="font-size:10.5px;color:#2E6B5F;font-weight:700">{{d.effect}}</span>
-            <button type="button" onClick="{{d.buy}}" style="{{d.style}}">{{d.label}}</button>
-          </div>
-        </sc-for>
-      </div>
-    </sc-if>
   </div>
 
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
@@ -142,6 +102,7 @@ button{font-family:inherit;cursor:pointer}
     </a>
   </nav>
 
+  </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
@@ -215,11 +176,12 @@ class Component extends DCLogic {
     if (ok) { this.say(ok); }
     return true;
   }
-  renderVals() {
+  renderVals() { var __v = this.renderValsT(), __t = {}; try { __t = window.PotteryShared.topVals.call(this, null, '', null); } catch (e) {} for (var __k in __t) { __v[__k] = __t[__k]; } return __v; }
+  renderValsT() {
     var self = this;
     var s = this.state;
     var G = s.g;
-    var tabDefs = [{ id: 'mat', label: '재료' }, { id: 'fac', label: '설비' }, { id: 'deco', label: '꾸미기' }];
+    var tabDefs = [{ id: 'mat', label: '재료' }, { id: 'fac', label: '설비' }];
     var tabs = tabDefs.map(function (d) {
       var on = d.id === s.tab;
       return {
@@ -235,7 +197,6 @@ class Component extends DCLogic {
     var QLs = this.qlib(), matDefs = [];
     ['y', 'w', 'r', 'k'].forEach(function (c) { var k = 'c' + c + '1', d = QLs.clayOf(k); matDefs.push({ id: k, img: IMGC[c], res: 'CLAY', name: d.name, desc: '최소 ' + d.thin + 'mm · ' + d.note.split(' · ')[0], price: (QLs.MATPRICE ? QLs.MATPRICE.clay[c] : 30) }); });
     ['white', 'celadon', 'black', 'jinsa'].forEach(function (z) { matDefs.push({ id: QLs.glazeMatKey(z), img: IMGG[z], res: 'GLZ', name: QLs.glazeMatName(z), desc: QLs.GNM[z] + ' 1회분', price: QLs.MATPRICE ? QLs.MATPRICE.glaze[z] : (z === 'jinsa' ? 500 : 30) }); });
-    matDefs.push({ id: 'plaster', img: '_blob/c2b64043b840ab3539af5fd284ab04aa.webp', res: 'MAT\nPLASTER', name: '석고', desc: '몰드 1개 제작용', price: 1200 });
     var mats = matDefs.map(function (m) {
       return {
         res: m.res, img: m.img, name: m.name, desc: m.desc, price: m.price.toLocaleString(),
@@ -248,73 +209,29 @@ class Component extends DCLogic {
       };
     });
 
-    var decoDefs = [
-      { id: 'lamp', img: '_blob/e70f56a19bd79329b1c338c1f0da7ebd.webp', res: 'DECO_LAMP', size: '240×240', name: '한지 등', effect: '방문 빈도 +2%', price: 600 },
-      { id: 'plant', img: '_blob/276078c4d372d3dd5ca8fc4961584043.webp', res: 'DECO_PLANT', size: '240×240', name: '화분', effect: '명성 +1/시간', price: 900 },
-      { id: 'rug', img: '_blob/f857ae2f300bc085e71fa4e003350137.webp', res: 'DECO_RUG', size: '360×180', name: '무명 러그', effect: '방문객 등급 +1%', price: 1100 },
-      { id: 'sign', img: '_blob/e9eab19c044e9273c9fb16c7d6ee488d.webp', res: 'DECO_SIGN', size: '300×150', name: '나무 간판', effect: '명성 +2/시간', price: 2400 }
-    ];
-    var decos = decoDefs.map(function (d) {
-      var owned = !!(G.deco || {})[d.id];
-      return {
-        res: d.res, img: d.img, size: d.size, name: d.name, effect: d.effect,
-        label: owned ? '배치됨' : d.price.toLocaleString(),
-        style: 'all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:7px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:15px;' + (owned ? 'background:#CFC5B4;border:3px solid #8E8473;color:#453D33;' : 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;'),
+    // 설비 : 판 성형대 · 붓 시유대 (기본 잠김 · 지금은 0G)
+    var FAC = G.fac || {}, BTN = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;border-radius:13px;font-family:Jua,sans-serif;font-size:16px;';
+    var facs = [
+      { id: 'slab', name: '판 성형대', desc: '흙을 밀대로 펴서 판으로 · 모양대로 잘라 접시를 만들어요 (물레 화면 구석)', price: 0, img: '', slab: true },
+      { id: 'paint', name: '붓 시유대', desc: '유약을 붓에 찍어 기물에 무늬를 그려요 (유약 화면 오른쪽)', price: 0, img: '_blob/3e347c192eea1b786ae04b3d3606b5bc.webp' }
+    ].map(function (d) {
+      var own = !!FAC[d.id], pr = d.price ? d.price.toLocaleString() + 'G' : '무료';
+      return { name: d.name, desc: d.desc, img: d.img, imgOn: !!d.img, slabOn: !!d.slab,
+        label: own ? '설치됨' : pr + ' · 설치', aria: d.name + ' · ' + (own ? '설치됨' : pr),
+        card: 'position:relative;box-sizing:border-box;padding:10px;background:#FFF4DE;border:4px solid #5B3A24;border-radius:18px;box-shadow:' + (own ? '0 5px 0 rgba(43,26,15,.45)' : '0 0 0 3px #E3B23C,0 5px 0 rgba(43,26,15,.45)') + ';display:flex;flex-direction:column;align-items:center;gap:6px',
+        btn: BTN + (own ? 'background:#CFC5B4;border:3px solid #8E8473;color:#453D33' : 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5'),
         buy: function () {
-          if (owned) { self.say('이미 공방에 놓여 있어요'); return; }
-          var o = {}; for (var k in G.deco) { o[k] = G.deco[k]; }
-          o[d.id] = true;
-          self.spend(d.price, d.name + '을(를) 공방에 놓았어요', { deco: o });
-        }
-      };
-    });
-
-    var trimBuy = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;border-radius:13px;font-family:Jua,sans-serif;font-size:17px;color:#FFFDF5;';
-    var trimOwned = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;background:#CFC5B4;border:3px solid #8E8473;border-radius:13px;font-family:Jua,sans-serif;font-size:16px;color:#453D33;';
-
-    var UIMG = { u_dry1: '_blob/83573d45657fe69185d862cb7459a206.webp', u_dry2: '_blob/83573d45657fe69185d862cb7459a206.webp', u_kiln: '_blob/5cbd50f799b0c74d2e34462914dafeb0.webp' };
-    var RS = G.res || {};
-    var upgs = QLs.UPG.map(function (u) {
-      var own = !!RS[u.id], preOk = u.req.every(function (q) { return RS[q]; }), cd = u.cond && QLs.RCOND[u.cond], condOk = !cd || cd.ok(G), can = !own && preOk && condOk;
-      var why = own ? '보유 중' : (!preOk ? QLs.RNODE[u.req[0]].name + ' 먼저' : (!condOk ? cd.t : ''));
-      return {
-        name: u.name, desc: why && !own ? u.desc + ' · ' + why : u.desc, img: UIMG[u.id] || '', imgOn: !!UIMG[u.id], emoji: '🏠', emojiOn: !UIMG[u.id],
-        label: own ? '보유 중' : u.gold.toLocaleString() + 'G', aria: u.name + ' · ' + (own ? '보유 중' : u.gold.toLocaleString() + '골드'),
-        btn: 'all:unset;cursor:pointer;box-sizing:border-box;flex:0 0 86px;min-height:40px;text-align:center;padding:6px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (own ? 'background:#CFC5B4;border:3px solid #8E8473;color:#453D33' : (can ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5' : 'background:#E9DCC3;border:3px solid #B8A88A;color:#6B5C47')),
-        buy: function () {
-          if (own) { self.say('이미 설치했어요'); return; }
-          if (!preOk || !condOk) { self.say(why + ' · 그다음 살 수 있어요'); return; }
-          var r = {}; for (var k in RS) { r[k] = RS[k]; } r[u.id] = true;
-          self.spend(u.gold, u.name + ' 완료! ' + u.desc, { res: r });
-        }
-      };
+          if (own) { self.say('공방에 설치되어 있어요'); return; }
+          var f2 = {}; for (var k in FAC) { f2[k] = FAC[k]; } f2[d.id] = true;
+          self.spend(d.price, d.name + '를 설치했어요 · ' + (d.id === 'slab' ? '물레 화면 구석에서 써요' : '유약 화면 오른쪽에서 써요'), { fac: f2 });
+        } };
     });
     return {
-      upgs: upgs,
+      facs: facs,
       tabs: tabs,
       isFac: s.tab === 'fac',
       isMat: s.tab === 'mat',
-      isDeco: s.tab === 'deco',
-      goldText: G.gold.toLocaleString(),
       mats: mats,
-      decos: decos,
-      trimLabel: G.trim ? '보유 중' : '800',
-      trimStyle: G.trim ? trimOwned : trimBuy,
-      buyTrim: function () {
-        if (G.trim) { self.say('공방에 설치되어 있어요'); return; }
-        self.spend(800, '굽깎이대를 들였어요 · 2차 성형 해금', { trim: true });
-      },
-      tryBrush: function () {
-        if (G.brush) { self.say('공방에 설치되어 있어요'); return; }
-        if (G.fameLv < 4) { self.say('명성 Lv.4가 되면 살 수 있어요 · 현재 Lv.' + G.fameLv); return; }
-        self.spend(2000, '붓 · 시유대를 들였어요 · 붓칠 해금', { brush: true });
-      },
-      tryElec: function () {
-        if (G.gold < 12000) { self.say('골드가 ' + (12000 - G.gold).toLocaleString() + ' 모자라요'); return; }
-        self.say('곧 구매할 수 있어요');
-      },
-      brushReq: G.fameLv >= 4 ? '명성 Lv.4 충족' : '명성 Lv.4 필요',
-      brushLabel: G.brush ? '보유 중' : '2,000',
       toast: s.toast,
       toastOn: s.toast !== ''
     };

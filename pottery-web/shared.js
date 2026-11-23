@@ -2468,4 +2468,36 @@
     }, 900);
 
   })();
+  /* 모든 화면 공통 상단 바 : 지금 받은 의뢰(이름 · 기한 · 요구 기물 칩) + 골드 · 옥 + 설정 */
+  S.topVals = function (g, sel, pick) {
+    var self = this, now = Date.now(), Q = null; try { Q = window.PotteryShared.qlib.call(this); } catch (e) {}
+    if (!g) { try { g = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { g = {}; } }
+    var v = { ptGold: (g.gold || 0).toLocaleString(), ptJade: (g.jadeV === 2 && g.jade != null ? g.jade : 0).toLocaleString() };
+    var CH = 'all:unset;cursor:pointer;flex:1 1 0;min-width:0;box-sizing:border-box;height:20px;padding:0 5px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;';
+    function go(href) { if (window.__potGo) { window.__potGo(href); } else { location.href = href; } }
+    var act = []; try { act = Q ? Q.active(g) : []; } catch (e) {}
+    var a = act[0];
+    if (!a) {
+      v.ptT = '받은 의뢰가 없어요'; v.ptDue = ''; v.ptDueSt = 'display:none'; v.ptN = '없음';
+      v.ptChips = [{ t: '카운터에서 손님 맞기', aria: '카운터로', st: CH + 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440', tap: function () { if (pick) { pick(null, null); } else { try { sessionStorage.setItem('potPick', JSON.stringify({ counter: 1 })); } catch (e) {} go('Main.dc.html'); } } }];
+      return v;
+    }
+    var AL = {}; try { AL = Q.alloc(g, act); } catch (e) {}
+    var r = AL[a.id] || {}, KEYS = { main: 'mq', dok: 'dq', season: 'sq' }, at = a.at || ((g[KEYS[a.id]] || {}).at), its = a.items || (a.def && a.def.items) || [];
+    if (!its.length) { var ls = {}; try { ls = Q.lineState(g, a.id); } catch (e) {} its = (ls.def && ls.def.items) || []; }
+    var nIt = 0; its.forEach(function (it) { if (!it.mat) { nIt += it.n || 1; } });
+    var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + (3600 + 1800 * Math.max(0, nIt - 1)) * 1000 : 0), left = due ? due - now : 0;
+    function fmt(ms) { var m = Math.round(ms / 60000); return m >= 60 ? Math.floor(m / 60) + '시간' + (m % 60 ? ' ' + (m % 60) + '분' : '') : m + '분'; }
+    v.ptN = '1건'; v.ptT = a.title || a.who || '의뢰';
+    v.ptDue = due ? (left > 0 ? fmt(left) + ' 남음' : '기한 지남') : '';
+    v.ptDueSt = 'flex:none;font-size:10.5px;font-weight:700;color:' + (due && left <= 0 ? '#FFB49A' : (due && left < 600000 ? '#FFD08A' : '#E8D3B5'));
+    v.ptChips = (r.items || []).slice(0, 3).map(function (x, k) {
+      var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === sel, nm = (x.it && (x.it.name || x.it.shapeN)) || '기물';
+      return { t: (done ? '✓ ' : '') + nm + ' ' + have + '/' + x.n, aria: '요구 기물 ' + (k + 1) + ' · ' + nm + ' ' + have + '/' + x.n + (done ? ' · 완료' : ' · 눌러서 작업'),
+        st: CH + (done ? 'background:#2F6328;color:#FFFDF5;border:2px solid #2F6328' : (on ? 'background:#FFE7A8;color:#2B1A0F;border:2px solid #E3B23C' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440')),
+        tap: function () { if (pick) { pick(a, x); return; } try { sessionStorage.setItem('potPick', JSON.stringify({ tag: x.tag || '', id: a.id, key: x.key || '' })); } catch (e) {} go('Main.dc.html'); } };
+    });
+    if (!v.ptChips.length) { v.ptChips = [{ t: a.who ? a.who + '에게 가 보기' : '카운터에서 확인', aria: '카운터로', st: CH + 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440', tap: function () { if (pick) { pick(null, null); } else { try { sessionStorage.setItem('potPick', JSON.stringify({ counter: 1 })); } catch (e) {} go('Main.dc.html'); } } }]; }
+    return v;
+  };
 })();
