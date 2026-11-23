@@ -1036,10 +1036,11 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
    </div>
   </div>
   <div style="position:absolute;left:0;top:0;width:390px;height:56px;background:linear-gradient(#3E2616,#5B3A24);border-bottom:3px solid #2B1A0F;z-index:30">
-    <div role="list" aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:5px;right:92px;height:44px;display:flex;gap:4px">
-      <sc-for list="{{qCards}}" as="qc" hint-placeholder-count="3">
-        <button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}"><span style="{{qc.dot}}"></span><span style="font-family:'Jua',sans-serif;font-size:13px;line-height:1.2;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qc.t}}</span><span style="font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{qc.subCol}}">{{qc.sub}}</span></button>
-      </sc-for>
+    <div aria-label="받은 의뢰 {{qcN}}" style="position:absolute;left:6px;top:4px;right:92px;height:48px;box-sizing:border-box;padding:2px 6px 3px;border-radius:9px;background:rgba(43,26,15,.55);border:2px solid #8A6440;display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0;height:18px"><span aria-hidden="true" style="flex:none;font-size:12px">📋</span><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:13.5px;line-height:18px;color:#FFF4DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{qT}}</span><span style="{{qDueSt}}">{{qDue}}</span></div>
+      <div role="list" aria-label="요구 기물" style="display:flex;gap:4px;min-width:0">
+        <sc-for list="{{qChips}}" as="qc" hint-placeholder-count="3"><button type="button" role="listitem" onClick="{{qc.tap}}" aria-label="{{qc.aria}}" style="{{qc.st}}">{{qc.t}}</button></sc-for>
+      </div>
     </div>
     <a href="Shop.dc.html" aria-label="골드 {{gold}} · 상점" style="position:absolute;right:6px;top:4px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><img src="_blob/ea2f92f9715f11442fcbe68ac6fe0508.webp" alt="" aria-hidden="true" style="position:absolute;left:1px;top:-1px;width:21px;height:21px;object-fit:contain">{{gold}}</a>
     <a href="Shop.dc.html" aria-label="옥 {{jade}}" style="position:absolute;right:6px;top:29px;width:80px;height:23px;box-sizing:border-box;padding:0 6px 0 24px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;display:flex;align-items:center;justify-content:flex-end;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#FFF4DE"><span aria-hidden="true" style="position:absolute;left:5px;top:1px;font-size:12px">💎</span>{{jade}}</a>
@@ -5644,6 +5645,30 @@ class Component extends DCLogic {
     return true;
   }
   lift() { var R = (this.stripEl || document.body).getBoundingClientRect(); return Math.round(76 * R.width / 390); } /* 끄는 물건을 손가락 위로 띄우는 높이 */
+  /* 위쪽 의뢰 칩 : 고른 요구 기물의 다음 작업으로 · 시유 화면이면 그 기물을 시유그릇에, 아니면 물레 목표로 */
+  curPanel() { for (var i = 0; i < 5; i++) { if (this.inView(i)) { return i; } } return -1; }
+  reqPick(q, r) {
+    var self = this, g = this.loadG(), W = this.ctls.Wheel, nm = (r.it && (r.it.name || r.it.shapeN)) || '기물', P = this.curPanel();
+    var have = (r.dl || 0) + (r.readyN || 0); if (have >= r.n) { this.say(nm + '은 다 준비됐어요' + (P === 0 ? '' : ' · 카운터에서 건네요')); return; }
+    if (r.it && r.it.mat) { this.say(nm + ' ' + r.n + '개를 모아 카운터에서 건네요'); return; }
+    if (!r.tag || !(r.it && r.it.prof)) { this.say(nm + ' · 카운터에서 의뢰 내용을 확인해요'); return; }
+    var formed = (g.glazeList || []).filter(function (x) { return x.goalSid === r.tag; })[0];
+    var glazed = (g.kilnList || []).filter(function (x) { return x.goalSid === r.tag; })[0];
+    if (W) { W.setState({ target: r.tag, sheet: '' }); }
+    if (P === 2 || (P !== 1 && formed)) {
+      if (formed) {
+        var G = this.ctls.Glaze;
+        if (G && G.state.sel === formed.id) { if (P !== 2) { this.goPanel(2); } this.say(nm + ' · 시유그릇에 있어요 · 유약에 담가요'); return; }
+        if (P !== 2) { this.goPanel(2); }
+        setTimeout(function () { if (self.putPiece(formed.id)) { self.say(nm + '을 시유그릇에 올렸어요 · ' + ((r.it.glaze && (self.qlib().GP || {})[r.it.glaze]) || '유약') + '에 담가요'); } self.bump(); }, P === 2 ? 0 : 650);
+        return;
+      }
+      if (glazed) { this.say(nm + '은 시유를 마쳤어요 · 가마에 넣어 구워요'); return; }
+      this.say(nm + '을 먼저 빚어요 · 물레 목표로 정했어요'); setTimeout(function () { self.goPanel(1); }, 500); return;
+    }
+    if (P !== 1) { this.goPanel(1); }
+    this.say('물레 목표 · ' + nm); this.bump();
+  }
   putPiece(id) {
     var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
     if (g.glzWait && (g.kilnList || []).some(function (x) { return x.id === g.glzWait; })) { this.say('시유그릇의 기물을 먼저 선반으로 옮기거나 한 번 더 담가요'); this.sfx('fail'); return false; }
@@ -5953,7 +5978,7 @@ class Component extends DCLogic {
     var GC = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#A8402E', sakura: '#E8B4C0', cheonmok: '#5A4030' };
     /* 레일 선반 2개 : 빚은 기물(물레 ↔ 유약) · 시유한 기물(유약 ↔ 가마) */
     var R = this.railPos(), CAP = this.KB().cap;
-    function shelf(list, st, x, title) {
+    function shelf(list, st, x, title, tot) { var LN = tot == null ? list.length : tot;
       var items = list.slice(0, CAP).map(function (it) {
         var qc = self.qColor(g, it), sn = (Q.shapeN ? Q.shapeN(it) : '') || '그릇';
         return { id: it.id, pot: self.potOf(it, self.fillOf(it, st === 'g' ? (it.recoat ? 'glazed' : 'dry') : 'glazed')),
@@ -5963,12 +5988,12 @@ class Component extends DCLogic {
           kp: it.kp >= 0.01 ? Math.round(it.kp * 100) + '%' : '', kpSt: it.kp >= 0.01 ? 'position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);padding:0 4px;border-radius:6px;background:#C0582E;font-family:Jua,sans-serif;font-size:11px;line-height:14px;color:#FFF' : 'display:none',
           st: 'position:relative;flex:0 0 42px;height:52px;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none' };
       });
-      return { items: items, n: list.length + '/' + CAP, title: title, full: list.length >= CAP,
+      return { items: items, n: LN + '/' + CAP, title: title, full: LN >= CAP,
         st: 'position:absolute;left:' + x + 'px;top:72px;width:180px;height:84px;z-index:9;pointer-events:none',
-        tagSt: 'position:absolute;left:0;right:0;top:66px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:16px;white-space:nowrap;color:' + (list.length >= CAP ? '#FFE27A' : '#FFF4DE') + ';' };
+        tagSt: 'position:absolute;left:0;right:0;top:66px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:16px;white-space:nowrap;color:' + (LN >= CAP ? '#FFE27A' : '#FFF4DE') + ';' };
     }
     var onWid0 = g.onWheel || '', onSid0 = g.onSlab || '';
-    v.rf = shelf((g.glazeList || []).filter(function (x) { return x.id !== onWid0 && x.id !== onSid0; }), 'g', R.f, '빚은 기물'); v.rf.dz = 'shelf'; var gw = g.glzWait || '', gwIt = gw ? (g.kilnList || []).filter(function (x) { return x.id === gw; })[0] : null;
+    var gSel0 = (this.ctls.Glaze && this.ctls.Glaze.state.sel) || ''; v.rf = shelf((g.glazeList || []).filter(function (x) { return x.id !== onWid0 && x.id !== onSid0 && x.id !== gSel0; }), /* 시유그릇에 올린 기물은 선반에서 뺀다 */ 'g', R.f, '빚은 기물', (g.glazeList || []).filter(function (x) { return x.id !== onWid0 && x.id !== onSid0; }).length); v.rf.dz = 'shelf'; var gw = g.glzWait || '', gwIt = gw ? (g.kilnList || []).filter(function (x) { return x.id === gw; })[0] : null;
     if (gw && !gwIt) { setTimeout(function () { self.setG2({ glzWait: '' }); }, 0); }
     v.rg = shelf((g.kilnList || []).filter(function (x) { return x.id !== gw; }), 'k', R.g, '시유한 기물'); v.rg.dz = 'gshelf';
     if (window.__glzWait !== !!gwIt) { window.__glzWait = !!gwIt; var Gz = this.ctls.Glaze; if (Gz) { Gz.dirty = true; } }
@@ -6148,22 +6173,31 @@ class Component extends DCLogic {
     /* 화면 안에 들어온 설비에는 오른쪽 위 배지 */
     var bn = [cDel || (cOffer ? '!' : ''), '', '', doneN || '', ''];
     bn.forEach(function (n, i) { v['pbn' + i] = n; v['pb' + i] = n ? 'position:absolute;left:' + (self.slotOf(i) * 390 + 354) + 'px;top:6px;z-index:8;min-width:24px;height:24px;box-sizing:border-box;padding:0 6px;border-radius:12px;background:#D0452B;border:2px solid #FFF4DE;font-family:Jua,sans-serif;font-size:13px;line-height:20px;text-align:center;color:#FFF;pointer-events:none;animation:bob 1.4s ease-in-out infinite' : 'display:none'; });
-    /* 위쪽 : 받은 의뢰 요약 (최대 3개) */
+    /* 위쪽 : 지금 받은 의뢰 (한 번에 하나) · 이름 + 요구 기물 칩 · 칩을 누르면 그 기물 작업으로 */
     var A2 = {}; try { A2 = Q.alloc(g, act); } catch (e) {}
-    var COL = ['#C0582E', '#3E6B8A', '#7A3E8E'], KEYS = { main: 'mq', dok: 'dq', season: 'sq' };
-    v.qcN = act.length + '/3';
-    v.qCards = act.slice(0, 3).map(function (a, i) {
+    var KEYS = { main: 'mq', dok: 'dq', season: 'sq' }, a = act[0];
+    v.qcN = act.length ? '1건' : '없음';
+    if (a) {
       var r = A2[a.id] || {}, at = a.at || ((g[KEYS[a.id]] || {}).at), its = a.items || (a.def && a.def.items) || [];
       if (!its.length) { var ls = {}; try { ls = Q.lineState(g, a.id); } catch (e) {} its = (ls.def && ls.def.items) || []; }
-      var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + self.durOf(its) : 0), left = due ? due - now : 0; /* 기한은 이야기 의뢰(메인·도깨비·시즌)와 일반 의뢰에만 */
-      var rwT = (a.reward && (a.reward.gold ? a.reward.gold.toLocaleString() + 'G' : a.reward.text)) || '', rows = (r.items || []).map(function (x) { return (x.it && (x.it.name || x.it.shapeN) || '') + ' ' + (x.dl + x.readyN) + '/' + x.n; }).join(' · ');
-      var sub = (r.need ? '준비 ' + (r.ready || 0) + '/' + r.need : '') + (due ? (r.need ? ' · ' : '') + (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '');
-      return { t: a.title || a.who || '의뢰', sub: sub || (a.who || ''), subCol: due && left <= 0 ? '#A3442C' : (due && left < 600000 ? '#C0582E' : '#5B3A24'),
-        aria: (a.title || '') + ' · ' + sub, tap: function () { self.say((a.title || a.who || '의뢰') + (rows ? ' · ' + rows : '') + (rwT ? ' · 보상 ' + rwT : '') + (due && left > 0 ? ' · 기한 안이면 보상 2배' : '')); },
-        dot: 'position:absolute;left:5px;top:17px;width:8px;height:8px;border-radius:50%;background:' + COL[i % 3],
-        st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;min-width:0;box-sizing:border-box;padding:1px 5px 1px 14px;border-radius:8px;background:#FFF4DE;border:2px solid ' + COL[i % 3] + ';display:flex;flex-direction:column;justify-content:center;overflow:hidden' };
-    });
-    if (!v.qCards.length) { v.qCards = [{ t: '받은 의뢰가 없어요', sub: '카운터에서 손님을 맞아요', subCol: '#8A6440', aria: '받은 의뢰 없음', tap: function () { self.goPanel(0); }, dot: 'display:none', st: 'all:unset;cursor:pointer;position:relative;flex:1 1 0;box-sizing:border-box;padding:1px 8px;border-radius:8px;background:rgba(255,244,222,.85);border:2px dashed #8A6440;display:flex;flex-direction:column;justify-content:center' }]; }
+      var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + self.durOf(its) : 0), left = due ? due - now : 0;
+      v.qT = a.title || a.who || '의뢰';
+      v.qDue = due ? (left > 0 ? self.fmtDur(left) + ' 남음' : '기한 지남') : '';
+      v.qDueSt = 'flex:none;font-size:10.5px;font-weight:700;color:' + (due && left <= 0 ? '#FFB49A' : (due && left < 600000 ? '#FFD08A' : '#E8D3B5'));
+      var selT = (this.ctls.Wheel && this.ctls.Wheel.state.target) || '';
+      v.qChips = (r.items || []).slice(0, 3).map(function (x, k) {
+        var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === selT;
+        var nm = (x.it && (x.it.name || x.it.shapeN)) || '기물';
+        return { t: (done ? '✓ ' : '') + nm + ' ' + have + '/' + x.n, aria: '요구 기물 ' + (k + 1) + ' · ' + nm + ' ' + have + '/' + x.n + (done ? ' · 완료' : ' · 눌러서 작업'),
+          tap: function () { self.reqPick(a, x); },
+          st: 'all:unset;cursor:pointer;flex:1 1 0;min-width:0;box-sizing:border-box;height:20px;padding:0 5px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;'
+            + (done ? 'background:#2F6328;color:#FFFDF5;border:2px solid #2F6328' : (on ? 'background:#FFE7A8;color:#2B1A0F;border:2px solid #E3B23C' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440')) };
+      });
+      if (!v.qChips.length) { v.qChips = [{ t: a.who ? a.who + '에게 가 보기' : '카운터에서 확인', aria: '카운터로', tap: function () { self.goPanel(0); }, st: 'all:unset;cursor:pointer;flex:1 1 0;height:20px;padding:0 6px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440;text-align:center' }]; }
+    } else {
+      v.qT = '받은 의뢰가 없어요'; v.qDue = ''; v.qDueSt = 'display:none';
+      v.qChips = [{ t: '카운터에서 손님 맞기', aria: '카운터로', tap: function () { self.goPanel(0); }, st: 'all:unset;cursor:pointer;flex:1 1 0;height:20px;padding:0 6px;border-radius:7px;font-size:10.5px;font-weight:700;line-height:16px;background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440;text-align:center' }];
+    }
     return v;
   }
   loadG() {
