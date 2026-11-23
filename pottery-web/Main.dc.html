@@ -464,7 +464,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <style>@keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translate(9px,-520px) scale(.55) rotateX(66deg)}38%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}45%{transform:perspective(760px) translate(9px,109px) scale(.55,.5) rotateX(66deg)}55%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:none}}@keyframes eqSlabOut{0%{transform:none}45%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:perspective(760px) translate(9px,-560px) scale(.55) rotateX(66deg)}}[data-eq="up"] [data-wheelstage]{animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both}[data-eq="drop"] [data-wheelstage]{animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
       <sc-if value="{{slabOn}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);{{sbBg}}"></div>
-      <div style="{{sbWrap}}">
+      <style>[data-sbwrap] > *{pointer-events:auto}[data-sbwrap] > svg{pointer-events:none}</style>
+      <div data-sbwrap="1" style="{{sbWrap}}">
         <div data-dz="slab" role="application" aria-label="판 성형대 · {{sb.hint}}" onPointerDown="{{sb.down}}" style="position:absolute;left:30px;top:118px;width:330px;height:360px;z-index:21;touch-action:none;cursor:crosshair;border-radius:18px;background:#B98A5C;border:4px solid #7A5434;box-shadow:inset 0 0 0 6px rgba(255,244,222,.18),0 5px 0 #5B3A24"></div>
         <svg aria-hidden="true" width="390" height="552" viewBox="0 0 390 552" style="position:absolute;left:0;top:0;z-index:22;pointer-events:none">
           <sc-if value="{{sb.sheet}}" hint-placeholder-val="{{true}}">
@@ -6246,7 +6247,7 @@ class Component extends DCLogic {
     v.eqSt = eqA ? (SON ? 'up' : 'drop') : '';
     v.eqTable = '';
     v.wheelWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (SON ? (eqA ? 'animation:eqFadeOut .22s .12s both;' : 'visibility:hidden;') : (eqA ? 'animation:eqFadeIn .2s .5s both;' : ''));
-    v.sbWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;z-index:20;transform-origin:195px 298px;' + (eqA ? (SON ? 'animation:eqSlabIn 1s .24s ease-out both;' : 'animation:eqSlabOut .6s ease-in both;') : '');
+    v.sbWrap = 'position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;pointer-events:none;transform-origin:195px 298px;' + (eqA ? (SON ? 'animation:eqSlabIn 1s .24s ease-out both;' : 'animation:eqSlabOut .6s ease-in both;') : '');
     v.sbBg = 'display:none;';
     var miniW = !wEmpty, ST = SL ? SL.stage : '', miniTxt = SON ? '물레' + (miniW ? ' · 빚는 중' : '') : '판 성형대' + (oSit ? ' · 완성' : ({ sheet: ' · 오리기', base: ' · 바닥', wall: ' · 벽', side: ' · 다듬기' }[ST] || ''));
     v.mini = { dz: 'off', txt: '⇄ ' + (SON ? '물레로' : '판 성형대로'), aria: '설비 변경 · ' + (SON ? '물레로 바꾸기' : '판 성형대로 바꾸기') + (miniTxt.indexOf('·') > 0 ? ' · 지금 ' + miniTxt : ''), tap: function () { self.slabTap(); },
