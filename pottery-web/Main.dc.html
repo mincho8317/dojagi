@@ -488,7 +488,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <sc-if value="{{sb.bandOn}}" hint-placeholder-val="{{false}}">
             <rect x="40" y="{{sb.bandY}}" width="310" height="28" rx="14" fill="{{sb.bandSt}}" stroke="rgba(255,226,122,.7)" stroke-width="1.5" stroke-dasharray="5 4" style="{{sb.bandAnim}}"></rect>
           </sc-if>
-          <path d="{{sb.tgD}}" fill="none" stroke="rgba(255,248,232,.95)" stroke-width="2.5" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.7))"></path>
+          <path d="{{sb.tgD}}" fill="none" stroke="{{sb.tgC}}" stroke-width="{{sb.tgW}}" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.7))"></path>
           <path d="{{sb.edgeD}}" fill="none" stroke="rgba(255,226,122,.85)" stroke-width="4" stroke-dasharray="3 6" stroke-linecap="round"></path>
           <sc-for list="{{sb.hands}}" as="hd" hint-placeholder-count="0"><g transform="{{hd.tr}}"><circle r="12" fill="{{hd.fill}}" stroke="{{hd.ring}}" stroke-width="2.5"></circle><path d="M-8 0 l5 -5 v10 z M8 0 l-5 -5 v10 z" fill="{{hd.ring}}"></path></g></sc-for>
           <sc-if value="{{sb.gh}}" hint-placeholder-val="{{false}}">
@@ -501,7 +501,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <g transform="translate({{sb.gwR}} {{sb.gwY}})"><path d="M14 0 l-7 -6 v12 z" fill="{{sb.gwSt}}"></path></g>
             <circle cx="{{sb.gwX}}" cy="{{sb.gwY}}" r="9" fill="rgba(43,26,15,.6)" stroke="{{sb.gwSt}}" stroke-width="2.5"></circle>
           </sc-if>
-          <path d="{{sb.knD}}" fill="none" stroke="#FFF4DE" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 5" style="filter:drop-shadow(0 0 3px rgba(43,26,15,.9))"></path>
+          <path d="{{sb.knD}}" fill="none" stroke="{{sb.knC}}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 5" style="filter:drop-shadow(0 0 3px rgba(43,26,15,.9))"></path>
         </svg>
         <sc-if value="{{sb.side}}" hint-placeholder-val="{{false}}">
           <span aria-hidden="true" style="position:absolute;left:292px;top:134px;z-index:23;width:72px;text-align:center;font-family:'Jua',sans-serif;font-size:10px;color:#2B1A0F">위에서 · ▼ 보는 쪽</span>
@@ -6053,9 +6053,13 @@ class Component extends DCLogic {
     var mv, up; this.dragging = true;
     if (tool === 'knife') {
       if (sl.stage !== 'sheet') { sl = { clay: sl.clay, stage: 'sheet' }; }
-      var raw = [[p0.x, p0.y]]; this.slabKnife = raw;
-      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev); q.x = Math.max(G.cx - G.sw / 2 + 4, Math.min(G.cx + G.sw / 2 - 4, q.x)); q.y = Math.max(G.cy - G.sh / 2 + 4, Math.min(G.cy + G.sh / 2 - 4, q.y)); var l = raw[raw.length - 1]; if (Math.hypot(q.x - l[0], q.y - l[1]) > 3) { raw.push([q.x, q.y]); self.bump(); } };
-      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabKnife = null;
+      /* 마그네틱 : 목표 점선 가까이(18px)로 칼이 지나가면 점선 쪽으로 끌려가고, 7px 안이면 딱 붙는다 */
+      var TGL = this.slabTgPoly(this.slabTg(g)).map(function (p) { return [p[0] + G.cx, p[1] + G.cy]; }), MR = 18, MS = 7;
+      function mag(q) { var bd = 1e9, bx = q.x, by = q.y; for (var i = 0; i < TGL.length; i++) { var a = TGL[i], b = TGL[(i + 1) % TGL.length], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey || 1, t = Math.max(0, Math.min(1, ((q.x - a[0]) * ex + (q.y - a[1]) * ey) / L2)), cx = a[0] + ex * t, cy = a[1] + ey * t, d = Math.hypot(q.x - cx, q.y - cy); if (d < bd) { bd = d; bx = cx; by = cy; } }
+        if (bd >= MR) { self.slabSnap = false; return q; } var k = bd <= MS ? 1 : 1 - (bd - MS) / (MR - MS); k = k * k * (3 - 2 * k); if (!self.slabSnap && k >= 1) { try { window.__buzz && window.__buzz(4); } catch (eb) {} } self.slabSnap = k >= 1; return { x: q.x + (bx - q.x) * k, y: q.y + (by - q.y) * k }; }
+      var q00 = mag(p0), raw = [[q00.x, q00.y]]; this.slabKnife = raw;
+      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = mag(self.slabPt(ev)); q.x = Math.max(G.cx - G.sw / 2 + 4, Math.min(G.cx + G.sw / 2 - 4, q.x)); q.y = Math.max(G.cy - G.sh / 2 + 4, Math.min(G.cy + G.sh / 2 - 4, q.y)); var l = raw[raw.length - 1]; if (Math.hypot(q.x - l[0], q.y - l[1]) > 3) { raw.push([q.x, q.y]); self.bump(); } };
+      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabKnife = null; self.slabSnap = false;
         var a = raw[0], b = raw[raw.length - 1], closed = raw.length > 12 && Math.hypot(a[0] - b[0], a[1] - b[1]) < 38;
         if (!closed) { self.say('선을 처음 자리까지 이어 닫아야 잘려요'); self.sfx('fail'); self.bump(); return; }
         var P = self.slabPoly(raw);
@@ -6345,7 +6349,7 @@ class Component extends DCLogic {
       hint: HINT,
       down: function (e) { self.slabDown(e); },
       pot: oSit ? this.potOf(oSit, this.fillOf(oSit, 'dry')) : EMPTY, pDown: function (e) { if (!oSit) { return; } var el = e.currentTarget.querySelector('svg'); var bx = e.currentTarget.getBoundingClientRect(), RR = (self.stripEl || document.body).getBoundingClientRect(), kk = RR.width / 390 || 1; self.carryStart(e, 'piece', { id: oSit.id }, el ? el.outerHTML.replace(/width="[0-9.]+" height="[0-9.]+"/, 'width="100%" height="100%"') : '', bx.width / kk, bx.height / kk, function () { self.say(oSit.slabName + '을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? oSit.id : ''; self.bump(); } }); },
-      tgD: tgD,
+      tgD: tgD, knC: this.slabSnap ? '#FFE27A' : '#FFF4DE', tgC: this.slabSnap ? 'rgba(255,226,122,1)' : 'rgba(255,248,232,.95)', tgW: this.slabSnap ? '3.5' : '2.5',
       pHid: oSit && this.carryId === oSit.id ? 'visibility:hidden' : '' };
     var SA = this.swapAsk; v.sw = { on: !!SA, txt: SA ? (SA.to === 'slab' ? '밀던 판이 사라져요' : '빚던 모양이 사라져요') + ' · ' + SA.c.n + ' 흙으로 바꿀까요?' : '', yes: function () { self.swapYes(); }, no: function () { self.swapNo(); } };
     /* ── 붓 무늬 ── */
