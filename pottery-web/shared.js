@@ -2552,16 +2552,21 @@
         /* 판 기물 : 바닥 외곽선을 높이마다 폭 배율로 키우며 쌓는다 (안쪽 벽은 한 겹 안으로) */
         var PL = p.poly.slice(), sA = 0; PL.forEach(function (q, i) { var w = PL[(i + 1) % PL.length]; sA += q[0] * w[1] - w[0] * q[1]; }); if (sA > 0) { PL.reverse(); } /* 물레 모양과 같은 감기 방향으로 */ var NP = PL.length, scA = p.sc, ns = scA.length, Rm = 0; PL.forEach(function (q) { Rm = Math.max(Rm, Math.hypot(q[0], q[1])); });
         var sAt = function (u) { var f = u * (ns - 1), j0 = Math.min(ns - 2, Math.floor(f)), t = f - j0, a = scA[Math.max(0, j0 - 1)], b = scA[j0], c = scA[j0 + 1], d = scA[Math.min(ns - 1, j0 + 2)]; return Math.max(0.2, 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t)); };
-        var ki = Math.max(0.55, 1 - wall / Math.max(20, Rm)), LR = Math.max(6, Math.min(RINGS, Math.round(H / 4)));
-        var at = function (k, s, y, inn) { var q = PL[(k + NP) % NP], m = s * (inn ? ki : 1); return [q[0] * m, y, q[1] * m]; };
-        var band = function (s0, y0, s1, y1, inn) { for (var k = 0; k < NP; k++) { var a = at(k, s0, y0, inn), b = at(k + 1, s0, y0, inn), c = at(k + 1, s1, y1, inn), d = at(k, s1, y1, inn); if (inn) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } };
-        for (var jl = 0; jl < LR; jl++) { var ua = jl / LR, ub = (jl + 1) / LR; band(sAt(ua), H * ua, sAt(ub), H * ub, false); }
-        var sTop = sAt(1); for (var kr = 0; kr < NP; kr++) { var o0 = at(kr, sTop, H, false), o1 = at(kr + 1, sTop, H, false), i1 = at(kr + 1, sTop, H, true), i0 = at(kr, sTop, H, true); tri(o0, o1, i1); tri(o0, i1, i0); }
-        IN = true; var fy = Math.min(floorY, H * 0.5);
-        for (var jm = LR; jm > 0; jm--) { var uc = jm / LR, ud = (jm - 1) / LR, yc = H * uc, yd = Math.max(fy, H * ud); if (yc <= fy) { break; } band(sAt(uc), yc, sAt(Math.max(ud, fy / H)), yd, true); }
-        var sF = sAt(fy / H), cin = PL.map(function (q) { return new T.Vector2(q[0] * sF * ki, q[1] * sF * ki); }), trF = T.ShapeUtils.triangulateShape(cin, []);
+        /* 기둥마다 : 바닥판(두께 T) → 테두리 높이(e) → 벽(Hw · 높이별 폭 sc) */
+        var EE = p.e ? (sA > 0 ? p.e.slice().reverse() : p.e.slice()) : null, TT = EE ? 7 : 0, Hw = p.Hw != null ? p.Hw : (p.wall === false ? 0 : H - TT);
+        if (!EE) { EE = []; for (var ez = 0; ez < NP; ez++) { EE.push(0); } }
+        var ki = Math.max(0.55, 1 - wall / Math.max(20, Rm)), LR = Hw > 0 ? Math.max(6, Math.min(RINGS, Math.round(Hw / 4))) : 0;
+        var lv = [{ y: function () { return 0; }, s: 1 }, { y: function (k) { return TT + (EE[(k + NP) % NP] || 0); }, s: 1 }];
+        for (var lw = 1; lw <= LR; lw++) { (function (v) { lv.push({ y: function (k) { return TT + (EE[(k + NP) % NP] || 0) + Hw * v; }, s: sAt(v) }); })(lw / LR); }
+        var at = function (k, L, inn) { var q = PL[(k + NP) % NP], m = L.s * (inn ? ki : 1); return [q[0] * m, Math.max(inn ? Math.min(TT, 2) : 0, L.y(k)), q[1] * m]; };
+        var band2 = function (La, Lb, inn) { for (var k = 0; k < NP; k++) { var a = at(k, La, inn), b = at(k + 1, La, inn), c = at(k + 1, Lb, inn), d = at(k, Lb, inn); if (inn) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } };
+        for (var li = 0; li < lv.length - 1; li++) { band2(lv[li], lv[li + 1], false); }
+        var LT = lv[lv.length - 1]; for (var kr = 0; kr < NP; kr++) { var o0 = at(kr, LT, false), o1 = at(kr + 1, LT, false), i1 = at(kr + 1, LT, true), i0 = at(kr, LT, true); tri(o0, o1, i1); tri(o0, i1, i0); }
+        IN = true; var fy = Math.max(TT, 2), FL = { y: function () { return fy; }, s: 1 };
+        for (var lj = lv.length - 1; lj >= 2; lj--) { band2(lv[lj], lv[lj - 1], true); } band2(lv[1], FL, true);
+        var cin = PL.map(function (q) { return new T.Vector2(q[0] * ki, q[1] * ki); }), trF = T.ShapeUtils.triangulateShape(cin, []);
         trF.forEach(function (f) { var A = cin[f[0]], B = cin[f[1]], C = cin[f[2]]; tri([A.x, fy, A.y], [C.x, fy, C.y], [B.x, fy, B.y]); });
-        IN = false; var s0b = sAt(0), cb = PL.map(function (q) { return new T.Vector2(q[0] * s0b, q[1] * s0b); }), trB = T.ShapeUtils.triangulateShape(cb, []);
+        IN = false; var s0b = 1, cb = PL.map(function (q) { return new T.Vector2(q[0], q[1]); }), trB = T.ShapeUtils.triangulateShape(cb, []);
         trB.forEach(function (f) { var A = cb[f[0]], B = cb[f[1]], C = cb[f[2]]; tri([A.x, 0, A.y], [B.x, 0, B.y], [C.x, 0, C.y]); });
         rB = Rm * s0b * 0.9; M = Math.max(M, Rm * 1.2);
       } else {
