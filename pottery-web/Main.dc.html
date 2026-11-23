@@ -203,7 +203,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="1" style="{{pst1}}">
       <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
+<div data-wheelwrap="1" style="{{wheelWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Wheel" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -416,7 +416,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </sc-if>
   </div>
-
+</div>
       <sc-if value="{{tgShut}}" hint-placeholder-val="{{true}}">
         <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:118px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></button>
       </sc-if>
@@ -460,7 +460,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="3"><div role="button" aria-label="{{lp.aria}}" onPointerDown="{{lp.down}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:52px;height:46px;object-fit:contain;pointer-events:none"></div><span style="{{lp.tagSt}}">{{lp.tag}}</span></sc-for>
       </div>
       <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
+      <style>@keyframes eqSink{from{transform:none;opacity:1}to{transform:translateY(90px);opacity:0}}@keyframes eqRise{from{transform:translateY(110px);opacity:0}to{transform:none;opacity:1}}</style>
       <sc-if value="{{slabOn}}" hint-placeholder-val="{{false}}">
+      <div style="{{sbWrap}}">
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);"></div>
         <div data-dz="slab" role="application" aria-label="판 성형대 · {{sb.hint}}" onPointerDown="{{sb.down}}" style="position:absolute;left:30px;top:118px;width:330px;height:360px;z-index:21;touch-action:none;cursor:crosshair;border-radius:18px;background:#B98A5C;border:4px solid #7A5434;box-shadow:inset 0 0 0 6px rgba(255,244,222,.18),0 5px 0 #5B3A24"></div>
         <svg aria-hidden="true" width="390" height="552" viewBox="0 0 390 552" style="position:absolute;left:0;top:0;z-index:22;pointer-events:none">
@@ -515,9 +517,10 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <button type="button" onClick="{{sb.fin}}" aria-label="다 만들었어요" style="{{sb.finSt}}">✓ 완성</button>
           </div>
         </sc-if>
+      </div>
       </sc-if>
       <sc-if value="{{facSlab}}" hint-placeholder-val="{{true}}">
-      <div data-dz="{{mini.dz}}" role="button" aria-label="{{mini.aria}}" onClick="{{mini.tap}}" style="{{mini.st}}">
+      <div role="button" tabindex="0" aria-label="{{mini.aria}}" onClick="{{mini.tap}}" style="{{mini.st}}">
         <svg width="56" height="47" viewBox="0 0 64 54" aria-hidden="true">
           <sc-if value="{{mini.slabOn}}" hint-placeholder-val="{{true}}"><rect x="4" y="8" width="56" height="40" rx="8" fill="#B98A5C" stroke="#7A5434" stroke-width="2.5"></rect><rect x="{{mini.slabX}}" y="18" width="{{mini.slabW}}" height="20" rx="5" fill="{{mini.slabC}}" stroke="#5B3A24" stroke-width="1.5" style="{{mini.slabR}}"></rect><rect x="10" y="41" width="44" height="5" rx="2.5" fill="#E2C08F" stroke="#5B3A24" stroke-width="1.2"></rect></sc-if>
           <sc-if value="{{mini.wheelOn}}" hint-placeholder-val="{{false}}"><ellipse cx="32" cy="42" rx="26" ry="8" fill="#9C8F7E" stroke="#4A3E33" stroke-width="2"></ellipse><ellipse cx="32" cy="39" rx="22" ry="6" fill="#C9BBA6" stroke="#4A3E33" stroke-width="1.5"></ellipse><rect x="22" y="14" width="20" height="25" rx="4" fill="#C9A27A" stroke="#5B3A24" stroke-width="1.5" style="{{mini.potOn}}"></rect></sc-if>
@@ -5989,7 +5992,7 @@ class Component extends DCLogic {
   /* ── 판 성형 : 칼로 바닥판을 오린다 (판은 그 자리 · 그 크기로 고정) → 손가락으로 판 테두리 높낮이 (옆에서 · 4방향) · 벽을 세우면 물레처럼 높이 · 폭 가이드 (정면)
      g.slab = { clay, stage: 'sheet' | 'cut', poly: [[x, y]] (바닥 · 중심 기준), ox, oy (오린 자리), q, e: [48] (테두리 높이), wall: bool, H, sc: [8] (벽 높이별 폭 배율) } */
   SG() { return { cx: 195, cy: 290, sw: 260, sh: 240, bot: 420, T: 7, N: 8, PN: 48 }; }
-  slabSet(on) { this.slabOn = !!on; this.cutMode = false; this.slabTool = ''; this.setG2({ slabOn: !!on }); this.sfx('tap'); this.bump(); }
+  slabSet(on) { var self = this; if (!!on !== !!this.slabOn) { this.eqT = Date.now(); clearTimeout(this.eqTm); this.eqTm = setTimeout(function () { self.bump(); }, 560); } this.slabOn = !!on; this.cutMode = false; this.slabTool = ''; this.setG2({ slabOn: !!on }); this.sfx(on !== undefined ? 'thud' : 'tap'); try { window.__buzz && window.__buzz(12); } catch (e) {} this.bump(); }
   slabTap() { if (this.dragging) { return; } if (!this.slabOn && !(this.loadG().fac || {}).slab) { this.say('판 성형대는 상점 「설비」에서 설치해요'); return; } this.slabSet(!this.slabOn); }
   putSlab(c) { if (!(this.loadG().fac || {}).slab) { this.say('판 성형대는 상점 「설비」에서 설치해요'); return false; }
     var g = this.loadG(), sl = g.slab || null;
@@ -6223,9 +6226,13 @@ class Component extends DCLogic {
     var SON = !!this.slabOn, SL = g.slab || null, SG = this.SG(), oSid = g.onSlab || '', oSit = oSid ? (g.glazeList || []).filter(function (x) { return x.id === oSid; })[0] : null;
     if (oSid && !oSit) { setTimeout(function () { self.setG2({ onSlab: '' }); }, 0); }
     var CLC = '#C9A27A'; try { (Wc.claysDef() || []).forEach(function (c) { if (SL && c.id === SL.clay) { CLC = c.c; } }); } catch (eC) {}
-    v.slabOn = SON; v.wheelDz = SON ? 'off' : 'wheel';
+    /* 설비 변경 : 지금 설비가 아래로 내려가고 다른 설비가 올라온다 */
+    var eqA = this.eqT && now - this.eqT < 520, eqOff = eqA && !SON;
+    v.slabOn = SON || eqOff; v.wheelDz = SON ? 'off' : 'wheel';
+    v.wheelWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (SON ? (eqA ? 'animation:eqSink .24s ease-in both;' : 'visibility:hidden;') : (eqA ? 'animation:eqRise .3s .2s ease-out both;' : ''));
+    v.sbWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;z-index:20;' + (eqA ? (SON ? 'animation:eqRise .3s .2s ease-out both;' : 'animation:eqSink .24s ease-in both;') : '');
     var miniW = !wEmpty, ST = SL ? SL.stage : '', miniTxt = SON ? '물레' + (miniW ? ' · 빚는 중' : '') : '판 성형대' + (oSit ? ' · 완성' : ({ sheet: ' · 오리기', base: ' · 바닥', wall: ' · 벽', side: ' · 다듬기' }[ST] || ''));
-    v.mini = { dz: SON ? 'wheel' : 'slab', txt: miniTxt, aria: (SON ? '물레로 바꾸기' : '판 성형대 · 흙을 여기 놓으면 판 성형') + ' · 흙을 끌어 놓아도 돼요', tap: function () { self.slabTap(); },
+    v.mini = { dz: 'off', txt: '⇄ ' + (SON ? '물레로' : '판 성형대로'), aria: '설비 변경 · ' + (SON ? '물레로 바꾸기' : '판 성형대로 바꾸기') + (miniTxt.indexOf('·') > 0 ? ' · 지금 ' + miniTxt : ''), tap: function () { self.slabTap(); },
       slabOn: !SON, wheelOn: SON, slabR: SL ? 'display:block' : 'display:none', slabC: CLC, slabW: '24', slabX: '20', potOn: miniW ? 'display:block' : 'display:none',
       st: 'position:absolute;left:4px;top:128px;width:66px;height:74px;z-index:22;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box;' + (this.cutMode ? 'display:none;' : '') };
     /* 판 성형대 그림 : 펼친 판(오리기) · 오린 바닥판(그 자리 고정) · 옆모습(손가락 · 4방향) · 정면(벽 · 가이드) */
