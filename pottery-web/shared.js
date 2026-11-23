@@ -2542,18 +2542,37 @@
       function texOf(fill, cb) { var cnv = document.createElement('canvas'); cnv.width = cnv.height = 512; var c2 = cnv.getContext('2d'); c2.fillStyle = /^#|^rgb/.test(fill) ? fill : glz; c2.fillRect(0, 0, 512, 512); var tx = new T.CanvasTexture(cnv); if (!/^url/.test(fill)) { cb(tx); return; } var im = new Image(); im.onload = function () { c2.drawImage(im, 0, 0, 512, 512); tx.needsUpdate = true; cb(tx); }; im.onerror = function () { cb(tx); }; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgOf(fill)); }
       /* 모양 : 바깥 벽 · 입구 테 · 안쪽 벽 · 안쪽 바닥 · 굽 바닥 (정면 그림 좌표로 입힌다 · 앞 = 붓 무늬 있음, 뒤 = 없음) */
       var RINGS = 44, SEG = 72, wall = Math.max(3, M * 0.07), floorY = Math.max(4, H * 0.07);
-      var posF = [], uvF = [], posB = [], uvB = [];
+      var posF = [], uvF = [], posB = [], uvB = [], posI = [], uvI = [];
       function uv(x, y) { return [(x - VX) / VW, 1 - ((-y) - VY) / VH]; }
-      var IN = false; function tri(a, b, c) { var z = (a[2] + b[2] + c[2]) / 3, fr = z >= 0 && !IN, P = fr ? posF : posB, U = fr ? uvF : uvB; /* 붓 무늬는 바깥 앞면에만 */ [a, b, c].forEach(function (q) { P.push(q[0], q[1], q[2]); var w = uv(q[0], q[1]); U.push(w[0], w[1]); }); }
+      var IN = false; function tri(a, b, c) { var z = (a[2] + b[2] + c[2]) / 3, fr = z >= 0 && !IN, P = IN ? posI : (fr ? posF : posB), U = IN ? uvI : (fr ? uvF : uvB); /* 안쪽은 따로 · 조금 어둡게 */ /* 붓 무늬는 바깥 앞면에만 */ [a, b, c].forEach(function (q) { P.push(q[0], q[1], q[2]); var w = uv(q[0], q[1]); U.push(w[0], w[1]); }); }
       function ring(rr, y, k) { var a = k / SEG * Math.PI * 2; return [rr * Math.sin(a), y, rr * Math.cos(a)]; }
       function strip(rf0, y0, rf1, y1, inward) { for (var k = 0; k < SEG; k++) { var a = ring(rf0, y0, k), b = ring(rf0, y0, k + 1), c = ring(rf1, y1, k + 1), d = ring(rf1, y1, k); if (inward) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } }
+      var rB = rad(0);
+      if (p.poly && p.poly.length > 5 && p.sc && p.sc.length > 2) {
+        /* 판 기물 : 바닥 외곽선을 높이마다 폭 배율로 키우며 쌓는다 (안쪽 벽은 한 겹 안으로) */
+        var PL = p.poly.slice(), sA = 0; PL.forEach(function (q, i) { var w = PL[(i + 1) % PL.length]; sA += q[0] * w[1] - w[0] * q[1]; }); if (sA > 0) { PL.reverse(); } /* 물레 모양과 같은 감기 방향으로 */ var NP = PL.length, scA = p.sc, ns = scA.length, Rm = 0; PL.forEach(function (q) { Rm = Math.max(Rm, Math.hypot(q[0], q[1])); });
+        var sAt = function (u) { var f = u * (ns - 1), j0 = Math.min(ns - 2, Math.floor(f)), t = f - j0, a = scA[Math.max(0, j0 - 1)], b = scA[j0], c = scA[j0 + 1], d = scA[Math.min(ns - 1, j0 + 2)]; return Math.max(0.2, 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t)); };
+        var ki = Math.max(0.55, 1 - wall / Math.max(20, Rm)), LR = Math.max(6, Math.min(RINGS, Math.round(H / 4)));
+        var at = function (k, s, y, inn) { var q = PL[(k + NP) % NP], m = s * (inn ? ki : 1); return [q[0] * m, y, q[1] * m]; };
+        var band = function (s0, y0, s1, y1, inn) { for (var k = 0; k < NP; k++) { var a = at(k, s0, y0, inn), b = at(k + 1, s0, y0, inn), c = at(k + 1, s1, y1, inn), d = at(k, s1, y1, inn); if (inn) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } };
+        for (var jl = 0; jl < LR; jl++) { var ua = jl / LR, ub = (jl + 1) / LR; band(sAt(ua), H * ua, sAt(ub), H * ub, false); }
+        var sTop = sAt(1); for (var kr = 0; kr < NP; kr++) { var o0 = at(kr, sTop, H, false), o1 = at(kr + 1, sTop, H, false), i1 = at(kr + 1, sTop, H, true), i0 = at(kr, sTop, H, true); tri(o0, o1, i1); tri(o0, i1, i0); }
+        IN = true; var fy = Math.min(floorY, H * 0.5);
+        for (var jm = LR; jm > 0; jm--) { var uc = jm / LR, ud = (jm - 1) / LR, yc = H * uc, yd = Math.max(fy, H * ud); if (yc <= fy) { break; } band(sAt(uc), yc, sAt(Math.max(ud, fy / H)), yd, true); }
+        var sF = sAt(fy / H), cin = PL.map(function (q) { return new T.Vector2(q[0] * sF * ki, q[1] * sF * ki); }), trF = T.ShapeUtils.triangulateShape(cin, []);
+        trF.forEach(function (f) { var A = cin[f[0]], B = cin[f[1]], C = cin[f[2]]; tri([A.x, fy, A.y], [C.x, fy, C.y], [B.x, fy, B.y]); });
+        IN = false; var s0b = sAt(0), cb = PL.map(function (q) { return new T.Vector2(q[0] * s0b, q[1] * s0b); }), trB = T.ShapeUtils.triangulateShape(cb, []);
+        trB.forEach(function (f) { var A = cb[f[0]], B = cb[f[1]], C = cb[f[2]]; tri([A.x, 0, A.y], [B.x, 0, B.y], [C.x, 0, C.y]); });
+        rB = Rm * s0b * 0.9; M = Math.max(M, Rm * 1.2);
+      } else {
       for (var j = 0; j < RINGS; j++) { var u0 = j / RINGS, u1 = (j + 1) / RINGS; strip(rad(u0), H * u0, rad(u1), H * u1, false); }
       var rTop = rad(1); strip(rTop, H, Math.max(1, rTop - wall), H, false); IN = true;
       for (var j2 = RINGS; j2 > 0; j2--) { var ua = j2 / RINGS, ub = (j2 - 1) / RINGS, ya = H * ua, yb = Math.max(floorY, H * ub); if (ya <= floorY) { break; } strip(Math.max(1, rad(ua) - wall), ya, Math.max(1, rad(ub) - wall), yb, false); }
       var rFl = Math.max(1, rad(floorY / H) - wall); for (var k2 = 0; k2 < SEG; k2++) { tri([0, floorY, 0], ring(rFl, floorY, k2), ring(rFl, floorY, k2 + 1)); }
-      IN = false; var rB = rad(0); for (var k3 = 0; k3 < SEG; k3++) { tri([0, 0, 0], ring(rB, 0, k3 + 1), ring(rB, 0, k3)); }
+      IN = false; for (var k3 = 0; k3 < SEG; k3++) { tri([0, 0, 0], ring(rB, 0, k3 + 1), ring(rB, 0, k3)); }
+      }
       function mk(pos, uvs) { var gg = new T.BufferGeometry(); gg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); gg.setAttribute('uv', new T.Float32BufferAttribute(uvs, 2)); gg.computeVertexNormals(); return gg; }
-      var gF = mk(posF, uvF), gB = mk(posB, uvB);
+      var gF = mk(posF, uvF), gB = mk(posB, uvB), gI = mk(posI, uvI);
       /* 2D 그림체 : 3단 명암 + 짙은 갈색 외곽선 */
       var gc = document.createElement('canvas'); gc.width = 3; gc.height = 1; var gx = gc.getContext('2d'); ['#7a7a7a', '#c4c4c4', '#ffffff'].forEach(function (c, i) { gx.fillStyle = c; gx.fillRect(i, 0, 1, 1); });
       var grad = new T.CanvasTexture(gc); grad.minFilter = grad.magFilter = T.NearestFilter;
@@ -2563,9 +2582,9 @@
       var olm = new T.MeshBasicMaterial({ color: 0x3E2616, side: T.BackSide });
       [gF, gB].forEach(function (gg) { var o = new T.Mesh(gg, olm); o.scale.set(1.025, 1.012, 1.025); o.position.y = -H * 0.006; grp.add(o); });
       var sh = new T.Mesh(new T.CircleGeometry(rB * 1.25, 48), new T.MeshBasicMaterial({ color: 0x2B1A0F, transparent: true, opacity: 0.22 })); sh.rotation.x = -Math.PI / 2; sh.position.y = -0.6; grp.add(sh);
-      var left = 2; function one() { left--; if (left === 0) { var ld = cv.querySelector('[data-ld]'); if (ld) { ld.remove(); } } }
+      var left = 3; function one() { left--; if (left === 0) { var ld = cv.querySelector('[data-ld]'); if (ld) { ld.remove(); } } }
       texOf(fF, function (tx) { grp.add(new T.Mesh(gF, new T.MeshToonMaterial({ map: tx, gradientMap: grad, side: T.DoubleSide }))); one(); });
-      texOf(fB, function (tx) { grp.add(new T.Mesh(gB, new T.MeshToonMaterial({ map: tx, gradientMap: grad, side: T.DoubleSide }))); one(); });
+      texOf(fB, function (tx) { grp.add(new T.Mesh(gB, new T.MeshToonMaterial({ map: tx, gradientMap: grad, side: T.DoubleSide }))); grp.add(new T.Mesh(gI, new T.MeshToonMaterial({ map: tx, color: 0xb8ab9c, gradientMap: grad, side: T.DoubleSide }))); one(); one(); });
       ren = new T.WebGLRenderer({ antialias: true, alpha: true }); ren.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
       var W = cv.clientWidth || 360; ren.setSize(W, W); ren.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;cursor:grab'; cv.appendChild(ren.domElement);
       var yaw = -0.5, pitch = 0.32, zoom = 1, auto = true, dist0 = Math.max(H, 2 * M) * 3.1;
