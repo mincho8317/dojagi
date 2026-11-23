@@ -203,7 +203,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="1" style="{{pst1}}">
       <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
-<div data-wheelwrap="1" style="{{wheelWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
+<div data-wheelwrap="1" data-eq="{{eqSt}}" style="{{wheelWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Wheel" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -226,7 +226,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
   </div>
 
-  <div style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;">
+  <div data-wheelstage="1" style="position:absolute;left:12px;right:12px;top:134px;height:466px;box-sizing:border-box;">
     
 
     <svg style="position:absolute;left:27px;top:0;overflow:visible" width="312" height="343" viewBox="0 0 300 330" role="img" aria-label="물레 위의 흙, 실시간 렌더">
@@ -460,7 +460,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="3"><div role="button" aria-label="{{lp.aria}}" onPointerDown="{{lp.down}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:52px;height:46px;object-fit:contain;pointer-events:none"></div><span style="{{lp.tagSt}}">{{lp.tag}}</span></sc-for>
       </div>
       <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
-      <style>@keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translateY(-560px) rotateX(66deg)}40%{transform:perspective(760px) translateY(0) rotateX(66deg)}47%{transform:perspective(760px) translateY(0) rotateX(66deg) scaleY(.96)}58%{transform:perspective(760px) rotateX(66deg)}100%{transform:perspective(760px) rotateX(0)}}@keyframes eqSlabOut{0%{transform:perspective(760px) rotateX(0)}45%{transform:perspective(760px) rotateX(66deg)}100%{transform:perspective(760px) translateY(-640px) rotateX(66deg)}}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
+      <img src="_blob/3c9b10b6a96c1ab7d724ba551332b361.webp" alt="" aria-hidden="true" draggable="false" data-eqtable="1" style="position:absolute;left:70px;top:319px;width:268px;height:215px;clip-path:inset(47% 0 0 0);pointer-events:none;{{eqTable}}">
+      <style>@keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translate(9px,-520px) scale(.55) rotateX(66deg)}38%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}45%{transform:perspective(760px) translate(9px,109px) scale(.55,.5) rotateX(66deg)}55%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:none}}@keyframes eqSlabOut{0%{transform:none}45%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:perspective(760px) translate(9px,-560px) scale(.55) rotateX(66deg)}}[data-eq="up"] [data-wheelstage]{animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both}[data-eq="drop"] [data-wheelstage]{animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
       <sc-if value="{{slabOn}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);{{sbBg}}"></div>
       <div style="{{sbWrap}}">
@@ -6230,9 +6231,12 @@ class Component extends DCLogic {
     /* 설비 변경 : 물레는 위로 휙 올라가 사라지고 → 판 성형대가 옆모습으로 툭 떨어진 뒤 → 위에서 내려다보는 모습으로 눕는다 (반대는 거꾸로) */
     var eqA = this.eqT && now - this.eqT < 1150, eqOff = eqA && !SON;
     v.slabOn = SON || eqOff; v.wheelDz = SON ? 'off' : 'wheel';
-    v.wheelWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (SON ? (eqA ? 'animation:eqUp .3s cubic-bezier(.5,0,.9,.4) both;' : 'visibility:hidden;') : (eqA ? 'animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both;' : ''));
-    v.sbWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;z-index:20;transform-origin:50% 62%;' + (eqA ? (SON ? 'animation:eqSlabIn 1s .22s ease-out both;' : 'animation:eqSlabOut .6s ease-in both;') : '');
-    v.sbBg = eqA ? (SON ? 'animation:eqFadeIn .25s .1s both;' : 'animation:eqFadeOut .3s .45s both;') : '';
+    /* 탁자(아래 반)는 그대로 두고 물레(위)만 위로 사라진다 · 지금은 물레 그림의 아래쪽을 잘라 탁자로 쓴다 (나중에 탁자 · 물레 그림을 나누면 그대로 교체) */
+    v.eqSt = eqA ? (SON ? 'up' : 'drop') : '';
+    v.eqTable = '';
+    v.wheelWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (SON ? (eqA ? 'animation:eqFadeOut .22s .12s both;' : 'visibility:hidden;') : (eqA ? 'animation:eqFadeIn .2s .5s both;' : ''));
+    v.sbWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;z-index:20;transform-origin:195px 298px;' + (eqA ? (SON ? 'animation:eqSlabIn 1s .24s ease-out both;' : 'animation:eqSlabOut .6s ease-in both;') : '');
+    v.sbBg = 'display:none;';
     var miniW = !wEmpty, ST = SL ? SL.stage : '', miniTxt = SON ? '물레' + (miniW ? ' · 빚는 중' : '') : '판 성형대' + (oSit ? ' · 완성' : ({ sheet: ' · 오리기', base: ' · 바닥', wall: ' · 벽', side: ' · 다듬기' }[ST] || ''));
     v.mini = { dz: 'off', txt: '⇄ ' + (SON ? '물레로' : '판 성형대로'), aria: '설비 변경 · ' + (SON ? '물레로 바꾸기' : '판 성형대로 바꾸기') + (miniTxt.indexOf('·') > 0 ? ' · 지금 ' + miniTxt : ''), tap: function () { self.slabTap(); },
       slabOn: !SON, wheelOn: SON, slabR: SL ? 'display:block' : 'display:none', slabC: CLC, slabW: '24', slabX: '20', potOn: miniW ? 'display:block' : 'display:none',
@@ -6320,7 +6324,7 @@ class Component extends DCLogic {
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레에 대면 자를 점선이 나와요'); }); };
     v.tgTap = function () { self.tgOpen = true; self.bump(); }; /* 목표 모양 : 모달 대신 쪽지가 커져서 목록 */
     v.tgClose = function () { self.tgOpen = false; self.bump(); };
-    v.tgOpen = !!this.tgOpen; v.tgShut = !this.tgOpen; v.tgRows = [];
+    v.tgOpen = !!this.tgOpen && !this.slabOn; v.tgShut = !this.tgOpen && !this.slabOn; /* 판 성형대일 때는 물레 목표 쪽지 숨김 */ v.tgRows = [];
     if (this.tgOpen && Wc) { try {
       var QT0 = Wc.questTargets(g), SH = Wc.shapes(), keys = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(Wc.baseShapes(QT0));
       v.tgRows = keys.filter(function (k) { return SH[k]; }).map(function (k) {
