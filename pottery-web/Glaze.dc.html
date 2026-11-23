@@ -472,9 +472,9 @@ class Component extends DCLogic {
     var curP = this.current();
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
-      if (window.__pano && window.__glzCarry && curP && curP.recoat && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 */
+      if (window.__pano && window.__glzCarry && curP && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 : 시유한 기물 → 시유한 기물 선반 · 안 바른 기물 → 빚은 기물 선반 */
         window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
-        self.offDrag = null; self.setState({ drag: false, dragDip: null, ang: a0 }); window.__glzCarry(ev, curP.id); return;
+        self.offDrag = null; self.setState({ drag: false, dragDip: null, ang: a0 }); window.__glzCarry(ev, curP.id, !curP.recoat); return;
       }
       if (!self.state.holding) { var dx = (ev.clientX - x0) / (k || 1), na = Math.round((a0 + dx * 1.1) / 15) * 15; if (na !== self.state.ang) { self.setState({ ang: na }); try { window.__buzz && window.__buzz(6); window.__sfx && window.__sfx('tap'); } catch (e2) {} } }
       var dip = Math.max(0, Math.min(T.maxDip, dy / 125)), cv = self.covOf(dip);
@@ -491,7 +491,7 @@ class Component extends DCLogic {
       var wasHold = self.state.holding;
       if (wasHold) { self.finish(); }
       self.setState({ drag: false, dragDip: null });
-      if (!wasHold && !lifted && moved < 8 && Date.now() - t0 < 450) { self.setState({ pkOpen: true }); }
+      if (!wasHold && !lifted && moved < 8 && Date.now() - t0 < 450) { if (window.__pano) { self.say('아래로 끌어 유약에 담가요 · 위로 들어 올리면 선반에 내려놓아요'); } else { self.setState({ pkOpen: true }); } }
       else if (!wasHold && moved >= 8) { self.say('조금 더 내려 유약에 닿게 해요 · 깊이 담글수록 빨리 입혀져요', 'fail'); }
     }
     this.offDrag = function () { end(true); };
@@ -696,7 +696,7 @@ class Component extends DCLogic {
       curPot: self.potOf(cur || { shape: 'cup' }, '#EAD8C4'),
       curName: cur ? (SH[cur.shape] || SH.dish).n : '',
       curMeta: cur ? CLAY[cur.clay] + ' · ' + (DRY[cur.dry] || DRY.ok).t : '',
-      openPick: function () { if (!s.holding) { self.setState({ pkOpen: true }); } },
+      openPick: function () { if (!s.holding && !window.__pano) { self.setState({ pkOpen: true }); } },
       dirOn: !!cur, boxInSt: cur ? '' : 'visibility:hidden', /* 가로 공방 : 기물이 없어도 기울기·미리보기 틀은 보인다 (내용 없음) */
       angVal: self.angN(s.ang), angAria: '담그는 기울기 ' + self.angN(s.ang) + '도 · ' + self.angName(s.ang),
       angRot: 'rotate(' + self.angN(s.ang) + ')',
