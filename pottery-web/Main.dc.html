@@ -197,6 +197,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 </div>
   </div>
 
+      <a href="Commission.dc.html" aria-label="의뢰 완료 내역서" style="position:absolute;left:8px;top:64px;z-index:12;display:flex;align-items:center;gap:4px;height:34px;box-sizing:border-box;padding:0 10px 0 8px;border-radius:12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;text-decoration:none;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24"><span aria-hidden="true">📜</span>완료 내역</a>
+
       </sc-if>
     </div>
     <div data-panel="1" style="{{pst1}}">
@@ -1059,22 +1061,25 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:16px;right:16px;top:62px;z-index:120;padding:10px 14px;border-radius:16px;background:rgba(43,26,15,.93);border:3px solid #FFE7A8;font-family:Jua,sans-serif;font-size:14.5px;line-height:1.35;color:#FFF4DE;text-align:center;pointer-events:none;animation:pop .25s ease both">{{toast}}</div>
   </sc-if>
-  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 6px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end">
-    <a href="Main.dc.html" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
-      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;z-index:50">
+    <a href="Main.dc.html" aria-label="공방" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">공방</span>
     </a>
-    <a href="Gather.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+    <a href="Gather.dc.html" aria-label="채집" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
-    <a href="Commission.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/e3f790ef5b7c6af4d706b063f909ab46.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
-      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">의뢰</span>
-      <sc-if value="{{commBadgeOn}}" hint-placeholder-val="{{true}}"><span data-cb="1" style="position:absolute;right:10px;top:0;min-width:20px;height:20px;box-sizing:border-box;padding:0 5px;border-radius:10px;background:#D0452B;border:2px solid #FFF4DE;color:#fff;font-family:'Jua',sans-serif;font-size:11px;display:flex;align-items:center;justify-content:center">{{commBadge}}</span></sc-if>
+    <a href="Research.dc.html" aria-label="연구" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6a66a73c9fc4b6c62852fd952628acea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">연구</span>
     </a>
-    <a href="Shop.dc.html" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:40px;height:40px;object-fit:contain">
+    <a href="Codex.dc.html" aria-label="도감" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/ec31190f776d7005da6bd6a0febe0402.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">도감</span>
+    </a>
+    <a href="Shop.dc.html" aria-label="상점" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
     </a>
   </nav>
@@ -5246,7 +5251,7 @@ class Component extends DCLogic {
     var self = this, Q = ctl.qlib(), act = Q.active(g), full = act.length >= 1, cq = g.cq || { i: 0, n: 0, sp: 0.1 }; /* 의뢰는 한 번에 하나 · 받은 동안 의뢰인이 카운터에서 기다린다 */
     var PAT = ['main', 'norm', 'norm', 'main', 'norm', 'norm', 'dok', 'norm', 'norm'], STORY = { main: 1, dok: 1, season: 1, min: 1 };
     var req = [], dels = [];
-    function goWheel(x) { var y = {}, k; for (k in x) { y[k] = x[k]; } y.choices = (x.choices || []).map(function (c) { if (c.tone !== 'go' || !c.run) { return c; } return { label: c.label, tone: c.tone, run: function () { c.run(); setTimeout(function () { self.goPanel(1); }, 700); } }; }); return y; } /* 의뢰를 받으면 물레로 넘어간다 */
+    function goWheel(x) { var y = {}, k; for (k in x) { y[k] = x[k]; } y.choices = (x.choices || []).map(function (c) { if (c.tone !== 'go' || !c.run) { return c; } return { label: c.label, tone: c.tone, run: function () { c.run(); } }; /* 받아도 그 자리 · 의뢰인이 카운터에서 기다린다 */ }); return y; } /* 의뢰를 받으면 물레로 넘어간다 */
     var AL = Q.alloc(g) || {};
     function waitCard(x, id, title, rw) { /* 기다리는 의뢰인 : 준비 수량을 보여 주고 작업하러 보낸다 */
       var y = {}, k; for (k in x) { y[k] = x[k]; } var A = AL[id];
@@ -5275,7 +5280,6 @@ class Component extends DCLogic {
           c.run && c.run();
           var g2 = ctl.loadG(), p = { cq: advance(LN) };
           if (c.tone === 'go' && KEY && g2[KEY] && g2[KEY].acc && !g2[KEY].at) { var m = {}, k2; for (k2 in g2[KEY]) { m[k2] = g2[KEY][k2]; } m.at = Date.now(); p[KEY] = m; }
-          if (c.tone === 'go' && md.type !== 'visit') { setTimeout(function () { self.goPanel(1); }, 700); }
           ctl.setG(p);
         } };
       });
@@ -5305,7 +5309,7 @@ class Component extends DCLogic {
       card: { title: d.title, conds: d.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') }; }), reward: po.gold.toLocaleString() + 'G' + (po.shards ? ' · 파편 ' + po.shards : '') + ' (기한 안 ×2)' },
       choices: [
         full ? { label: '받은 의뢰를 먼저 끝내요', tone: '', run: function () { ctl.say('의뢰는 한 번에 하나씩 · 카운터에서 기다리는 손님 의뢰를 먼저 끝내요'); } } :
-        { label: '맡을게요', tone: 'go', run: function () { var g2 = ctl.loadG(), now = Date.now(); ctl.setG({ nq: (g2.nq || []).concat([{ id: 'n' + seed + '_' + now, who: d.who, res: d.res, title: d.title, items: d.items, at: now, due: now + dur, dl: {} }]), cq: advance('norm') }); ctl.say('「' + d.title + '」 의뢰를 받았어요 · 기한 ' + self.fmtDur(dur)); setTimeout(function () { self.goPanel(1); }, 700); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } },
+        { label: '맡을게요', tone: 'go', run: function () { var g2 = ctl.loadG(), now = Date.now(); ctl.setG({ nq: (g2.nq || []).concat([{ id: 'n' + seed + '_' + now, who: d.who, res: d.res, title: d.title, items: d.items, at: now, due: now + dur, dl: {} }]), cq: advance('norm') }); ctl.say('「' + d.title + '」 의뢰를 받았어요 · 기한 ' + self.fmtDur(dur)); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } },
         { label: '다음에요', tone: '', run: function () { ctl.setG({ cq: advance('norm') }); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } }
       ] };
   }
