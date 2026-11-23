@@ -6054,13 +6054,13 @@ class Component extends DCLogic {
         self.say('바닥판을 오렸어요 · 👆 손가락으로 테두리를 올리거나 🧱 벽을 세워요 · 이대로 「✓ 완성」 = 평판'); self.bump(); };
     } else if (tool === 'finger') {
       /* 옆에서 본 판 : 손가락 가까운 앞쪽 테두리를 위아래로 · 주변도 부드럽게 */
-      var V = this.slabView || 0, ee = (sl.e || []).slice(), base = ee.slice(), rp = sl.poly.map(function (p) { return self.slabRotP(p, V); }), lastY = p0.y;
-      var wts = rp.map(function (q) { if (q[1] < -2) { return 0; } return Math.exp(-Math.pow((q[0] + G.cx - p0.x) / 26, 2)); });
-      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev), dy = p0.y - q.y; for (var i = 0; i < ee.length; i++) { ee[i] = Math.max(0, Math.min(70, base[i] + dy * wts[i])); } self.slabLive = { e: ee }; self.bump(); };
+      var PSh = window.PotteryShared; this._liftMax = 0; var V = this.slabView || 0, ee = (sl.e || []).slice(), base = ee.slice(), rp = this.slabRims(sl).map(function (p) { return self.slabRotP(p, V); }), rp0 = sl.poly.map(function (p) { return self.slabRotP(p, V); }), lastY = p0.y;
+      var wts = rp.map(function (q, ii) { if (rp0[ii][1] < -2) { return 0; } return Math.exp(-Math.pow((q[0] + G.cx - p0.x) / 26, 2)); });
+      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev), dy = p0.y - q.y, hit = false; for (var i = 0; i < ee.length; i++) { var mx = PSh.slabLift(sl.poly[i]); ee[i] = Math.max(0, Math.min(mx, base[i] + dy * wts[i])); if (wts[i] > 0.5 && base[i] + dy * wts[i] > mx) { hit = true; } } if (hit && !self._liftMax) { self._liftMax = 1; self.say('더는 못 올려요 · 판이 휠 수 있는 만큼 올렸어요'); try { window.__buzz && window.__buzz(10); } catch (eb) {} } self.slabLive = { e: ee }; self.bump(); };
       up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabLive = null; self.setG2({ slab: self.slabWith(sl, { e: ee.map(function (x) { return Math.round(x * 10) / 10; }) }) }); self.bump(); };
     } else {
       /* 벽 (정면) : 위 가이드 근처 = 높이 · 벽 = 잡은 높이의 폭 (물레처럼 주변도 따라온다) · 바닥판은 고정 */
-      var H = sl.H || 44, sc2 = (sl.sc || []).slice(), W0 = this.slabHalfW(sl.poly, 0), eF = this.slabFrontE(sl, 0), baseY = G.bot - G.T - eF, top = baseY - H, mode = Math.abs(p0.y - top) < 20 ? 'h' : 'w';
+      var H = sl.H || 44, sc2 = (sl.sc || []).slice(), W0 = this.slabHalfW(this.slabRims(sl), 0), eF = this.slabFrontE(sl, 0), baseY = G.bot - G.T - eF, top = baseY - H, mode = Math.abs(p0.y - top) < 20 ? 'h' : 'w';
       var u0 = (baseY - p0.y) / H; this.slabGrab = mode === 'h' ? { h: 1 } : { u: u0 };
       mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev);
         if (mode === 'h') { H = Math.max(12, Math.min(200, baseY - q.y)); }
@@ -6070,8 +6070,10 @@ class Component extends DCLogic {
     }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
+  /* 휘어 오른 테두리 끝(위에서 본 자리) */
+  slabRims(sl) { return window.PotteryShared.slabGeo(sl.poly, sl.e).map(function (c) { return [c.R[0], c.R[1]]; }); }
   /* 앞쪽 테두리 평균 높이 (벽이 서는 자리) */
-  slabFrontE(sl, v) { var self = this, s = 0, n = 0; (sl.poly || []).forEach(function (p, i) { if (self.slabRotP(p, v)[1] >= 0) { s += (sl.e || [])[i] || 0; n++; } }); return n ? s / n : 0; }
+  slabFrontE(sl, v) { var self = this, s = 0, n = 0, GE = window.PotteryShared.slabGeo(sl.poly, sl.e); (sl.poly || []).forEach(function (p, i) { if (self.slabRotP(p, v)[1] >= 0) { s += GE[i].e; n++; } }); return n ? s / n : 0; }
   slabKind(poly, H) {
     var A = 0, P = 0, mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9; (poly || []).forEach(function (p, i) { var q = poly[(i + 1) % poly.length]; A += p[0] * q[1] - q[0] * p[1]; P += Math.hypot(q[0] - p[0], q[1] - p[1]); mnx = Math.min(mnx, p[0]); mxx = Math.max(mxx, p[0]); mny = Math.min(mny, p[1]); mxy = Math.max(mxy, p[1]); }); A = Math.abs(A / 2);
     var circ = 4 * Math.PI * A / Math.max(1, P * P), rect = A / Math.max(1, (mxx - mnx) * (mxy - mny)), base = circ > 0.86 ? '둥근' : (rect > 0.86 ? '네모' : '');
@@ -6081,14 +6083,19 @@ class Component extends DCLogic {
   slabFinish() {
     var g = this.loadG(), sl = g.slab, QL = this.qlib(), G = this.SG(); if (!sl || !sl.poly) { this.say('먼저 칼로 바닥판을 오려요'); this.sfx('fail'); return; }
     if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 · 유약을 먼저 발라요'); this.sfx('fail'); return; }
-    var ee = sl.e || [], eAvg = 0; ee.forEach(function (x) { eAvg += x; }); eAvg /= Math.max(1, ee.length);
-    var wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, sc = wall ? (sl.sc || []) : [1, 1, 1, 1, 1, 1, 1, 1], W0 = this.slabHalfW(sl.poly, 0), Htot = Math.round(G.T + eAvg + Hw);
+    var GE = window.PotteryShared.slabGeo(sl.poly, sl.e), ee = GE.map(function (c) { return c.e; }), eAvg = 0; ee.forEach(function (x) { eAvg += x; }); eAvg /= Math.max(1, ee.length);
+    var wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, sc = wall ? (sl.sc || []) : [1, 1, 1, 1, 1, 1, 1, 1], Htot = Math.round(G.T + eAvg + Hw);
     var sm = 0; for (var k = 2; k < sc.length; k++) { sm += Math.abs(sc[k] - 2 * sc[k - 1] + sc[k - 2]); }
-    var er = 0; for (var i = 0; i < ee.length; i++) { er += Math.abs(ee[i] - ee[(i + 1) % ee.length]); } /* 테두리가 들쭉날쭉할수록 조금 깎인다 */
+    var er = 0; for (var i = 0; i < ee.length; i++) { er += Math.abs(ee[i] - ee[(i + 1) % ee.length]); }
     var fit = Math.max(40, Math.min(100, Math.round(64 + (sl.q || 0.6) * 30 - sm * 22 - Math.min(10, er / 40))));
+    /* 옆모습(앞에서 · 가장 오른쪽 기둥) : 굽 → 휜 띠 → 테두리 → 벽 · 높이 10칸 반폭 */
+    var iR = 0; sl.poly.forEach(function (p, ii) { if (p[0] > sl.poly[iR][0]) { iR = ii; } }); var cR = GE[iR], path = [[cR.F[0], 0]];
+    cR.band.forEach(function (b) { path.push([b[0], b[2]]); }); path.push([cR.R[0], cR.e + G.T]); var self2 = this;
+    if (wall) { for (var w = 1; w <= 8; w++) { path.push([cR.R[0] * this.slabSc(sc, w / 8), cR.e + G.T + Hw * w / 8]); } }
+    var HT = Math.max(10, path[path.length - 1][1]), prof = [];
+    for (var pj = 0; pj < 10; pj++) { var yy = HT * pj / 9, xx = path[0][0]; for (var pk = 1; pk < path.length; pk++) { if (path[pk][1] >= yy) { var a0 = path[pk - 1], b0 = path[pk], f = (yy - a0[1]) / Math.max(0.001, b0[1] - a0[1]); xx = a0[0] + (b0[0] - a0[0]) * Math.max(0, Math.min(1, f)); break; } xx = path[pk][0]; } prof.push(Math.round(Math.max(4, xx) * 10) / 10); }
     var K = this.slabKind(sl.poly, Htot), t = QL.takeClay(g, sl.clay);
-    var prof = sc.map(function (x) { return Math.round(W0 * x * 10) / 10; });
-    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: K.name, slabName: K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.max(10, Htot), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
+    var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: K.name, slabName: K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
     var up = { glazeList: (g.glazeList || []).concat([item]), slab: null, onSlab: item.id }; if (t && t.mats) { up.mats = t.mats; } if (t && t.matsQ) { up.matsQ = t.matsQ; }
     this.setG2(up); this.slabTool = ''; this.slabView = 0; this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
     this.say(K.name + ' 완성 · 맞춤 ' + fit + '% · 들어서 오른쪽 위 선반에 ↗'); this.bump();
@@ -6227,16 +6234,19 @@ class Component extends DCLogic {
     var ee = LV.e || (SL && SL.e) || [], WALL = !!(SL && SL.wall), Hw = WALL ? (LV.H || SL.H || 44) : 0, scs = WALL ? (LV.sc || SL.sc || [1, 1, 1, 1, 1, 1, 1, 1]) : null;
     var baseD = pd(poly.map(function (p) { return [p[0] + ox, p[1] + oy]; }), true), backD = 'M0 0', frontD = 'M0 0', lipD = 'M0 0', editD = 'M0 0', thumbD = 'M0 0', G2 = { h: false, w: false };
     if (mode === 'side' && poly.length) {
-      var rp = poly.map(function (p) { return self.slabRotP(p, VW); }), W0 = this.slabHalfW(poly, VW), bot = SG.bot, T = SG.T, sTop = WALL ? this.slabSc(scs, 1) : 1;
+      /* 접시처럼 : 굽선(60%) 안쪽은 바닥 · 바깥 띠가 휘어 오르고 위에서 본 테두리는 안으로 당겨진다 */
+      var GE = window.PotteryShared.slabGeo(poly, ee), bot = SG.bot, T = SG.T, sTop = WALL ? this.slabSc(scs, 1) : 1;
+      var rp = poly.map(function (p) { return self.slabRotP(p, VW); }), rr = GE.map(function (c) { return self.slabRotP(c.R, VW); });
       var iL = 0, iR = 0; rp.forEach(function (q, i) { if (q[0] < rp[iL][0]) { iL = i; } if (q[0] > rp[iR][0]) { iR = i; } });
-      function topY(i) { return bot - T - (ee[i] || 0) - Hw; }
-      function edge(i, sgn) { var out = [], yb = bot - T - (ee[i] || 0); out.push([SG.cx + sgn * W0, bot]); out.push([SG.cx + sgn * W0, yb]); if (WALL) { for (var k = 1; k <= 16; k++) { var u = k / 16; out.push([SG.cx + sgn * W0 * self.slabSc(scs, u), yb - Hw * u]); } } return out; }
-      var L = edge(iL, -1), R = edge(iR, 1);
-      function curve(front) { var pts = []; rp.forEach(function (q, i) { if ((q[1] >= 0) === front) { pts.push([SG.cx + q[0] * sTop, topY(i), q[0]]); } }); pts.sort(function (a, b) { return a[2] - b[2]; }); return pts.map(function (p) { return [p[0], p[1]]; }); }
+      function topY(i) { return bot - T - GE[i].e - Hw; }
+      function edge(i) { var c = GE[i], out = [], f = self.slabRotP(c.F, VW); out.push([SG.cx + f[0], bot]); c.band.forEach(function (b) { var q = self.slabRotP(b, VW); out.push([SG.cx + q[0], bot - b[2]]); }); var r0 = self.slabRotP(c.R, VW); out.push([SG.cx + r0[0], bot - T - c.e]); if (WALL) { for (var k = 1; k <= 16; k++) { var u = k / 16; out.push([SG.cx + r0[0] * self.slabSc(scs, u), bot - T - c.e - Hw * u]); } } return out; }
+      var L = edge(iL), R = edge(iR);
+      function curve(front) { var pts = []; rr.forEach(function (q, i) { if ((rp[i][1] >= 0) === front) { pts.push([SG.cx + q[0] * sTop, topY(i), q[0]]); } }); pts.sort(function (a, b) { return a[2] - b[2]; }); return pts.map(function (p) { return [p[0], p[1]]; }); }
       var fc = curve(true), bc = curve(false);
       backD = pd(L.concat(bc).concat(R.slice().reverse()), true); frontD = pd(L.concat(fc).concat(R.slice().reverse()), true);
-      if (WALL) { var lp = []; rp.forEach(function (q, i) { if (q[1] >= 0) { lp.push([SG.cx + q[0], bot - T - (ee[i] || 0), q[0]]); } }); lp.sort(function (a, b) { return a[2] - b[2]; }); lipD = pd(lp.map(function (p) { return [p[0], p[1]]; }), false); }
+      if (WALL) { var lp = []; rr.forEach(function (q, i) { if (rp[i][1] >= 0) { lp.push([SG.cx + q[0], bot - T - GE[i].e, q[0]]); } }); lp.sort(function (a, b) { return a[2] - b[2]; }); lipD = pd(lp.map(function (p) { return [p[0], p[1]]; }), false); }
       if (tool === 'finger') { editD = WALL ? lipD : pd(fc, false); }
+      var W0 = 0; rr.forEach(function (q) { W0 = Math.max(W0, Math.abs(q[0])); });
       thumbD = pd(poly.map(function (p) { var q = self.slabRotP(p, VW); return [328 + q[0] * 0.22, 186 + q[1] * 0.22]; }), true);
       if (tool === 'wall') {
         var eF = this.slabFrontE(SL, 0), baseY = bot - T - eF, topW = baseY - Hw, gr = this.slabGrab || {};
