@@ -96,7 +96,7 @@ button{font-family:inherit;cursor:pointer}
     <sc-if value="{{isWorks}}" hint-placeholder-val="{{true}}">
       <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
         <sc-for list="{{works}}" as="w" hint-placeholder-count="6">
-          <div style="{{w.card}}">
+          <div role="{{w.role}}" tabindex="{{w.tab}}" onClick="{{w.tap}}" aria-label="{{w.aria}}" style="{{w.card}}">
             <sc-if value="{{w.known}}" hint-placeholder-val="{{true}}">
               <svg width="46" height="54" viewBox="0 0 48 56" aria-hidden="true"><path d="{{w.path}}" fill="{{w.fill}}" stroke="#3E2616" stroke-width="2.4" stroke-linejoin="round"></path><ellipse cx="24" cy="{{w.rimY}}" rx="{{w.rimX}}" ry="2.6" fill="{{w.fill}}" stroke="#3E2616" stroke-width="2"></ellipse></svg>
               <span style="font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F;text-align:center;line-height:1.2">{{w.name}}</span>
@@ -265,11 +265,11 @@ class Component extends DCLogic {
       var sh = SH[p.shape] || SH.cup;
       var gl = GL[p.glaze] || GL.white;
       var item = {
-        known: true, unknown: false, count: 1,
+        known: true, unknown: false, count: 1, role: 'button', tab: '0', aria: p.name + ' ' + p.grade + ' · 눌러서 돌려 보기', tap: (function (pp) { return function () { try { window.PotteryShared.view3d(pp); } catch (e) {} }; })(p),
         name: p.name, grade: p.grade, where: WHERE[p.where] || '',
         path: sh.p, rimY: sh.y, rimX: sh.x, fill: gl.c,
         badge: 'padding:0 8px;border-radius:7px;font-family:Jua,sans-serif;font-size:11px;color:#FFFDF5;background:' + (GRADE[p.grade] || '#8A7A63'),
-        card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#F3E3C4;border:3px solid ' + (p.grade === '명작' ? '#C9962E' : '#8A6440') + ';display:flex;flex-direction:column;align-items:center;gap:3px;min-height:150px'
+        card: 'cursor:pointer;box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#F3E3C4;border:3px solid ' + (p.grade === '명작' ? '#C9962E' : '#8A6440') + ';display:flex;flex-direction:column;align-items:center;gap:3px;min-height:150px'
       };
       seen[key] = item;
       works.push(item);
@@ -277,7 +277,7 @@ class Component extends DCLogic {
     var worksFound = works.length;
     var WORK_SLOTS = 15;
     while (works.length < WORK_SLOTS) {
-      works.push({ known: false, unknown: true, card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#EADBC0;border:3px dashed #A8987C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:150px' });
+      works.push({ known: false, unknown: true, role: 'presentation', tab: '-1', aria: '아직 못 만든 작품', tap: function () {}, card: 'box-sizing:border-box;padding:8px 4px;border-radius:14px;background:#EADBC0;border:3px dashed #A8987C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:150px' });
     }
 
     var gf = g.glazesFound || {};

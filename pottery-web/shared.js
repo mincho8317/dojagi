@@ -2500,4 +2500,87 @@
     if (!v.ptChips.length) { v.ptChips = [{ t: a.who ? a.who + '에게 가 보기' : '카운터에서 확인', aria: '카운터로', st: CH + 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440', tap: function () { if (pick) { pick(null, null); } else { try { sessionStorage.setItem('potPick', JSON.stringify({ counter: 1 })); } catch (e) {} go('Main.dc.html'); } } }]; }
     return v;
   };
+  /* ── 기물 3D 보기 : 진열대 · 보관함 · 도감에서 기물 하나를 골라 손가락으로 돌려 본다 ──
+     물레 기물 = 저장된 옆모습(prof · H)을 한 바퀴 돌린 모양 · 유약 덮임 · 덧시유 · 붓 무늬는 정면 그림을 그대로 입힌다 (뒤쪽은 붓 무늬 없이) */
+  S.view3d = function (p) {
+    var S = this; if (!p) { return; }
+    try { var old = document.getElementById('pv3d'); if (old) { old.remove(); } } catch (e) {}
+    var GRC = { '명작': '#C9962E', '수작': '#3E7FA0', '양작': '#3B7A32', '범작': '#8A7A63' };
+    var ov = document.createElement('div'); ov.id = 'pv3d'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-label', (p.name || '기물') + ' 돌려 보기');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(26,14,6,.88);display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;touch-action:none';
+    ov.innerHTML = '<div style="position:relative;width:min(92vw,400px);display:flex;flex-direction:column;gap:8px;align-items:stretch">'
+      + '<div style="display:flex;align-items:center;gap:8px"><span style="flex:1 1 auto;min-width:0;font-size:20px;color:#FFF4DE;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + String(p.name || '기물').replace(/</g, '&lt;') + '</span>'
+      + (p.grade ? '<span style="flex:none;padding:1px 10px;border-radius:9px;background:' + (GRC[p.grade] || '#8A7A63') + ';font-size:13px;color:#FFFDF5">' + p.grade + '</span>' : '')
+      + '<button type="button" data-x="1" aria-label="닫기" style="all:unset;cursor:pointer;flex:none;width:40px;height:40px;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:17px;color:#5B3A24">✕</button></div>'
+      + '<div data-cv="1" style="position:relative;width:100%;aspect-ratio:1/1;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 42%,#FFF6E2 0%,#EAD3AE 62%,#C9A27A 100%);border:4px solid #5B3A24;box-shadow:inset 0 0 0 3px #F0D9AE"><span data-ld="1" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:#7A5434">불러오는 중…</span></div>'
+      + '<div style="display:flex;justify-content:center;gap:12px;font-size:13px;color:#E8D3B5">' + (p.value ? '<span>평가액 ' + Number(p.value).toLocaleString() + 'G</span>' : '') + (typeof p.skill === 'number' ? '<span>실력 ' + p.skill + '점</span>' : '') + (p.colorPct != null ? '<span>발색 ' + p.colorPct + '%</span>' : '') + '</div>'
+      + '<div style="text-align:center;font-size:12px;color:#B9A88E">끌어서 돌려 보기 · 위아래로 기울이기 · 두 손가락으로 확대</div></div>';
+    document.body.appendChild(ov);
+    var cv = ov.querySelector('[data-cv]'), alive = true, raf = 0, ren = null;
+    function close() { alive = false; cancelAnimationFrame(raf); try { ren && ren.dispose(); } catch (e) {} ov.remove(); window.removeEventListener('keydown', onKey); }
+    function onKey(e) { if (e.key === 'Escape') { close(); } }
+    window.addEventListener('keydown', onKey);
+    ov.addEventListener('click', function (e) { if (e.target === ov || (e.target.closest && e.target.closest('[data-x]'))) { close(); } });
+    function go() {
+      if (!alive) { return; }
+      var T = window.THREE; if (!T) { cv.querySelector('[data-ld]').textContent = '3D를 불러오지 못했어요'; return; }
+      /* 옆모습 : 아래(0)부터 위(1)까지 반지름 */
+      var TB = { dish: [70, function (u) { return 40 + 50 * Math.sqrt(u); }], cup: [130, function (u) { return 34 + 14 * u; }], bowl: [95, function (u) { return 38 + 62 * Math.pow(u, 0.6); }], jar: [140, function (u) { return 34 + 30 * Math.sin(u * Math.PI) + 10 * u; }], vase: [150, function (u) { return 30 + 26 * Math.sin(u * Math.PI * 0.9); }] };
+      var r = p.prof, H = p.H; if (!r || r.length < 3) { var tt = TB[p.shape] || TB.cup; r = []; for (var i0 = 0; i0 < 12; i0++) { r.push(tt[1](i0 / 11)); } H = tt[0]; } H = H || 110;
+      var n = r.length, M = 0; for (var i1 = 0; i1 < n; i1++) { M = Math.max(M, r[i1]); }
+      function rad(u) { var f = u * (n - 1), j = Math.min(n - 2, Math.floor(f)), t = f - j, a = r[Math.max(0, j - 1)], b = r[j], c = r[j + 1], d = r[Math.min(n - 1, j + 2)]; return Math.max(2, 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t)); }
+      /* 색 : 흙(초벌) · 유약 */
+      var CLB = { cw1: '#F2EEE6', cy1: '#E2C79E', cr1: '#D49A7E', ck1: '#9C8F84' }, GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A', sakura: '#EFB3C2', cheonmok: '#2E2A25' };
+      var clay = CLB[(p.clay || '').replace(/[23]$/, '1')] || '#E2C79E', glz = p.tint || GZ[p.glaze] || (p.glaze ? '#ECE8DE' : clay);
+      function dk(h, k) { var m = /^#([0-9a-f]{6})$/i.exec(h); if (!m) { return '#3E2616'; } var v = parseInt(m[1], 16); return 'rgb(' + Math.round(((v >> 16) & 255) * k) + ',' + Math.round(((v >> 8) & 255) * k) + ',' + Math.round((v & 255) * k) + ')'; }
+      var geo2 = { H: H, r: r, drip: dk(glz, 0.72) }, partial = !!p.glaze && p.cov != null && (p.cov < 0.97 || !!p.g2 || !!(p.brush && p.brush.length));
+      var fF = glz, fB = glz;
+      try { if (partial) { fF = S.covFillAng(glz, clay, p, geo2); fB = S.covFillTwo(glz, clay, p, geo2); } } catch (e) {}
+      if (!p.glaze) { fF = fB = clay; }
+      var PAD = 12, VX = -M - PAD, VY = -H - PAD, VW = 2 * M + 2 * PAD, VH = H + 2 * PAD;
+      function svgOf(fill) { var host = document.getElementById('cvf-host'), defs = host ? host.innerHTML.replace(/^<defs>|<\/defs>$/g, '') : ''; return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="' + VX + ' ' + VY + ' ' + VW + ' ' + VH + '" preserveAspectRatio="none"><defs>' + defs + '</defs><rect x="' + VX + '" y="' + VY + '" width="' + VW + '" height="' + VH + '" fill="' + fill + '"/></svg>'; }
+      function texOf(fill, cb) { var cnv = document.createElement('canvas'); cnv.width = cnv.height = 512; var c2 = cnv.getContext('2d'); c2.fillStyle = /^#|^rgb/.test(fill) ? fill : glz; c2.fillRect(0, 0, 512, 512); var tx = new T.CanvasTexture(cnv); if (!/^url/.test(fill)) { cb(tx); return; } var im = new Image(); im.onload = function () { c2.drawImage(im, 0, 0, 512, 512); tx.needsUpdate = true; cb(tx); }; im.onerror = function () { cb(tx); }; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgOf(fill)); }
+      /* 모양 : 바깥 벽 · 입구 테 · 안쪽 벽 · 안쪽 바닥 · 굽 바닥 (정면 그림 좌표로 입힌다 · 앞 = 붓 무늬 있음, 뒤 = 없음) */
+      var RINGS = 44, SEG = 72, wall = Math.max(3, M * 0.07), floorY = Math.max(4, H * 0.07);
+      var posF = [], uvF = [], posB = [], uvB = [];
+      function uv(x, y) { return [(x - VX) / VW, 1 - ((-y) - VY) / VH]; }
+      var IN = false; function tri(a, b, c) { var z = (a[2] + b[2] + c[2]) / 3, fr = z >= 0 && !IN, P = fr ? posF : posB, U = fr ? uvF : uvB; /* 붓 무늬는 바깥 앞면에만 */ [a, b, c].forEach(function (q) { P.push(q[0], q[1], q[2]); var w = uv(q[0], q[1]); U.push(w[0], w[1]); }); }
+      function ring(rr, y, k) { var a = k / SEG * Math.PI * 2; return [rr * Math.sin(a), y, rr * Math.cos(a)]; }
+      function strip(rf0, y0, rf1, y1, inward) { for (var k = 0; k < SEG; k++) { var a = ring(rf0, y0, k), b = ring(rf0, y0, k + 1), c = ring(rf1, y1, k + 1), d = ring(rf1, y1, k); if (inward) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } }
+      for (var j = 0; j < RINGS; j++) { var u0 = j / RINGS, u1 = (j + 1) / RINGS; strip(rad(u0), H * u0, rad(u1), H * u1, false); }
+      var rTop = rad(1); strip(rTop, H, Math.max(1, rTop - wall), H, false); IN = true;
+      for (var j2 = RINGS; j2 > 0; j2--) { var ua = j2 / RINGS, ub = (j2 - 1) / RINGS, ya = H * ua, yb = Math.max(floorY, H * ub); if (ya <= floorY) { break; } strip(Math.max(1, rad(ua) - wall), ya, Math.max(1, rad(ub) - wall), yb, false); }
+      var rFl = Math.max(1, rad(floorY / H) - wall); for (var k2 = 0; k2 < SEG; k2++) { tri([0, floorY, 0], ring(rFl, floorY, k2), ring(rFl, floorY, k2 + 1)); }
+      IN = false; var rB = rad(0); for (var k3 = 0; k3 < SEG; k3++) { tri([0, 0, 0], ring(rB, 0, k3 + 1), ring(rB, 0, k3)); }
+      function mk(pos, uvs) { var gg = new T.BufferGeometry(); gg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); gg.setAttribute('uv', new T.Float32BufferAttribute(uvs, 2)); gg.computeVertexNormals(); return gg; }
+      var gF = mk(posF, uvF), gB = mk(posB, uvB);
+      /* 2D 그림체 : 3단 명암 + 짙은 갈색 외곽선 */
+      var gc = document.createElement('canvas'); gc.width = 3; gc.height = 1; var gx = gc.getContext('2d'); ['#7a7a7a', '#c4c4c4', '#ffffff'].forEach(function (c, i) { gx.fillStyle = c; gx.fillRect(i, 0, 1, 1); });
+      var grad = new T.CanvasTexture(gc); grad.minFilter = grad.magFilter = T.NearestFilter;
+      var scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, 1, 5000);
+      scene.add(new T.AmbientLight(0xffffff, 0.55)); var dl = new T.DirectionalLight(0xffffff, 0.75); dl.position.set(-0.6, 1, 0.9); scene.add(dl);
+      var grp = new T.Group(); grp.position.y = -H / 2; scene.add(grp);
+      var olm = new T.MeshBasicMaterial({ color: 0x3E2616, side: T.BackSide });
+      [gF, gB].forEach(function (gg) { var o = new T.Mesh(gg, olm); o.scale.set(1.025, 1.012, 1.025); o.position.y = -H * 0.006; grp.add(o); });
+      var sh = new T.Mesh(new T.CircleGeometry(rB * 1.25, 48), new T.MeshBasicMaterial({ color: 0x2B1A0F, transparent: true, opacity: 0.22 })); sh.rotation.x = -Math.PI / 2; sh.position.y = -0.6; grp.add(sh);
+      var left = 2; function one() { left--; if (left === 0) { var ld = cv.querySelector('[data-ld]'); if (ld) { ld.remove(); } } }
+      texOf(fF, function (tx) { grp.add(new T.Mesh(gF, new T.MeshToonMaterial({ map: tx, gradientMap: grad, side: T.DoubleSide }))); one(); });
+      texOf(fB, function (tx) { grp.add(new T.Mesh(gB, new T.MeshToonMaterial({ map: tx, gradientMap: grad, side: T.DoubleSide }))); one(); });
+      ren = new T.WebGLRenderer({ antialias: true, alpha: true }); ren.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+      var W = cv.clientWidth || 360; ren.setSize(W, W); ren.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;cursor:grab'; cv.appendChild(ren.domElement);
+      var yaw = -0.5, pitch = 0.32, zoom = 1, auto = true, dist0 = Math.max(H, 2 * M) * 3.1;
+      function place() { var d = dist0 / zoom; cam.position.set(d * Math.cos(pitch) * Math.sin(yaw), d * Math.sin(pitch), d * Math.cos(pitch) * Math.cos(yaw)); cam.lookAt(0, 0, 0); }
+      var pts = {}, pd0 = 0, z0 = 1;
+      ren.domElement.addEventListener('pointerdown', function (e) { auto = false; pts[e.pointerId] = [e.clientX, e.clientY]; try { ren.domElement.setPointerCapture(e.pointerId); } catch (er) {} var ks = Object.keys(pts); if (ks.length === 2) { var A = pts[ks[0]], B = pts[ks[1]]; pd0 = Math.hypot(A[0] - B[0], A[1] - B[1]); z0 = zoom; } });
+      ren.domElement.addEventListener('pointermove', function (e) { var q = pts[e.pointerId]; if (!q) { return; } var ks = Object.keys(pts); if (ks.length === 1) { yaw -= (e.clientX - q[0]) * 0.011; pitch = Math.max(-0.25, Math.min(1.35, pitch + (e.clientY - q[1]) * 0.008)); } pts[e.pointerId] = [e.clientX, e.clientY]; if (ks.length === 2) { var A = pts[ks[0]], B = pts[ks[1]], dd = Math.hypot(A[0] - B[0], A[1] - B[1]); zoom = Math.max(0.7, Math.min(2.6, z0 * dd / Math.max(1, pd0))); } });
+      function upP(e) { delete pts[e.pointerId]; }
+      ren.domElement.addEventListener('pointerup', upP); ren.domElement.addEventListener('pointercancel', upP);
+      ren.domElement.addEventListener('wheel', function (e) { e.preventDefault(); auto = false; zoom = Math.max(0.7, Math.min(2.6, zoom * (e.deltaY > 0 ? 0.92 : 1.08))); }, { passive: false });
+      (function loop() { if (!alive) { return; } if (auto) { yaw += 0.006; } place(); ren.render(scene, cam); raf = requestAnimationFrame(loop); })();
+    }
+    if (window.THREE) { go(); return; }
+    var sc = document.querySelector('script[data-three]');
+    if (!sc) { sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'; sc.setAttribute('data-three', '1'); document.head.appendChild(sc); }
+    sc.addEventListener('load', go); sc.addEventListener('error', function () { var ld = cv.querySelector('[data-ld]'); if (ld) { ld.textContent = '3D를 불러오지 못했어요 · 인터넷 연결을 확인해요'; } });
+  };
 })();

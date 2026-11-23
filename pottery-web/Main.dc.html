@@ -878,6 +878,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <span style="font-family:'Jua',sans-serif;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ds.sel.name}} <span style="font-size:12px;color:#7A5434">{{ds.sel.grade}}</span></span>
       <span style="font-size:12px;color:#2E6B5F;font-weight:700">{{ds.sel.line}}</span>
     </div>
+    <button type="button" onClick="{{ds.sel3d}}" aria-label="{{ds.sel.name}} 돌려 보기" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 10px;background:#5B3A24;border:3px solid #3E2616;box-shadow:0 3px 0 #3E2616;border-radius:12px;font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">🔄 돌려 보기</button>
     <button type="button" onClick="{{ds.toStore}}" style="all:unset;cursor:pointer;flex:0 0 auto;padding:8px 12px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;border-radius:12px;font-family:'Jua',sans-serif;font-size:13px;color:#5B3A24">내리기</button>
   </div>
   </sc-if>
@@ -4025,7 +4026,7 @@ class Ctl_ds extends StationBase {
         tap: function () {
           if (Date.now() - (self.dragEnd || 0) < 300) { return; }
           if (self.state.sellMode) { self.togglePick(sid); return; }
-          self.say('끌어서 진열대에 올리거나 판매 상자에 넣어요');
+          try { window.PotteryShared.view3d(p); } catch (e) { self.say('끌어서 진열대에 올리거나 판매 상자에 넣어요'); } /* 누르면 돌려 보기 · 끌면 진열대·판매 상자로 */
         }
       };
     });
@@ -4103,6 +4104,7 @@ class Ctl_ds extends StationBase {
       shelfCount: shelfIds.length,
       storeCount: storeIds.length,
       fameRate: shelfIds.length * 3,
+      sel3d: function () { if (selP) { try { window.PotteryShared.view3d(selP); } catch (e) {} } },
       sel: selP ? { name: selP.name, grade: selP.grade + (typeof selP.skill === 'number' ? ' · 실력 ' + selP.skill + '점' : ''), value: selP.value.toLocaleString(), line: '평가액 ' + selP.value.toLocaleString() + 'G · 발색 ' + QLd.colorPctOf(selP) + '%' + (selP.yohen ? ' 요변' : '') } : { name: '진열된 작품 없음', grade: '', value: '0', line: '보관함에서 작품을 끌어 올려요' },
       target: target ? { name: target.name, grade: target.grade, offer: offer.toLocaleString(), pot: self.potOf(target, GC[target.glaze] || '#F2EFE6') } : { name: '', grade: '', offer: '0', pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 } },
       visitorOn: curatorWaiting && this.state.visitor,
