@@ -418,14 +418,14 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </div>
 </div>
       <sc-if value="{{tgShut}}" hint-placeholder-val="{{true}}">
-        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:118px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></button>
+        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:6;max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span></button>
       </sc-if>
       <sc-if value="{{tgOpen}}" hint-placeholder-val="{{false}}">
         <style>@keyframes memoOpen{from{transform:rotate(-3deg) scale(.5);opacity:.7}to{transform:rotate(-1.5deg) scale(1);opacity:1}}</style>
         <div aria-hidden="true" onClick="{{tgClose}}" style="position:absolute;left:0;top:0;width:390px;height:696px;z-index:24"></div>
         <div role="group" aria-label="목표 모양 고르기" style="position:absolute;left:8px;top:80px;z-index:25;width:206px;max-height:360px;overflow-y:auto;box-sizing:border-box;padding:6px 8px 9px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-1.5deg);transform-origin:16px 12px;box-shadow:0 5px 8px rgba(43,26,15,.35);animation:memoOpen .16s ease-out both;display:flex;flex-direction:column;gap:4px">
           <button type="button" onClick="{{tgClose}}" aria-label="목표 모양 쪽지 접기" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:11px;color:#A3442C;padding:0 2px 3px;border-bottom:1.5px dashed #C9A27A"><span>📌 목표 모양</span><span>▴</span></button>
-          <sc-for list="{{tgRows}}" as="tr" hint-placeholder-count="4"><button type="button" onClick="{{tr.pick}}" aria-pressed="{{tr.on}}" aria-label="{{tr.aria}}" style="{{tr.st}}"><span style="flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tr.name}}</span><span style="{{tr.tagSt}}">{{tr.tag}}</span></button></sc-for>
+          <sc-for list="{{tgRows}}" as="tr" hint-placeholder-count="4"><button type="button" onClick="{{tr.pick}}" aria-pressed="{{tr.on}}" aria-label="{{tr.aria}}" style="{{tr.st}}"><svg width="28" height="28" viewBox="{{tr.ico.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tr.ico.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tr.ico.sw}}" stroke-linejoin="round"></path></svg><span style="flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tr.name}}</span><span style="{{tr.tagSt}}">{{tr.tag}}</span></button></sc-for>
         </div>
       </sc-if>
       <div data-dz="{{wheelDz}}" aria-hidden="true" style="position:absolute;left:46px;top:150px;width:298px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
@@ -6246,6 +6246,7 @@ class Component extends DCLogic {
     if (oSid && !oSit) { setTimeout(function () { self.setG2({ onSlab: '' }); }, 0); }
     var CLC = '#C9A27A'; try { (Wc.claysDef() || []).forEach(function (c) { if (SL && c.id === SL.clay) { CLC = c.c; } }); } catch (eC) {}
     /* 설비 변경 : 지금 설비가 아래로 내려가고 다른 설비가 올라온다 */
+    /* 설비 변경 버튼 : 물레·판 성형대 모두 같은 자리(실 아래 · 배경의 걸이못에 걸린 모양) */
     /* 설비 변경 : 물레는 위로 휙 올라가 사라지고 → 판 성형대가 옆모습으로 툭 떨어진 뒤 → 위에서 내려다보는 모습으로 눕는다 (반대는 거꾸로) */
     var eqA = this.eqT && now - this.eqT < 1150, eqOff = eqA && !SON;
     v.slabOn = SON || eqOff; v.wheelDz = SON ? 'off' : 'wheel';
@@ -6258,7 +6259,7 @@ class Component extends DCLogic {
     var miniW = !wEmpty, ST = SL ? SL.stage : '', miniTxt = SON ? '물레' + (miniW ? ' · 빚는 중' : '') : '판 성형대' + (oSit ? ' · 완성' : ({ sheet: ' · 오리기', base: ' · 바닥', wall: ' · 벽', side: ' · 다듬기' }[ST] || ''));
     v.mini = { dz: 'off', txt: '⇄ ' + (SON ? '물레로' : '판 성형대로'), aria: '설비 변경 · ' + (SON ? '물레로 바꾸기' : '판 성형대로 바꾸기') + (miniTxt.indexOf('·') > 0 ? ' · 지금 ' + miniTxt : ''), tap: function () { self.slabTap(); },
       slabOn: !SON, wheelOn: SON, slabR: SL ? 'display:block' : 'display:none', slabC: CLC, slabW: '24', slabX: '20', potOn: miniW ? 'display:block' : 'display:none',
-      st: 'position:absolute;left:312px;top:' + (SON ? 562 : 494) + 'px;width:72px;height:66px;z-index:25;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box;' + (this.cutMode ? 'display:none;' : '') };
+      st: 'position:absolute;left:313px;top:552px;width:72px;height:66px;z-index:25;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box;' + (this.cutMode ? 'display:none;' : '') };
     /* 판 성형대 그림 : 펼친 판(오리기) · 오린 바닥판(그 자리 고정) · 옆모습(손가락 · 4방향) · 정면(벽 · 가이드) */
     function pd(pts, close) { return pts.length ? 'M' + pts.map(function (p) { return (+p[0]).toFixed(1) + ' ' + (+p[1]).toFixed(1); }).join(' L') + (close ? ' Z' : '') : 'M0 0'; }
     var TL = this.slabTools(SL), tool = this.slabTool || (ST === 'sheet' ? 'knife' : ''), LV = this.slabLive || {};
@@ -6320,7 +6321,7 @@ class Component extends DCLogic {
     }
     var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
     v.paintStand = function () { self.say('선반의 기물(시유 전·후 모두)을 끌어다 놓으면 유약으로 무늬를 그려요'); };
-    v.wireBoardSt = (SON ? 'display:none;' : '') + 'position:absolute;left:310px;top:556px;width:78px;height:118px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25' : '');
+    v.wireBoardSt = 'position:absolute;left:310px;top:446px;width:78px;height:112px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25;' : '') + (SON ? 'display:none;' : ''); /* 실은 설비 변경 버튼 위 · 판 성형대에선 숨김 (display:none 은 맨 뒤에 둬야 flex 에 덮이지 않는다) */
     v.onPop = '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
@@ -6350,7 +6351,8 @@ class Component extends DCLogic {
       var QT0 = Wc.questTargets(g), SH = Wc.shapes(), keys = Object.keys(QT0).concat(g.goal ? ['goal'] : []).concat(Wc.baseShapes(QT0));
       v.tgRows = keys.filter(function (k) { return SH[k]; }).map(function (k) {
         var t = SH[k], on = Wc.state.target === k, isQ = /^q:/.test(k);
-        return { name: t.n, on: on ? 'true' : 'false', aria: t.n + (isQ ? ' · 의뢰 기물' : '') + (on ? ' · 선택 중' : ''),
+        var ic = { d: 'M0 0', vb: '0 0 10 10', sw: '1' }; try { ic = Wc.iconOf(t); } catch (e) {}
+        return { ico: ic, name: t.n, on: on ? 'true' : 'false', aria: t.n + (isQ ? ' · 의뢰 기물' : '') + (on ? ' · 선택 중' : ''),
           tag: isQ ? '📋 ' + (t.full ? '✓' : t.left + '점') : (on ? '✓' : ''),
           tagSt: 'flex:none;font-size:10px;font-weight:700;' + (isQ ? 'color:#2F6328' : 'color:#5B3A24'),
           st: 'all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;box-sizing:border-box;min-height:32px;padding:4px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:13.5px;color:#2B1A0F;' + (on ? 'background:#FFE7A8;border:2px solid #E3B23C' : (isQ ? 'background:#EEF5E8;border:2px solid #BFD8B0' : 'background:transparent;border:2px solid transparent')),
@@ -6358,6 +6360,8 @@ class Component extends DCLogic {
       });
     } catch (eT) {} }
     v.tgName = W.targetName || '';
+    /* 목표 모양 그림 : 이름 옆에 옆모습 실루엣 */
+    v.tgIco = { d: 'M0 0', vb: '0 0 10 10', sw: '1' }; try { var SH0 = Wc && Wc.shapes(), tk = Wc && Wc.state && Wc.state.target; if (SH0 && SH0[tk]) { v.tgIco = Wc.iconOf(SH0[tk]); } } catch (e) {}
     /* 유약 쪽 : 유약통 · 유약석 · 절구 */
     var GZ = v.gz || {};
     v.buckets = (GZ.glazes || []).slice(0, 5).map(function (b, i) {
