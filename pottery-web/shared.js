@@ -540,7 +540,7 @@
     // 제작 안내를 켠 의뢰들 (여러 개 가능) · 예전 저장(track 하나)은 그대로 읽고, 아무것도 안 정했으면 첫 의뢰
     function tracked(g, act) {
       act = act || active(g); var ids = act.map(function (x) { return x.id; });
-      return ids; /* 받은 의뢰(최대 3개)를 모두 제작 목표로 */
+      return ids; /* 받은 의뢰(한 번에 1개)를 모두 제작 목표로 */
       if (g.track && ids.indexOf(g.track) >= 0) { return [g.track]; }
       return ids.length ? [ids[0]] : [];
     }
