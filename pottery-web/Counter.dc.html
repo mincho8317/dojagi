@@ -707,7 +707,7 @@ class Component extends DCLogic {
     if (this.state.deliver) { var sk = {}; for (var k0 in (this.state.delSkip || {})) { sk[k0] = true; } sk[this.state.deliver] = true; this.setState({ delSkip: sk }); }
     if (this.state.deliver) { this.setState({ deliver: '', line: 0, enterN: this.state.enterN + 1 }); if (msg) { this.say(msg); } return; }
     var ct = this.state.ctab === 'del' ? 'del' : 'req';
-    var n = this.guests(this.state.g).filter(function (x) { return x.kind !== 'wait' && x.kind !== 'deliver' && (x.cat || 'buy') === ct; }).length || 1;
+    var n = this.guests(this.state.g).filter(function (x) { return (window.__pano || (x.kind !== 'wait' && x.kind !== 'deliver')) && (x.cat || 'buy') === ct; }).length || 1;
     this.setState({ gi: (this.state.gi + 1) % n, line: 0, enterN: this.state.enterN + 1 });
     if (msg) { this.say(msg); }
   }
