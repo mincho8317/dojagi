@@ -2619,16 +2619,32 @@
     return 0.6;
   };
   S.slabLift = function (P) {
-    return 90;
+    return 28; /* 테두리는 낮게 휘는 정도까지만 */
   };
   S.slabGeo = function (poly, ee) {
     var FT = 0.6, NT = 6;
     return (poly || []).map(function (P, i) {
-      var r = Math.hypot(P[0], P[1]) || 1, d = [P[0] / r, P[1] / r], L = (1 - FT) * r, e = Math.max(0, (ee && ee[i]) || 0); /* 띠 길이와 상관없이 올린 만큼 올라간다 */
+      var r = Math.hypot(P[0], P[1]) || 1, d = [P[0] / r, P[1] / r], L = (1 - FT) * r, e = Math.max(0, Math.min(28, (ee && ee[i]) || 0)); /* 띠 길이와 상관없이 같은 높이 · 28까지 */
       function arc(Lh) { var s = 0, px = 0, pz = 0; for (var k = 1; k <= 12; k++) { var t = k / 12, x = Lh * t, z = e * t * t; s += Math.hypot(x - px, z - pz); px = x; pz = z; } return s; }
       var Lh = L, F = [P[0] * FT, P[1] * FT], band = [];
       for (var k2 = 0; k2 <= NT; k2++) { var t2 = k2 / NT; band.push([F[0] + d[0] * Lh * t2, F[1] + d[1] * Lh * t2, e * t2 * t2]); }
       return { P: P, F: F, d: d, L: L, e: e, Lh: Lh, band: band, R: band[NT] };
     });
+  };
+  /* 판 기물 2D 그림 (선반 · 시유 · 가마 · 전시) : 판 성형대 옆모습과 같은 모양으로 · 굽 바닥 → 휜 띠 → 테두리 두께 → 벽 */
+  S.slabPot = function (it, P) {
+    var GE = this.slabGeo(it.poly, it.e), T = 7, Hw = it.wall ? (it.Hw || 0) : 0, sc = it.sc || [1, 1], n = sc.length;
+    function sAt(u) { var f = u * (n - 1), j0 = Math.min(n - 2, Math.floor(f)), t = f - j0, a = sc[Math.max(0, j0 - 1)], b = sc[j0], c = sc[j0 + 1], d = sc[Math.min(n - 1, j0 + 2)]; return 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t); }
+    var iL = 0, iR = 0; it.poly.forEach(function (q, i) { if (q[0] < it.poly[iL][0]) { iL = i; } if (q[0] > it.poly[iR][0]) { iR = i; } });
+    function col(i) { var c = GE[i], o = [[c.F[0], 0]]; c.band.forEach(function (b, k) { if (k) { o.push([b[0], -b[2]]); } }); o.push([c.R[0], -(c.e + T)]); if (Hw > 0) { for (var w = 1; w <= 12; w++) { o.push([c.R[0] * sAt(w / 12), -(c.e + T + Hw * w / 12)]); } } return o; }
+    var L = col(iL), R = col(iR), pts = L.concat(R.slice().reverse()), M = 0, Ht = 0;
+    pts.forEach(function (p) { M = Math.max(M, Math.abs(p[0])); Ht = Math.max(Ht, -p[1]); });
+    var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L') + ' Z';
+    var top = Math.max(Math.abs(L[L.length - 1][0]), Math.abs(R[R.length - 1][0])), foot = Math.max(Math.abs(L[0][0]), Math.abs(R[0][0])), side = Math.max(2 * M, Ht) + 20, o = {}, k;
+    for (k in P) { o[k] = P[k]; }
+    o.d = d; o.H = Ht; o.M = M; o.rimY = (-Ht).toFixed(1); o.rimRx = (top * 0.99).toFixed(1); o.rimRy = Math.max(2, top * 0.08).toFixed(1);
+    o.shRx = (foot * 1.15).toFixed(1); o.shRy = Math.max(3, foot * 0.18).toFixed(1); o.shCy = '1';
+    o.vb = (-side / 2).toFixed(1) + ' ' + (-Ht / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1); o.sw = (side / 64).toFixed(2);
+    return o;
   };
 })();
