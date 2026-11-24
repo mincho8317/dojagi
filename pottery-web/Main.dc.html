@@ -461,7 +461,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       </div>
       <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
       <img src="_blob/3c9b10b6a96c1ab7d724ba551332b361.webp" alt="" aria-hidden="true" draggable="false" data-eqtable="1" style="position:absolute;left:70px;top:319px;width:268px;height:215px;clip-path:inset(47% 0 0 0);pointer-events:none;{{eqTable}}">
-      <style>@keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translate(9px,-520px) scale(.55) rotateX(66deg)}38%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}45%{transform:perspective(760px) translate(9px,109px) scale(.55,.5) rotateX(66deg)}55%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:none}}@keyframes eqSlabOut{0%{transform:none}45%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:perspective(760px) translate(9px,-560px) scale(.55) rotateX(66deg)}}[data-eq="up"] [data-wheelstage]{animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both}[data-eq="drop"] [data-wheelstage]{animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
+      <style>@keyframes cfPop{0%{opacity:1;transform-box:fill-box;transform-origin:center;transform:scale(.4)}100%{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(2.2)}}
+@keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translate(9px,-520px) scale(.55) rotateX(66deg)}38%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}45%{transform:perspective(760px) translate(9px,109px) scale(.55,.5) rotateX(66deg)}55%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:none}}@keyframes eqSlabOut{0%{transform:none}45%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:perspective(760px) translate(9px,-560px) scale(.55) rotateX(66deg)}}[data-eq="up"] [data-wheelstage]{animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both}[data-eq="drop"] [data-wheelstage]{animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
       <sc-if value="{{slabOn}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);{{sbBg}}"></div>
       <style>[data-sbwrap] > *{pointer-events:auto}[data-sbwrap] > svg{pointer-events:none}</style>
@@ -489,6 +490,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <rect x="40" y="{{sb.bandY}}" width="310" height="28" rx="14" fill="{{sb.bandSt}}" stroke="rgba(255,226,122,.7)" stroke-width="1.5" stroke-dasharray="5 4" style="{{sb.bandAnim}}"></rect>
           </sc-if>
           <path d="{{sb.tgD}}" fill="none" stroke="{{sb.tgC}}" stroke-width="{{sb.tgW}}" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.7))"></path>
+          <circle cx="{{sb.cfX}}" cy="{{sb.cfY}}" r="{{sb.cfR}}" fill="none" stroke="#E8452B" stroke-width="3" style="animation:cfPop .6s ease-out forwards"></circle>
           <path d="{{sb.edgeD}}" fill="none" stroke="rgba(255,226,122,.85)" stroke-width="4" stroke-dasharray="3 6" stroke-linecap="round"></path>
           <sc-for list="{{sb.hands}}" as="hd" hint-placeholder-count="0"><g transform="{{hd.tr}}"><circle r="12" fill="{{hd.fill}}" stroke="{{hd.ring}}" stroke-width="2.5"></circle><path d="M-8 0 l5 -5 v10 z M8 0 l-5 -5 v10 z" fill="{{hd.ring}}"></path></g></sc-for>
           <sc-if value="{{sb.gh}}" hint-placeholder-val="{{false}}">
@@ -6067,15 +6069,30 @@ class Component extends DCLogic {
       function mag(q) { if (!TGL.length) { return q; } var bd = 1e9, bx = q.x, by = q.y; for (var i = 0; i < TGL.length; i++) { var a = TGL[i], b = TGL[(i + 1) % TGL.length], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey || 1, t = Math.max(0, Math.min(1, ((q.x - a[0]) * ex + (q.y - a[1]) * ey) / L2)), cx = a[0] + ex * t, cy = a[1] + ey * t, d = Math.hypot(q.x - cx, q.y - cy); if (d < bd) { bd = d; bx = cx; by = cy; } }
         if (bd >= MR) { self.slabSnap = false; return q; } var k = bd <= MS ? 1 : 1 - (bd - MS) / (MR - MS); k = k * k * (3 - 2 * k); if (!self.slabSnap && k >= 1) { try { window.__buzz && window.__buzz(4); } catch (eb) {} } self.slabSnap = k >= 1; return { x: q.x + (bx - q.x) * k, y: q.y + (by - q.y) * k }; }
       var q00 = mag(p0), raw = [[q00.x, q00.y]]; this.slabKnife = raw;
-      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = mag(self.slabPt(ev)); q.x = Math.max(G.cx - G.sw / 2 + 4, Math.min(G.cx + G.sw / 2 - 4, q.x)); q.y = Math.max(G.cy - G.sh / 2 + 4, Math.min(G.cy + G.sh / 2 - 4, q.y)); var l = raw[raw.length - 1]; if (Math.hypot(q.x - l[0], q.y - l[1]) > 3) { raw.push([q.x, q.y]); self.bump(); } };
-      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabKnife = null; self.slabSnap = false;
-        var a = raw[0], b = raw[raw.length - 1], closed = raw.length > 12 && Math.hypot(a[0] - b[0], a[1] - b[1]) < 38;
-        if (!closed) { self.say('선을 처음 자리까지 이어 닫아야 잘려요'); self.sfx('fail'); self.bump(); return; }
-        var P = self.slabPoly(raw);
-        if (!P || P.small) { self.say('너무 작아요 · 조금 더 크게 그려요'); self.sfx('fail'); self.bump(); return; }
+      /* 칼선이 이미 그은 선에 닿는 순간 그 자리에서 고리 하나가 잘린다 (꼬임·마지막 겹침 모두 여기서 처리)
+         · 방금 그은 3토막은 검사하지 않음 · 손떨림으로 생긴 작은 고리(넓이 < 900)는 지우고 계속 그림 */
+      function cross(a, b, c, d) { var r1 = b[0] - a[0], r2 = b[1] - a[1], s1 = d[0] - c[0], s2 = d[1] - c[1], den = r1 * s2 - r2 * s1; if (Math.abs(den) < 1e-9) { return null; } var t = ((c[0] - a[0]) * s2 - (c[1] - a[1]) * s1) / den, u = ((c[0] - a[0]) * r2 - (c[1] - a[1]) * r1) / den; return t > 0 && t <= 1 && u >= 0 && u <= 1 ? [a[0] + r1 * t, a[1] + r2 * t] : null; }
+      function area(P) { var A = 0; for (var i = 0; i < P.length; i++) { var p = P[i], q = P[(i + 1) % P.length]; A += p[0] * q[1] - q[0] * p[1]; } return Math.abs(A) / 2; }
+      var cutDone = false;
+      function doCut(pts, X) {
+        var P = self.slabPoly(pts);
+        if (!P || P.small) { self.say('너무 작아요 · 조금 더 크게 그려요'); self.sfx('fail'); self.bump(); return false; }
+        if (X) { self.slabCutFx = { x: X[0], y: X[1], t: Date.now() }; setTimeout(function () { self.slabCutFx = null; self.bump(); }, 650); }
         var e0 = []; for (var k = 0; k < G.PN; k++) { e0.push(0); }
         self.setG2({ slab: { clay: sl.clay, stage: 'cut', poly: P.poly, ox: P.ox, oy: P.oy, q: P.q, e: e0, wall: false } }); self.slabTool = ''; self.sfx('ok'); try { window.__buzz && window.__buzz(12); } catch (e2) {}
-        self.say('바닥판을 오렸어요 · 👆 손가락으로 테두리를 올리거나 🧱 벽을 세워요 · 이대로 「✓ 완성」 = 평판'); self.bump(); };
+        self.say('바닥판을 오렸어요 · 👆 손가락으로 테두리를 올리거나 🧱 벽을 세워요 · 이대로 「✓ 완성」 = 평판'); self.bump(); return true; }
+      mv = function (ev) { if (ev.pointerId !== pid || cutDone) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = mag(self.slabPt(ev)); q.x = Math.max(G.cx - G.sw / 2 + 4, Math.min(G.cx + G.sw / 2 - 4, q.x)); q.y = Math.max(G.cy - G.sh / 2 + 4, Math.min(G.cy + G.sh / 2 - 4, q.y)); var l = raw[raw.length - 1]; if (Math.hypot(q.x - l[0], q.y - l[1]) <= 3) { return; }
+        var np = [q.x, q.y];
+        for (var j = raw.length - 4; j >= 0; j--) { var X = cross(l, np, raw[j], raw[j + 1]); if (!X) { continue; }
+          var loop = [X].concat(raw.slice(j + 1));
+          if (area(loop) < 900) { raw.splice(j + 1, raw.length - j - 1, X); break; } /* 작은 고리 = 손떨림 → 지우고 이어 그림 */
+          cutDone = true; off(); self.slabKnife = null; self.slabSnap = false; try { window.__buzz && window.__buzz(12); } catch (eb) {}
+          if (!doCut(loop, X)) { cutDone = false; } return; }
+        raw.push(np); self.bump(); };
+      up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabKnife = null; self.slabSnap = false; if (cutDone) { return; }
+        var a = raw[0], b = raw[raw.length - 1], closed = raw.length > 12 && Math.hypot(a[0] - b[0], a[1] - b[1]) < 38; /* 조금 못 미쳐도 손 떼면 직선으로 이어 닫힘 */
+        if (!closed) { self.say('선을 처음 자리까지 이어 닫아야 잘려요'); self.sfx('fail'); self.bump(); return; }
+        doCut(raw, null); };
     } else if (tool === 'finger') {
       /* 손가락 (정면 하나) : 테두리 손잡이 띠를 잡고 위아래 · 끈 거리의 절반만큼 천천히 · 점마다 휠 수 있는 한도까지만 */
       var PSh = window.PotteryShared, lims = sl.poly.map(function (p) { return PSh.slabLift(p); }), mxL = Math.max.apply(null, lims), h0 = sl.lift != null ? sl.lift : Math.max.apply(null, (sl.e || [0])), hN = h0, warned = false;
@@ -6361,6 +6378,7 @@ class Component extends DCLogic {
       hint: HINT,
       down: function (e) { self.slabDown(e); },
       pot: oSit ? this.potOf(oSit, this.fillOf(oSit, 'dry')) : EMPTY, pDown: function (e) { if (!oSit) { return; } var el = e.currentTarget.querySelector('svg'); var bx = e.currentTarget.getBoundingClientRect(), RR = (self.stripEl || document.body).getBoundingClientRect(), kk = RR.width / 390 || 1; self.carryStart(e, 'piece', { id: oSit.id }, el ? el.outerHTML.replace(/width="[0-9.]+" height="[0-9.]+"/, 'width="100%" height="100%"') : '', bx.width / kk, bx.height / kk, function () { self.say(oSit.slabName + '을 들어서 오른쪽 위 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? oSit.id : ''; self.bump(); } }); },
+      cfR: this.slabCutFx ? '9' : '0', cfX: this.slabCutFx ? this.slabCutFx.x.toFixed(1) : '0', cfY: this.slabCutFx ? this.slabCutFx.y.toFixed(1) : '0', /* 칼선이 만나 잘린 자리 반짝 */
       tgD: tgD, knC: this.slabSnap ? '#FFE27A' : '#FFF4DE', tgC: this.slabSnap ? 'rgba(255,226,122,1)' : 'rgba(255,248,232,.95)', tgW: this.slabSnap ? '3.5' : '2.5',
       pHid: oSit && this.carryId === oSit.id ? 'visibility:hidden' : '' };
     var SA = this.swapAsk; v.sw = { on: !!SA, txt: SA ? (SA.to === 'slab' ? '밀던 판이 사라져요' : '빚던 모양이 사라져요') + ' · ' + SA.c.n + ' 흙으로 바꿀까요?' : '', yes: function () { self.swapYes(); }, no: function () { self.swapNo(); } };
