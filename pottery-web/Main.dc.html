@@ -480,6 +480,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <ellipse cx="195" cy="{{sb.botY}}" rx="120" ry="8" fill="rgba(43,26,15,.22)"></ellipse>
             <path d="{{sb.backD}}" fill="{{sb.inner}}" stroke="{{sb.edge}}" stroke-width="2.5" stroke-linejoin="round"></path>
             <path d="{{sb.frontD}}" fill="{{sb.col}}" stroke="{{sb.edge}}" stroke-width="3" stroke-linejoin="round"></path>
+            <defs><clipPath id="slabClipF"><path d="{{sb.frontD}}"></path></clipPath></defs>
+            <sc-if value="{{sb.gbOn}}" hint-placeholder-val="{{false}}"><rect x="0" y="{{sb.gb.y1}}" width="390" height="{{sb.gb.h}}" fill="#FFE7A8" opacity=".42" clip-path="url(#slabClipF)"></rect><line x1="44" x2="346" y1="{{sb.gb.y}}" y2="{{sb.gb.y}}" stroke="#FFE7A8" stroke-width="1.4" stroke-dasharray="3 5"></line></sc-if>
             <path d="{{sb.lipD}}" fill="none" stroke="{{sb.edge}}" stroke-width="1.6" stroke-dasharray="4 3" opacity=".8"></path>
             <path d="{{sb.editD}}" fill="none" stroke="#FFE27A" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.8))"></path>
             <rect x="292" y="152" width="72" height="68" rx="10" fill="rgba(255,244,222,.85)" stroke="#8A6440" stroke-width="2"></rect>
@@ -491,6 +493,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           </sc-if>
           <path d="{{sb.tgD}}" fill="none" stroke="{{sb.tgC}}" stroke-width="{{sb.tgW}}" stroke-dasharray="8 6" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 2px rgba(43,26,15,.7))"></path>
           <circle cx="{{sb.cfX}}" cy="{{sb.cfY}}" r="{{sb.cfR}}" fill="none" stroke="#E8452B" stroke-width="3" style="animation:cfPop .6s ease-out forwards"></circle>
+          <path d="{{sb.doneD}}" fill="none" stroke="#7CD36A" stroke-width="4.5" stroke-linecap="round" style="filter:drop-shadow(0 0 3px rgba(47,99,40,.9))"></path>
+          <sc-for list="{{sb.spk}}" as="sp" hint-placeholder-count="0"><text x="{{sp.x}}" y="{{sp.y}}" text-anchor="middle" font-size="{{sp.fs}}" fill="#FFD66B" stroke="#8A6410" stroke-width="0.8" opacity="{{sp.op}}">✦</text></sc-for>
+          <sc-if value="{{sb.gbOn}}" hint-placeholder-val="{{false}}"><text x="195" y="{{sb.gb.ly}}" text-anchor="middle" font-family="Jua, sans-serif" font-size="13" fill="#FFF4DE" stroke="#2B1A0F" stroke-width="0.7" paint-order="stroke">{{sb.gl}}</text></sc-if>
           <path d="{{sb.edgeD}}" fill="none" stroke="rgba(255,226,122,.85)" stroke-width="4" stroke-dasharray="3 6" stroke-linecap="round"></path>
           <sc-for list="{{sb.hands}}" as="hd" hint-placeholder-count="0"><g transform="{{hd.tr}}"><circle r="12" fill="{{hd.fill}}" stroke="{{hd.ring}}" stroke-width="2.5"></circle><path d="M-8 0 l5 -5 v10 z M8 0 l-5 -5 v10 z" fill="{{hd.ring}}"></path></g></sc-for>
           <sc-if value="{{sb.gh}}" hint-placeholder-val="{{false}}">
@@ -6096,9 +6101,10 @@ class Component extends DCLogic {
     } else if (tool === 'finger') {
       /* 손가락 (정면 하나) : 테두리 손잡이 띠를 잡고 위아래 · 끈 거리의 절반만큼 천천히 · 점마다 휠 수 있는 한도까지만 */
       var PSh = window.PotteryShared, lims = sl.poly.map(function (p) { return PSh.slabLift(p); }), mxL = Math.max.apply(null, lims), h0 = sl.lift != null ? sl.lift : Math.max.apply(null, (sl.e || [0])), hN = h0, warned = false;
-      var rimY = G.bot - G.T - h0; if (Math.abs(p0.y - rimY) > 28) { this.dragging = false; this.say('노란 띠(테두리)를 잡고 위아래로 끌어요'); this.sfx('fail'); this.slabHint = Date.now(); this.bump(); return; }
+      var TGf = this.slabTg(g), magF = !TGf.free, tolF = Math.max(2.5, TGf.e * 0.18), prvF = this.slabDone(sl, TGf); /* 옆 화면 어디를 짚어도 테두리 높이 조절 · 목표 높이 가까이면 붙음 */
       var ee = lims.map(function (l) { return Math.min(h0, l); }); this.slabGrab = { lift: 1 }; this.sfx('tap');
-      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev); hN = Math.max(0, Math.min(mxL, h0 + (p0.y - q.y) * 0.3)); ee = lims.map(function (l) { return Math.min(hN, l); });
+      mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev); hN = Math.max(0, Math.min(mxL, h0 + (p0.y - q.y) * 0.3)); if (magF) { hN = Math.min(mxL, self.slabStick(hN, TGf.e, tolF)); } ee = lims.map(function (l) { return Math.min(hN, l); });
+        var nwF = self.slabDone(self.slabWith(sl, { lift: hN, e: ee }), TGf); self.slabFxDone(prvF, nwF); prvF = nwF; self.slabGrab = { lift: 1, dir: q.y < p0.y ? 'up' : 'down' };
         if (hN >= mxL && !warned) { warned = true; self.say('더는 못 올려요'); try { window.__buzz && window.__buzz(10); } catch (eb) {} }
         self.slabLive = { e: ee, lift: hN }; self.bump(); };
       up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabLive = null; self.slabGrab = null; self.setG2({ slab: self.slabWith(sl, { lift: Math.round(hN * 10) / 10, e: ee.map(function (x) { return Math.round(x * 10) / 10; }) }) }); self.bump(); };
@@ -6107,15 +6113,17 @@ class Component extends DCLogic {
       var H = sl.H || 44, sc2 = (sl.sc || []).slice(), W0 = this.slabHalfW(this.slabRims(sl), 0), eF = this.slabFrontE(sl, 0), baseY = G.bot - G.T - eF, top = baseY - H, mode = '';
       if (sc2.length !== G.N) { var o2 = sc2.slice(); sc2 = []; for (var k0 = 0; k0 < G.N; k0++) { sc2.push(this.slabSc(o2, k0 / (G.N - 1))); } }
       var u0 = (baseY - p0.y) / H, hw0 = W0 * this.slabSc(sc2, Math.max(0, Math.min(1, u0)));
-      if (Math.abs(p0.y - top) < 22 && Math.abs(p0.x - G.cx) < Math.max(40, hw0)) { mode = 'h'; }
-      else if (u0 > -0.05 && u0 < 1.05 && Math.abs(p0.x - G.cx) < hw0 + 34) { mode = 'w'; }
-      if (!mode) { this.dragging = false; this.say('벽을 잡고 좌우로 · 위 ↕ 손잡이로 높이'); this.sfx('fail'); this.slabHint = Date.now(); this.bump(); return; }
+      /* 어디를 짚어도 된다 : 벽 윗단 근처·그 위 = 높이 · 그 아래 = 짚은 높이의 넓이 (가장자리 점선을 잡지 않아도) */
+      mode = p0.y < top + 16 ? 'h' : 'w';
+      var TGw = this.slabTg(g), magW = !TGw.free && !!TGw.H, TT = this.slabTune(), tWw = magW ? this.slabTgW(TGw) : 0, prvW = this.slabDone(sl, TGw);
       var lx = p0.x, side = p0.x >= G.cx ? 1 : -1, warnedH = false; this.slabGrab = mode === 'h' ? { h: 1 } : { u: u0, side: side, x: p0.x, y: p0.y }; this.sfx('tap');
       mv = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.slabPt(ev);
-        if (mode === 'h') { H = Math.max(6, Math.min(200, (sl.H || 44) + (p0.y - q.y) * 0.6)); if (H <= 14 && !warnedH) { warnedH = true; self.say('여기서 놓으면 벽이 없어져요'); } }
+        if (mode === 'h') { H = Math.max(6, Math.min(200, (sl.H || 44) + (p0.y - q.y) * 0.6)); if (magW) { H = self.slabStick(H, TGw.H, Math.max(4, TGw.H * TT.hTol)); } if (H <= 14 && !warnedH) { warnedH = true; self.say('여기서 놓으면 벽이 없어져요'); } self.slabGrab = { h: 1, dir: q.y < p0.y ? 'up' : 'down' }; }
         else { var u = Math.max(0, Math.min(1, (baseY - q.y) / H)), ci = u * (G.N - 1), dx = q.x - lx, out = side * dx; lx = q.x;
-          for (var k = 1; k < G.N; k++) { var w = Math.exp(-Math.pow(k - ci, 2) / 2.2); if (w < 0.03) { continue; } sc2[k] = out > 0 ? Math.min(1.9, sc2[k] + 0.38 * out * w / W0) : Math.max(0.4, sc2[k] + 0.32 * out * w / W0); }
-          self.slabGrab = { u: u, side: side, x: q.x, y: q.y }; }
+          for (var k = 1; k < G.N; k++) { var w = Math.exp(-Math.pow(k - ci, 2) / 2.2); if (w < 0.03) { continue; } sc2[k] = out > 0 ? Math.min(1.9, sc2[k] + 0.38 * out * w / W0) : Math.max(0.4, sc2[k] + 0.32 * out * w / W0);
+            if (magW) { var sk = tWw * self.slabSc(TGw.sc, k / (G.N - 1)) / W0, rl = (sc2[k] - sk) / sk; if (Math.abs(rl) < TT.snapTol) { sc2[k] += (sk - sc2[k]) * Math.min(1, w * 0.35); } } } /* 목표 넓이 가까이면 그쪽으로 끌림 */
+          self.slabGrab = { u: u, side: side, x: q.x, y: q.y, dir: out > 0.3 ? 'out' : (out < -0.3 ? 'in' : ((self.slabGrab || {}).dir || '')) }; }
+        var nwW = self.slabDone(self.slabWith(sl, { H: H, sc: sc2 }), TGw); self.slabFxDone(prvW, nwW); prvW = nwW;
         self.slabLive = { H: H, sc: sc2 }; self.bump(); };
       up = function (ev) { if (ev.pointerId !== pid) { return; } off(); self.slabLive = null; self.slabGrab = null;
         if (mode === 'h' && H <= 14) { self.setG2({ slab: self.slabWith(sl, { wall: false, H: 44, sc: null }) }); self.slabTool = 'finger'; self.sfx('thud'); self.say('벽을 없앴어요 · 다시 세우려면 🧱 벽 세우기'); self.bump(); return; }
@@ -6152,6 +6160,23 @@ class Component extends DCLogic {
     for (var k = 0; k < 36; k++) { var th = k / 36 * Math.PI * 2, dx = Math.cos(th), dy = Math.sin(th), best = 0;
       for (var j = 0; j < n; j++) { var a = poly[j], b = poly[(j + 1) % n], ex = b[0] - a[0], ey = b[1] - a[1], den = dx * ey - dy * ex; if (Math.abs(den) < 1e-9) { continue; } var ax = a[0] - cx, ay = a[1] - cy, t = (ax * ey - ay * ex) / den, u = (ax * dy - ay * dx) / den; if (t > 0 && u >= 0 && u <= 1) { best = Math.max(best, t); } }
       r.push(best); } return r; }
+  /* 목표 벽 기준 : 옆에서 본 반폭(테두리 끝) · 높이별 목표 반폭 = 반폭 × 목표 옆선 */
+  slabTgW(t) { var tp = this.slabTgPoly(t); return this.slabHalfW(this.slabRims({ poly: tp, e: tp.map(function () { return t.e; }) }), 0); }
+  slabTune() { var W = this.ctls && this.ctls.Wheel, T = null; try { T = W && W.wtune ? W.wtune() : null; } catch (e) {} return T || { snapTol: 0.1, doneTol: 0.035, hTol: 0.08 }; } /* 물레와 같은 보정값 (연구·흙 영향 포함) */
+  slabStick(raw, tgt, tol) { var d = raw - tgt, ad = Math.abs(d), inner = tol * 0.45; if (ad >= tol) { return raw; } if (ad <= inner) { return tgt; } return tgt + (d < 0 ? -1 : 1) * (ad - inner) / (tol - inner) * tol; } /* 마그네틱 : 가까우면 목표값에 붙는다 */
+  slabDone(sl, t) { /* 구간별 맞음 : 벽 1~11 · 높이 · 테두리 */
+    var o = { seg: [], h: false, e: false, all: false }; if (!sl || !t || t.free) { return o; } var T = this.slabTune(), self = this;
+    var eA = 0; (sl.e || []).forEach(function (x) { eA = Math.max(eA, x); }); var eL = sl.lift != null ? sl.lift : eA; o.e = Math.abs(eL - t.e) <= Math.max(1.2, t.e * 0.06);
+    if (t.H && sl.wall) { var W0 = this.slabHalfW(this.slabRims(sl), 0), tW = this.slabTgW(t), sc = sl.sc || [1, 1]; for (var k = 1; k < 12; k++) { var tg = tW * this.slabSc(t.sc, k / 11), cur = W0 * this.slabSc(sc, k / 11); o.seg[k] = Math.abs(cur - tg) / tg <= T.doneTol; } o.h = Math.abs((sl.H || 44) - t.H) / t.H <= T.doneTol; o.all = o.h && o.seg.slice(1).every(Boolean); }
+    else { o.all = o.e; } return o; }
+  slabFxDone(prev, now) { /* 새로 맞은 구간 : 물레처럼 작은 소리·진동·반짝 */
+    var nw = [], k; for (k = 1; k < 12; k++) { if (now.seg[k] && !prev.seg[k]) { nw.push(k); } }
+    var hN = now.h && !prev.h, eN = now.e && !prev.e; if (!nw.length && !hN && !eN) { return; }
+    var tt = Date.now(), fx = (this.slabSegFx || []).filter(function (x) { return tt - x.t < 700; }); nw.forEach(function (j) { fx.push({ k: j, t: tt + j }); }); if (hN) { fx.push({ k: 'h', t: tt }); } if (eN) { fx.push({ k: 'e', t: tt }); } this.slabSegFx = fx;
+    try { window.__sfx && window.__sfx('dot', Math.min(12, now.seg.filter(Boolean).length + (now.h ? 1 : 0))); window.__buzz && window.__buzz(10); } catch (e) {}
+    var self = this; setTimeout(function () { self.bump(); }, 720);
+    if (now.all && !prev.all) { this.say('완벽! 목표 모양에 꼭 맞았어요 · 「✓ 완성」을 눌러요', 'ok'); }
+  }
   slabMatch(sl, t) {
     if (!sl || !sl.poly || sl.poly.length < 3 || !t) { return null; }
     if (t.free) { var bst = null, selfM = this; this.SLT().forEach(function (u) { if (u.free) { return; } var m = selfM.slabMatch(sl, u); if (m && (!bst || m.pct > bst.pct)) { bst = m; bst.near = u; } }); return bst; } /* 자유 : 가장 닮은 목표의 일치율 */
@@ -6161,7 +6186,7 @@ class Component extends DCLogic {
     var shp = cl(100 - best * 480), size = cl(100 - Math.abs(Math.log(mA / mB)) * 130), outl = shp * 0.7 + size * 0.3;
     var eAvg = mean(sl.e || []), lift = cl(100 - Math.abs(eAvg - t.e) / Math.max(8, t.e) * 55), wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, hs = 0, ps = 0, pct;
     if (!t.H) { pct = outl * 0.65 + lift * 0.35; if (wall) { pct *= 0.45; } }
-    else if (wall) { hs = cl(100 - Math.abs(Hw - t.H) / t.H * 130); var d = 0, sc = sl.sc || [1, 1]; for (var k = 0; k <= 11; k++) { d += Math.abs(this.slabSc(sc, k / 11) - this.slabSc(t.sc, k / 11)); } ps = cl(100 - d / 12 * 320); pct = outl * 0.45 + lift * 0.1 + hs * 0.25 + ps * 0.2; }
+    else if (wall) { hs = cl(100 - Math.abs(Hw - t.H) / t.H * 130); var d = 0, sc = sl.sc || [1, 1], W0m = this.slabHalfW(this.slabRims(sl), 0), tWm = this.slabTgW(t); for (var k = 0; k <= 11; k++) { var tgw = tWm * this.slabSc(t.sc, k / 11); d += Math.abs(W0m * this.slabSc(sc, k / 11) - tgw) / tgw; } ps = cl(100 - d / 12 * 320); /* 벽 넓이 = 실제 폭으로 비교 */ pct = outl * 0.45 + lift * 0.1 + hs * 0.25 + ps * 0.2; }
     else { pct = (outl * 0.45 + lift * 0.1) * 0.6; }
     return { pct: Math.round(pct), outl: Math.round(outl), lift: Math.round(lift), hs: Math.round(hs), ps: Math.round(ps) };
   }
@@ -6352,6 +6377,21 @@ class Component extends DCLogic {
         var eL = [], eR = []; for (var k5 = 0; k5 <= 12; k5++) { var u5 = k5 / 12, h5 = W0 * self.slabSc(scs, u5), y5 = baseY - Hw * u5; eL.push([SG.cx - h5 - 6, y5]); eR.push([SG.cx + h5 + 6, y5]); }
         G2.edge = pd(eL, false) + ' ' + pd(eR, false); G2.hands = gr.u != null ? [{ x: SG.cx + gr.side * W0 * self.slabSc(scs, gr.u), y: baseY - Hw * gr.u, on: true, sg: gr.side }] : [];
       }
+      /* 물레처럼 : 잡은 높이를 기물 위에 노란 띠로 · 맞은 구간은 초록 · 새로 맞으면 반짝 */
+      var grb = this.slabGrab || {}, TGd = this.slabTg(g), cur = this.slabWith(SL, {}); if (LV.e) { cur.e = LV.e; } if (LV.lift != null) { cur.lift = LV.lift; } if (LV.H != null) { cur.H = LV.H; } if (LV.sc) { cur.sc = LV.sc; }
+      var DN = this.slabDone(cur, TGd), bY0 = bot - T - this.slabFrontE(SL, 0), gD = '', spk = [], tNow = Date.now(), wX = function (u) { return W0 * self.slabSc(scs, u) + 3; };
+      if (WALL) { for (var kd = 1; kd < 11; kd++) { if (DN.seg[kd] && DN.seg[kd + 1]) { var ua = kd / 11, ub = (kd + 1) / 11, ya = bY0 - Hw * ua, yb = bY0 - Hw * ub; gD += 'M' + (SG.cx + wX(ua)).toFixed(1) + ' ' + ya.toFixed(1) + ' L' + (SG.cx + wX(ub)).toFixed(1) + ' ' + yb.toFixed(1) + ' M' + (SG.cx - wX(ua)).toFixed(1) + ' ' + ya.toFixed(1) + ' L' + (SG.cx - wX(ub)).toFixed(1) + ' ' + yb.toFixed(1) + ' '; } }
+        if (DN.h) { var tw = wX(1); gD += 'M' + (SG.cx - tw).toFixed(1) + ' ' + (bY0 - Hw - 3).toFixed(1) + ' L' + (SG.cx + tw).toFixed(1) + ' ' + (bY0 - Hw - 3).toFixed(1) + ' '; } }
+      else if (DN.e && !TGd.free) { var hE = cur.lift != null ? cur.lift : Math.max.apply(null, (cur.e || [0]).concat([0])); gD += 'M' + (SG.cx - W0 * 0.95).toFixed(1) + ' ' + (bot - T - hE - 3).toFixed(1) + ' L' + (SG.cx + W0 * 0.95).toFixed(1) + ' ' + (bot - T - hE - 3).toFixed(1); }
+      (this.slabSegFx || []).forEach(function (fx) { var age = tNow - fx.t; if (age < 0 || age > 650) { return; } var px, py; if (fx.k === 'h') { px = SG.cx; py = bY0 - Hw - 8; } else if (fx.k === 'e') { px = SG.cx + W0 * 0.7; py = bot - T - (cur.lift || 0) - 8; } else { var uu = fx.k / 11; px = SG.cx + wX(uu) + 8; py = bY0 - Hw * uu; } var k0 = age / 650; spk.push({ x: px.toFixed(1), y: (py - k0 * 14).toFixed(1), fs: (14 + k0 * 8).toFixed(0), op: (1 - k0).toFixed(2), key: fx.t + '' + fx.k }); });
+      G2.done = gD || 'M0 0'; G2.spk = spk;
+      if (grb.u != null || grb.h || grb.lift) {
+        var REGN = function (u) { return u < 0.34 ? '아랫부분' : (u < 0.67 ? '몸통' : '입구'); }, gy, bh;
+        if (grb.u != null) { gy = bY0 - Hw * grb.u; bh = Math.max(7, Hw / 11 * 1.6); G2.gl = REGN(grb.u) + (grb.dir === 'out' ? ' 넓히는 중' : (grb.dir === 'in' ? ' 모으는 중' : ' 잡음')); }
+        else if (grb.h) { gy = bY0 - Hw; bh = 9; G2.gl = '높이 ' + (grb.dir === 'up' ? '올리는 중' : (grb.dir === 'down' ? '낮추는 중' : '')) + ' · ' + Math.round(Hw) + (TGd.H && !TGd.free ? ' / 목표 ' + TGd.H : ''); }
+        else { var hL2 = cur.lift != null ? cur.lift : 0; gy = bot - T - hL2; bh = 8; G2.gl = '테두리 ' + (grb.dir === 'up' ? '올리는 중' : (grb.dir === 'down' ? '낮추는 중' : '')) + ' · ' + Math.round(hL2) + (!TGd.free && !TGd.H ? ' / 목표 ' + TGd.e : ''); }
+        G2.gb = { y1: (gy - bh).toFixed(1), h: (bh * 2).toFixed(1), y: gy.toFixed(1), ly: Math.max(160, gy - bh - 8).toFixed(1) };
+      }
     }
     /* 목표 안내선 : 위에서 = 바닥 모양(점선) · 옆에서 = 목표 옆모습(점선) */
     var TG = this.slabTg(g), tgP = this.slabTgPoly(TG), tgD = 'M0 0';
@@ -6365,10 +6405,11 @@ class Component extends DCLogic {
     var kn = this.slabKnife, knD = kn && kn.length > 1 ? pd(kn, false) : 'M0 0';
     var TBTN = 'all:unset;cursor:pointer;box-sizing:border-box;height:40px;padding:0 9px;border-radius:12px;display:flex;align-items:center;gap:4px;font-family:Jua,sans-serif;font-size:13.5px;';
     function tb(id, label) { var en = !!TL[id], on = en && tool === id; return { label: label, aria: label + (on ? ' · 들고 있음' : (en ? '' : ' · 지금은 못 써요')), on: on ? 'true' : 'false', tap: function () { self.slabPick(id); }, st: TBTN + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F;box-shadow:0 3px 0 #B98A2E' : (en ? 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24;box-shadow:0 3px 0 #8A6440' : 'background:#E6DCCB;border:3px solid #B9A88E;color:#A0907A')) }; }
-    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? (this.slabTg(g).free ? '🔪 자유 · 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : '🔪 점선(목표 모양)을 따라 칼로 바닥을 그려요 · 처음 자리까지 이으면 잘려요') : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 노란 띠(테두리)를 잡고 ↕ · 테두리 전체 높이 · 가운데(굽)는 바닥에 붙어 있어요', wall: '🧱 위 ↕ 손잡이 = 벽 높이 (끝까지 내리면 벽 없앰) · 벽 어디든 잡고 ↔ = 그 높이의 폭' }[tool] || '')));
+    var HINT = !SL && !oSit ? '흙판에서 흙을 끌어다 판 성형대에 올려요' : (oSit ? oSit.slabName + ' · 들어서 오른쪽 위 선반에 ↗' : (ST === 'sheet' ? (this.slabTg(g).free ? '🔪 자유 · 칼로 원하는 바닥 모양을 그려요 · 처음 자리까지 이으면 잘려요' : '🔪 점선(목표 모양)을 따라 칼로 바닥을 그려요 · 처음 자리까지 이으면 잘려요') : ({ '': '👆 손가락으로 테두리 높이 · 🧱 벽 세우기 · 둘 다 해도 돼요 · 이대로 「✓ 완성」 = 평판', knife: '🔪 다시 오리기 · 판 위에 바닥 모양을 그려요', finger: '👆 아무 데나 짚고 ↕ = 테두리 높이 · 목표 높이 가까이면 착 붙어요', wall: '🧱 벽 윗단·그 위를 짚고 ↕ = 높이 (끝까지 내리면 벽 없앰) · 그 아래 아무 데나 짚고 ↔ = 그 높이의 넓이' }[tool] || '')));
     v.sb = { on: SON, empty: !SL && !oSit, has: !!SL, piece: !!oSit, sheet: mode === 'sheet', topv: mode === 'top', side: mode === 'side', rot: false, work: !!SL,
       sx: SG.cx - SG.sw / 2, sy: SG.cy - SG.sh / 2, sw: SG.sw, sh: SG.sh, col: CLC, edge: this.shade(CLC, 0.62), hi: this.shade(CLC, 1.12), inner: this.shade(CLC, 0.74),
       knD: knD, baseD: baseD, backD: backD, frontD: frontD, lipD: lipD, editD: editD, thumbD: thumbD, botY: SG.bot, wallOn: WALL,
+      doneD: G2.done || 'M0 0', spk: G2.spk || [], gbOn: !!G2.gb, gb: G2.gb || { y1: 0, h: 0, y: 0, ly: 0 }, gl: G2.gl || '',
       edgeD: G2.edge || 'M0 0', bandOn: !!G2.band, bandY: G2.band ? (G2.band.y - 14).toFixed(1) : '0', bandSt: G2.band && G2.band.on ? 'rgba(255,226,122,.42)' : 'rgba(255,226,122,.2)', bandAnim: this.slabHint && now - this.slabHint < 900 ? 'animation:cutPulse .45s ease-in-out 2' : '',
       hands: (G2.hands || []).map(function (h) { return { tr: 'translate(' + h.x.toFixed(1) + ' ' + h.y.toFixed(1) + ')', ring: h.on ? '#FFE27A' : '#FFF4DE', fill: h.on ? 'rgba(227,178,60,.85)' : 'rgba(43,26,15,.6)', ar: h.sg > 0 ? 'M5 0 l-5 -5 v10 z M-5 0 l5 -5 v10 z' : 'M5 0 l-5 -5 v10 z M-5 0 l5 -5 v10 z' }; }),
       gh: G2.h, ghY: (G2.hy || 0).toFixed(1), ghSt: G2.hOn ? '#FFE27A' : '#FFF4DE', gw: G2.w, gwY: (G2.wy || 0).toFixed(1), gwL: (G2.wl || 0).toFixed(1), gwR: (G2.wr || 0).toFixed(1), gwX: (G2.wx || 0).toFixed(1), gwSt: G2.wOn ? '#FFE27A' : 'rgba(255,244,222,.75)',
