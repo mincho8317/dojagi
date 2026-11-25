@@ -810,17 +810,19 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           </sc-if>
         </div>
         <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
-          <div role="toolbar" aria-label="붓 · 도장" style="position:absolute;left:8px;right:8px;top:486px;z-index:12;display:flex;flex-wrap:wrap;gap:5px;justify-content:center"><sc-for list="{{pt.tools}}" as="tl" hint-placeholder-count="6"><button type="button" aria-pressed="{{tl.on}}" aria-label="{{tl.aria}}" onClick="{{tl.tap}}" style="{{tl.st}}">{{tl.label}}</button></sc-for></div>
-          <div role="radiogroup" aria-label="유약 색" style="position:absolute;left:8px;right:8px;top:574px;z-index:12;display:flex;gap:9px;justify-content:center"><sc-for list="{{pt.pal}}" as="pc" hint-placeholder-count="3"><button type="button" role="radio" aria-label="{{pc.aria}}" onClick="{{pc.tap}}" style="{{pc.st}}"></button></sc-for></div>
-          <div style="position:absolute;left:8px;top:620px;width:300px;z-index:12;display:flex;gap:5px">
-            <button type="button" onClick="{{pt.undo}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">↶ 한 획</button>
-            <button type="button" onClick="{{pt.clear}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">모두 지움</button>
-            <button type="button" onClick="{{pt.drop}}" aria-label="그린 것 버리고 기물 내려놓기" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">내려놓기</button>
-            <button type="button" onClick="{{pt.save}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#3B7A32;border:3px solid #2F6328;color:#FFFDF5">다 그렸어요</button>
+          <div role="toolbar" aria-label="붓 · 지우개 · 도장" style="position:absolute;left:4px;right:4px;top:482px;z-index:12;display:flex;gap:4px;justify-content:center"><sc-for list="{{pt.tools}}" as="tl" hint-placeholder-count="7"><button type="button" aria-pressed="{{tl.on}}" aria-label="{{tl.aria}}" onClick="{{tl.tap}}" style="{{tl.st}}"><svg width="26" height="26" viewBox="-14 -14 28 28" aria-hidden="true"><path d="{{tl.ico}}" fill="none" stroke="#3E2616" stroke-width="{{tl.icoW}}" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>{{tl.label}}</span></button></sc-for></div>
+          <div style="position:absolute;left:8px;top:540px;z-index:12;display:flex;gap:5px">
+            <button type="button" onClick="{{pt.undo}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:34px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">↶ 한 획</button>
+            <button type="button" onClick="{{pt.clear}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:34px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">이 면 모두 지움</button>
+            <button type="button" onClick="{{pt.drop}}" aria-label="그린 것 버리고 기물 내려놓기" style="all:unset;cursor:pointer;box-sizing:border-box;height:34px;padding:0 9px;border-radius:11px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">내려놓기</button>
           </div>
+          <div role="radiogroup" aria-label="붓 유약 고르기" style="position:absolute;left:8px;top:574px;width:300px;height:110px;z-index:12">
+            <sc-for list="{{pbuckets}}" as="bk" hint-placeholder-count="3"><div role="radio" aria-label="{{bk.aria}}" onPointerDown="{{bk.down}}" style="{{bk.st}}"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:6px;width:56px;height:50px;object-fit:contain;pointer-events:none"><span style="{{bk.liq}}"></span><span style="{{bk.tagSt}}">{{bk.tag}}</span></div></sc-for>
+          </div>
+          <button type="button" onClick="{{pt.save}}" aria-label="다 그렸어요" style="all:unset;cursor:pointer;position:absolute;left:313px;top:606px;width:72px;height:66px;z-index:26;box-sizing:border-box;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:13px;line-height:1.15;color:#FFFDF5;text-align:center">✓<br>다 그렸어요</button>
         </sc-if>
       </sc-if>
-      <sc-if value="{{facPaint}}" hint-placeholder-val="{{true}}">
+      <sc-if value="{{gzBtn.show}}" hint-placeholder-val="{{true}}">
       <div role="button" tabindex="0" aria-label="{{gzBtn.aria}}" onClick="{{gzBtn.tap}}" style="position:absolute;left:313px;top:606px;width:72px;height:66px;z-index:25;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box">
         <svg width="56" height="44" viewBox="0 0 56 64" aria-hidden="true"><sc-if value="{{gzBtn.brush}}" hint-placeholder-val="{{true}}"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse><ellipse cx="28" cy="49" rx="21" ry="5" fill="#E2C08F" stroke="#5B3A24" stroke-width="2"></ellipse></sc-if><sc-if value="{{gzBtn.dip}}" hint-placeholder-val="{{false}}"><path d="M6 26 Q6 58 28 58 Q50 58 50 26 Z" fill="#D9B48A" stroke="#5B3A24" stroke-width="2.5"></path><ellipse cx="28" cy="26" rx="22" ry="7" fill="#9DBFA9" stroke="#5B3A24" stroke-width="2.5"></ellipse></sc-if></svg>
         <span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;color:#5B3A24;text-align:center">{{gzBtn.txt}}</span>
@@ -6261,7 +6263,7 @@ class Component extends DCLogic {
     if (this.paint) { this.say('붓 시유대에 이미 기물이 있어요'); this.sfx('fail'); return false; }
     var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; }), g0 = (pal[2] || pal[0])[0];
     var bv = it.brushV || {}; /* 면마다 따로 : 0 앞(it.brush) · 1 오른쪽 · 2 뒤 · 3 왼쪽(it.brushV) */
-    this.paint = { id: id, st: st, view: 0, sv: { 0: (it.brush || []).slice(), 1: (bv[1] || []).slice(), 2: (bv[2] || []).slice(), 3: (bv[3] || []).slice() }, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: 'brush', stamp: 'dot', live: '' };
+    this.paint = { id: id, st: st, view: 0, sv: { 0: (it.brush || []).slice(), 1: (bv[1] || []).slice(), 2: (bv[2] || []).slice(), 3: (bv[3] || []).slice() }, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: 'brush', stamp: 'dot', live: '', used: {} };
     this.sfx('tap'); this.say('붓으로 긋거나 도장을 찍어 무늬를 넣어요 · 다 하면 「다 그렸어요」'); this.bump(); return true;
   }
   paintItem() { var P = this.paint; if (!P) { return null; } var g = this.loadG(), L = P.st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === P.id; })[0]; return it || null; }
@@ -6283,7 +6285,15 @@ class Component extends DCLogic {
     if (P.tool === 'stamp') { /* 도장 : 짚은 자리에 한 번 찍는다 */
       var qs = this.paintPt(e, true); if (!svg || !qs) { return; } if (!this.paintIn(it, qs)) { this.say('기물 위에 찍어요'); return; }
       var bw = +(svg.getAttribute('data-bw') || 3), sz = Math.max(4, bw * 2.4);
-      P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, k: 'st', w: bw, p: this.stampPath(P.stamp, qs[0], qs[1], sz) }]).slice(-60); this.sfx('tap'); try { window.__buzz && window.__buzz(6); } catch (eb) {} this.bump(); return;
+      P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, k: 'st', w: bw, x: qs[0], y: qs[1], p: this.stampPath(P.stamp, qs[0], qs[1], sz) }]).slice(-60); P.used[P.gk] = 1; this.sfx('tap'); try { window.__buzz && window.__buzz(6); } catch (eb) {} this.bump(); return;
+    }
+    if (P.tool === 'erase') { /* 지우개 : 문지른 자리에 닿은 획·도장을 통째로 지운다 */
+      var bwE = +(svg && svg.getAttribute('data-bw') || 3), RE = Math.max(6, bwE * 2.2), n0 = P.strokes.length;
+      var hitS = function (st, q) { if (st.x != null && Math.hypot(st.x - q[0], st.y - q[1]) < RE + bwE * 1.5) { return true; } var pts = [], m, re = /([ML])\s*(-?[\d.]+)[ ,]+(-?[\d.]+)/g; while ((m = re.exec(st.p))) { pts.push([+m[2], +m[3], m[1]]); } for (var i = 0; i < pts.length; i++) { var a = pts[i]; if (Math.hypot(a[0] - q[0], a[1] - q[1]) < RE) { return true; } var b = pts[i + 1]; if (b && b[2] === 'L') { var ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey || 1, t = Math.max(0, Math.min(1, ((q[0] - a[0]) * ex + (q[1] - a[1]) * ey) / L2)); if (Math.hypot(a[0] + ex * t - q[0], a[1] + ey * t - q[1]) < RE) { return true; } } } return false; };
+      var rub = function (ev) { var q = self.paintPt(ev, true); if (!q) { return; } var keep = P.strokes.filter(function (st) { return !hitS(st, q); }); if (keep.length !== P.strokes.length) { P.strokes = keep; self.bump(); } };
+      rub(e); this.dragging = true;
+      var mvE = function (ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } rub(ev); }, upE = function (ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mvE); window.removeEventListener('pointerup', upE); window.removeEventListener('pointercancel', upE); self.dragging = false; if (P.strokes.length < n0) { self.sfx('tap'); } };
+      window.addEventListener('pointermove', mvE, { passive: false }); window.addEventListener('pointerup', upE); window.addEventListener('pointercancel', upE); return;
     }
     var q0 = this.paintPt(e); if (!svg || !q0) { return; }
     var d = '', pen = false, raf = 0, tip = document.querySelector('[data-paint-tip]');
@@ -6292,7 +6302,7 @@ class Component extends DCLogic {
     add(q0); this.dragging = true;
     function mv(ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.paintPt(ev); if (q) { add(q); } }
     function up(ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; if (tip) { tip.setAttribute('opacity', '0'); } if (raf) { cancelAnimationFrame(raf); raf = 0; }
-      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, w: +(svg.getAttribute('data-bw') || 3), p: d.trim() }]).slice(-60); }
+      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, w: +(svg.getAttribute('data-bw') || 3), p: d.trim() }]).slice(-60); P.used[P.gk] = 1; }
       P.live = ''; self.bump(); }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
@@ -6304,6 +6314,9 @@ class Component extends DCLogic {
     var y = {}, k; for (k in it) { y[k] = it[k]; } y.brush = P.sv[0].slice(); var bvN = { 1: P.sv[1].slice(), 2: P.sv[2].slice(), 3: P.sv[3].slice() }, side = bvN[1].length + bvN[2].length + bvN[3].length;
     if (side) { y.brushV = bvN; } else { delete y.brushV; } if (!y.brush.length) { delete y.brush; } if (y.brush || side) { y.bru = true; } else { delete y.bru; }
     var up = {};
+    /* 쓴 유약 색마다 원료 1개 (이번에 새로 그은 색만 · 튜토리얼은 무한) */
+    var Gc = this.ctls.Glaze, usedK = Object.keys(P.used || {}).filter(function (gk) { return y.bru && (P.sv[0].concat(P.sv[1], P.sv[2], P.sv[3])).some(function (st) { return st.g === gk; }); });
+    if (usedK.length && Gc && Gc.matInfo) { var mm = {}, kk; for (kk in (g.mats || {})) { mm[kk] = g.mats[kk]; } var spent = []; usedK.forEach(function (gk) { var MI = Gc.matInfo(g, gk); if (MI.tut) { return; } mm[MI.key] = Math.max(0, (mm[MI.key] || 0) - 1); spent.push(gk); }); if (spent.length) { up.mats = mm; } }
     if (P.st === 'g' && y.bru) {
       if ((g.kilnList || []).length >= this.KB().cap) { this.say('시유한 기물 선반이 가득 찼어요 · 가마에 먼저 넣어요'); this.sfx('fail'); return; }
       delete y.recoat; up.glazeList = (g.glazeList || []).filter(function (x) { return x.id !== P.id; }); up.kilnList = (g.kilnList || []).concat([y]);
@@ -6505,7 +6518,7 @@ class Component extends DCLogic {
     v.gzBrush = GZB; v.gzDip = !GZB;
     v.gzWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (GZB ? (gzA ? 'animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both;' : 'transform:translateY(-640px);visibility:hidden;') : (gzA ? 'animation:eqDrop .42s .3s cubic-bezier(.55,0,1,.45) both;' : ''));
     v.gzBoard = 'position:absolute;left:40px;top:196px;width:310px;height:280px;z-index:12;' + (GZB && gzA ? 'animation:eqDrop .42s .3s cubic-bezier(.55,0,1,.45) both;' : '');
-    v.gzBtn = { txt: '⇄ ' + (GZB ? '담금 시유로' : '붓 시유로'), aria: '설비 변경 · ' + (GZB ? '담금 시유대로 바꾸기' : '붓 시유대로 바꾸기'), tap: function () { self.gzSwap(); }, dip: GZB, brush: !GZB };
+    v.gzBtn = { txt: '⇄ ' + (GZB ? '담금 시유로' : '붓 시유로'), aria: '설비 변경 · ' + (GZB ? '담금 시유대로 바꾸기' : '붓 시유대로 바꾸기'), tap: function () { self.gzSwap(); }, dip: GZB, brush: !GZB, show: !!(g.fac || {}).paint && !PT }; /* 그리는 동안엔 그 자리에 「다 그렸어요」 */
     v.pt = { on: !!PT, empty: GZB && !PT };
     if (PT) {
       var tmpIt = {}; for (var pk in pIt) { tmpIt[pk] = pIt[pk]; } tmpIt.brush = PT.strokes; delete tmpIt.brushV; tmpIt.bru = true;
@@ -6515,9 +6528,13 @@ class Component extends DCLogic {
       var TB = 'all:unset;cursor:pointer;box-sizing:border-box;height:36px;padding:0 9px;border-radius:11px;display:flex;align-items:center;font-family:Jua,sans-serif;font-size:13px;';
       v.pt = { on: true, empty: false, pot: ppot, bw: ppot.bw, live: PT.live || 'M0 0', col: PT.col, name: this.pName(PT.st === 'g' ? { shape: pIt.shape, sk: pIt.sk, goalName: pIt.goalName, slabName: pIt.slabName, poly: pIt.poly } : pIt) + (PT.st === 'g' ? ' · 시유 전' : ' · 담금 시유 위에'), n: PT.strokes.length,
         pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.paint.gk = p[0]; self.bump(); } }; }),
-        tools: [['brush', '🖌 붓']].concat(this.STAMPS().map(function (t) { return [t[0], t[1]]; })).map(function (t) { var on = t[0] === 'brush' ? PT.tool === 'brush' : (PT.tool === 'stamp' && PT.stamp === t[0]); return { label: t[0] === 'brush' ? t[1] : '◉ ' + t[1], aria: t[0] === 'brush' ? '붓으로 긋기' : t[1] + ' 도장 찍기', on: on ? 'true' : 'false', st: TB + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'), tap: function () { if (t[0] === 'brush') { self.paint.tool = 'brush'; } else { self.paint.tool = 'stamp'; self.paint.stamp = t[0]; } self.bump(); } }; }),
+        tools: (function () { var IC = { brush: 'M15 -15 L-3 3 M-3 3 Q-9 5 -10 11 Q-4 11 -1 6', erase: 'M-10 4 L2 -8 L10 0 L-2 12 Z M-6 0 L6 8' };
+          return [['brush', '붓'], ['erase', '지우개']].concat(self.STAMPS()).map(function (t) { var isS = t[0] !== 'brush' && t[0] !== 'erase', on = isS ? (PT.tool === 'stamp' && PT.stamp === t[0]) : PT.tool === t[0];
+            return { ico: isS ? self.stampPath(t[0], 0, 0, 8) : IC[t[0]], icoW: isS ? 3.4 : 2.6, label: t[1], aria: t[0] === 'brush' ? '붓으로 긋기' : (t[0] === 'erase' ? '지우개 · 문지른 획 지우기' : t[1] + ' 도장 찍기'), on: on ? 'true' : 'false',
+              st: 'all:unset;cursor:pointer;box-sizing:border-box;width:44px;height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:Jua,sans-serif;font-size:10px;' + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
+              tap: function () { if (isS) { self.paint.tool = 'stamp'; self.paint.stamp = t[0]; } else { self.paint.tool = t[0]; } self.bump(); } }; }); })(),
         viewTxt: ['앞', '오른쪽', '뒤', '왼쪽'][VWp] + '면', rotL: function () { self.paintRot(-1); }, rotR: function () { self.paintRot(1); }, cnt: [0, 1, 2, 3].map(function (k) { var n = k === VWp ? PT.strokes.length : (PT.sv[k] || []).length; return { t: ['앞', '오', '뒤', '왼'][k], st: 'padding:0 5px;border-radius:7px;font-size:10px;' + (k === VWp ? 'background:#FFE27A;color:#2B1A0F' : (n ? 'background:#5B3A24;color:#FFE7A8' : 'background:rgba(91,58,36,.18);color:#8A6440')) }; }),
-        hint: PT.tool === 'stamp' ? '기물을 짚으면 그 자리에 도장이 찍혀요' : '붓으로 그어요 · 붓 끝은 손가락 조금 위',
+        hint: PT.tool === 'stamp' ? '기물을 짚으면 그 자리에 도장이 찍혀요' : (PT.tool === 'erase' ? '지울 무늬를 문질러요' : '붓으로 그어요 · 붓 끝은 손가락 조금 위'),
         down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); }, drop: function () { self.paintDrop(); } };
     }
     var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
@@ -6582,11 +6599,24 @@ class Component extends DCLogic {
       var bh = '<div style="position:relative;width:56px;height:56px"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" style="width:56px;height:50px;object-fit:contain"><span style="position:absolute;left:10px;top:11px;width:36px;height:9px;border-radius:50%;background:' + (GC[b.id] || '#ECE8DE') + ';border:1.5px solid #3E2616"></span></div>';
       return { name: BN, aria: b.name + ' · ' + (b.price || '') + (b.on ? ' · 시유그릇에 들어간 유약' : ' · 끌어서 시유그릇에'), pick: b.pick,
         down: function (e) { self.carryStart(e, 'glaze', b, bh, 56, 56, function () { self.say('유약통을 끌어서 시유그릇에 부어요'); }); },
-        st: 'position:absolute;left:' + (4 + i * 64) + 'px;top:' + (b.on ? 0 : 10) + 'px;width:56px;height:84px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (none ? 'opacity:.55;' : '') + (b.on ? 'filter:drop-shadow(0 0 5px #FFE27A)' : ''),
+        st: 'position:absolute;left:' + (2 + i * 61) + 'px;top:' + (b.on ? 0 : 10) + 'px;width:56px;height:84px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;' + (none ? 'opacity:.55;' : '') + (b.on ? 'filter:drop-shadow(0 0 5px #FFE27A)' : ''),
         liq: 'position:absolute;left:10px;top:' + (b.on ? 17 : 17) + 'px;width:36px;height:9px;border-radius:50%;background:' + (GC[b.id] || '#ECE8DE') + ';border:1.5px solid #3E2616',
         tag: BN + ' ' + (none ? '0' : (b.price || '').split(' · ')[0].replace(/^[^0-9∞무]*/, '').replace('개', '')) + (b.on ? ' ✓' : ''), tagSt: 'position:absolute;left:-4px;right:-4px;top:58px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:18px;border-radius:9px;background:rgba(43,26,15,.82);color:' + (b.on ? '#FFE27A' : '#FFF4DE') + ';white-space:nowrap',
         sub: '', subSt: 'display:none;position:absolute;left:0;right:0;top:69px;text-align:center;font-size:9.5px;font-weight:700;color:#F3E3C4;white-space:nowrap' };
     });
+    /* 붓 시유 색 = 유약통과 같은 모양 · 누르면 그 유약으로 · 원료가 없으면 못 씀 (다 그렸어요 때 쓴 색마다 1개) */
+    v.pbuckets = [];
+    if (this.paint) { var PTb = this.paint, Gcb = this.ctls.Glaze;
+      v.pbuckets = (GZ.glazes || []).slice(0, 5).map(function (b, i) {
+        var BN = { white: '백자', celadon: '청자', black: '흑유', jinsa: '진사', sakura: '벚꽃', cheonmok: '천목' }[b.id] || b.name, MI = Gcb && Gcb.matInfo ? Gcb.matInfo(g, b.id) : { n: 1 }, n = MI.tut ? Infinity : (MI.n || 0), col = self.fillOf({ glaze: b.id }, 'glazed'), on = PTb.gk === b.id, ok = n > 0 || (PTb.used || {})[b.id];
+        return { name: BN, aria: BN + '으로 그리기 · 원료 ' + (n === Infinity ? '무한' : n) + (on ? ' · 고름' : ''), pick: null,
+          down: function () { if (!ok) { self.say(BN + ' 원료가 없어요 · 채집하거나 상점에서 사요'); self.sfx('fail'); return; } self.paint.col = col; self.paint.gk = b.id; if (self.paint.tool === 'erase') { self.paint.tool = 'brush'; } self.sfx('tap'); self.bump(); },
+          st: 'position:absolute;left:' + (2 + i * 61) + 'px;top:' + (on ? 0 : 10) + 'px;width:56px;height:84px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;' + (ok ? '' : 'opacity:.45;') + (on ? 'filter:drop-shadow(0 0 5px #FFE27A)' : ''),
+          liq: 'position:absolute;left:10px;top:17px;width:36px;height:9px;border-radius:50%;background:' + col + ';border:1.5px solid #3E2616',
+          tag: BN + ' ' + (n === Infinity ? '∞' : n) + (on ? ' ✓' : ''), tagSt: 'position:absolute;left:-4px;right:-4px;top:58px;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:18px;border-radius:9px;background:rgba(43,26,15,.82);color:' + (on ? '#FFE27A' : '#FFF4DE') + ';white-space:nowrap',
+          sub: '', subSt: 'display:none' };
+      });
+    }
     /* 큰 가마 · 칸 6개 */
     var K = this.kState(g); this.kAdv(K, now);
     var B = this.KB(), T = K.T, inB = T >= B.lo, kv = [], doneN = 0, fireN = 0, cost = this.kCost()[K.open - 3], tip = this.kTip && now - this.kTip.t < 4500 ? this.kTip.i : -1;
