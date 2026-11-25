@@ -977,7 +977,7 @@ class Component extends DCLogic {
       clayCntSt: 'font-size:12px;' + (s.clay ? 'color:#8A6440' : 'color:#C0392B;font-weight:700'),
       noClay: !s.clay,
       boardFull: (function () { return self.qCnt(g) >= self.qCap() && !(self.touched && self.touched.length) && !self.qlib().isTut(g); })(),
-      boardTxt: (window.__pano ? '대기함이 가득 찼어요 (' : '물레 옆 작업대가 가득 찼어요 (') + self.qCnt(g) + '/' + self.qCap() + ')',
+      boardTxt: (window.__pano ? '2층 선반이 가득 찼어요 (' : '물레 옆 작업대가 가득 찼어요 (') + self.qCnt(g) + '/' + self.qCap() + ')',
       tgIcon: self.iconOf(tg.free ? self.shapes().free : tg),
       tgTag: tg.free ? '닮은 모양 · ' + an.nearN : /^q:/.test(s.target) ? '📋 의뢰 목표' : s.target === 'goal' && g.goal ? '★ ' + g.goal.num + '스테이지' + ((g.goalQ || []).length > 1 ? ' · 남은 ' + (g.goalQ || []).length : ' 목표') : '목표',
       tgTagStyle: 'font-size:10px;font-weight:700;white-space:nowrap;color:' + (/^q:/.test(s.target) ? '#2F6328' : (s.target === 'goal' && g.goal ? '#7A5A93' : '#A3442C')),
