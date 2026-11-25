@@ -2598,8 +2598,8 @@
           IN = true; for (var q2 = 0; q2 < nI - 1; q2++) { tri(A.inn[q2], B.inn[q2 + 1], B.inn[q2]); tri(A.inn[q2], A.inn[q2 + 1], B.inn[q2 + 1]); } IN = false; }
         var fT = col.map(function (c) { var q = c.inn[nI - 1]; return new T.Vector2(q[0], q[2]); }), trF = T.ShapeUtils.triangulateShape(fT, []), fy = TT || 2;
         IN = true; trF.forEach(function (f) { var A2 = fT[f[0]], B2 = fT[f[1]], C2 = fT[f[2]]; tri([A2.x, fy, A2.y], [C2.x, fy, C2.y], [B2.x, fy, B2.y]); }); IN = false;
-        var fB = col.map(function (c) { return new T.Vector2(c.ou[0][0], c.ou[0][2]); }), trB = T.ShapeUtils.triangulateShape(fB, []);
-        trB.forEach(function (f) { var A3 = fB[f[0]], B3 = fB[f[1]], C3 = fB[f[2]]; tri([A3.x, 0, A3.y], [B3.x, 0, B3.y], [C3.x, 0, C3.y]); });
+        var fBot = col.map(function (c) { return new T.Vector2(c.ou[0][0], c.ou[0][2]); }), trB = T.ShapeUtils.triangulateShape(fBot, []); /* 이름이 뒷면 유약(fB)과 겹쳐 뒷면이 통째로 유약으로 칠해지던 문제 */
+        trB.forEach(function (f) { var A3 = fBot[f[0]], B3 = fBot[f[1]], C3 = fBot[f[2]]; tri([A3.x, 0, A3.y], [B3.x, 0, B3.y], [C3.x, 0, C3.y]); });
         rB = Rm * 0.6; M = Math.max(M, Rm);
       } else {
       for (var j = 0; j < RINGS; j++) { var u0 = j / RINGS, u1 = (j + 1) / RINGS; strip(rad(u0), H * u0, rad(u1), H * u1, false); }
