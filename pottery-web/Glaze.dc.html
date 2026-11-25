@@ -473,7 +473,7 @@ class Component extends DCLogic {
     var curP = this.current();
     function mv(ev) {
       var dy = (ev.clientY - y0) / (k || 1); moved = Math.max(moved, Math.abs(dy));
-      if (window.__pano && window.__glzCarry && curP && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 : 시유한 기물 → 시유한 기물 선반 · 안 바른 기물 → 빚은 기물 선반 */
+      if (window.__pano && window.__glzCarry && curP && !self.state.holding && dy < -22) { /* 위로 들어 올리면 선반으로 옮기기 : 시유한 기물 → 1층 선반 · 안 바른 기물 → 2층 선반 */
         window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up);
         self.offDrag = null; self.setState({ drag: false, dragDip: null, ang: a0 }); window.__glzCarry(ev, curP.id, !curP.recoat); return;
       }
@@ -735,8 +735,8 @@ class Component extends DCLogic {
       pvPct: !cur ? '' : (function () { var c = (s.drag || s.holding) ? Math.max(self.maxCov || 0, self.curCov || 0) : 0; return c < 0.03 ? self.angName(s.ang) : '담금 ' + Math.round(Math.min(1, c) * 100) + '%'; })(),
       pvPctSt: 'font-family:Jua,sans-serif;font-size:12px;color:' + ((s.drag || s.holding) ? '#2F6328' : '#8A6440'),
       pvAria: '완성 미리보기 · ' + self.angName(s.ang) + ' 담금',
-      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : (window.__pano ? '왼쪽 위 선반에서 기물을 끌어와요' : '위 대기함에서 기물 고르기'),
-      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('왼쪽 위 빚은 기물 선반에서 기물을 끌어와요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
+      potHint: cur ? (s.holding ? '위로 올려 꺼내기 ↑' : '↓ 담그기 · ↔ 기울이기') : (window.__pano ? '2층 선반에서 기물을 끌어와요' : '위 대기함에서 기물 고르기'),
+      potDown: function (e) { if (!cur) { if (window.__pano) { self.say('2층 선반에서 기물을 끌어와요'); return; } self.setState({ pkOpen: true }); return; } self.potDown(e); },
       subGuide: cur && (s.drag || s.holding) ? 'position:absolute;left:18px;top:' + (390 - 11) + 'px;padding:2px 8px;border-radius:9px;font-family:Jua,sans-serif;font-size:12px;pointer-events:none;z-index:3;' + (s.holding ? 'background:#2F6328;color:#FFFDF5' : 'background:rgba(43,26,15,.8);color:#FFE7A8') : 'display:none',
       subGuideText: s.holding ? '● 담금 ' + Math.round((self.curCov || 0) * 100) + '%' : (s.drag && (self.curCov || 0) > 0 ? '담금 ' + Math.round((self.curCov || 0) * 100) + '% · 조금 더 ↓' : '유약 수면 · 깊이 담글수록 빨리 ↓'),
       liftOn: !!s.lift,
@@ -755,7 +755,7 @@ class Component extends DCLogic {
       tubColor: 'rgba(255,248,235,.35)',
       glzEmpty: !!cur && self.noMat(g, EG),
       shelfFull: !!cur && !cur.recoat && (g.kilnList || []).length >= (self.qlib().BOARD || 4) && !self.qlib().isTut(g),
-      shelfTxt: (window.__pano ? '시유한 기물 선반이 가득 찼어요 (' : '유약통 옆 자리가 가득 찼어요 (') + (g.kilnList || []).length + '/' + (self.qlib().BOARD || 4) + ')',
+      shelfTxt: (window.__pano ? '1층 선반이 가득 찼어요 (' : '유약통 옆 자리가 가득 찼어요 (') + (g.kilnList || []).length + '/' + (self.qlib().BOARD || 4) + ')',
       glzAlt: (function () { return ['white', 'celadon', 'black', 'jinsa', 'sakura'].some(function (z) { return z !== EG && !self.noMat(g, z) && (z !== 'jinsa' || (g.glazesFound || {}).jinsa) && (z !== 'sakura' || (g.glazesFound || {}).sakura); }); })(),
       glzAltTxt: '원료가 있는 다른 유약 고르기 ›',
       glzEmptyTitle: selG.name + ' 없음 · 보유 0',
