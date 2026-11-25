@@ -2677,7 +2677,7 @@
     var g = this.slabProj(it), o = {}, k;
     for (k in P) { o[k] = P[k]; }
     o.d = g.d; o.rimD = g.rimD; o.rings = 'none'; /* 판 기물엔 물레 자국 없음 */ o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
-    try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = g.Hw > 0 ? Math.max(0.6, 0.86 - g.Hw / Math.max(40, g.M * 2) * 0.5) : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
+    try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = g.Hw > 0 ? 0.55 : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
     o.shRx = (g.M * 1.08).toFixed(1); o.shRy = Math.max(3, g.dep * 0.9).toFixed(1); o.shCy = (g.yMax * 0.55).toFixed(1);
     var side = Math.max(g.xMax - g.xMin, g.yMax - g.yMin) + 22, cx = (g.xMax + g.xMin) / 2, cy = (g.yMax + g.yMin) / 2;
     o.vb = (cx - side / 2).toFixed(1) + ' ' + (cy - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1); o.sw = (side / 64).toFixed(2);
@@ -2711,7 +2711,9 @@
     } catch (e) { out = null; }
     if (!out || out.length < 3) { out = polys[0]; }
     function sm(q) { var m = q.length, s = ''; for (var k = 0; k < m; k++) { var a = q[k], b = q[(k + 1) % m], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; s += (k ? ' Q' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' ' : 'M') + mx.toFixed(1) + ' ' + my.toFixed(1); } var a0 = q[0], b0 = q[1 % m]; return s + ' Q' + a0[0].toFixed(1) + ' ' + a0[1].toFixed(1) + ' ' + ((a0[0] + b0[0]) / 2).toFixed(1) + ' ' + ((a0[1] + b0[1]) / 2).toFixed(1) + ' Z'; }
-    var top = polys[1], H = 0, dep = 0; GE.forEach(function (c) { H = Math.max(H, c.e + T + Hw); dep = Math.max(dep, Math.abs(c.F[1]) * K); });
+    /* 두께 : 입구(윗면)를 벽 두께만큼 안으로 줄여 그 사이에 흙 테두리가 보이게 */
+    var WT = Hw > 0 ? 5.5 : 4.5, topIn = cols.map(function (c, i) { var c3 = GE[i], s1 = Hw > 0 ? sAt(1) : 1, x = c3.R[0] * s1, y = c3.R[1] * s1, z = c3.e + T + Hw, rr = Math.hypot(x, y) || 1, kk = Math.max(0.55, 1 - WT / rr); return pj([x * kk, y * kk, z]); });
+    var top = SIDE ? polys[1] : topIn, H = 0, dep = 0; GE.forEach(function (c) { H = Math.max(H, c.e + T + Hw); dep = Math.max(dep, Math.abs(c.F[1]) * K); });
     var res = { d: sm(out), rimD: SIDE ? 'M0 0' : sm(top), H: H, Hw: Hw, M: Math.max(Math.abs(xMin), Math.abs(xMax)), xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax, dep: dep };
     C[key] = res; return res;
   };
