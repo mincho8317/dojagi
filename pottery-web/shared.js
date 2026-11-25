@@ -2685,9 +2685,9 @@
   };
   S.slabProj = function (it) {
     /* 3D 점(x 좌우, y 앞뒤, z 높이) → 화면 (x, -z + y·K) · 모든 면을 캔버스에 칠해 겉윤곽만 따낸다 (오목한 모양도 정확) */
-    var S = this, key = JSON.stringify([it.poly, it.e, it.wall ? it.Hw : 0, it.wall ? it.sc : 0]), C = S._spc || (S._spc = {});
+    var S = this, SIDE = !!window.__slabSide, key = JSON.stringify([it.poly, it.e, it.wall ? it.Hw : 0, it.wall ? it.sc : 0, SIDE]), C = S._spc || (S._spc = {}); /* __slabSide : 정면 옆모습(유약대에 매단 기물) */
     if (C[key]) { return C[key]; }
-    var K = 0.32, T = 7, Hw = it.wall ? (it.Hw || 44) : 0, sc = it.sc || [1, 1], n = sc.length, GE = S.slabGeo(it.poly, it.e || []);
+    var K = SIDE ? 0 : 0.32, T = 7, Hw = it.wall ? (it.Hw || 44) : 0, sc = it.sc || [1, 1], n = sc.length, GE = S.slabGeo(it.poly, it.e || []);
     function sAt(u) { if (n < 2) { return 1; } var f = u * (n - 1), j0 = Math.min(n - 2, Math.floor(f)), t = f - j0, a = sc[Math.max(0, j0 - 1)], b = sc[j0], c = sc[j0 + 1], d = sc[Math.min(n - 1, j0 + 2)]; return 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t); }
     function pj(p) { return [p[0], -p[2] + p[1] * K]; }
     var cols = GE.map(function (c) { var o = [[c.F[0], c.F[1], 0]]; c.band.forEach(function (b, j) { if (j) { o.push([b[0], b[1], b[2]]); } }); o.push([c.R[0], c.R[1], c.e + T]); if (Hw > 0) { for (var w = 1; w <= 10; w++) { var s = sAt(w / 10); o.push([c.R[0] * s, c.R[1] * s, c.e + T + Hw * w / 10]); } } return o.map(pj); });
@@ -2712,7 +2712,7 @@
     if (!out || out.length < 3) { out = polys[0]; }
     function sm(q) { var m = q.length, s = ''; for (var k = 0; k < m; k++) { var a = q[k], b = q[(k + 1) % m], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; s += (k ? ' Q' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' ' : 'M') + mx.toFixed(1) + ' ' + my.toFixed(1); } var a0 = q[0], b0 = q[1 % m]; return s + ' Q' + a0[0].toFixed(1) + ' ' + a0[1].toFixed(1) + ' ' + ((a0[0] + b0[0]) / 2).toFixed(1) + ' ' + ((a0[1] + b0[1]) / 2).toFixed(1) + ' Z'; }
     var top = polys[1], H = 0, dep = 0; GE.forEach(function (c) { H = Math.max(H, c.e + T + Hw); dep = Math.max(dep, Math.abs(c.F[1]) * K); });
-    var res = { d: sm(out), rimD: sm(top), H: H, Hw: Hw, M: Math.max(Math.abs(xMin), Math.abs(xMax)), xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax, dep: dep };
+    var res = { d: sm(out), rimD: SIDE ? 'M0 0' : sm(top), H: H, Hw: Hw, M: Math.max(Math.abs(xMin), Math.abs(xMax)), xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax, dep: dep };
     C[key] = res; return res;
   };
 })();
