@@ -893,11 +893,12 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:172px;top:528px">아궁이 · 장작을 끌어 넣기</span>
       <div style="position:absolute;left:0;top:210px;width:64px;height:300px;z-index:5" role="img" aria-label="가마 온도 {{kTemp}} · {{kZone}}">
         <span style="{{kZoneSt}}">{{kZone}}</span>
-        <div style="position:absolute;left:21px;top:0;width:22px;height:270px;box-sizing:border-box;border:3px solid #2B1A0F;border-radius:11px;overflow:hidden;background:linear-gradient(#F3B4A6 0 14%,#BFE3B4 14% 44%,#F6E2C0 44%)">
+        <div style="position:absolute;left:21px;top:0;width:22px;height:270px;box-sizing:border-box;border:3px solid #2B1A0F;border-radius:11px;overflow:hidden;background:linear-gradient(#F3B4A6 0 14%,#9FDC8C 14% 26%,#D7EBA8 26% 40%,#F6E2C0 40% 60%,#E2D6C6 60%)">
           <div style="{{thFill}}"></div>
-          <span style="position:absolute;left:0;right:0;top:14%;height:2px;background:#D8442C"></span><span style="position:absolute;left:0;right:0;top:44%;height:2px;background:#3B7A32"></span>
+          <span style="position:absolute;left:0;right:0;top:14%;height:2px;background:#D8442C"></span><span style="position:absolute;left:0;right:0;top:26%;height:2px;background:#3B7A32"></span><span style="position:absolute;left:0;right:0;top:40%;height:1.5px;background:#8A9A4A"></span><span style="position:absolute;left:0;right:0;top:60%;height:1.5px;background:#B9A88E"></span>
         </div>
         <div style="position:absolute;left:21px;top:0;width:22px;height:270px;pointer-events:none"><span style="{{thMark}}"></span></div>
+        <span style="position:absolute;left:46px;top:49px;font-family:Jua,sans-serif;font-size:9.5px;line-height:11px;color:#2F6328;pointer-events:none">100</span><span style="position:absolute;left:46px;top:84px;font-family:Jua,sans-serif;font-size:9.5px;line-height:11px;color:#5E7A1E;pointer-events:none">80</span><span style="position:absolute;left:46px;top:130px;font-family:Jua,sans-serif;font-size:9.5px;line-height:11px;color:#8A6410;pointer-events:none">50</span><span style="position:absolute;left:46px;top:211px;font-family:Jua,sans-serif;font-size:9.5px;line-height:11px;color:#8A7A66;pointer-events:none">10</span>
         <span style="position:absolute;left:0;top:276px;width:64px;text-align:center;font-family:'Jua',sans-serif;font-size:12px;color:#2B1A0F">{{kTemp}}</span>
       </div>
       <div role="button" onPointerDown="{{woodDown}}" aria-label="장작더미 · {{woodTxt}} · 끌어서 아궁이에 넣기" style="cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;position:absolute;left:12px;top:584px;width:118px;height:90px;z-index:6">
@@ -905,7 +906,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <span style="position:absolute;left:22px;top:26px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#9A6A44,#6B4429);border:2px solid #3E2616"></span><span style="position:absolute;left:12px;top:12px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#A97B52,#7A5434);border:2px solid #3E2616"></span>
         <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:6px;top:62px;background:#7A2A10;color:#FFE7A8">🪵 {{woodTxt}}</span>
       </div>
-      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}<br>끌어서 빈 칸에 · 누르면 남은 시간<br>콘이 다 누우면 완성 ✨ 눌러서 꺼내기</div>
+      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}<br>초록(적정)에 오래 둘수록 소성 점수↑<br>콘이 다 누우면 완성 ✨ 눌러서 꺼내기</div>
 
       </sc-if>
     </div>
@@ -4717,6 +4718,11 @@ class Ctl_k extends StationBase {
     var spot = window.__spotRoll ? window.__spotRoll(item.thick) : ''; /* 유약 뭉침 무늬 (생김새만 · 값과 무관) */
     var G2 = TU.gradeCut2 || { '명작': 260, '수작': 200 }, tot3 = sk.score + cr.pct; /* 등급 = 실력 + 발색 */
     grade = tot3 >= G2['명작'] ? '명작' : (tot3 >= G2['수작'] ? '수작' : '양작');
+    if (item.fireSc != null) { /* 새 등급 : 성형(일치율 100) + 소성(온도 구간 점수 100) = 200 · 명작 190 · 수작 160 · 시유·발색은 등급에 안 들어간다 */
+      var fitN = typeof item.fit === 'number' ? item.fit : Math.min(100, (item.form || 3) * 20), GC3 = TU.gradeCut3 || { '명작': 190, '수작': 160 };
+      tot3 = Math.round(Math.min(100, fitN) + Math.min(100, item.fireSc)); grade = tot3 >= GC3['명작'] ? '명작' : (tot3 >= GC3['수작'] ? '수작' : '양작');
+      sk = { score: tot3, max: 200, grade: grade, parts: { form: Math.round(fitN), fire: Math.round(item.fireSc) }, pts: { form: Math.round(fitN), fire: Math.round(item.fireSc) } };
+    }
     var mult = TU.gradeMul[grade] || 1;
     /* 평가액 = 예전의 1/10 */
     /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
@@ -5518,7 +5524,9 @@ class Component extends DCLogic {
      온도 T(0~100) : 장작 1개 20G → +18 · 1분에 15씩 식는다
      적정 56~86 → 굽는 속도 ×2 · 낮으면 ×0.4~2 (온도에 비례) · 86을 넘으면 과열 → 파손 위험이라 불이 10으로 뚝
      발색 = 굽는 동안 적정 구간에 머문 시간 비율 */
-  KB() { return { lo: 56, hi: 86, dec: 0.25, log: 9, cost: 20, base: 180, over: 10, cap: 6 }; }
+  KB() { return { lo: 60, hi: 86, dec: 0.25, log: 4.5, cost: 10, base: 180, over: 10, cap: 6, Z: [[74, 100, '적정'], [60, 80, '조금 낮음'], [40, 50, '낮음'], [0, 10, '너무 낮음']] }; } /* 온도 구간(아래 경계, 소성 점수, 이름) · 적정 74~86 · 86 넘으면 과열 → 10 · 빠르게 익는 건 60부터 */
+  kZoneOf(T) { var Z = this.KB().Z; for (var i = 0; i < Z.length; i++) { if (T > Z[i][0] || (i === Z.length - 1)) { return Z[i]; } } return Z[Z.length - 1]; }
+  kFireSc(x) { if (!x) { return 0; } if (x.zs != null && x.tt > 0) { return Math.round(x.zs / x.tt); } return x.tt > 0 ? Math.round(x.tb / x.tt * 100) : 0; } /* 소성 점수 = 구간별 머문 시간 × 구간 점수의 평균 */
   kCost() { return [2000, 5000, 10000]; } /* 기본 3칸 → 최대 6칸 */
   kN() { return 6; }
   kState(g) {
@@ -5541,23 +5549,23 @@ class Component extends DCLogic {
       extra.forEach(function (x) { var j = kk.indexOf(null); if (j >= 0) { kk[j] = x; if (j >= op) { op = j + 1; } } else { back.push(x.it); } });
       try { var c0 = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); c0.kilnList = (c0.kilnList || []).concat(back); c0.pk2 = { open: op, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk }; localStorage.setItem('pottery-proto-v1', JSON.stringify(c0)); } catch (e) {}
     }
-    return { open: op, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk.map(function (x) { return x ? { it: x.it, p: x.p || 0, tb: x.tb || 0, tt: x.tt || 0, done: !!x.done } : null; }) };
+    return { open: op, T: K.T == null ? 40 : K.T, at: K.at || Date.now(), k: kk.map(function (x) { return x ? { it: x.it, p: x.p || 0, tb: x.tb || 0, tt: x.tt || 0, zs: x.zs != null ? x.zs : (x.tt ? (x.tb || 0) / x.tt * 100 * x.tt : 0), done: !!x.done } : null; }) };
   }
   kMul(T) { var B = this.KB(); return T >= B.lo ? 2 : 0.4 + 1.6 * Math.max(0, T) / B.lo; }
   /* 지금까지 흐른 시간만큼 가마를 진행시킨다 (온도는 직선으로 식으므로 구간마다 정확히 적분) */
   kAdv(K, now) {
     var B = this.KB(), dt = Math.max(0, (now - K.at) / 1000), T = K.T, fin = [], guard = 0;
     while (dt > 1e-6 && guard++ < 8) {
-      var seg, I, band;
-      if (T > B.lo) { seg = Math.min(dt, (T - B.lo) / B.dec); I = 2 * seg; band = true; }
-      else if (T > 0) { seg = Math.min(dt, T / B.dec); var mT = T - B.dec * seg / 2; I = seg * (0.4 + 1.6 * mT / B.lo); band = false; }
-      else { seg = dt; I = 0.4 * seg; band = false; }
-      if (seg <= 0) { seg = dt; I = this.kMul(T) * seg; band = T >= B.lo; }
+      var seg, I, band, nb = 0; B.Z.forEach(function (z) { if (z[0] < T && z[0] > nb) { nb = z[0]; } }); if (B.lo < T && B.lo > nb) { nb = B.lo; }
+      var zs = this.kZoneOf(T)[1];
+      if (T > 0) { seg = Math.min(dt, (T - nb) / B.dec); if (T > B.lo) { I = 2 * seg; } else { var mT = T - B.dec * seg / 2; I = seg * (0.4 + 1.6 * mT / B.lo); } }
+      else { seg = dt; I = 0.4 * seg; zs = this.KB().Z[this.KB().Z.length - 1][1]; }
+      if (!(seg > 0)) { seg = dt; I = this.kMul(T) * seg; } band = zs >= 100;
       K.k.forEach(function (x, i) {
         if (!x || !x.it || x.done) { return; }
         var need = (1 - x.p) * B.base;
-        if (I >= need) { var fr = I > 0 ? need / I : 1; x.tt += seg * fr; if (band) { x.tb += seg * fr; } x.p = 1; x.done = true; fin.push(i); }
-        else { x.p += I / B.base; x.tt += seg; if (band) { x.tb += seg; } }
+        if (I >= need) { var fr = I > 0 ? need / I : 1; x.tt += seg * fr; x.zs = (x.zs || 0) + seg * fr * zs; if (band) { x.tb += seg * fr; } x.p = 1; x.done = true; fin.push(i); }
+        else { x.p += I / B.base; x.tt += seg; x.zs = (x.zs || 0) + seg * zs; if (band) { x.tb += seg; } }
       });
       T = Math.max(0, T - B.dec * seg); dt -= seg;
     }
@@ -5592,7 +5600,7 @@ class Component extends DCLogic {
     var c = this.kSave(K); c.gold = (c.gold || 0) - B.cost; try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
     this.woodAt = Date.now();
     if (over) { this.say('과열! 파손될 뻔해서 불을 확 줄였어요 · 온도 최저로'); this.sfx('fail'); try { window.__buzz && window.__buzz(40); } catch (e) {} }
-    else { this.sfx('tap'); try { window.__buzz && window.__buzz(8); } catch (e) {} if (K.T >= B.lo && K.T - B.log < B.lo) { this.say('적정 온도! 가장 빨리 구워져요'); } }
+    else { this.sfx('tap'); try { window.__buzz && window.__buzz(8); } catch (e) {} var z1 = this.kZoneOf(K.T), z0 = this.kZoneOf(K.T - B.log); if (z1[1] !== z0[1]) { this.say(z1[2] + ' 구간 · 소성 ' + z1[1] + '점' + (z1[1] >= 100 ? ' · 86 넘으면 과열!' : '')); } }
     return true;
   }
   kPlace(i, id) {
@@ -5600,8 +5608,8 @@ class Component extends DCLogic {
     if (i >= K.open) { this.say('잠긴 칸이에요 · 골드로 열어요'); return false; }
     if (K.k[i] && K.k[i].it) { this.say('이미 기물이 든 칸이에요'); return false; }
     var it = (g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
-    var it2 = {}, a; for (a in it) { if (a !== 'kp' && a !== 'ktb' && a !== 'ktt') { it2[a] = it[a]; } }
-    K.k[i] = { it: it2, p: it.kp || 0, tb: it.ktb || 0, tt: it.ktt || 0, done: false };
+    var it2 = {}, a; for (a in it) { if (a !== 'kp' && a !== 'ktb' && a !== 'ktt' && a !== 'kzs') { it2[a] = it[a]; } }
+    K.k[i] = { it: it2, p: it.kp || 0, tb: it.ktb || 0, tt: it.ktt || 0, zs: it.kzs != null ? it.kzs : (it.ktb || 0) * 100, done: false };
     var c = this.kSave(K); c.kilnList = (c.kilnList || []).filter(function (x) { return x.id !== id; });
     try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
     this.sfx('ignite'); this.doorAt = { i: i, t: Date.now() }; return true;
@@ -5611,7 +5619,7 @@ class Component extends DCLogic {
     var g = this.loadG(), K = this.kState(g); this.kAdv(K, Date.now());
     var x = K.k[i]; if (!x || !x.it || x.done) { return; }
     if ((g.kilnList || []).length >= this.KB().cap) { this.say('1층 선반이 가득 차서 꺼낼 수 없어요'); this.sfx('fail'); return; }
-    var it = {}, a; for (a in x.it) { it[a] = x.it[a]; } it.kp = Math.round(x.p * 1000) / 1000; it.ktb = Math.round(x.tb); it.ktt = Math.round(x.tt);
+    var it = {}, a; for (a in x.it) { it[a] = x.it[a]; } it.kp = Math.round(x.p * 1000) / 1000; it.ktb = Math.round(x.tb); it.ktt = Math.round(x.tt); it.kzs = Math.round(x.zs || 0);
     K.k[i] = null; var c = this.kSave(K); c.kilnList = (c.kilnList || []).concat([it]);
     try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
     this.sfx('tap'); this.say('칸에서 꺼냈어요 · ' + Math.round(x.p * 100) + '% 익음 (다시 넣으면 이어서)');
@@ -5630,8 +5638,9 @@ class Component extends DCLogic {
     try {
       kj.state = { g: g };
       var GL = (kj.tables().GL[it.glaze] || kj.tables().GL.white), opt = GL.opt || 1240;
-      var temp = r >= 0.7 ? opt : (r >= 0.4 ? opt + 35 : opt + 90); /* 적정 온도에 오래 머물수록 발색 높게 */
-      res = kj.judge(it, temp, 'mid');
+      var fs = this.kFireSc(k), temp = fs >= 90 ? opt : (fs >= 70 ? opt + 35 : opt + 90); /* 소성 점수가 높을수록 발색도 높게 */
+      var itF = {}, a0; for (a0 in it) { itF[a0] = it[a0]; } itF.fireSc = fs;
+      res = kj.judge(itF, temp, 'mid');
     } catch (e) { try { console.error(e); } catch (e2) {} }
     if (!res) { return; }
     var pid = 'k' + Date.now() + '_' + i, p = {}, x;
@@ -5909,7 +5918,7 @@ class Component extends DCLogic {
     if ((it.brush && it.brush.length || it.bru)) { this.say('붓 시유한 기물은 다시 담글 수 없어요 · 담금 시유를 먼저 하고 붓 시유를 해요'); this.sfx('fail'); return false; } /* 덧시유 횟수 제한 없음 */
     if (G.state.sel || g.glzWait) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 선반에 내려놓아요'); this.sfx('fail'); return false; }
     if ((g.glazeList || []).length >= this.KB().cap) { this.say('2층 선반이 가득 찼어요 (' + this.KB().cap + '/' + this.KB().cap + ') · 자리를 비워요'); this.sfx('fail'); return false; }
-    var ni = {}, k; for (k in it) { if (k !== 'kp' && k !== 'ktb' && k !== 'ktt') { ni[k] = it[k]; } } ni.recoat = true;
+    var ni = {}, k; for (k in it) { if (k !== 'kp' && k !== 'ktb' && k !== 'ktt' && k !== 'kzs') { ni[k] = it[k]; } } ni.recoat = true;
     this.setG2({ kilnList: (g.kilnList || []).filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     G.setState({ sel: id, lastId: '', glazeManual: '', pkOpen: false, potHide: 0 }); this.sfx('ok');
     this.say('한 번 더 입혀요 · 유약을 골라 담가요 (위로 들어 올리면 한 층만 입힌 채 선반으로)');
@@ -6711,7 +6720,7 @@ class Component extends DCLogic {
           lockTxt: !open ? (nextLock && cost != null ? '🔒 ' + cost.toLocaleString() + 'G' : '🔒') : '',
           lockSt: !open ? 'position:absolute;left:4px;right:4px;top:28px;text-align:center;font-family:Jua,sans-serif;font-size:11px;color:' + (nextLock ? '#FFE27A' : '#C9BBA8') : 'display:none',
           emptyTxt: open && !has ? '빈 칸' : '', emptySt: open && !has ? 'position:absolute;left:4px;right:4px;top:30px;text-align:center;font-family:Jua,sans-serif;font-size:11px;color:#C9A27A;pointer-events:none' : 'display:none',
-          tipOn: tip === k && has, outOn: tip === k && run, out: function () { self.kTip = null; self.kTakeOut(k); self.bump(); }, stop: function (e) { if (e && e.stopPropagation) { e.stopPropagation(); } }, tip: has ? nm + (done ? ' · 다 구웠어요!' : ' · ' + self.fmtSec(eta) + ' 남음') : '',
+          tipOn: tip === k && has, outOn: tip === k && run, out: function () { self.kTip = null; self.kTakeOut(k); self.bump(); }, stop: function (e) { if (e && e.stopPropagation) { e.stopPropagation(); } }, tip: has ? nm + (done ? ' · 다 구웠어요!' : ' · ' + self.fmtSec(eta) + ' 남음') + ' · 소성 ' + self.kFireSc(x) + '점' : '',
           tipSt: 'position:absolute;bottom:72px;' + (k % 3 === 0 ? 'left:-4px;' : (k % 3 === 2 ? 'right:-4px;' : 'left:50%;transform:translateX(-50%);')) + 'z-index:20;padding:5px 9px;border-radius:11px;background:#FFF4DE;border:3px solid #5B3A24;font-family:Jua,sans-serif;font-size:12px;line-height:1.3;color:#2B1A0F;white-space:nowrap;pointer-events:auto;display:flex;align-items:center;gap:6px;box-shadow:0 3px 0 rgba(43,26,15,.35)' });
       })(k);
     }
@@ -6740,7 +6749,8 @@ class Component extends DCLogic {
         return { list: out, tot: tot, end: f0 + (list.length - 1) * gap + 330 };
       }
       var SP = rp.skillPts || { form: Math.round((rp.fit || 0) * 1.2), glaze: 0 }, CP = rp.colorParts || {};
-      var A = chips([{ t: '성형 ' + SP.form + '/120', v: SP.form }, { t: '+ 시유 ' + SP.glaze + '/80', v: SP.glaze }], 800, 1150, 120, '#8A6440');
+      var NEWG = SP.fire != null; if (NEWG) { SP = { form: SP.form, glaze: SP.fire }; } /* 새 등급 : 성형 100 + 소성 100 */
+      var A = chips(NEWG ? [{ t: '성형 ' + SP.form + '/100', v: SP.form }, { t: '+ 소성 ' + SP.glaze + '/100', v: SP.glaze }] : [{ t: '성형 ' + SP.form + '/120', v: SP.form }, { t: '+ 시유 ' + SP.glaze + '/80', v: SP.glaze }], 800, 1150, 120, '#8A6440');
       var cl4 = (CP.rnd ? [{ t: '무작위 ' + CP.rnd + '%', v: CP.rnd }] : []).concat([{ t: (CP.rnd ? '+ ' : '') + '온도 정합 ' + (CP.temp || 0) + '%', v: CP.temp || 0 }, { t: '+ 유약 보너스 ' + (CP.glaze || 0) + '%', v: CP.glaze || 0 }, { t: '+ 흙·유약 궁합 ' + (CP.syn || 0) + '%', v: CP.syn || 0 }]).concat(CP.fire ? [{ t: '+ 불 다스림 ' + CP.fire + '%', v: CP.fire }] : []);
       var CB = chips(cl4, 920, 1270, 90, '#3E6B60');
       var cPct = rp.colorPct || 0, cNow = t >= CB.end ? cPct : Math.max(0, Math.min(100, Math.round(CB.tot)));
@@ -6781,8 +6791,8 @@ class Component extends DCLogic {
     }
     var cT = Math.round(800 + T * 5);
     v.kTemp = cT.toLocaleString() + '℃';
-    v.kZone = T > B.hi ? '과열' : (inB ? '적정 · 빠르게' : '낮음 · 느리게');
-    v.kZoneSt = 'position:absolute;left:0;top:-17px;width:64px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:13px;color:' + (inB ? '#2F6328' : '#A3442C');
+    var ZN = this.kZoneOf(T); v.kZone = T > B.hi ? '과열' : ZN[2] + ' · ' + ZN[1] + '점';
+    v.kZoneSt = 'position:absolute;left:0;top:-17px;width:64px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:13px;color:' + (ZN[1] >= 100 ? '#2F6328' : (ZN[1] >= 80 ? '#5E7A1E' : '#A3442C'));
     v.thFill = 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(Math.min(100, T)) + '%;background:linear-gradient(#FF9A3C,#E2562B);transition:height .6s';
     v.thMark = 'position:absolute;left:-7px;right:-7px;height:3px;background:#2B1A0F;bottom:calc(' + Math.round(Math.min(100, T)) + '% - 1px);transition:bottom .6s';
     v.fireGlow = 'position:absolute;left:166px;top:458px;width:118px;height:62px;border-radius:52px 52px 4px 4px;border:3px solid #2B1A0F;background:radial-gradient(circle at 50% 88%,#FFE07A,#F08A2C ' + Math.round(30 + T * 0.4) + '%,#5A1E0C);box-shadow:0 0 ' + Math.round(6 + T * 0.3) + 'px ' + Math.round(2 + T * 0.1) + 'px rgba(255,150,50,' + (0.25 + T / 200).toFixed(2) + ')' + (this.woodAt && now - this.woodAt < 400 ? ';transform:scale(1.06)' : '');

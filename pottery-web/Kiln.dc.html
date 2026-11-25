@@ -568,6 +568,11 @@ class Component extends DCLogic {
     var spot = window.__spotRoll ? window.__spotRoll(item.thick) : ''; /* 유약 뭉침 무늬 (생김새만 · 값과 무관) */
     var G2 = TU.gradeCut2 || { '명작': 260, '수작': 200 }, tot3 = sk.score + cr.pct; /* 등급 = 실력 + 발색 */
     grade = tot3 >= G2['명작'] ? '명작' : (tot3 >= G2['수작'] ? '수작' : '양작');
+    if (item.fireSc != null) { /* 새 등급 : 성형(일치율 100) + 소성(온도 구간 점수 100) = 200 · 명작 190 · 수작 160 · 시유·발색은 등급에 안 들어간다 */
+      var fitN = typeof item.fit === 'number' ? item.fit : Math.min(100, (item.form || 3) * 20), GC3 = TU.gradeCut3 || { '명작': 190, '수작': 160 };
+      tot3 = Math.round(Math.min(100, fitN) + Math.min(100, item.fireSc)); grade = tot3 >= GC3['명작'] ? '명작' : (tot3 >= GC3['수작'] ? '수작' : '양작');
+      sk = { score: tot3, max: 200, grade: grade, parts: { form: Math.round(fitN), fire: Math.round(item.fireSc) }, pts: { form: Math.round(fitN), fire: Math.round(item.fireSc) } };
+    }
     var mult = TU.gradeMul[grade] || 1;
     /* 평가액 = 예전의 1/10 */
     /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
