@@ -2676,7 +2676,7 @@
     /* 판 기물 2D : 실제 모양을 비스듬히 위에서 본 그림 (바닥 모양 그대로 · 테두리 · 벽) — 옆모습+타원 방식은 네모도 둥글게 보여서 버림 */
     var g = this.slabProj(it), o = {}, k;
     for (k in P) { o[k] = P[k]; }
-    o.d = g.d; o.rimD = g.rimD; o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
+    o.d = g.d; o.rimD = g.rimD; o.rings = 'none'; /* 판 기물엔 물레 자국 없음 */ o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
     try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = g.Hw > 0 ? Math.max(0.6, 0.86 - g.Hw / Math.max(40, g.M * 2) * 0.5) : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
     o.shRx = (g.M * 1.08).toFixed(1); o.shRy = Math.max(3, g.dep * 0.9).toFixed(1); o.shCy = (g.yMax * 0.55).toFixed(1);
     var side = Math.max(g.xMax - g.xMin, g.yMax - g.yMin) + 22, cx = (g.xMax + g.xMin) / 2, cy = (g.yMax + g.yMin) / 2;
