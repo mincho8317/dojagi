@@ -804,6 +804,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
             <span style="position:absolute;left:0;right:0;top:-24px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">붓 시유 · {{pt.name}}</span>
             <div style="position:absolute;left:5px;top:5px"><svg data-paint-svg="1" data-bw="{{pt.bw}}" width="300" height="270" viewBox="{{pt.pot.vb}}" onPointerDown="{{pt.down}}" style="touch-action:none;cursor:crosshair"><path data-pbody="1" d="{{pt.pot.d}}" fill="{{pt.pot.fill}}"></path><path d="{{pt.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{pt.pot.d}}" fill="none" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></path><path d="{{pt.pot.b0}}" fill="none" stroke="{{pt.pot.c0}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b1}}" fill="none" stroke="{{pt.pot.c1}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b2}}" fill="none" stroke="{{pt.pot.c2}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse data-prim="1" cx="0" cy="{{pt.pot.rimY}}" rx="{{pt.pot.rimRx}}" ry="{{pt.pot.rimRy}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></ellipse><path data-prim="1" d="{{pt.pot.rimD}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}" stroke-linejoin="round"></path><path d="{{pt.live}}" fill="none" stroke="{{pt.col}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round" opacity=".95"></path><circle data-paint-tip="1" cx="0" cy="0" r="3" fill="none" stroke="#2B1A0F" stroke-width="1.2" opacity="0"></circle></svg></div>
             <span style="position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;color:#5B3A24;pointer-events:none">{{pt.hint}}</span>
+            <button type="button" onClick="{{pt.rotL}}" aria-label="왼쪽으로 돌리기" style="all:unset;cursor:pointer;position:absolute;left:6px;top:8px;width:36px;height:36px;border-radius:50%;background:#FFF4DE;border:3px solid #8A6440;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:13px;color:#5B3A24">◀</button>
+            <button type="button" onClick="{{pt.rotR}}" aria-label="오른쪽으로 돌리기" style="all:unset;cursor:pointer;position:absolute;right:6px;top:8px;width:36px;height:36px;border-radius:50%;background:#FFF4DE;border:3px solid #8A6440;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-size:13px;color:#5B3A24">▶</button>
+            <div style="position:absolute;left:46px;right:46px;top:10px;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none"><span style="padding:1px 9px;border-radius:9px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:12px;color:#FFE7A8">{{pt.viewTxt}}</span><span style="display:flex;gap:3px"><sc-for list="{{pt.cnt}}" as="cn" hint-placeholder-count="4"><span style="{{cn.st}}">{{cn.t}}</span></sc-for></span></div>
           </sc-if>
         </div>
         <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
@@ -2366,7 +2369,7 @@ class Ctl_gz extends StationBase {
   // 덧시유 : 방금 담근 그릇을 소성 대기에서 다시 꺼내 한 번 더 담근다 (한 그릇에 두 층까지)
   recoat() {
     var g = this.state.g, id = this.state.lastId, kl = g.kilnList || [], it = kl.filter(function (x) { return x.id === id; })[0];
-    if (!it || (it.brush && it.brush.length)) { this.setState({ lastId: '' }); return; } /* 붓 시유한 기물은 다시 담글 수 없다 */
+    if (!it || ((it.brush && it.brush.length || it.bru))) { this.setState({ lastId: '' }); return; } /* 붓 시유한 기물은 다시 담글 수 없다 */
     var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
     this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     this.setState({ sel: id, lastId: '', glazeManual: '' });
@@ -2624,7 +2627,7 @@ class Ctl_gz extends StationBase {
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
-      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !(it.brush && it.brush.length); })(),
+      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !((it.brush && it.brush.length || it.bru)); })(),
       recoatTap: function () { self.recoat(); },
       condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
       conds: (function () {
@@ -2725,7 +2728,7 @@ class Ctl_gz extends StationBase {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
@@ -2739,7 +2742,7 @@ class Ctl_gz extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
-    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -4236,7 +4239,7 @@ class Ctl_ds extends StationBase {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
@@ -4251,7 +4254,7 @@ class Ctl_ds extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
-    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -4702,7 +4705,7 @@ class Ctl_k extends StationBase {
     var mult = TU.gradeMul[grade] || 1;
     /* 평가액 = 예전의 1/10 */
     /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
-    var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || (item.brush && item.brush.length));
+    var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || ((item.brush && item.brush.length || item.bru)));
     var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) / 10) * 10);
     var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
@@ -5042,7 +5045,7 @@ class Ctl_k extends StationBase {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
@@ -5057,7 +5060,7 @@ class Ctl_k extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
-    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -5618,7 +5621,7 @@ class Component extends DCLogic {
     var pid = 'k' + Date.now() + '_' + i, p = {}, x;
     for (x in it) { p[x] = it[x]; } for (x in res) { p[x] = res[x]; }
     delete p.recoat; if (it.sk === 'slab') { p.name = this.pName(p); }
-    if (!it.glaze && it.brush && it.brush.length) { delete p.tint; p.name = '붓 무늬 ' + String(p.name || '').replace(/^(백자|청자|흑유|진사|벚꽃|천목)\s*/, ''); } /* 붓 시유만 한 기물 */ p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
+    if (!it.glaze && (it.brush && it.brush.length || it.bru)) { delete p.tint; p.name = '붓 무늬 ' + String(p.name || '').replace(/^(백자|청자|흑유|진사|벚꽃|천목)\s*/, ''); } /* 붓 시유만 한 기물 */ p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
     K.k[i] = null;
     var c = this.kSave(K), ps = {}; for (x in (c.pieces || {})) { ps[x] = c.pieces[x]; } ps[pid] = p;
     var sf = {}, gf = {}; for (x in (c.shapesFound || {})) { sf[x] = c.shapesFound[x]; } for (x in (c.glazesFound || {})) { gf[x] = c.glazesFound[x]; } sf[p.shape] = true; if (p.glaze) { gf[p.glaze] = true; }
@@ -5797,7 +5800,7 @@ class Component extends DCLogic {
     var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
     if (g.glzWait && (g.kilnList || []).some(function (x) { return x.id === g.glzWait; })) { this.say('시유그릇의 기물을 먼저 선반으로 옮기거나 한 번 더 담가요'); this.sfx('fail'); return false; }
     if (G.state.sel && G.state.sel !== id) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 담가요'); this.sfx('fail'); return false; }
-    var pi = (g.glazeList || []).filter(function (x) { return x.id === id; })[0]; if (pi && pi.brush && pi.brush.length) { this.say('붓 시유한 기물은 담글 수 없어요 · 가마로 가져가 구워요'); this.sfx('fail'); return false; }
+    var pi = (g.glazeList || []).filter(function (x) { return x.id === id; })[0]; if (pi && (pi.brush && pi.brush.length || pi.bru)) { this.say('붓 시유한 기물은 담글 수 없어요 · 가마로 가져가 구워요'); this.sfx('fail'); return false; }
     G.setState({ sel: id, pkOpen: false, potHide: 0 }); this.sfx('ok'); return true;
   }
   /* 실로 잘라 낸 기물이 물레에서 선반으로 날아간다 */
@@ -5849,7 +5852,7 @@ class Component extends DCLogic {
   recoatPiece(id) {
     var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
     var it = (g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
-    if (it.brush && it.brush.length) { this.say('붓 시유한 기물은 다시 담글 수 없어요 · 담금 시유를 먼저 하고 붓 시유를 해요'); this.sfx('fail'); return false; } /* 덧시유 횟수 제한 없음 */
+    if ((it.brush && it.brush.length || it.bru)) { this.say('붓 시유한 기물은 다시 담글 수 없어요 · 담금 시유를 먼저 하고 붓 시유를 해요'); this.sfx('fail'); return false; } /* 덧시유 횟수 제한 없음 */
     if (G.state.sel || g.glzWait) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 선반에 내려놓아요'); this.sfx('fail'); return false; }
     if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 (' + this.KB().cap + '/' + this.KB().cap + ') · 자리를 비워요'); this.sfx('fail'); return false; }
     var ni = {}, k; for (k in it) { if (k !== 'kp' && k !== 'ktb' && k !== 'ktt') { ni[k] = it[k]; } } ni.recoat = true;
@@ -6257,7 +6260,8 @@ class Component extends DCLogic {
     var g = this.loadG(), L = st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
     if (this.paint) { this.say('붓 시유대에 이미 기물이 있어요'); this.sfx('fail'); return false; }
     var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; }), g0 = (pal[2] || pal[0])[0];
-    this.paint = { id: id, st: st, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: 'brush', stamp: 'dot', live: '' };
+    var bv = it.brushV || {}; /* 면마다 따로 : 0 앞(it.brush) · 1 오른쪽 · 2 뒤 · 3 왼쪽(it.brushV) */
+    this.paint = { id: id, st: st, view: 0, sv: { 0: (it.brush || []).slice(), 1: (bv[1] || []).slice(), 2: (bv[2] || []).slice(), 3: (bv[3] || []).slice() }, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: 'brush', stamp: 'dot', live: '' };
     this.sfx('tap'); this.say('붓으로 긋거나 도장을 찍어 무늬를 넣어요 · 다 하면 「다 그렸어요」'); this.bump(); return true;
   }
   paintItem() { var P = this.paint; if (!P) { return null; } var g = this.loadG(), L = P.st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === P.id; })[0]; return it || null; }
@@ -6279,7 +6283,7 @@ class Component extends DCLogic {
     if (P.tool === 'stamp') { /* 도장 : 짚은 자리에 한 번 찍는다 */
       var qs = this.paintPt(e, true); if (!svg || !qs) { return; } if (!this.paintIn(it, qs)) { this.say('기물 위에 찍어요'); return; }
       var bw = +(svg.getAttribute('data-bw') || 3), sz = Math.max(4, bw * 2.4);
-      P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, k: 'st', p: this.stampPath(P.stamp, qs[0], qs[1], sz) }]).slice(-60); this.sfx('tap'); try { window.__buzz && window.__buzz(6); } catch (eb) {} this.bump(); return;
+      P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, k: 'st', w: bw, p: this.stampPath(P.stamp, qs[0], qs[1], sz) }]).slice(-60); this.sfx('tap'); try { window.__buzz && window.__buzz(6); } catch (eb) {} this.bump(); return;
     }
     var q0 = this.paintPt(e); if (!svg || !q0) { return; }
     var d = '', pen = false, raf = 0, tip = document.querySelector('[data-paint-tip]');
@@ -6288,7 +6292,7 @@ class Component extends DCLogic {
     add(q0); this.dragging = true;
     function mv(ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.paintPt(ev); if (q) { add(q); } }
     function up(ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; if (tip) { tip.setAttribute('opacity', '0'); } if (raf) { cancelAnimationFrame(raf); raf = 0; }
-      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, p: d.trim() }]).slice(-60); }
+      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, w: +(svg.getAttribute('data-bw') || 3), p: d.trim() }]).slice(-60); }
       P.live = ''; self.bump(); }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
@@ -6296,16 +6300,20 @@ class Component extends DCLogic {
   paintSave() {
     var P = this.paint; if (!P) { return; }
     var g = this.loadG(), key = P.st === 'g' ? 'glazeList' : 'kilnList', it = (g[key] || []).filter(function (x) { return x.id === P.id; })[0]; if (!it) { this.paint = null; this.bump(); return; }
-    var y = {}, k; for (k in it) { y[k] = it[k]; } y.brush = P.strokes.slice(); if (!y.brush.length) { delete y.brush; }
+    P.sv[P.view] = P.strokes.slice();
+    var y = {}, k; for (k in it) { y[k] = it[k]; } y.brush = P.sv[0].slice(); var bvN = { 1: P.sv[1].slice(), 2: P.sv[2].slice(), 3: P.sv[3].slice() }, side = bvN[1].length + bvN[2].length + bvN[3].length;
+    if (side) { y.brushV = bvN; } else { delete y.brushV; } if (!y.brush.length) { delete y.brush; } if (y.brush || side) { y.bru = true; } else { delete y.bru; }
     var up = {};
-    if (P.st === 'g' && y.brush) {
+    if (P.st === 'g' && y.bru) {
       if ((g.kilnList || []).length >= this.KB().cap) { this.say('시유한 기물 선반이 가득 찼어요 · 가마에 먼저 넣어요'); this.sfx('fail'); return; }
       delete y.recoat; up.glazeList = (g.glazeList || []).filter(function (x) { return x.id !== P.id; }); up.kilnList = (g.kilnList || []).concat([y]);
       this.setG2(up); this.paint = null; this.sfx('ok'); this.say('붓 시유를 마쳤어요 · 시유한 기물 선반에 올렸어요 (바로 구울 수 있어요)'); this.bump(); return;
     }
     up[key] = (g[key] || []).map(function (x) { return x.id === P.id ? y : x; });
-    this.setG2(up); this.paint = null; this.sfx('ok'); this.say(y.brush ? '무늬를 그렸어요 · 소성 전이면 언제든 다시 그릴 수 있어요' : '무늬를 지웠어요'); this.bump();
+    this.setG2(up); this.paint = null; this.sfx('ok'); this.say(y.bru ? '무늬를 그렸어요 · 소성 전이면 언제든 다시 그릴 수 있어요' : '무늬를 지웠어요'); this.bump();
   }
+  /* 돌려 가며 그리기 : 90°씩 · 그 면의 무늬만 보이고 그 면에 그린다 */
+  paintRot(d) { var P = this.paint; if (!P) { return; } P.sv[P.view] = P.strokes.slice(); P.view = (P.view + d + 4) % 4; P.strokes = (P.sv[P.view] || []).slice(); P.live = ''; this.sfx('tap'); this.bump(); }
   paintDrop() { if (!this.paint) { return; } this.paint = null; this.sfx('tap'); this.say('그리던 것은 두고 기물을 선반에 그대로 두었어요'); this.bump(); } /* 내려놓기 : 그린 것 저장 안 함 */
   accepts(kind, dz) { if (kind === 'clay' && dz === 'slab') { return true; } return { clay: 'wheel', wire: 'wheel', piece: 'shelf', glaze: 'basin', gpiece: 'gshelf', wood: 'fire' }[kind] === dz; }
   dropAt(x, y, kind) {
@@ -6500,13 +6508,15 @@ class Component extends DCLogic {
     v.gzBtn = { txt: '⇄ ' + (GZB ? '담금 시유로' : '붓 시유로'), aria: '설비 변경 · ' + (GZB ? '담금 시유대로 바꾸기' : '붓 시유대로 바꾸기'), tap: function () { self.gzSwap(); }, dip: GZB, brush: !GZB };
     v.pt = { on: !!PT, empty: GZB && !PT };
     if (PT) {
-      var tmpIt = {}; for (var pk in pIt) { tmpIt[pk] = pIt[pk]; } tmpIt.brush = PT.strokes;
+      var tmpIt = {}; for (var pk in pIt) { tmpIt[pk] = pIt[pk]; } tmpIt.brush = PT.strokes; delete tmpIt.brushV; tmpIt.bru = true;
+      var VWp = PT.view || 0; if (tmpIt.poly) { var rp = tmpIt.poly; for (var rv = 0; rv < VWp; rv++) { rp = rp.map(function (q) { return [-q[1], q[0]]; }); } tmpIt.poly = rp; } /* 그 면이 앞으로 오게 돌린 모습 (판 기물은 옆에서 본 면 그대로) */
       var GN0 = (g.glazesFound || {}), pal0 = this.PAL().filter(function (p) { return GN0[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
-      var ppot = this.potOf(tmpIt, PT.st === 'g' ? this.fillOf(tmpIt, 'dry') : this.fillOf(tmpIt, 'glazed'));
+      window.__slabSide = 1; var ppot; try { ppot = this.potOf(tmpIt, PT.st === 'g' ? this.fillOf(tmpIt, 'dry') : this.fillOf(tmpIt, 'glazed')); } finally { window.__slabSide = 0; }
       var TB = 'all:unset;cursor:pointer;box-sizing:border-box;height:36px;padding:0 9px;border-radius:11px;display:flex;align-items:center;font-family:Jua,sans-serif;font-size:13px;';
       v.pt = { on: true, empty: false, pot: ppot, bw: ppot.bw, live: PT.live || 'M0 0', col: PT.col, name: this.pName(PT.st === 'g' ? { shape: pIt.shape, sk: pIt.sk, goalName: pIt.goalName, slabName: pIt.slabName, poly: pIt.poly } : pIt) + (PT.st === 'g' ? ' · 시유 전' : ' · 담금 시유 위에'), n: PT.strokes.length,
         pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.paint.gk = p[0]; self.bump(); } }; }),
         tools: [['brush', '🖌 붓']].concat(this.STAMPS().map(function (t) { return [t[0], t[1]]; })).map(function (t) { var on = t[0] === 'brush' ? PT.tool === 'brush' : (PT.tool === 'stamp' && PT.stamp === t[0]); return { label: t[0] === 'brush' ? t[1] : '◉ ' + t[1], aria: t[0] === 'brush' ? '붓으로 긋기' : t[1] + ' 도장 찍기', on: on ? 'true' : 'false', st: TB + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'), tap: function () { if (t[0] === 'brush') { self.paint.tool = 'brush'; } else { self.paint.tool = 'stamp'; self.paint.stamp = t[0]; } self.bump(); } }; }),
+        viewTxt: ['앞', '오른쪽', '뒤', '왼쪽'][VWp] + '면', rotL: function () { self.paintRot(-1); }, rotR: function () { self.paintRot(1); }, cnt: [0, 1, 2, 3].map(function (k) { var n = k === VWp ? PT.strokes.length : (PT.sv[k] || []).length; return { t: ['앞', '오', '뒤', '왼'][k], st: 'padding:0 5px;border-radius:7px;font-size:10px;' + (k === VWp ? 'background:#FFE27A;color:#2B1A0F' : (n ? 'background:#5B3A24;color:#FFE7A8' : 'background:rgba(91,58,36,.18);color:#8A6440')) }; }),
         hint: PT.tool === 'stamp' ? '기물을 짚으면 그 자리에 도장이 찍혀요' : '붓으로 그어요 · 붓 끝은 손가락 조금 위',
         down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); }, drop: function () { self.paintDrop(); } };
     }
@@ -6748,7 +6758,7 @@ class Component extends DCLogic {
     var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var nn = parseInt(h.slice(1), 16), rr = (nn >> 16) & 255, gg = (nn >> 8) & 255, bb = nn & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
@@ -6763,7 +6773,7 @@ class Component extends DCLogic {
     var c = CL[it && it.clay] || CL.basic;
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry' || stage === 'bisque') { return c[1]; }
-    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint) { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }

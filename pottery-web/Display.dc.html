@@ -852,7 +852,7 @@ class Component extends DCLogic {
     var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
     function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var n = parseInt(h.slice(1), 16), rr = (n >> 16) & 255, gg = (n >> 8) & 255, bb = n & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
     // 유약은 입구부터 담근다 · 끝까지 담그지 않았으면 입구 쪽 cov 비율만 유약 빛, 아래(굽 쪽)는 흙 빛
-    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!(it.brush && it.brush.length)), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
     var _cvf = _part && window.PotteryShared && window.PotteryShared.covFill ? (window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (it.covDir === 'foot' ? window.PotteryShared.covFill.call(window.PotteryShared, _clay, fill, it.cov, { H: H, r: r, cov: 1 - it.cov, drip: _clay }) : window.PotteryShared.covFill.call(window.PotteryShared, fill, _clay, 1 - it.cov, { H: H, r: r, cov: it.cov, drip: _dk(_f, 0.72) }))) : (fill || '#C9A68C');
     var Lr = L.slice().reverse();
     var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
@@ -867,7 +867,7 @@ class Component extends DCLogic {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
-    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }

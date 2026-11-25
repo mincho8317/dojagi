@@ -1694,12 +1694,13 @@
   };
   // 덧시유 : 첫 층 채색 위에 두 번째 층(it.g2col · it.cov2 · it.ang2)을 반투명으로 겹친 패턴 하나로 칠한다
   S.covFillAng = function (glz, clay, it, geo) {
+    var self0 = this;
     var f0 = this.covFillTwo(glz, clay, it, geo);
     if (!it || !it.brush || !it.brush.length) { return f0; }
     try { /* 붓 무늬 : 유약 위에 그린 선을 그릇 좌표 그대로 겹쳐 칠한다 */
       var key = JSON.stringify(it.brush), h = 0;
       for (var i = 0; i < key.length; i++) { h = (h * 31 + key.charCodeAt(i)) | 0; }
-      var pid = 'cvb_' + String(f0).replace(/[^a-zA-Z0-9_]/g, '') + '_' + (h >>> 0).toString(36);
+      var pid = 'cvb_' + String(f0).replace(/[^a-zA-Z0-9_]/g, '') + '_' + (h >>> 0).toString(36) + (it.sk === 'slab' && !window.__slabSide ? 'q' : '');
       if (!document.getElementById(pid)) {
         var NS = 'http://www.w3.org/2000/svg', host = document.getElementById('cvf-host');
         if (!host) { host = document.createElementNS(NS, 'svg'); host.setAttribute('id', 'cvf-host'); host.setAttribute('width', '0'); host.setAttribute('height', '0'); host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; host.appendChild(document.createElementNS(NS, 'defs')); document.body.appendChild(host); }
@@ -1707,7 +1708,7 @@
         var pt = document.createElementNS(NS, 'pattern'); pt.setAttribute('id', pid); pt.setAttribute('patternUnits', 'userSpaceOnUse'); pt.setAttribute('x', '-2000'); pt.setAttribute('y', '-2000'); pt.setAttribute('width', '4000'); pt.setAttribute('height', '4000');
         var gw = document.createElementNS(NS, 'g'); gw.setAttribute('transform', 'translate(2000 2000)');
         var rc = document.createElementNS(NS, 'rect'); rc.setAttribute('x', '-2000'); rc.setAttribute('y', '-2000'); rc.setAttribute('width', '4000'); rc.setAttribute('height', '4000'); rc.setAttribute('fill', f0); gw.appendChild(rc);
-        it.brush.forEach(function (b) { if (!b || !b.p) { return; } var pa = document.createElementNS(NS, 'path'); pa.setAttribute('d', String(b.p)); pa.setAttribute('fill', 'none'); pa.setAttribute('stroke', String(b.c || '#3A2A20')); pa.setAttribute('stroke-width', String(b.w || 4)); pa.setAttribute('stroke-linecap', 'round'); pa.setAttribute('stroke-linejoin', 'round'); pa.setAttribute('opacity', '.92'); gw.appendChild(pa); });
+        it.brush.forEach(function (b) { if (!b || !b.p) { return; } var pa = document.createElementNS(NS, 'path'); pa.setAttribute('d', it.sk === 'slab' && it.poly && !window.__slabSide && self0.slabBrushXf ? self0.slabBrushXf(it, String(b.p)) : String(b.p)); pa.setAttribute('fill', 'none'); pa.setAttribute('stroke', String(b.c || '#3A2A20')); pa.setAttribute('stroke-width', String(b.w || 4)); pa.setAttribute('stroke-linecap', 'round'); pa.setAttribute('stroke-linejoin', 'round'); pa.setAttribute('opacity', '.92'); gw.appendChild(pa); });
         pt.appendChild(gw); defs.appendChild(pt);
       }
       return 'url(#' + pid + ')';
@@ -2538,10 +2539,10 @@
       var CLB = { cw1: '#F2EEE6', cy1: '#E2C79E', cr1: '#D49A7E', ck1: '#9C8F84' }, GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A', sakura: '#EFB3C2', cheonmok: '#2E2A25' };
       var clay = CLB[(p.clay || '').replace(/[23]$/, '1')] || '#E2C79E', glz = p.tint || GZ[p.glaze] || (p.glaze ? '#ECE8DE' : clay);
       function dk(h, k) { var m = /^#([0-9a-f]{6})$/i.exec(h); if (!m) { return '#3E2616'; } var v = parseInt(m[1], 16); return 'rgb(' + Math.round(((v >> 16) & 255) * k) + ',' + Math.round(((v >> 8) & 255) * k) + ',' + Math.round((v & 255) * k) + ')'; }
-      var geo2 = { H: H, r: r, drip: dk(glz, 0.72) }, partial = !!p.glaze && p.cov != null && (p.cov < 0.97 || !!p.g2 || !!(p.brush && p.brush.length));
+      var geo2 = { H: H, r: r, drip: dk(glz, 0.72) }, partial = !!p.glaze && p.cov != null && (p.cov < 0.97 || !!p.g2); /* 붓 무늬는 아래 면별 무늬 층으로 따로 */
       var fF = glz, fB = glz;
-      try { if (partial) { fF = S.covFillAng(glz, clay, p, geo2); fB = S.covFillTwo(glz, clay, p, geo2); } } catch (e) {}
-      if (!p.glaze) { fF = fB = clay; try { if (p.brush && p.brush.length) { var pc = {}; for (var kq in p) { pc[kq] = p[kq]; } pc.cov = 1; pc.covAng = 180; fF = S.covFillAng(clay, clay, pc, geo2); } } catch (e) {} } /* 붓 시유만 : 흙빛 몸에 무늬 */
+      try { if (partial) { fF = fB = S.covFillTwo(glz, clay, p, geo2); } } catch (e) {}
+      if (!p.glaze) { fF = fB = clay; }
       var PAD = 12, VX = -M - PAD, VY = -H - PAD, VW = 2 * M + 2 * PAD, VH = H + 2 * PAD;
       function svgOf(fill) { var host = document.getElementById('cvf-host'), defs = host ? host.innerHTML.replace(/^<defs>|<\/defs>$/g, '') : ''; return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="' + VX + ' ' + VY + ' ' + VW + ' ' + VH + '" preserveAspectRatio="none"><defs>' + defs + '</defs><rect x="' + VX + '" y="' + VY + '" width="' + VW + '" height="' + VH + '" fill="' + fill + '"/></svg>'; }
       /* 완성품 2D 처럼 : 유약 두께 차이(입구 테는 옅게 · 아래는 고여 짙게) · 굽은 맨흙 · 흙 티(철분 점) · 물레 자국 · 유약 = 매끈(광택) / 맨흙 = 거칠게 */
@@ -2576,7 +2577,10 @@
       var RINGS = 44, SEG = 72, wall = Math.max(3, M * 0.07), floorY = Math.max(4, H * 0.07);
       var posF = [], uvF = [], posB = [], uvB = [], posI = [], uvI = [];
       function uv(x, y) { return [(x - VX) / VW, 1 - ((-y) - VY) / VH]; }
-      var IN = false; function tri(a, b, c) { var z = (a[2] + b[2] + c[2]) / 3, fr = z >= 0 && !IN, P = IN ? posI : (fr ? posF : posB), U = IN ? uvI : (fr ? uvF : uvB); /* 안쪽은 따로 · 조금 어둡게 */ /* 붓 무늬는 바깥 앞면에만 */ [a, b, c].forEach(function (q) { P.push(q[0], q[1], q[2]); var w = uv(q[0], q[1]); U.push(w[0], w[1]); }); }
+      /* 붓 무늬 면 나누기 : 바깥 면을 바라보는 쪽(앞 · 오른쪽 · 뒤 · 왼쪽)으로 나눠, 그 면에서 그린 무늬를 그 방향에서 입힌다 */
+      var posV = [[], [], [], []];
+      function vOf(a, b, c) { var ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2], wx = c[0] - a[0], wy = c[1] - a[1], wz = c[2] - a[2], nx = uy * wz - uz * wy, nz = ux * wy - uy * wx, cx = (a[0] + b[0] + c[0]) / 3, cz = (a[2] + b[2] + c[2]) / 3; if (nx * cx + nz * cz < 0) { nx = -nx; nz = -nz; } if (Math.abs(nx) < 1e-6 && Math.abs(nz) < 1e-6) { nx = cx; nz = cz; } var an = Math.atan2(nx, nz); return ((Math.round(an / (Math.PI / 2)) % 4) + 4) % 4; }
+      var IN = false; function tri(a, b, c) { var z = (a[2] + b[2] + c[2]) / 3, fr = z >= 0 && !IN, P = IN ? posI : (fr ? posF : posB), U = IN ? uvI : (fr ? uvF : uvB); /* 안쪽은 따로 · 조금 어둡게 */ [a, b, c].forEach(function (q) { P.push(q[0], q[1], q[2]); var w = uv(q[0], q[1]); U.push(w[0], w[1]); }); if (!IN) { var vv = vOf(a, b, c); posV[vv].push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]); } }
       function ring(rr, y, k) { var a = k / SEG * Math.PI * 2; return [rr * Math.sin(a), y, rr * Math.cos(a)]; }
       function strip(rf0, y0, rf1, y1, inward) { for (var k = 0; k < SEG; k++) { var a = ring(rf0, y0, k), b = ring(rf0, y0, k + 1), c = ring(rf1, y1, k + 1), d = ring(rf1, y1, k); if (inward) { tri(a, c, b); tri(a, d, c); } else { tri(a, b, c); tri(a, c, d); } } }
       var rB = rad(0);
@@ -2640,6 +2644,17 @@
       texOf(fF, function (tx, rt) { add(gF, mat(tx, rt)); one(); });
       texOf(fB, function (tx, rt) { add(gB, mat(tx, rt)); one(); });
       texOf(fB, function (tx, rt) { add(gI, mat(tx, rt, 0xe6ddd2)); one(); }, true);
+      /* 면별 붓 무늬 층 : 그 면이 앞으로 오게 돌린 좌표(x')로 투명 그림을 입힌다 (0 앞 = it.brush · 1~3 = it.brushV) */
+      var BV = { 0: p.brush || [], 1: (p.brushV || {})[1] || [], 2: (p.brushV || {})[2] || [], 3: (p.brushV || {})[3] || [] };
+      [0, 1, 2, 3].forEach(function (v) {
+        var L = BV[v]; if (!L.length || !posV[v].length) { return; }
+        var P = posV[v], xs = function (x, z) { return v === 0 ? x : (v === 1 ? -z : (v === 2 ? -x : z)); }, Mv = 0; for (var q = 0; q < P.length; q += 3) { Mv = Math.max(Mv, Math.abs(xs(P[q], P[q + 2]))); }
+        var VXv = -Mv - PAD, VWv = 2 * Mv + 2 * PAD, uvs = []; for (var q2 = 0; q2 < P.length; q2 += 3) { uvs.push((xs(P[q2], P[q2 + 2]) - VXv) / VWv, 1 - ((-P[q2 + 1]) - VY) / VH); }
+        var gg = mk(P, uvs), cnv = document.createElement('canvas'); cnv.width = cnv.height = 1024; var tx = new T.CanvasTexture(cnv); tx.encoding = T.sRGBEncoding; tx.anisotropy = 4;
+        var sv = '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="' + VXv + ' ' + VY + ' ' + VWv + ' ' + VH + '" preserveAspectRatio="none">' + L.map(function (b) { return '<path d="' + String(b.p).replace(/"/g, '') + '" fill="none" stroke="' + String(b.c || '#3A2A20') + '" stroke-width="' + (b.w || 4) + '" stroke-linecap="round" stroke-linejoin="round"/>'; }).join('') + '</svg>';
+        var im = new Image(); im.onload = function () { cnv.getContext('2d').drawImage(im, 0, 0, 1024, 1024); tx.needsUpdate = true; }; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(sv);
+        var dm = new T.Mesh(gg, new T.MeshStandardMaterial({ map: tx, transparent: true, alphaTest: 0.05, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -4, roughness: 0.35, metalness: 0, side: T.DoubleSide })); grp.add(dm);
+      });
       var W = cv.clientWidth || 360; ren.setSize(W, W); ren.domElement.style.cssText = 'display:block;width:100%;height:100%;touch-action:none;cursor:grab'; cv.appendChild(ren.domElement);
       /* 손에 들고 돌려 보듯 : 기물이 돌고 빛·카메라는 그대로 */
       var yaw = -0.5, pitch = 0.32, zoom = 1, auto = true, dist0 = SZ * 2.75;
@@ -2681,13 +2696,20 @@
     /* 판 기물 2D : 실제 모양을 비스듬히 위에서 본 그림 (바닥 모양 그대로 · 테두리 · 벽) — 옆모습+타원 방식은 네모도 둥글게 보여서 버림 */
     var g = this.slabProj(it), o = {}, k;
     for (k in P) { o[k] = P[k]; }
-    o.d = g.d; o.rimD = g.rimD; o.rings = 'none'; /* 판 기물엔 물레 자국 없음 */ o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
+    o.d = g.d; o.rimD = g.rimD; o.rings = 'none'; /* 판 기물엔 물레 자국 없음 */
+    if (!window.__slabSide) { var S0 = this; ['b0', 'b1', 'b2'].forEach(function (kb) { if (o[kb] && o[kb] !== 'M0 0') { o[kb] = S0.slabBrushXf(it, o[kb]); } }); } /* 붓 무늬(앞면에서 그린 좌표) → 비스듬히 위에서 본 그림 좌표 */ o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
     try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = g.Hw > 0 ? 0.55 : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
     o.shRx = (g.M * 1.08).toFixed(1); o.shRy = Math.max(3, g.dep * 0.9).toFixed(1); o.shCy = (g.yMax * 0.55).toFixed(1);
     var side = Math.max(g.xMax - g.xMin, g.yMax - g.yMin) + 22, cx = (g.xMax + g.xMin) / 2, cy = (g.yMax + g.yMin) / 2;
     o.vb = (cx - side / 2).toFixed(1) + ' ' + (cy - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1); o.sw = (side / 64).toFixed(2);
     return o;
   };
+  /* 판 기물 앞면 붓 무늬 : 옆에서 본 좌표(x, -높이) → 비스듬히 위에서 본 그림(x, -높이 + 앞쪽 깊이 × K) · 절대 좌표 M/L만 옮기면 상대 좌표(도장)는 따라온다 */
+  S.slabBrushXf = function (it, path) {
+    try { var R = this.slabGeo(it.poly, it.e || []).map(function (c) { return c.R; }), n = R.length, K = 0.32;
+      var fy = function (x) { var best = null; for (var i = 0; i < n; i++) { var a = R[i], b = R[(i + 1) % n]; if ((a[0] - x) * (b[0] - x) <= 0 && a[0] !== b[0]) { var t = (x - a[0]) / (b[0] - a[0]), y = a[1] + (b[1] - a[1]) * t; if (best === null || y > best) { best = y; } } } return best === null ? 0 : best; };
+      return String(path).replace(/([ML])\s*(-?[\d.]+)[ ,]+(-?[\d.]+)/g, function (m, c, x, y) { return c + x + ' ' + (+y + fy(+x) * K).toFixed(1); });
+    } catch (e) { return path; } }
   S.slabProj = function (it) {
     /* 3D 점(x 좌우, y 앞뒤, z 높이) → 화면 (x, -z + y·K) · 모든 면을 캔버스에 칠해 겉윤곽만 따낸다 (오목한 모양도 정확) */
     var S = this, SIDE = !!window.__slabSide, key = JSON.stringify([it.poly, it.e, it.wall ? it.Hw : 0, it.wall ? it.sc : 0, SIDE]), C = S._spc || (S._spc = {}); /* __slabSide : 정면 옆모습(유약대에 매단 기물) */
@@ -2715,7 +2737,7 @@
       out = simp.map(function (p) { return [(p[0] - PD) / sk + xMin, (p[1] - PD) / sk + yMin]; });
     } catch (e) { out = null; }
     if (!out || out.length < 3) { out = polys[0]; }
-    function sm(q) { var m = q.length, s = ''; for (var k = 0; k < m; k++) { var a = q[k], b = q[(k + 1) % m], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; s += (k ? ' Q' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' ' : 'M') + mx.toFixed(1) + ' ' + my.toFixed(1); } var a0 = q[0], b0 = q[1 % m]; return s + ' Q' + a0[0].toFixed(1) + ' ' + a0[1].toFixed(1) + ' ' + ((a0[0] + b0[0]) / 2).toFixed(1) + ' ' + ((a0[1] + b0[1]) / 2).toFixed(1) + ' Z'; }
+    function sm(q) { /* 곧은 변은 곧게 · 꼭짓점만 살짝 둥글게 (짧은 변은 그 길이의 1/3까지) */ var m = q.length, s = ''; for (var k = 0; k < m; k++) { var p0 = q[(k - 1 + m) % m], c = q[k], p1 = q[(k + 1) % m], l0 = Math.hypot(c[0] - p0[0], c[1] - p0[1]) || 1, l1 = Math.hypot(p1[0] - c[0], p1[1] - c[1]) || 1, r0 = Math.min(5, l0 / 3), r1 = Math.min(5, l1 / 3), A = [c[0] + (p0[0] - c[0]) * r0 / l0, c[1] + (p0[1] - c[1]) * r0 / l0], B = [c[0] + (p1[0] - c[0]) * r1 / l1, c[1] + (p1[1] - c[1]) * r1 / l1]; s += (k ? ' L' : 'M') + A[0].toFixed(1) + ' ' + A[1].toFixed(1) + ' Q' + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ' + B[0].toFixed(1) + ' ' + B[1].toFixed(1); } return s + ' Z'; }
     /* 두께 : 입구(윗면)를 벽 두께만큼 안으로 줄여 그 사이에 흙 테두리가 보이게 */
     var WT = Hw > 0 ? 5.5 : 4.5, topIn = cols.map(function (c, i) { var c3 = GE[i], s1 = Hw > 0 ? sAt(1) : 1, x = c3.R[0] * s1, y = c3.R[1] * s1, z = c3.e + T + Hw, rr = Math.hypot(x, y) || 1, kk = Math.max(0.55, 1 - WT / rr); return pj([x * kk, y * kk, z]); });
     var top = SIDE ? polys[1] : topIn, H = 0, dep = 0; GE.forEach(function (c) { H = Math.max(H, c.e + T + Hw); dep = Math.max(dep, Math.abs(c.F[1]) * K); });
