@@ -62,8 +62,9 @@ body:has([data-zoom]) a[aria-label^="이야기 진행"],body:has([aria-modal="tr
 [data-zst="Counter"] img[src*="c34a05dab38452d9ce4a40ffc6f3e5dd"]{display:none !important}
 [data-zst="Wheel"] div[style*="top:606px"]{display:none !important}
 [data-zst="Wheel"] [data-wheelstage]{transform:translateY(44px)}
+[data-zst="Wheel"] div[role="meter"][aria-label="목표 일치율"]{height:50px !important;padding:2px 14px !important;z-index:30}
 [data-zst="Glaze"] .bg-bg-glaze{transform:translateY(60px)}
-[data-zst="Glaze"] div[style*="left:147px;top:118px"]{left:6px !important;top:100px !important}
+[data-zst="Glaze"] div[style*="left:147px;top:118px"]{top:192px !important}
 [data-wshift]>*{pointer-events:auto}
 [data-onslab] svg{width:100%;height:100%}
 [data-zst="Glaze"] div[style*="top:604px"]{display:none !important}
@@ -208,7 +209,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="1" style="{{pst1}}">
       <sc-if value="{{pv1}}" hint-placeholder-val="{{true}}">
-<div data-wheelwrap="1" data-eq="{{eqSt}}" style="{{wheelWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
+<div data-wheelwrap="1" data-eq="{{eqSt}}" style="{{wheelWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;">
 <div class="navdrop" data-zst="Wheel" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-wheel" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
 
@@ -423,12 +424,12 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   </div>
 </div>
       <sc-if value="{{tgShut}}" hint-placeholder-val="{{true}}">
-        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:80px;z-index:{{tgZ}};max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path><path d="{{tgIco.rd}}" fill="#C9A77A" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span><sc-if value="{{tgPctOn}}" hint-placeholder-val="{{false}}"><span style="display:block;margin-top:2px;padding:1px 6px;border-radius:7px;background:#2F6328;color:#FFF4DE;font-size:11px;text-align:center">{{tgPctTx}}</span></sc-if></button>
+        <button type="button" onClick="{{tgTap}}" aria-label="목표 모양 쪽지 · {{tgName}} · 눌러서 바꾸기" style="all:unset;cursor:pointer;position:absolute;left:8px;top:128px;z-index:{{tgZ}};max-width:132px;box-sizing:border-box;padding:4px 8px 5px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-3deg);box-shadow:0 3px 3px rgba(43,26,15,.3);font-family:'Jua',sans-serif;font-size:12px;line-height:1.25;color:#5B3A24"><span style="display:block;font-size:9.5px;color:#A3442C">📌 목표 모양</span><span style="display:flex;align-items:center;gap:4px"><svg width="30" height="30" viewBox="{{tgIco.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tgIco.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path><path d="{{tgIco.rd}}" fill="#C9A77A" stroke="#5B3A24" stroke-width="{{tgIco.sw}}" stroke-linejoin="round"></path></svg><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tgName}} ▾</span></span><sc-if value="{{tgPctOn}}" hint-placeholder-val="{{false}}"><span style="display:block;margin-top:2px;padding:1px 6px;border-radius:7px;background:#2F6328;color:#FFF4DE;font-size:11px;text-align:center">{{tgPctTx}}</span></sc-if></button>
       </sc-if>
       <sc-if value="{{tgOpen}}" hint-placeholder-val="{{false}}">
         <style>@keyframes memoOpen{from{transform:rotate(-3deg) scale(.5);opacity:.7}to{transform:rotate(-1.5deg) scale(1);opacity:1}}</style>
         <div aria-hidden="true" onClick="{{tgClose}}" style="position:absolute;left:0;top:0;width:390px;height:696px;z-index:24"></div>
-        <div role="group" aria-label="목표 모양 고르기" style="position:absolute;left:8px;top:80px;z-index:25;width:206px;max-height:360px;overflow-y:auto;box-sizing:border-box;padding:6px 8px 9px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-1.5deg);transform-origin:16px 12px;box-shadow:0 5px 8px rgba(43,26,15,.35);animation:memoOpen .16s ease-out both;display:flex;flex-direction:column;gap:4px">
+        <div role="group" aria-label="목표 모양 고르기" style="position:absolute;left:8px;top:128px;z-index:25;width:206px;max-height:360px;overflow-y:auto;box-sizing:border-box;padding:6px 8px 9px;background:#FBF4E4;border:2px solid #C9A27A;transform:rotate(-1.5deg);transform-origin:16px 12px;box-shadow:0 5px 8px rgba(43,26,15,.35);animation:memoOpen .16s ease-out both;display:flex;flex-direction:column;gap:4px">
           <button type="button" onClick="{{tgClose}}" aria-label="목표 모양 쪽지 접기" style="all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:11px;color:#A3442C;padding:0 2px 3px;border-bottom:1.5px dashed #C9A27A"><span>📌 목표 모양</span><span>▴</span></button>
           <sc-for list="{{tgRows}}" as="tr" hint-placeholder-count="4"><button type="button" onClick="{{tr.pick}}" aria-pressed="{{tr.on}}" aria-label="{{tr.aria}}" style="{{tr.st}}"><svg width="28" height="28" viewBox="{{tr.ico.vb}}" aria-hidden="true" style="flex:none;display:block"><path d="{{tr.ico.d}}" fill="#E2C79E" stroke="#5B3A24" stroke-width="{{tr.ico.sw}}" stroke-linejoin="round"></path><path d="{{tr.ico.rd}}" fill="#C9A77A" stroke="#5B3A24" stroke-width="{{tr.ico.sw}}" stroke-linejoin="round"></path></svg><span style="flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{tr.name}}</span><span style="{{tr.tagSt}}">{{tr.tag}}</span></button></sc-for>
         </div>
@@ -475,7 +476,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);{{sbBg}}"></div>
       <style>[data-sbwrap] > *{pointer-events:auto}[data-sbwrap] > svg{pointer-events:none}</style>
       <div data-sbwrap="1" style="{{sbWrap}}">
-        <sc-if value="{{shOn}}" hint-placeholder-val="{{false}}"><div role="meter" aria-label="판 성형 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{shPct}}" style="position:absolute;left:12px;right:12px;top:-42px;height:62px;z-index:25;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px;pointer-events:none">
+        <sc-if value="{{shOn}}" hint-placeholder-val="{{false}}"><div role="meter" aria-label="판 성형 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{shPct}}" style="position:absolute;left:12px;right:12px;top:-42px;height:50px;z-index:25;box-sizing:border-box;padding:2px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px;pointer-events:none">
           <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1"><span style="font-size:11px;font-weight:700;color:#E8D3B5;white-space:nowrap">{{shLbl}}</span><span style="font-family:'Jua',sans-serif;font-size:34px;color:{{shCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{shPct}}<span style="font-size:18px">%</span></span></div>
           <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0"><div style="height:12px;border-radius:6px;background:rgba(255,244,222,.18);overflow:hidden"><div style="{{shBar}}"></div></div><span role="img" aria-label="{{shStars}}" style="display:flex;gap:1px;align-items:center"><sc-for list="{{shStarList}}" as="fs" hint-placeholder-count="5"><img dc-src="{{fs}}" alt="" aria-hidden="true" style="width:17px;height:17px;object-fit:contain"></sc-for></span></div>
         </div></sc-if>
@@ -888,7 +889,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <button type="button" onClick="{{woodTap}}" aria-label="아궁이에 장작 넣기 · {{woodTxt}} · 지금 {{kTemp}} {{kZone}}" style="all:unset;cursor:pointer;position:absolute;left:0;top:0;width:0;height:0"></button>
       <div data-dz="fire" onClick="{{fireTap}}" aria-hidden="true" style="{{fireGlow}};cursor:pointer;z-index:4"></div>
       <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:172px;top:528px">아궁이 · 장작을 끌어 넣기</span>
-      <div style="position:absolute;left:0;top:196px;width:64px;height:300px;z-index:5" role="img" aria-label="가마 온도 {{kTemp}} · {{kZone}}">
+      <div style="position:absolute;left:0;top:210px;width:64px;height:300px;z-index:5" role="img" aria-label="가마 온도 {{kTemp}} · {{kZone}}">
         <span style="{{kZoneSt}}">{{kZone}}</span>
         <div style="position:absolute;left:21px;top:0;width:22px;height:270px;box-sizing:border-box;border:3px solid #2B1A0F;border-radius:11px;overflow:hidden;background:linear-gradient(#F3B4A6 0 14%,#BFE3B4 14% 44%,#F6E2C0 44%)">
           <div style="{{thFill}}"></div>
@@ -1129,16 +1130,16 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <div aria-hidden="true" data-rl="0" style="{{rl0}}"><div style="position:absolute;left:2px;top:6px;width:384px;height:6px;border-radius:3px;background:#3E2616;box-shadow:0 2px 0 rgba(255,244,222,.35)"></div><span style="position:absolute;left:0;top:0;width:8px;height:18px;border-radius:2px;background:#5B3A24"></span><span style="position:absolute;left:384px;top:0;width:8px;height:18px;border-radius:2px;background:#5B3A24"></span></div>
     <div aria-hidden="true" data-rl="1" style="{{rl1}}"><div style="position:absolute;left:2px;top:6px;width:384px;height:6px;border-radius:3px;background:#3E2616;box-shadow:0 2px 0 rgba(255,244,222,.35)"></div><span style="position:absolute;left:0;top:0;width:8px;height:18px;border-radius:2px;background:#5B3A24"></span><span style="position:absolute;left:384px;top:0;width:8px;height:18px;border-radius:2px;background:#5B3A24"></span></div>
     <div data-rail="rf" data-dz="{{rf.dz}}" style="{{rf.st}}">
-      <span aria-hidden="true" style="position:absolute;left:3px;top:-6px;width:5px;height:72px;border-radius:2px;background:#5B3A24"></span><span aria-hidden="true" style="position:absolute;right:3px;top:-6px;width:5px;height:72px;border-radius:2px;background:#5B3A24"></span>
-      <div role="list" aria-label="{{rf.title}} 선반 {{rf.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:3px;justify-content:center;align-items:flex-end;pointer-events:auto">
+      <span aria-hidden="true" style="position:absolute;left:14px;top:-56px;width:3px;height:116px;background:repeating-linear-gradient(#A97B52 0 5px,#7A5434 5px 7px)"></span><span aria-hidden="true" style="position:absolute;right:14px;top:-56px;width:3px;height:116px;background:repeating-linear-gradient(#A97B52 0 5px,#7A5434 5px 7px)"></span>
+      <div role="list" aria-label="{{rf.title}} 선반 {{rf.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:12px;justify-content:center;align-items:flex-end;pointer-events:auto">
         <sc-for list="{{rf.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="38" height="44" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="{{si.pot.tex}}" opacity="{{si.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{si.pot.d}}" fill="url(#potTopLight)"></path><path d="{{si.pot.d}}" fill="{{si.pot.rings}}"></path><path d="{{si.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{si.pot.grainOp}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse><path d="{{si.pot.rimD}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}" stroke-linejoin="round"></path></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
       <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
       <span style="{{rf.tagSt}}"><span style="padding:0 8px;border-radius:7px;background:rgba(43,26,15,.55)">{{rf.title}} {{rf.n}}</span></span>
     </div>
     <div data-rail="rg" data-dz="{{rg.dz}}" style="{{rg.st}}">
-      <span aria-hidden="true" style="position:absolute;left:3px;top:-6px;width:5px;height:72px;border-radius:2px;background:#5B3A24"></span><span aria-hidden="true" style="position:absolute;right:3px;top:-6px;width:5px;height:72px;border-radius:2px;background:#5B3A24"></span>
-      <div role="list" aria-label="{{rg.title}} 선반 {{rg.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:3px;justify-content:center;align-items:flex-end;pointer-events:auto">
+      <span aria-hidden="true" style="position:absolute;left:14px;top:-122px;width:3px;height:182px;background:repeating-linear-gradient(#A97B52 0 5px,#7A5434 5px 7px)"></span><span aria-hidden="true" style="position:absolute;right:14px;top:-122px;width:3px;height:182px;background:repeating-linear-gradient(#A97B52 0 5px,#7A5434 5px 7px)"></span>
+      <div role="list" aria-label="{{rg.title}} 선반 {{rg.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:12px;justify-content:center;align-items:flex-end;pointer-events:auto">
         <sc-for list="{{rg.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="38" height="44" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="{{si.pot.tex}}" opacity="{{si.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{si.pot.d}}" fill="url(#potTopLight)"></path><path d="{{si.pot.d}}" fill="{{si.pot.rings}}"></path><path d="{{si.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{si.pot.grainOp}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse><path d="{{si.pot.rimD}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}" stroke-linejoin="round"></path></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
       <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
@@ -5671,8 +5672,9 @@ class Component extends DCLogic {
   /* pa 화면 오른쪽 위 ↔ pb 화면 왼쪽 위 사이를 미끄러진다 (두 화면이 이웃 칸이 아닐 땐 가까운 쪽에 붙음) */
   railX(pa, pb, oa, ob) { var sa = this.slotOf(pa), sb = this.slotOf(pb), A = sa * 390 + oa, B = sb * 390 + ob; if (sb === sa + 1) { var t = ((this.sl || 0) - sa * 390) / 390; t = Math.max(0, Math.min(1, t)); return Math.round(A + (B - A) * t); } return Math.abs(this.cd(pa)) <= Math.abs(this.cd(pb)) ? A : B; }
   /* 2단 선반 : 물레·유약·가마 세 화면 내내 같은 자리(오른쪽 위)에 붙어 있다 · 2층 = 빚은 기물 · 1층 = 시유한 기물 */
-  shelfX() { var OX = 100, s1 = this.slotOf(1), s3 = this.slotOf(3), sl = this.sl || 0; if (s3 === s1 + 2) { return Math.round(Math.max(s1 * 390, Math.min(s3 * 390, sl)) + OX); } var best = 1; [2, 3].forEach(function (pp) { if (Math.abs(this.cd(pp)) < Math.abs(this.cd(best))) { best = pp; } }, this); return this.slotOf(best) * 390 + OX; }
-  railPos() { var x = this.shelfX(); return { f: x, g: x }; }
+  /* 선반이 따라오는 구간 : 2층(빚은 기물) = 물레 ↔ 유약 · 1층(시유한 기물) = 유약 ↔ 가마 · 그 사이에선 화면에 붙어 있다 */
+  pinX(a, b) { var OX = 6, sa = this.slotOf(a), sb = this.slotOf(b), sl = this.sl || 0; if (sb === sa + 1) { return Math.round(Math.max(sa * 390, Math.min(sb * 390, sl)) + OX); } return (Math.abs(this.cd(a)) <= Math.abs(this.cd(b)) ? sa : sb) * 390 + OX; }
+  railPos() { return { f: this.pinX(1, 2), g: this.pinX(2, 3) }; }
   /* 벽 레일 장식 : k=0 물레↔유약 · k=1 유약↔가마 */
   rlSt(k) { return 'display:none'; } /* 예전 벽 레일 (2단 선반으로 바꾸며 숨김) */
   railSync() {
@@ -6434,10 +6436,10 @@ class Component extends DCLogic {
           down: function (e) { self.qDown(e, it.id, st); },
           dot: qc ? 'position:absolute;right:0;top:0;width:11px;height:11px;border-radius:50%;background:' + qc.c + ';border:1.5px solid #FFF4DE' : 'display:none',
           kp: it.kp >= 0.01 ? Math.round(it.kp * 100) + '%' : '', kpSt: it.kp >= 0.01 ? 'position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);padding:0 4px;border-radius:6px;background:#C0582E;font-family:Jua,sans-serif;font-size:11px;line-height:14px;color:#FFF' : 'display:none',
-          st: 'position:relative;flex:0 0 40px;height:50px;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none' };
+          st: 'position:relative;flex:0 0 44px;height:50px;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none' };
       });
       return { items: items, n: LN + '/' + CAP, title: title, full: LN >= CAP,
-        st: 'position:absolute;left:' + x + 'px;top:' + (st === 'g' ? 70 : 136) + 'px;width:284px;height:66px;z-index:9;pointer-events:none', /* 2층(위) 70 · 1층(아래) 136 */
+        st: 'position:absolute;left:' + x + 'px;top:' + (st === 'g' ? 56 : 122) + 'px;width:378px;height:66px;z-index:' + (st === 'g' ? 9 : 8) + ';pointer-events:none', /* 2층(위) 56 · 1층(아래) 122 · 천장에 줄로 매달림 */
         tagSt: 'position:absolute;left:0;right:0;top:49px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:15px;white-space:nowrap;pointer-events:none;color:' + (LN >= CAP ? '#FFE27A' : '#FFF4DE') + ';' };
     }
     var onWid0 = g.onWheel || '', onSid0 = g.onSlab || '';
@@ -6778,7 +6780,7 @@ class Component extends DCLogic {
     var cT = Math.round(800 + T * 5);
     v.kTemp = cT.toLocaleString() + '℃';
     v.kZone = T > B.hi ? '과열' : (inB ? '적정 · 빠르게' : '낮음 · 느리게');
-    v.kZoneSt = 'position:absolute;left:0;top:-30px;width:64px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:13px;color:' + (inB ? '#2F6328' : '#A3442C');
+    v.kZoneSt = 'position:absolute;left:0;top:-17px;width:64px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:13px;color:' + (inB ? '#2F6328' : '#A3442C');
     v.thFill = 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(Math.min(100, T)) + '%;background:linear-gradient(#FF9A3C,#E2562B);transition:height .6s';
     v.thMark = 'position:absolute;left:-7px;right:-7px;height:3px;background:#2B1A0F;bottom:calc(' + Math.round(Math.min(100, T)) + '% - 1px);transition:bottom .6s';
     v.fireGlow = 'position:absolute;left:166px;top:458px;width:118px;height:62px;border-radius:52px 52px 4px 4px;border:3px solid #2B1A0F;background:radial-gradient(circle at 50% 88%,#FFE07A,#F08A2C ' + Math.round(30 + T * 0.4) + '%,#5A1E0C);box-shadow:0 0 ' + Math.round(6 + T * 0.3) + 'px ' + Math.round(2 + T * 0.1) + 'px rgba(255,150,50,' + (0.25 + T / 200).toFixed(2) + ')' + (this.woodAt && now - this.woodAt < 400 ? ';transform:scale(1.06)' : '');
