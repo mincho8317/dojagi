@@ -926,6 +926,7 @@ class Component extends DCLogic {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }

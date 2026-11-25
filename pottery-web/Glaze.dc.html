@@ -447,7 +447,7 @@ class Component extends DCLogic {
   // 덧시유 : 방금 담근 그릇을 소성 대기에서 다시 꺼내 한 번 더 담근다 (한 그릇에 두 층까지)
   recoat() {
     var g = this.state.g, id = this.state.lastId, kl = g.kilnList || [], it = kl.filter(function (x) { return x.id === id; })[0];
-    if (!it || it.g2) { this.setState({ lastId: '' }); return; }
+    if (!it || (it.brush && it.brush.length)) { this.setState({ lastId: '' }); return; } /* 붓 시유한 기물은 다시 담글 수 없다 */
     var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
     this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     this.setState({ sel: id, lastId: '', glazeManual: '' });
@@ -550,7 +550,8 @@ class Component extends DCLogic {
     item.cov = Math.round(Math.max(0.05, Math.min(1, this.maxCov || 1)) * 100) / 100; // 실제로 담근 높이 비율 · 완성작 채색에 그대로 쓴다
     item.covAng = this.angN(this.state.ang); /* 담근 기울기 : 0 = 굽부터 세워서 · ±180 = 입구부터 뒤집어서 · 15° 단위 */
     item.covDir = Math.abs(item.covAng) >= 90 ? 'rim' : 'foot';
-    if (cur.recoat) { /* 덧시유 : 두 번째 층만 새로 기록하고 첫 층은 그대로 둔다 */
+    if (cur.recoat) { /* 덧시유 : 맨 위 층(g2)만 새로 기록 · 그 전 덧시유 층은 gx 에 쌓아 둔다 (횟수 제한 없음) */
+      if (cur.g2) { item.gx = (cur.gx || []).concat([{ g: cur.g2, c: cur.g2col, cov: cur.cov2, ang: cur.ang2 }]); }
       item.g2 = item.glaze; item.g2col = this.fillOf({ glaze: item.g2 }, 'glazed'); item.cov2 = item.cov; item.ang2 = item.covAng; item.thick2 = item.thick;
       item.glaze = cur.glaze; item.cov = cur.cov; item.covAng = cur.covAng; item.covDir = cur.covDir; item.thick = cur.thick; item.pattern = cur.pattern || ''; item.mm = cur.mm;
       delete item.recoat;
@@ -704,7 +705,7 @@ class Component extends DCLogic {
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
-      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
+      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !(it.brush && it.brush.length); })(),
       recoatTap: function () { self.recoat(); },
       condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
       conds: (function () {
@@ -819,6 +820,7 @@ class Component extends DCLogic {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }

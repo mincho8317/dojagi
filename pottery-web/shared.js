@@ -1714,8 +1714,13 @@
     } catch (e) { return f0; }
   };
   S.covFillTwo = function (glz, clay, it, geo) {
-    var base = this.covFillOne(glz, clay, it, geo);
-    if (!it || !it.g2 || !it.g2col) { return base; }
+    var f = this.covFillOne(glz, clay, it, geo), self = this; if (!it) { return f; }
+    /* 덧시유 층을 아래부터 차례로 겹친다 : gx(예전 덧시유들) → g2(맨 위) · 횟수 제한 없음 */
+    var L = (it.gx || []).map(function (x) { return { g2: x.g, g2col: x.c, cov2: x.cov, ang2: x.ang }; }).concat(it.g2 && it.g2col ? [{ g2: it.g2, g2col: it.g2col, cov2: it.cov2, ang2: it.ang2 }] : []);
+    L.forEach(function (l) { if (l.g2col) { f = self.covLayer(f, l, geo); } });
+    return f;
+  };
+  S.covLayer = function (base, it, geo) {
     try {
       var a2 = it.ang2 != null ? +it.ang2 : 180, c2 = Math.max(0.02, Math.min(1, it.cov2 != null ? it.cov2 : 0.5)), rad = a2 * Math.PI / 180, nx = Math.sin(rad), ny = Math.cos(rad), r = geo.r, n = r.length, H = geo.H, lo = 1e9, hi = -1e9;
       for (var i = 0; i < n; i++) { var y = -H * i / (n - 1); for (var sg = -1; sg <= 1; sg += 2) { var d = sg * r[i] * nx + y * ny; if (d < lo) { lo = d; } if (d > hi) { hi = d; } } }
@@ -2536,7 +2541,7 @@
       var geo2 = { H: H, r: r, drip: dk(glz, 0.72) }, partial = !!p.glaze && p.cov != null && (p.cov < 0.97 || !!p.g2 || !!(p.brush && p.brush.length));
       var fF = glz, fB = glz;
       try { if (partial) { fF = S.covFillAng(glz, clay, p, geo2); fB = S.covFillTwo(glz, clay, p, geo2); } } catch (e) {}
-      if (!p.glaze) { fF = fB = clay; }
+      if (!p.glaze) { fF = fB = clay; try { if (p.brush && p.brush.length) { var pc = {}; for (var kq in p) { pc[kq] = p[kq]; } pc.cov = 1; pc.covAng = 180; fF = S.covFillAng(clay, clay, pc, geo2); } } catch (e) {} } /* 붓 시유만 : 흙빛 몸에 무늬 */
       var PAD = 12, VX = -M - PAD, VY = -H - PAD, VW = 2 * M + 2 * PAD, VH = H + 2 * PAD;
       function svgOf(fill) { var host = document.getElementById('cvf-host'), defs = host ? host.innerHTML.replace(/^<defs>|<\/defs>$/g, '') : ''; return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="' + VX + ' ' + VY + ' ' + VW + ' ' + VH + '" preserveAspectRatio="none"><defs>' + defs + '</defs><rect x="' + VX + '" y="' + VY + '" width="' + VW + '" height="' + VH + '" fill="' + fill + '"/></svg>'; }
       /* 완성품 2D 처럼 : 유약 두께 차이(입구 테는 옅게 · 아래는 고여 짙게) · 굽은 맨흙 · 흙 티(철분 점) · 물레 자국 · 유약 = 매끈(광택) / 맨흙 = 거칠게 */

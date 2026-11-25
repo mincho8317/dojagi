@@ -565,7 +565,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="2" data-drop="glaze" style="{{pst2}}">
       <sc-if value="{{pv2}}" hint-placeholder-val="{{true}}">
-<div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
+<div data-gzwrap="1" style="{{gzWrap}}"><div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
 <div class="navdrop" data-zst="Glaze" style="position:absolute;left:0;top:0;width:390px;height:754px;overflow:hidden">
 <div class="bg-bg-glaze" style="position:relative;width:390px;height:844px;overflow:hidden;color:#2B1A0F">
   <div aria-hidden="true" data-area="1" style="position:absolute;left:104px;top:190px;width:182px;height:298px;box-sizing:border-box;border:2px dashed #6B4A2C;border-radius:16px;background:rgba(255,248,235,.16);pointer-events:none"></div>
@@ -783,7 +783,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </sc-for>
   </sc-if>
   </div>
-
+</div>
+      <sc-if value="{{gzDip}}" hint-placeholder-val="{{true}}">
       <sc-if value="{{rcOn}}" hint-placeholder-val="{{false}}">
         <div style="position:absolute;left:24px;right:24px;top:318px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">↓ 끌어내리면 한 번 더 시유<br>↑ 들어 올려 오른쪽 위 선반에 놓으면 끝</span></div>
       </sc-if>
@@ -792,30 +793,41 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:30px;right:30px;top:316px;z-index:8;text-align:center;pointer-events:none"><span style="display:inline-block;padding:6px 12px;border-radius:12px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8">시유 완료 · 한 번 더 담그거나<br>끌어서 오른쪽 위 선반에 ↗</span></div>
       </sc-if>
       <div data-dz="basin" aria-hidden="true" style="position:absolute;left:40px;top:150px;width:310px;height:330px;border-radius:24px;pointer-events:none;z-index:7"></div>
+      </sc-if>
+      <sc-if value="{{gzBrush}}" hint-placeholder-val="{{false}}">
+        <div data-drop="paint" role="group" aria-label="붓 시유대 · {{pt.name}}" style="{{gzBoard}}">
+          <div style="position:absolute;inset:0;border-radius:22px;background:radial-gradient(circle at 50% 40%,#F3E3C4,#D9BE96);border:4px solid #8A6440;box-shadow:0 6px 0 #5B3A24;box-sizing:border-box"></div>
+          <sc-if value="{{pt.empty}}" hint-placeholder-val="{{true}}">
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;pointer-events:none"><svg width="70" height="60" viewBox="0 0 56 64" aria-hidden="true"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse></svg><span style="padding:5px 12px;border-radius:12px;background:rgba(43,26,15,.82);font-family:'Jua',sans-serif;font-size:14px;line-height:1.35;color:#FFE7A8;text-align:center">붓 시유대<br>선반의 기물을 끌어다 올려요</span></div>
+          </sc-if>
+          <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
+            <span style="position:absolute;left:0;right:0;top:-24px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">붓 시유 · {{pt.name}}</span>
+            <div style="position:absolute;left:5px;top:5px"><svg data-paint-svg="1" data-bw="{{pt.bw}}" width="300" height="270" viewBox="{{pt.pot.vb}}" onPointerDown="{{pt.down}}" style="touch-action:none;cursor:crosshair"><path data-pbody="1" d="{{pt.pot.d}}" fill="{{pt.pot.fill}}"></path><path d="{{pt.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{pt.pot.d}}" fill="none" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></path><path d="{{pt.pot.b0}}" fill="none" stroke="{{pt.pot.c0}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b1}}" fill="none" stroke="{{pt.pot.c1}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b2}}" fill="none" stroke="{{pt.pot.c2}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse data-prim="1" cx="0" cy="{{pt.pot.rimY}}" rx="{{pt.pot.rimRx}}" ry="{{pt.pot.rimRy}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></ellipse><path data-prim="1" d="{{pt.pot.rimD}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}" stroke-linejoin="round"></path><path d="{{pt.live}}" fill="none" stroke="{{pt.col}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round" opacity=".95"></path><circle data-paint-tip="1" cx="0" cy="0" r="3" fill="none" stroke="#2B1A0F" stroke-width="1.2" opacity="0"></circle></svg></div>
+            <span style="position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:11px;color:#5B3A24;pointer-events:none">{{pt.hint}}</span>
+          </sc-if>
+        </div>
+        <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
+          <div role="toolbar" aria-label="붓 · 도장" style="position:absolute;left:8px;right:8px;top:486px;z-index:12;display:flex;flex-wrap:wrap;gap:5px;justify-content:center"><sc-for list="{{pt.tools}}" as="tl" hint-placeholder-count="6"><button type="button" aria-pressed="{{tl.on}}" aria-label="{{tl.aria}}" onClick="{{tl.tap}}" style="{{tl.st}}">{{tl.label}}</button></sc-for></div>
+          <div role="radiogroup" aria-label="유약 색" style="position:absolute;left:8px;right:8px;top:574px;z-index:12;display:flex;gap:9px;justify-content:center"><sc-for list="{{pt.pal}}" as="pc" hint-placeholder-count="3"><button type="button" role="radio" aria-label="{{pc.aria}}" onClick="{{pc.tap}}" style="{{pc.st}}"></button></sc-for></div>
+          <div style="position:absolute;left:8px;top:620px;width:300px;z-index:12;display:flex;gap:5px">
+            <button type="button" onClick="{{pt.undo}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">↶ 한 획</button>
+            <button type="button" onClick="{{pt.clear}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">모두 지움</button>
+            <button type="button" onClick="{{pt.drop}}" aria-label="그린 것 버리고 기물 내려놓기" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#FFF4DE;border:3px solid #5B3A24;color:#5B3A24">내려놓기</button>
+            <button type="button" onClick="{{pt.save}}" style="all:unset;cursor:pointer;box-sizing:border-box;height:38px;padding:0 8px;border-radius:12px;display:flex;align-items:center;white-space:nowrap;font-family:'Jua',sans-serif;font-size:12.5px;background:#3B7A32;border:3px solid #2F6328;color:#FFFDF5">다 그렸어요</button>
+          </div>
+        </sc-if>
+      </sc-if>
       <sc-if value="{{facPaint}}" hint-placeholder-val="{{true}}">
-      <div data-drop="paint" role="button" aria-label="그림 받침 · 선반의 기물을 끌어다 놓으면 유약으로 무늬를 그려요" onClick="{{paintStand}}" style="position:absolute;left:326px;top:226px;width:60px;height:96px;z-index:9;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px">
-        <svg width="56" height="64" viewBox="0 0 56 64" aria-hidden="true"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><rect x="22" y="40" width="12" height="10" fill="#7A5434"></rect><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse><ellipse cx="28" cy="49" rx="21" ry="5" fill="#E2C08F" stroke="#5B3A24" stroke-width="2"></ellipse></svg>
-        <span style="padding:1px 6px;border-radius:8px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:11px;color:#FFE7A8;white-space:nowrap">그림 받침</span>
+      <div role="button" tabindex="0" aria-label="{{gzBtn.aria}}" onClick="{{gzBtn.tap}}" style="position:absolute;left:313px;top:606px;width:72px;height:66px;z-index:25;border-radius:14px;background:#FFF4DE;border:3px solid #8A6440;box-shadow:0 3px 0 rgba(43,26,15,.45);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:3px;box-sizing:border-box">
+        <svg width="56" height="44" viewBox="0 0 56 64" aria-hidden="true"><sc-if value="{{gzBtn.brush}}" hint-placeholder-val="{{true}}"><path d="M44 4 L30 30" stroke="#8A5A36" stroke-width="5" stroke-linecap="round"></path><path d="M30 30 L26 38" stroke="#2B1A0F" stroke-width="5" stroke-linecap="round"></path><ellipse cx="28" cy="52" rx="25" ry="7" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></ellipse><ellipse cx="28" cy="49" rx="21" ry="5" fill="#E2C08F" stroke="#5B3A24" stroke-width="2"></ellipse></sc-if><sc-if value="{{gzBtn.dip}}" hint-placeholder-val="{{false}}"><path d="M6 26 Q6 58 28 58 Q50 58 50 26 Z" fill="#D9B48A" stroke="#5B3A24" stroke-width="2.5"></path><ellipse cx="28" cy="26" rx="22" ry="7" fill="#9DBFA9" stroke="#5B3A24" stroke-width="2.5"></ellipse></sc-if></svg>
+        <span style="font-family:'Jua',sans-serif;font-size:11px;line-height:1.1;color:#5B3A24;text-align:center">{{gzBtn.txt}}</span>
       </div>
       </sc-if>
-      <sc-if value="{{pt.on}}" hint-placeholder-val="{{false}}">
-        <div role="dialog" aria-label="붓 무늬 그리기 · {{pt.name}}" style="position:absolute;left:0;top:0;width:390px;height:696px;z-index:60;background:rgba(30,15,5,.78);display:flex;flex-direction:column;align-items:center">
-          <span style="margin-top:70px;font-family:'Jua',sans-serif;font-size:19px;color:#FFE7A8">붓 무늬 · {{pt.name}}</span>
-          <span style="margin-top:2px;font-size:12px;color:#F1DDBD">유약을 찍어 기물 위에 그려요 · 붓 끝은 손가락 조금 위</span>
-          <div style="margin-top:10px;width:300px;height:310px;border-radius:22px;background:radial-gradient(circle at 50% 40%,#F3E3C4,#D9BE96);border:4px solid #8A6440;display:flex;align-items:center;justify-content:center">
-            <svg data-paint-svg="1" data-bw="{{pt.bw}}" width="290" height="300" viewBox="{{pt.pot.vb}}" onPointerDown="{{pt.down}}" style="touch-action:none;cursor:crosshair"><path d="{{pt.pot.d}}" fill="{{pt.pot.fill}}"></path><path d="{{pt.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{pt.pot.d}}" fill="none" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></path><path d="{{pt.pot.b0}}" fill="none" stroke="{{pt.pot.c0}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b1}}" fill="none" stroke="{{pt.pot.c1}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pt.pot.b2}}" fill="none" stroke="{{pt.pot.c2}}" stroke-width="{{pt.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pt.pot.rimY}}" rx="{{pt.pot.rimRx}}" ry="{{pt.pot.rimRy}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}"></ellipse><path d="{{pt.pot.rimD}}" fill="{{pt.pot.inner}}" stroke="{{pt.pot.edge}}" stroke-width="{{pt.pot.sw}}" stroke-linejoin="round"></path><circle data-paint-tip="1" cx="0" cy="0" r="3" fill="none" stroke="#2B1A0F" stroke-width="1.2" opacity="0"></circle></svg>
-          </div>
-          <div role="radiogroup" aria-label="유약 색" style="margin-top:14px;display:flex;gap:10px"><sc-for list="{{pt.pal}}" as="pc" hint-placeholder-count="3"><button type="button" role="radio" aria-label="{{pc.aria}}" onClick="{{pc.tap}}" style="{{pc.st}}"></button></sc-for></div>
-          <div style="margin-top:14px;display:flex;gap:8px">
-            <button type="button" onClick="{{pt.undo}}" style="all:unset;cursor:pointer;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">↶ 한 획 지우기</button>
-            <button type="button" onClick="{{pt.clear}}" style="all:unset;cursor:pointer;padding:9px 13px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">모두 지우기</button>
-            <button type="button" onClick="{{pt.save}}" style="all:unset;cursor:pointer;padding:9px 15px;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;font-family:'Jua',sans-serif;font-size:15px;color:#FFFDF5">다 그렸어요</button>
-          </div>
-        </div>
-      </sc-if>
+      <sc-if value="{{gzDip}}" hint-placeholder-val="{{true}}">
       <div role="group" aria-label="유약통 · 골라서 시유그릇에" style="position:absolute;left:8px;top:574px;width:300px;height:110px;z-index:6">
         <sc-for list="{{buckets}}" as="bk" hint-placeholder-count="3"><div role="button" aria-label="{{bk.aria}}" onPointerDown="{{bk.down}}" style="{{bk.st}}"><img src="_blob/55218b400577c68d037a6a6284cc431e.png" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:6px;width:56px;height:50px;object-fit:contain;pointer-events:none"><span style="{{bk.liq}}"></span><span style="{{bk.tagSt}}">{{bk.tag}}</span><span style="{{bk.subSt}}">{{bk.sub}}</span></div></sc-for>
       </div>
+      </sc-if>
 
       </sc-if>
     </div>
@@ -2354,7 +2366,7 @@ class Ctl_gz extends StationBase {
   // 덧시유 : 방금 담근 그릇을 소성 대기에서 다시 꺼내 한 번 더 담근다 (한 그릇에 두 층까지)
   recoat() {
     var g = this.state.g, id = this.state.lastId, kl = g.kilnList || [], it = kl.filter(function (x) { return x.id === id; })[0];
-    if (!it || it.g2) { this.setState({ lastId: '' }); return; }
+    if (!it || (it.brush && it.brush.length)) { this.setState({ lastId: '' }); return; } /* 붓 시유한 기물은 다시 담글 수 없다 */
     var ni = {}; for (var k in it) { ni[k] = it[k]; } ni.recoat = true;
     this.setG({ kilnList: kl.filter(function (x) { return x.id !== id; }), glazeList: [ni].concat((g.glazeList || []).filter(function (x) { return x.id !== id; })) });
     this.setState({ sel: id, lastId: '', glazeManual: '' });
@@ -2457,7 +2469,8 @@ class Ctl_gz extends StationBase {
     item.cov = Math.round(Math.max(0.05, Math.min(1, this.maxCov || 1)) * 100) / 100; // 실제로 담근 높이 비율 · 완성작 채색에 그대로 쓴다
     item.covAng = this.angN(this.state.ang); /* 담근 기울기 : 0 = 굽부터 세워서 · ±180 = 입구부터 뒤집어서 · 15° 단위 */
     item.covDir = Math.abs(item.covAng) >= 90 ? 'rim' : 'foot';
-    if (cur.recoat) { /* 덧시유 : 두 번째 층만 새로 기록하고 첫 층은 그대로 둔다 */
+    if (cur.recoat) { /* 덧시유 : 맨 위 층(g2)만 새로 기록 · 그 전 덧시유 층은 gx 에 쌓아 둔다 (횟수 제한 없음) */
+      if (cur.g2) { item.gx = (cur.gx || []).concat([{ g: cur.g2, c: cur.g2col, cov: cur.cov2, ang: cur.ang2 }]); }
       item.g2 = item.glaze; item.g2col = this.fillOf({ glaze: item.g2 }, 'glazed'); item.cov2 = item.cov; item.ang2 = item.covAng; item.thick2 = item.thick;
       item.glaze = cur.glaze; item.cov = cur.cov; item.covAng = cur.covAng; item.covDir = cur.covDir; item.thick = cur.thick; item.pattern = cur.pattern || ''; item.mm = cur.mm;
       delete item.recoat;
@@ -2611,7 +2624,7 @@ class Ctl_gz extends StationBase {
       angLab: cur ? Math.abs(self.angN(s.ang)) + '°' : '', angNm: self.angName(s.ang),
       angLabSt: 'font-family:Jua,sans-serif;font-size:15px;line-height:1;white-space:nowrap;color:' + (s.drag && !s.holding ? '#2F6328' : '#5B3A24'),
       angTicks: (function () { var a0 = self.angN(s.ang), o = []; for (var t = -165; t <= 180; t += 15) { var rd = t * Math.PI / 180, on = t === a0, big = t % 90 === 0, r1 = big || on ? 22 : 25; o.push({ x1: (Math.sin(rd) * r1).toFixed(1), y1: (-Math.cos(rd) * r1).toFixed(1), x2: (Math.sin(rd) * 29).toFixed(1), y2: (-Math.cos(rd) * 29).toFixed(1), /* 입구가 향한 쪽 눈금 */ c: on ? '#2F6328' : (big ? '#8A6440' : '#C9A27A'), w: on ? 3.2 : (big ? 2 : 1.2) }); } return o; })(),
-      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !it.g2; })(),
+      recoatOn: (function () { if (window.__pano || !s.lastId || s.holding || s.drag) { return false; } var it = (g.kilnList || []).filter(function (x) { return x.id === s.lastId; })[0]; return !!it && !(it.brush && it.brush.length); })(),
       recoatTap: function () { self.recoat(); },
       condOn: !!(cur && (cur.goalGlaze || cur.goalReq)),
       conds: (function () {
@@ -2726,6 +2739,7 @@ class Ctl_gz extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -4237,6 +4251,7 @@ class Ctl_ds extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -5042,6 +5057,7 @@ class Ctl_k extends StationBase {
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry') { return c[1]; }
     if (stage === 'bisque') { return c[1]; } // 초벌 단계 없음 · 유약 전 그릇은 마른 흙색
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint && stage !== 'wet' && stage !== 'dry' && stage !== 'bisque') { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
@@ -5308,7 +5324,7 @@ class Component extends DCLogic {
     if (ev === 'formed' && data.id) { window.__wEmpty = true; this.setG2({ onWheel: data.id, wEmpty: true }); this.liftAt = Date.now(); }
     else if (ev === 'glazed' && data.id) {
       var it = (this.loadG().kilnList || []).filter(function (x) { return x.id === data.id; })[0], G = this.ctls.Glaze;
-      if (it && !it.g2 && G && G.recoat) { /* 첫 층을 입히면 그대로 시유그릇에 둔 채 바로 덧시유 가능한 상태로 (버튼·대기 없이) */
+      if (it && G && G.recoat) { /* 덧시유 횟수 제한 없음 */ /* 첫 층을 입히면 그대로 시유그릇에 둔 채 바로 덧시유 가능한 상태로 (버튼·대기 없이) */
         var self2 = this; setTimeout(function () { try { G.setState({ lastId: data.id }); G.recoat(); } catch (e) {} self2.bump(); }, 0);
       } else { window.__glzWait = true; this.setG2({ glzWait: data.id }); }
     }
@@ -5435,7 +5451,7 @@ class Component extends DCLogic {
     var self = this, el = e.currentTarget, x0 = e.clientX, y0 = e.clientY, pid = e.pointerId, moved = false, ghost = null, rect = el.getBoundingClientRect(), sc = null, lastX = x0, off = { x: 0, y: 0 }, ff = null, small = null, big = null, railQ = null;
     try { el.setPointerCapture && el.setPointerCapture(pid); } catch (er) {}
     function hit(x, y) {
-      var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(st === 'g' ? '[data-drop="glaze"]' : '[data-kiln],[data-drop="glaze"]'))); /* 그림 받침이 먼저 · 시유한 기물은 시유그릇에 다시 올려 덧시유 */
+      var els = Array.prototype.slice.call(document.querySelectorAll('[data-drop="paint"]')).concat(Array.prototype.slice.call(document.querySelectorAll(self.gzMode === 'brush' ? (st === 'g' ? '[data-none]' : '[data-kiln]') : (st === 'g' ? '[data-drop="glaze"]' : '[data-kiln],[data-drop="glaze"]')))); /* 붓 시유대일 땐 시유그릇이 없다 */ /* 그림 받침이 먼저 · 시유한 기물은 시유그릇에 다시 올려 덧시유 */
       for (var i = 0; i < els.length; i++) { var r = els[i].getBoundingClientRect(); if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) { return els[i]; } }
       return null;
     }
@@ -5464,7 +5480,7 @@ class Component extends DCLogic {
       else if (t && st === 'g') { ok = self.putPiece(id); }
       else if (t && st === 'k' && t.getAttribute('data-drop') === 'glaze') { ok = self.recoatPiece(id); if (ok) { st = 'g'; } }
       else if (t && st === 'k') { ok = self.kPlace(+t.getAttribute('data-kiln'), id); }
-      else if (moved) { self.say(st === 'g' ? '시유그릇에 놓아야 유약을 바를 수 있어요' : '가마의 빈 칸에 놓아야 구울 수 있어요'); }
+      else if (moved) { self.say(self.gzMode === 'brush' && self.curPanel() === 2 ? '붓 시유대 위에 놓아야 무늬를 그려요' : (st === 'g' ? '시유그릇에 놓아야 유약을 바를 수 있어요' : '가마의 빈 칸에 놓아야 구울 수 있어요')); }
       if (!ghost) { self.hideCss('q', ''); return; }
       /* 놓은 곳에 그대로 앉는다 : 시유그릇이면 그릇 자리로, 가마면 칸 안으로, 못 놓으면 선반 제자리로 미끄러져 돌아간다 */
       if (ok && t.getAttribute('data-drop') === 'paint') { ghost.remove(); self.hideCss('q', ''); }
@@ -5601,10 +5617,11 @@ class Component extends DCLogic {
     if (!res) { return; }
     var pid = 'k' + Date.now() + '_' + i, p = {}, x;
     for (x in it) { p[x] = it[x]; } for (x in res) { p[x] = res[x]; }
-    delete p.recoat; if (it.sk === 'slab') { p.name = this.pName(p); } p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
+    delete p.recoat; if (it.sk === 'slab') { p.name = this.pName(p); }
+    if (!it.glaze && it.brush && it.brush.length) { delete p.tint; p.name = '붓 무늬 ' + String(p.name || '').replace(/^(백자|청자|흑유|진사|벚꽃|천목)\s*/, ''); } /* 붓 시유만 한 기물 */ p.where = 'store'; p.fresh = true; p.fireBand = Math.round(r * 100); p.yohen = false;
     K.k[i] = null;
     var c = this.kSave(K), ps = {}; for (x in (c.pieces || {})) { ps[x] = c.pieces[x]; } ps[pid] = p;
-    var sf = {}, gf = {}; for (x in (c.shapesFound || {})) { sf[x] = c.shapesFound[x]; } for (x in (c.glazesFound || {})) { gf[x] = c.glazesFound[x]; } sf[p.shape] = true; gf[p.glaze] = true;
+    var sf = {}, gf = {}; for (x in (c.shapesFound || {})) { sf[x] = c.shapesFound[x]; } for (x in (c.glazesFound || {})) { gf[x] = c.glazesFound[x]; } sf[p.shape] = true; if (p.glaze) { gf[p.glaze] = true; }
     c.pieces = ps; c.order = (c.order || []).concat([pid]); c.shapesFound = sf; c.glazesFound = gf; c.firedTotal = (c.firedTotal || 0) + 1;
     try { localStorage.setItem('pottery-proto-v1', JSON.stringify(c)); } catch (e) {}
     this.sfx(p.grade === '명작' ? 'gMaster' : (p.grade === '수작' ? 'gGood' : 'gPlain'));
@@ -5780,6 +5797,7 @@ class Component extends DCLogic {
     var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
     if (g.glzWait && (g.kilnList || []).some(function (x) { return x.id === g.glzWait; })) { this.say('시유그릇의 기물을 먼저 선반으로 옮기거나 한 번 더 담가요'); this.sfx('fail'); return false; }
     if (G.state.sel && G.state.sel !== id) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 담가요'); this.sfx('fail'); return false; }
+    var pi = (g.glazeList || []).filter(function (x) { return x.id === id; })[0]; if (pi && pi.brush && pi.brush.length) { this.say('붓 시유한 기물은 담글 수 없어요 · 가마로 가져가 구워요'); this.sfx('fail'); return false; }
     G.setState({ sel: id, pkOpen: false, potHide: 0 }); this.sfx('ok'); return true;
   }
   /* 실로 잘라 낸 기물이 물레에서 선반으로 날아간다 */
@@ -5831,7 +5849,7 @@ class Component extends DCLogic {
   recoatPiece(id) {
     var g = this.loadG(), G = this.ctls.Glaze; if (!G) { return false; }
     var it = (g.kilnList || []).filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
-    if (it.g2) { this.say('유약은 두 번까지 입혀요 · 가마에 넣어 구워요'); this.sfx('fail'); return false; }
+    if (it.brush && it.brush.length) { this.say('붓 시유한 기물은 다시 담글 수 없어요 · 담금 시유를 먼저 하고 붓 시유를 해요'); this.sfx('fail'); return false; } /* 덧시유 횟수 제한 없음 */
     if (G.state.sel || g.glzWait) { this.say('시유그릇에 이미 기물이 있어요 · 먼저 선반에 내려놓아요'); this.sfx('fail'); return false; }
     if ((g.glazeList || []).length >= this.KB().cap) { this.say('빚은 기물 선반이 가득 찼어요 (' + this.KB().cap + '/' + this.KB().cap + ') · 자리를 비워요'); this.sfx('fail'); return false; }
     var ni = {}, k; for (k in it) { if (k !== 'kp' && k !== 'ktb' && k !== 'ktt') { ni[k] = it[k]; } } ni.recoat = true;
@@ -6226,34 +6244,69 @@ class Component extends DCLogic {
   }
   /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
   PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
+  /* ── 붓 시유대 ⇄ 담금 시유대 : 버튼으로 설비를 바꾼다 (시유그릇이 위로 사라지고 붓 시유대가 내려온다) ── */
+  gzSwap() {
+    var g = this.loadG(), G = this.ctls.Glaze, to = this.gzMode === 'brush' ? 'dip' : 'brush';
+    if (to === 'brush' && !(g.fac || {}).paint) { this.say('붓 시유대는 상점 「설비」에서 설치해요'); this.sfx('fail'); return; }
+    if (to === 'brush' && ((G && G.state.sel) || g.glzWait)) { this.say('시유그릇의 기물을 먼저 선반에 옮겨요'); this.sfx('fail'); return; }
+    if (to === 'dip' && this.paint) { this.say('그리던 기물을 먼저 「다 그렸어요」나 「내려놓기」로 정리해요'); this.sfx('fail'); return; }
+    this.gzMode = to; this.gzAt = Date.now(); this.sfx('thud'); var self = this; setTimeout(function () { self.bump(); }, 1100);
+    this.say(to === 'brush' ? '붓 시유대 · 선반의 기물을 끌어다 올려요 (담금 시유한 기물도 돼요)' : '담금 시유대 · 선반의 기물을 시유그릇에 넣어요'); this.bump();
+  }
   openPaint(id, st) { if (!(this.loadG().fac || {}).paint) { this.say('붓 시유대는 상점 「설비」에서 설치해요'); return false; }
     var g = this.loadG(), L = st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === id; })[0]; if (!it) { return false; }
-    var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
-    this.paint = { id: id, st: st, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: (pal[2] || pal[0])[0] }, 'glazed') };
-    this.sfx('tap'); this.say('유약을 찍어 기물에 무늬를 그려요 · 다 그리면 「다 그렸어요」'); this.bump(); return true;
+    if (this.paint) { this.say('붓 시유대에 이미 기물이 있어요'); this.sfx('fail'); return false; }
+    var self = this, pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; }), g0 = (pal[2] || pal[0])[0];
+    this.paint = { id: id, st: st, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: 'brush', stamp: 'dot', live: '' };
+    this.sfx('tap'); this.say('붓으로 긋거나 도장을 찍어 무늬를 넣어요 · 다 하면 「다 그렸어요」'); this.bump(); return true;
   }
   paintItem() { var P = this.paint; if (!P) { return null; } var g = this.loadG(), L = P.st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === P.id; })[0]; return it || null; }
-  paintPt(e) { var svg = document.querySelector('[data-paint-svg]'); if (!svg || !svg.getScreenCTM) { return null; } var m = svg.getScreenCTM(); if (!m) { return null; } var p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY - 26; var q = p.matrixTransform(m.inverse()); return [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; } /* 붓 끝은 손가락보다 조금 위 */
-  paintIn(it, q) { var r = it.prof && it.prof.length > 2 ? it.prof : null, H = it.H || 110; if (!r) { return Math.abs(q[0]) < 60 && q[1] < 0 && q[1] > -H; } if (q[1] > -1 || q[1] < -H + 1) { return false; } var f = (-q[1] / H) * (r.length - 1), j = Math.floor(f), rr = r[j] + (r[Math.min(r.length - 1, j + 1)] - r[j]) * (f - j); return Math.abs(q[0]) <= rr - 1.5; }
+  paintPt(e, raw) { var svg = document.querySelector('[data-paint-svg]'); if (!svg || !svg.getScreenCTM) { return null; } var m = svg.getScreenCTM(); if (!m) { return null; } var p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY - (raw ? 0 : 26); var q = p.matrixTransform(m.inverse()); return [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; } /* 붓 끝은 손가락보다 조금 위 · 도장은 손가락 자리 그대로 */
+  /* 기물 위인지 : 그림판에 그린 몸통 모양 그대로 판정 (판 기물·물레 기물 모두) */
+  paintIn(it, q) { try { var bp = document.querySelector('[data-paint-svg] [data-pbody]'); if (bp && bp.isPointInFill) { var sv = bp.ownerSVGElement, pt = sv.createSVGPoint(); pt.x = q[0]; pt.y = q[1]; if (!bp.isPointInFill(pt)) { return false; } var rims = sv.querySelectorAll('[data-prim]'); for (var i = 0; i < rims.length; i++) { if (rims[i].isPointInFill(pt)) { return false; } } return true; } /* 입구(안쪽)는 빼고 */ } catch (e) {}
+    var r = it.prof && it.prof.length > 2 ? it.prof : null, H = it.H || 110; if (!r) { return Math.abs(q[0]) < 60 && q[1] < 0 && q[1] > -H; } if (q[1] > -1 || q[1] < -H + 1) { return false; } var f = (-q[1] / H) * (r.length - 1), j = Math.floor(f), rr = r[j] + (r[Math.min(r.length - 1, j + 1)] - r[j]) * (f - j); return Math.abs(q[0]) <= rr - 1.5; }
+  /* 도장 : 획(선)으로 만든 무늬라 그리는 쪽 코드(2D·3D·소성 후)가 그대로 그린다 */
+  STAMPS() { return [['dot', '점'], ['plum', '매화'], ['ring', '동그라미'], ['wave', '물결'], ['star', '별']]; }
+  stampPath(k, x, y, s) { function f(v) { return (+v).toFixed(1); } function dot(a, b) { return 'M' + f(a) + ' ' + f(b) + ' l0.1 0'; }
+    if (k === 'plum') { var o = dot(x, y); for (var i = 0; i < 5; i++) { var a = -Math.PI / 2 + i * Math.PI * 2 / 5; o += ' ' + dot(x + Math.cos(a) * s * 0.9, y + Math.sin(a) * s * 0.9); } return o; }
+    if (k === 'ring') { var r = s * 0.9; return 'M' + f(x - r) + ' ' + f(y) + ' a' + f(r) + ' ' + f(r) + ' 0 1 0 ' + f(2 * r) + ' 0 a' + f(r) + ' ' + f(r) + ' 0 1 0 ' + f(-2 * r) + ' 0'; }
+    if (k === 'wave') { var w = s * 1.1; return 'M' + f(x - 2 * w) + ' ' + f(y) + ' q' + f(w / 2) + ' ' + f(-w * 0.7) + ' ' + f(w) + ' 0 t' + f(w) + ' 0 t' + f(w) + ' 0 t' + f(w) + ' 0'; }
+    if (k === 'star') { var o2 = ''; for (var j = 0; j <= 5; j++) { var b = -Math.PI / 2 + (j * 2 % 5) * Math.PI * 2 / 5; o2 += (j ? ' L' : 'M') + f(x + Math.cos(b) * s) + ' ' + f(y + Math.sin(b) * s); } return o2; }
+    return dot(x, y); }
   paintDown(e) {
     var P = this.paint, it = this.paintItem(), self = this; if (!P || !it) { return; } if (e.cancelable) { e.preventDefault(); }
-    var pid = e.pointerId, svg = document.querySelector('[data-paint-svg]'), q0 = this.paintPt(e); if (!svg || !q0) { return; }
-    var NS = 'http://www.w3.org/2000/svg', live = document.createElementNS(NS, 'path'), d = '', pen = false;
-    live.setAttribute('fill', 'none'); live.setAttribute('stroke', P.col); live.setAttribute('stroke-width', svg.getAttribute('data-bw') || '3'); live.setAttribute('stroke-linecap', 'round'); live.setAttribute('stroke-linejoin', 'round'); svg.appendChild(live);
-    var tip = document.querySelector('[data-paint-tip]');
-    function add(q) { if (tip) { tip.setAttribute('cx', q[0]); tip.setAttribute('cy', q[1]); tip.setAttribute('opacity', '1'); } if (!self.paintIn(it, q)) { pen = false; return; } d += (pen ? ' L' : ' M') + q[0] + ' ' + q[1]; pen = true; live.setAttribute('d', d); }
+    var pid = e.pointerId, svg = document.querySelector('[data-paint-svg]');
+    if (P.tool === 'stamp') { /* 도장 : 짚은 자리에 한 번 찍는다 */
+      var qs = this.paintPt(e, true); if (!svg || !qs) { return; } if (!this.paintIn(it, qs)) { this.say('기물 위에 찍어요'); return; }
+      var bw = +(svg.getAttribute('data-bw') || 3), sz = Math.max(4, bw * 2.4);
+      P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, k: 'st', p: this.stampPath(P.stamp, qs[0], qs[1], sz) }]).slice(-60); this.sfx('tap'); try { window.__buzz && window.__buzz(6); } catch (eb) {} this.bump(); return;
+    }
+    var q0 = this.paintPt(e); if (!svg || !q0) { return; }
+    var d = '', pen = false, raf = 0, tip = document.querySelector('[data-paint-tip]');
+    function show() { raf = 0; P.live = d; self.bump(); } /* 그리는 동안 붓 자국이 보이게 : 화면이 다시 그려져도 남도록 상태로 그린다 */
+    function add(q) { if (tip) { tip.setAttribute('cx', q[0]); tip.setAttribute('cy', q[1]); tip.setAttribute('opacity', '1'); } if (!self.paintIn(it, q)) { pen = false; return; } d += (pen ? ' L' : ' M') + q[0] + ' ' + q[1]; pen = true; if (!raf) { raf = requestAnimationFrame(show); } }
     add(q0); this.dragging = true;
     function mv(ev) { if (ev.pointerId !== pid) { return; } if (ev.cancelable) { ev.preventDefault(); } var q = self.paintPt(ev); if (q) { add(q); } }
-    function up(ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; if (tip) { tip.setAttribute('opacity', '0'); }
-      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, p: d.trim() }]).slice(-40); }
-      live.remove(); self.bump(); }
+    function up(ev) { if (ev.pointerId !== pid) { return; } window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); self.dragging = false; if (tip) { tip.setAttribute('opacity', '0'); } if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      if (d) { if (d.indexOf(' L') < 0) { d += ' L' + (q0[0] + 0.5) + ' ' + q0[1]; } P.strokes = P.strokes.concat([{ c: P.col, g: P.gk, p: d.trim() }]).slice(-60); }
+      P.live = ''; self.bump(); }
     window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   }
+  /* 다 그렸어요 : 붓 시유도 시유 → 빚은 기물이면 시유한 기물 선반으로 (바로 가마에 구울 수 있다 · 이후 담금 시유는 못 한다) */
   paintSave() {
     var P = this.paint; if (!P) { return; }
-    var g = this.loadG(), key = P.st === 'g' ? 'glazeList' : 'kilnList', L = (g[key] || []).map(function (x) { if (x.id !== P.id) { return x; } var y = {}; for (var k in x) { y[k] = x[k]; } y.brush = P.strokes.slice(); return y; }), up = {}; up[key] = L;
-    this.setG2(up); this.paint = null; this.sfx('ok'); this.say(P.strokes.length ? '무늬를 그렸어요 · 소성 전이면 언제든 다시 그릴 수 있어요 (가치 +40%)' : '무늬를 지웠어요'); this.bump();
+    var g = this.loadG(), key = P.st === 'g' ? 'glazeList' : 'kilnList', it = (g[key] || []).filter(function (x) { return x.id === P.id; })[0]; if (!it) { this.paint = null; this.bump(); return; }
+    var y = {}, k; for (k in it) { y[k] = it[k]; } y.brush = P.strokes.slice(); if (!y.brush.length) { delete y.brush; }
+    var up = {};
+    if (P.st === 'g' && y.brush) {
+      if ((g.kilnList || []).length >= this.KB().cap) { this.say('시유한 기물 선반이 가득 찼어요 · 가마에 먼저 넣어요'); this.sfx('fail'); return; }
+      delete y.recoat; up.glazeList = (g.glazeList || []).filter(function (x) { return x.id !== P.id; }); up.kilnList = (g.kilnList || []).concat([y]);
+      this.setG2(up); this.paint = null; this.sfx('ok'); this.say('붓 시유를 마쳤어요 · 시유한 기물 선반에 올렸어요 (바로 구울 수 있어요)'); this.bump(); return;
+    }
+    up[key] = (g[key] || []).map(function (x) { return x.id === P.id ? y : x; });
+    this.setG2(up); this.paint = null; this.sfx('ok'); this.say(y.brush ? '무늬를 그렸어요 · 소성 전이면 언제든 다시 그릴 수 있어요' : '무늬를 지웠어요'); this.bump();
   }
+  paintDrop() { if (!this.paint) { return; } this.paint = null; this.sfx('tap'); this.say('그리던 것은 두고 기물을 선반에 그대로 두었어요'); this.bump(); } /* 내려놓기 : 그린 것 저장 안 함 */
   accepts(kind, dz) { if (kind === 'clay' && dz === 'slab') { return true; } return { clay: 'wheel', wire: 'wheel', piece: 'shelf', glaze: 'basin', gpiece: 'gshelf', wood: 'fire' }[kind] === dz; }
   dropAt(x, y, kind) {
     var els = document.querySelectorAll('[data-dz]');
@@ -6439,17 +6492,26 @@ class Component extends DCLogic {
     var SA = this.swapAsk; v.sw = { on: !!SA, txt: SA ? (SA.to === 'slab' ? '밀던 판이 사라져요' : '빚던 모양이 사라져요') + ' · ' + SA.c.n + ' 흙으로 바꿀까요?' : '', yes: function () { self.swapYes(); }, no: function () { self.swapNo(); } };
     /* ── 붓 무늬 ── */
     var PT = this.paint, pIt = PT ? this.paintItem() : null; if (PT && !pIt) { this.paint = null; PT = null; }
-    v.pt = { on: !!PT };
+    /* 붓 시유대 : 담금 시유대와 버튼으로 바꿔 쓴다 · 기물이 없으면 빈 받침 (선반에서 끌어다 올림) */
+    var GZB = this.gzMode === 'brush', gzA = this.gzAt && Date.now() - this.gzAt < 1100;
+    v.gzBrush = GZB; v.gzDip = !GZB;
+    v.gzWrap = 'position:absolute;left:0;top:0;width:390px;height:696px;' + (GZB ? (gzA ? 'animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both;' : 'transform:translateY(-640px);visibility:hidden;') : (gzA ? 'animation:eqDrop .42s .3s cubic-bezier(.55,0,1,.45) both;' : ''));
+    v.gzBoard = 'position:absolute;left:40px;top:196px;width:310px;height:280px;z-index:12;' + (GZB && gzA ? 'animation:eqDrop .42s .3s cubic-bezier(.55,0,1,.45) both;' : '');
+    v.gzBtn = { txt: '⇄ ' + (GZB ? '담금 시유로' : '붓 시유로'), aria: '설비 변경 · ' + (GZB ? '담금 시유대로 바꾸기' : '붓 시유대로 바꾸기'), tap: function () { self.gzSwap(); }, dip: GZB, brush: !GZB };
+    v.pt = { on: !!PT, empty: GZB && !PT };
     if (PT) {
       var tmpIt = {}; for (var pk in pIt) { tmpIt[pk] = pIt[pk]; } tmpIt.brush = PT.strokes;
       var GN0 = (g.glazesFound || {}), pal0 = this.PAL().filter(function (p) { return GN0[p[0]] || p[0] === 'white' || p[0] === 'celadon'; });
       var ppot = this.potOf(tmpIt, PT.st === 'g' ? this.fillOf(tmpIt, 'dry') : this.fillOf(tmpIt, 'glazed'));
-      v.pt = { on: true, pot: ppot, bw: ppot.bw, name: this.pName(PT.st === 'g' ? { shape: pIt.shape, sk: pIt.sk, goalName: pIt.goalName } : pIt) + (PT.st === 'g' ? ' · 시유 전' : ' · 시유 후'), n: PT.strokes.length,
-        pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:38px;height:38px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.bump(); } }; }),
-        down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); } };
+      var TB = 'all:unset;cursor:pointer;box-sizing:border-box;height:36px;padding:0 9px;border-radius:11px;display:flex;align-items:center;font-family:Jua,sans-serif;font-size:13px;';
+      v.pt = { on: true, empty: false, pot: ppot, bw: ppot.bw, live: PT.live || 'M0 0', col: PT.col, name: this.pName(PT.st === 'g' ? { shape: pIt.shape, sk: pIt.sk, goalName: pIt.goalName, slabName: pIt.slabName, poly: pIt.poly } : pIt) + (PT.st === 'g' ? ' · 시유 전' : ' · 담금 시유 위에'), n: PT.strokes.length,
+        pal: pal0.map(function (p) { var c = self.fillOf({ glaze: p[0] }, 'glazed'); return { n: p[1], aria: p[1] + '으로 그리기', st: 'all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;box-sizing:border-box;background:' + c + ';border:' + (PT.col === c ? '4px solid #FFE27A;box-shadow:0 0 0 2px #2B1A0F' : '3px solid #5B3A24'), tap: function () { self.paint.col = c; self.paint.gk = p[0]; self.bump(); } }; }),
+        tools: [['brush', '🖌 붓']].concat(this.STAMPS().map(function (t) { return [t[0], t[1]]; })).map(function (t) { var on = t[0] === 'brush' ? PT.tool === 'brush' : (PT.tool === 'stamp' && PT.stamp === t[0]); return { label: t[0] === 'brush' ? t[1] : '◉ ' + t[1], aria: t[0] === 'brush' ? '붓으로 긋기' : t[1] + ' 도장 찍기', on: on ? 'true' : 'false', st: TB + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'), tap: function () { if (t[0] === 'brush') { self.paint.tool = 'brush'; } else { self.paint.tool = 'stamp'; self.paint.stamp = t[0]; } self.bump(); } }; }),
+        hint: PT.tool === 'stamp' ? '기물을 짚으면 그 자리에 도장이 찍혀요' : '붓으로 그어요 · 붓 끝은 손가락 조금 위',
+        down: function (e) { self.paintDown(e); }, undo: function () { if (self.paint.strokes.length) { self.paint.strokes = self.paint.strokes.slice(0, -1); self.bump(); } }, clear: function () { self.paint.strokes = []; self.bump(); }, save: function () { self.paintSave(); }, drop: function () { self.paintDrop(); } };
     }
     var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
-    v.paintStand = function () { self.say('선반의 기물(시유 전·후 모두)을 끌어다 놓으면 유약으로 무늬를 그려요'); };
+    v.paintStand = function () { self.say('선반의 기물(빚은 기물·담금 시유한 기물)을 끌어다 올려요'); };
     v.wireBoardSt = 'position:absolute;left:310px;top:446px;width:78px;height:112px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25;' : '') + (SON ? 'display:none;' : ''); /* 실은 설비 변경 버튼 위 · 판 성형대에선 숨김 (display:none 은 맨 뒤에 둬야 flex 에 덮이지 않는다) */
     v.onPop = '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
@@ -6701,6 +6763,7 @@ class Component extends DCLogic {
     var c = CL[it && it.clay] || CL.basic;
     if (stage === 'wet') { return c[0]; }
     if (stage === 'dry' || stage === 'bisque') { return c[1]; }
+    if (it && !it.glaze && it.brush && it.brush.length) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
     if (it && it.tint) { return it.tint; }
     return GZ[it && it.glaze] || '#ECE8DE';
   }
