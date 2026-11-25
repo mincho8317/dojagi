@@ -467,6 +467,10 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <div style="position:absolute;left:0;top:0;width:390px;height:552px;z-index:20;background:linear-gradient(#D9BE96,#C9A77C);{{sbBg}}"></div>
       <style>[data-sbwrap] > *{pointer-events:auto}[data-sbwrap] > svg{pointer-events:none}</style>
       <div data-sbwrap="1" style="{{sbWrap}}">
+        <sc-if value="{{shOn}}" hint-placeholder-val="{{false}}"><div role="meter" aria-label="판 성형 일치율" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{shPct}}" style="position:absolute;left:12px;right:12px;top:8px;height:62px;z-index:25;box-sizing:border-box;padding:6px 14px;border-radius:16px;background:rgba(43,26,15,.88);border:3px solid #3E2616;display:flex;align-items:center;gap:12px;pointer-events:none">
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;line-height:1"><span style="font-size:11px;font-weight:700;color:#E8D3B5;white-space:nowrap">{{shLbl}}</span><span style="font-family:'Jua',sans-serif;font-size:34px;color:{{shCol}};text-shadow:0 2px 0 rgba(0,0,0,.4)">{{shPct}}<span style="font-size:18px">%</span></span></div>
+          <div style="flex:1 1 auto;display:flex;flex-direction:column;gap:5px;min-width:0"><div style="height:12px;border-radius:6px;background:rgba(255,244,222,.18);overflow:hidden"><div style="{{shBar}}"></div></div><span role="img" aria-label="{{shStars}}" style="display:flex;gap:1px;align-items:center"><sc-for list="{{shStarList}}" as="fs" hint-placeholder-count="5"><img dc-src="{{fs}}" alt="" aria-hidden="true" style="width:17px;height:17px;object-fit:contain"></sc-for></span></div>
+        </div></sc-if>
         <div data-dz="slab" role="application" aria-label="판 성형대 · {{sb.hint}}" onPointerDown="{{sb.down}}" style="position:absolute;left:30px;top:118px;width:330px;height:360px;z-index:21;touch-action:none;cursor:crosshair;border-radius:18px;background:#B98A5C;border:4px solid #7A5434;box-shadow:inset 0 0 0 6px rgba(255,244,222,.18),0 5px 0 #5B3A24"></div>
         <svg aria-hidden="true" width="390" height="552" viewBox="0 0 390 552" style="position:absolute;left:0;top:0;z-index:22;pointer-events:none">
           <sc-if value="{{sb.sheet}}" hint-placeholder-val="{{true}}">
@@ -6184,7 +6188,7 @@ class Component extends DCLogic {
     var A = this.slabSig(sl.poly), B = this.slabSig(this.slabTgPoly(t)); if (!A || !B) { return null; }
     var mA = mean(A) || 1, mB = mean(B) || 1, best = 1e9; for (var s = 0; s < 36; s++) { var er = 0; for (var i = 0; i < 36; i++) { er += Math.abs(A[(i + s) % 36] / mA - B[i] / mB); } best = Math.min(best, er / 36); }
     var shp = cl(100 - best * 480), size = cl(100 - Math.abs(Math.log(mA / mB)) * 130), outl = shp * 0.7 + size * 0.3;
-    var eAvg = mean(sl.e || []), lift = cl(100 - Math.abs(eAvg - t.e) / Math.max(8, t.e) * 55), wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, hs = 0, ps = 0, pct;
+    var eAvg = mean(sl.e || []), lift = t.H ? 100 : cl(100 - Math.abs(eAvg - t.e) / Math.max(8, t.e) * 55) /* 벽 목표는 테두리를 올리고 세워도 감점 없음 */, wall = !!sl.wall, Hw = wall ? (sl.H || 44) : 0, hs = 0, ps = 0, pct;
     if (!t.H) { pct = outl * 0.65 + lift * 0.35; if (wall) { pct *= 0.45; } }
     else if (wall) { hs = cl(100 - Math.abs(Hw - t.H) / t.H * 130); var d = 0, sc = sl.sc || [1, 1], W0m = this.slabHalfW(this.slabRims(sl), 0), tWm = this.slabTgW(t); for (var k = 0; k <= 11; k++) { var tgw = tWm * this.slabSc(t.sc, k / 11); d += Math.abs(W0m * this.slabSc(sc, k / 11) - tgw) / tgw; } ps = cl(100 - d / 12 * 320); /* 벽 넓이 = 실제 폭으로 비교 */ pct = outl * 0.45 + lift * 0.1 + hs * 0.25 + ps * 0.2; }
     else { pct = (outl * 0.45 + lift * 0.1) * 0.6; }
@@ -6398,7 +6402,7 @@ class Component extends DCLogic {
     if (SON && !oSit && !TG.free) {
       if (mode === 'sheet') { tgD = pd(tgP.map(function (p) { return [p[0] + SG.cx, p[1] + SG.cy]; }), true); }
       else if (mode === 'top') { var mcx = 0, mcy = 0; poly.forEach(function (p) { mcx += p[0]; mcy += p[1]; }); mcx /= Math.max(1, poly.length); mcy /= Math.max(1, poly.length); tgD = pd(tgP.map(function (p) { return [p[0] + ox + mcx, p[1] + oy + mcy]; }), true); }
-      else if (mode === 'side') { var tGE = window.PotteryShared.slabGeo(tgP, tgP.map(function () { return TG.e; })), tL = 0, tR = 0; tgP.forEach(function (q, i) { if (q[0] < tgP[tL][0]) { tL = i; } if (q[0] > tgP[tR][0]) { tR = i; } });
+      else if (mode === 'side') { var slE = this.slabWith(SL, LV.e ? { e: LV.e } : {}), tE = TG.H ? this.slabFrontE(slE, 0) : TG.e; /* 벽 목표 : 손가락으로 올린 테두리 위에서 벽이 시작하니 안내선도 그만큼 올린다 */ var tGE = window.PotteryShared.slabGeo(tgP, tgP.map(function () { return tE; })), tL = 0, tR = 0; tgP.forEach(function (q, i) { if (q[0] < tgP[tL][0]) { tL = i; } if (q[0] > tgP[tR][0]) { tR = i; } });
         var tcol = function (i) { var c = tGE[i], o = [[SG.cx + c.F[0], SG.bot]]; c.band.forEach(function (b) { o.push([SG.cx + b[0], SG.bot - b[2]]); }); o.push([SG.cx + c.R[0], SG.bot - SG.T - c.e]); if (TG.H) { for (var k = 1; k <= 16; k++) { o.push([SG.cx + c.R[0] * self.slabSc(TG.sc, k / 16), SG.bot - SG.T - c.e - TG.H * k / 16]); } } return o; };
         tgD = pd(tcol(tL).slice().reverse().concat(tcol(tR)), false); }
     }
@@ -6461,13 +6465,16 @@ class Component extends DCLogic {
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레에 대면 자를 점선이 나와요'); }); };
     v.tgTap = function () { self.tgOpen = true; self.bump(); }; /* 목표 모양 : 모달 대신 쪽지가 커져서 목록 */
     v.tgClose = function () { self.tgOpen = false; self.bump(); };
-    v.tgOpen = !!this.tgOpen; v.tgShut = !this.tgOpen; v.tgRows = []; v.tgZ = this.slabOn ? 26 : 6; v.tgPctOn = false; v.tgPct = '';
+    v.tgOpen = !!this.tgOpen; v.tgShut = !this.tgOpen; v.tgRows = []; v.tgZ = this.slabOn ? 26 : 6; v.tgPctOn = false; v.tgPct = ''; v.shOn = false;
     var RSTY = function (on) { return 'all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;box-sizing:border-box;min-height:32px;padding:4px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:13.5px;color:#2B1A0F;' + (on ? 'background:#FFE7A8;border:2px solid #E3B23C' : 'background:transparent;border:2px solid transparent'); };
     var slabIco = function (t) { /* 판 목표 그림 = 완성품과 같은 그림법 (비스듬히 위에서) */ var tp = self.slabTgPoly(t);
       try { var gq = window.PotteryShared.slabProj({ poly: tp, e: tp.map(function () { return t.e; }), wall: !!t.H, Hw: t.H, sc: t.sc }), sd = Math.max(gq.xMax - gq.xMin, gq.yMax - gq.yMin) + 16, ccx = (gq.xMax + gq.xMin) / 2, ccy = (gq.yMax + gq.yMin) / 2; return { d: gq.d, rd: gq.rimD, vb: (ccx - sd / 2).toFixed(1) + ' ' + (ccy - sd / 2).toFixed(1) + ' ' + sd.toFixed(1) + ' ' + sd.toFixed(1), sw: (sd / 26).toFixed(2) }; } catch (e) { return { d: 'M0 0', rd: 'M0 0', vb: '0 0 10 10', sw: '1' }; } };
     if (this.slabOn) { /* 판 성형대 : 판 목표 쪽지 */
-      var STG = this.slabTg(g); v.tgName = STG.n; v.tgIco = slabIco(STG);
-      var MT = SL && SL.poly ? this.slabMatch(this.slabWith(SL, { e: LV.e || SL.e, H: LV.H != null ? LV.H : SL.H, sc: LV.sc || SL.sc }), STG) : null; if (MT) { v.tgPctOn = true; v.tgPct = MT.pct; v.tgPctTx = STG.free ? MT.near.n + ' 닮음 ' + MT.pct + '%' : '일치 ' + MT.pct + '%'; } /* 만드는 동안 실시간 일치율 */
+      var STG = this.slabTg(g), oSit0 = g.onSlab ? (g.glazeList || []).filter(function (x) { return x.id === g.onSlab; })[0] : null; v.shOn = !oSit0; v.shPct = 0; v.shLbl = '바닥판을 오리면 일치율이 나와요'; v.shCol = '#FFB08A'; v.shBar = 'width:0'; v.shStars = '☆☆☆☆☆'; v.shStarList = []; if (!SL) { v.shOn = false; } v.tgName = STG.n; v.tgIco = slabIco(STG);
+      var MT = SL && SL.poly ? this.slabMatch(this.slabWith(SL, { e: LV.e || SL.e, H: LV.H != null ? LV.H : SL.H, sc: LV.sc || SL.sc }), STG) : null; var shP = MT ? MT.pct : 0, shN = Math.max(MT ? 1 : 0, Math.min(5, Math.round(shP / 20))), shS = ''; for (var ks = 0; ks < 5; ks++) { shS += ks < shN ? '★' : '☆'; }
+      /* 판 성형 완성도 판 : 물레 일치율 판과 같은 모양 */
+      v.shOn = !oSit0; v.shPct = shP; v.shLbl = !MT ? '바닥판을 오리면 일치율이 나와요' : (STG.free ? '자유 · ' + MT.near.n + ' 닮음' : '「' + STG.n + '」 일치율'); v.shCol = shP >= 88 ? '#9BE08A' : (shP >= 60 ? '#FFD66B' : '#FFB08A');
+      v.shBar = 'height:100%;border-radius:6px;transition:width .2s;width:' + shP + '%;background:' + (shP >= 88 ? '#5FB052' : (shP >= 60 ? '#E3B23C' : '#D9773E')); v.shStars = shS; v.shStarList = shS.split('').map(function (c) { return c === '★' ? 'ui/rating_star_filled.webp' : 'ui/rating_star_empty.webp'; }); /* 만드는 동안 실시간 일치율 */
       if (this.tgOpen) { v.tgRows = this.SLT().map(function (t) { var on = t.k === STG.k; return { ico: slabIco(t), name: t.n, on: on ? 'true' : 'false', aria: t.n + (on ? ' · 선택 중' : ''), tag: on ? '✓' : '', tagSt: 'flex:none;font-size:10px;font-weight:700;color:#5B3A24', st: RSTY(on), pick: function () { self.slabTgPick(t.k); } }; }); }
     }
     if (this.tgOpen && Wc && !this.slabOn) { try {
