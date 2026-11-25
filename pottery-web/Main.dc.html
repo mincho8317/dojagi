@@ -69,6 +69,9 @@ body:has([data-zoom]) a[aria-label^="이야기 진행"],body:has([aria-modal="tr
 [data-zst="Glaze"] div[role="img"][style*="right:20px;top:204px"]{right:44px !important}
 [data-wshift]>*{pointer-events:auto}
 [data-onslab] svg{width:100%;height:100%}
+[data-zst="Display"] #dshelf>div{visibility:hidden !important}
+[data-zst="Display"] div[style*="top:420px;height:62px"]{display:none !important}
+[data-zst="Glaze"] img[src*="77f6907c1843f9b7401e349e55ada0fa"]{filter:var(--tubF,none) drop-shadow(0 5px 4px rgba(43,26,15,.35)) !important}
 [data-zst="Glaze"] div[style*="top:604px"]{display:none !important}
 [data-zst="Glaze"] a[href="Main.dc.html"]{display:none !important}
 body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
@@ -78,7 +81,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 @keyframes wireSlit2{0%{transform:scaleX(.2);opacity:1}40%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1.05);opacity:0}}@keyframes cutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
 </style>
 </helmet>
-<div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F">
+<div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F;--tubF:{{tubF}}">
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
 <linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
 <linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
@@ -90,6 +93,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 </defs></svg>
   <div data-strip="1" style="position:absolute;left:0;top:56px;width:390px;height:696px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch">
    <div style="position:relative;width:1950px;height:696px;background:repeating-linear-gradient(90deg,rgba(91,58,36,.5) 0 8px,transparent 8px 390px) 0 0/1950px 500px no-repeat,linear-gradient(#EBD6B3,#D8BA8E) 0 0/1950px 500px no-repeat,linear-gradient(#5B3A24,#5B3A24) 0 500px/1950px 8px no-repeat,repeating-linear-gradient(90deg,#9A6A44 0 64px,#93633F 64px 128px) 0 508px/1950px 188px no-repeat,#3E2616">
+    <div aria-hidden="true" style="{{wallSt}}"></div>
     <div data-panel="0" style="{{pst0}}">
       <sc-if value="{{pv0}}" hint-placeholder-val="{{true}}">
 <div style="position:absolute;left:0.0px;top:-56.0px;width:390px;height:754px;transform:scale(1.0000);transform-origin:0 0">
@@ -851,8 +855,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     </div>
     <div data-panel="3" style="{{pst3}}">
       <sc-if value="{{pv3}}" hint-placeholder-val="{{true}}">
-      <div aria-hidden="true" style="position:absolute;left:206px;top:118px;width:40px;height:50px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;border:3px solid #3E2616;pointer-events:none"></div>
-      <div aria-hidden="true" style="position:absolute;left:66px;top:150px;width:318px;height:390px;box-sizing:border-box;border-radius:130px 130px 10px 10px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;border:4px solid #3E2616;box-shadow:inset 0 -10px 0 rgba(0,0,0,.18),0 8px 0 rgba(43,26,15,.25);pointer-events:none"></div>
+      <div aria-hidden="true" style="position:absolute;left:206px;top:118px;width:40px;height:50px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;border:3px solid #3E2616;pointer-events:none;filter:{{kilnF}}"></div>
+      <div aria-hidden="true" style="position:absolute;left:66px;top:150px;width:318px;height:390px;box-sizing:border-box;border-radius:130px 130px 10px 10px;background:repeating-linear-gradient(0deg,#B4643C 0 11px,#8E4A2A 11px 13px),#B4643C;filter:{{kilnF}};border:4px solid #3E2616;box-shadow:inset 0 -10px 0 rgba(0,0,0,.18),0 8px 0 rgba(43,26,15,.25);pointer-events:none"></div>
       <div role="group" aria-label="가마 칸 6개 · {{kHead}}" style="position:absolute;left:84px;top:232px;width:282px;display:grid;grid-template-columns:repeat(3,84px);gap:26px 15px;z-index:4">
         <sc-for list="{{kilns}}" as="kn" hint-placeholder-count="9">
           <div data-kiln="{{kn.idx}}" data-kfree="{{kn.free}}" role="button" aria-label="{{kn.aria}}" onPointerDown="{{kn.down}}" style="{{kn.box}}">
@@ -1123,6 +1127,46 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 </div>
   </div>
 
+      <div data-dispx="1" style="position:absolute;left:0;top:0;width:390px;height:696px;pointer-events:none;z-index:8">
+        <div role="group" aria-label="전시대 바꾸기 · {{dp.title}}" style="position:absolute;left:34px;right:34px;top:2px;height:36px;pointer-events:auto;display:flex;align-items:center;gap:6px;box-sizing:border-box;padding:0 4px;border-radius:14px;background:linear-gradient(#7A4A2A,#5B3A24);border:3px solid #3E2616;box-shadow:0 3px 0 rgba(43,26,15,.45)">
+          <button type="button" onClick="{{dp.prev}}" aria-label="이전 전시대" style="all:unset;cursor:pointer;flex:0 0 28px;height:28px;border-radius:50%;background:#FFF4DE;color:#5B3A24;font-size:13px;text-align:center;line-height:28px">◀</button>
+          <span style="flex:1 1 auto;min-width:0;text-align:center;font-family:'Jua',sans-serif;font-size:13.5px;color:#FFE7A8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{dp.title}}</span>
+          <span style="flex:0 0 auto;font-family:'Jua',sans-serif;font-size:11px;color:#E8D3B5">{{dp.cnt}}</span>
+          <button type="button" onClick="{{dp.next}}" aria-label="다음 전시대" style="all:unset;cursor:pointer;flex:0 0 28px;height:28px;border-radius:50%;background:#FFF4DE;color:#5B3A24;font-size:13px;text-align:center;line-height:28px">▶</button>
+        </div>
+        <sc-for list="{{dp.slots}}" as="ds" hint-placeholder-count="4">
+          <button type="button" data-dispslot="{{ds.id}}" onClick="{{ds.tap}}" aria-label="{{ds.aria}}" aria-pressed="{{ds.on}}" style="{{ds.st}}">
+            <sc-if value="{{ds.filled}}" hint-placeholder-val="{{false}}"><span style="position:absolute;left:8px;right:8px;top:2px;height:58px;display:flex;align-items:flex-end;justify-content:center"><svg width="64" height="58" viewBox="{{ds.pot.vb}}" aria-hidden="true"><path d="{{ds.pot.d}}" fill="{{ds.pot.fill}}"></path><path d="{{ds.pot.d}}" fill="{{ds.pot.tex}}" opacity="{{ds.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{ds.pot.d}}" fill="url(#potTopLight)"></path><path d="{{ds.pot.d}}" fill="{{ds.pot.rings}}"></path><path d="{{ds.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{ds.pot.grainOp}}"></path><path d="{{ds.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{ds.pot.d}}" fill="none" stroke="{{ds.pot.edge}}" stroke-width="{{ds.pot.sw}}"></path><path d="{{ds.pot.b0}}" fill="none" stroke="{{ds.pot.c0}}" stroke-width="{{ds.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{ds.pot.b1}}" fill="none" stroke="{{ds.pot.c1}}" stroke-width="{{ds.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{ds.pot.b2}}" fill="none" stroke="{{ds.pot.c2}}" stroke-width="{{ds.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{ds.pot.rimY}}" rx="{{ds.pot.rimRx}}" ry="{{ds.pot.rimRy}}" fill="{{ds.pot.inner}}" stroke="{{ds.pot.edge}}" stroke-width="{{ds.pot.sw}}"></ellipse><path d="{{ds.pot.rimD}}" fill="{{ds.pot.inner}}" stroke="{{ds.pot.edge}}" stroke-width="{{ds.pot.sw}}" stroke-linejoin="round"></path></svg></span></sc-if>
+            <span style="{{ds.icoSt}}">{{ds.ico}}</span>
+            <span style="{{ds.txtSt}}">{{ds.txt}}</span>
+            <span style="{{ds.rwSt}}">{{ds.rw}}</span>
+          </button>
+        </sc-for>
+        <div role="region" aria-label="전시 자리 설명" style="{{dp.barSt}}">
+          <div style="display:flex;align-items:center;gap:6px"><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{dp.selName}}</span><span style="flex:0 0 auto;padding:1px 8px;border-radius:8px;background:#7A3E8E;font-family:'Jua',sans-serif;font-size:11.5px;color:#FFF">{{dp.selRw}}</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;gap:3px"><sc-for list="{{dp.chips}}" as="dc" hint-placeholder-count="3"><span style="{{dc.st}}">{{dc.t}}</span></sc-for></div>
+            <button type="button" onClick="{{dp.act}}" aria-label="{{dp.actTxt}}" style="{{dp.actSt}}">{{dp.actTxt}}</button></div>
+        </div>
+        <sc-if value="{{dp.pkOn}}" hint-placeholder-val="{{false}}">
+          <div aria-hidden="true" onClick="{{dp.pkClose}}" style="position:absolute;left:0;top:0;width:390px;height:696px;background:rgba(26,15,8,.55);pointer-events:auto"></div>
+          <div role="dialog" aria-label="전시할 기물 고르기" style="position:absolute;left:10px;right:10px;top:120px;bottom:10px;pointer-events:auto;box-sizing:border-box;padding:12px 12px 10px;border-radius:20px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.45);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="flex:1 1 auto;font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{dp.pkTitle}}</span><button type="button" onClick="{{dp.pkClose}}" aria-label="닫기" style="all:unset;cursor:pointer;flex:0 0 36px;height:36px;border-radius:50%;background:#FFF4DE;border:3px solid #5B3A24;text-align:center;line-height:30px;font-size:16px;color:#5B3A24">✕</button></div>
+            <span style="font-size:12px;line-height:1.4;color:#7A5434">{{dp.pkSub}}</span>
+            <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:7px">
+              <sc-for list="{{dp.rows}}" as="pr" hint-placeholder-count="3">
+                <div style="{{pr.st}}">
+                  <span style="flex:0 0 54px;height:54px;display:flex;align-items:flex-end;justify-content:center"><svg width="52" height="52" viewBox="{{pr.pot.vb}}" aria-hidden="true"><path d="{{pr.pot.d}}" fill="{{pr.pot.fill}}"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.tex}}" opacity="{{pr.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{pr.pot.d}}" fill="url(#potTopLight)"></path><path d="{{pr.pot.d}}" fill="{{pr.pot.rings}}"></path><path d="{{pr.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{pr.pot.grainOp}}"></path><path d="{{pr.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{pr.pot.d}}" fill="none" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></path><path d="{{pr.pot.b0}}" fill="none" stroke="{{pr.pot.c0}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pr.pot.b1}}" fill="none" stroke="{{pr.pot.c1}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{pr.pot.b2}}" fill="none" stroke="{{pr.pot.c2}}" stroke-width="{{pr.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{pr.pot.rimY}}" rx="{{pr.pot.rimRx}}" ry="{{pr.pot.rimRy}}" fill="{{pr.pot.inner}}" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}"></ellipse><path d="{{pr.pot.rimD}}" fill="{{pr.pot.inner}}" stroke="{{pr.pot.edge}}" stroke-width="{{pr.pot.sw}}" stroke-linejoin="round"></path></svg></span>
+                  <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{pr.name}} <span style="font-size:11.5px;color:#8A6440">{{pr.sub}}</span></span>
+                    <span style="display:flex;flex-wrap:wrap;gap:3px"><sc-for list="{{pr.chips}}" as="pc" hint-placeholder-count="3"><span style="{{pc.st}}">{{pc.t}}</span></sc-for></span></span>
+                  <button type="button" onClick="{{pr.put}}" aria-label="{{pr.aria}}" style="{{pr.btn}}">{{pr.btnTxt}}</button>
+                </div>
+              </sc-for>
+              <sc-if value="{{dp.pkEmpty}}" hint-placeholder-val="{{false}}"><span style="padding:16px 6px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#8A6440">보관 중인 작품이 없어요 · 가마에서 꺼낸 작품이 여기에 모여요</span></sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
       </sc-if>
     </div>
     <span aria-hidden="true" data-pbi="0" style="{{pb0}}">{{pbn0}}</span>
@@ -1137,7 +1181,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <div role="list" aria-label="{{rf.title}} 선반 {{rf.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:12px;justify-content:center;align-items:flex-end;pointer-events:auto">
         <sc-for list="{{rf.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="38" height="44" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="{{si.pot.tex}}" opacity="{{si.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{si.pot.d}}" fill="url(#potTopLight)"></path><path d="{{si.pot.d}}" fill="{{si.pot.rings}}"></path><path d="{{si.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{si.pot.grainOp}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse><path d="{{si.pot.rimD}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}" stroke-linejoin="round"></path></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
-      <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:{{rf.plank}};border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
       <span style="{{rf.tagSt}}"><span style="padding:0 8px;border-radius:7px;background:rgba(43,26,15,.55)">{{rf.title}} {{rf.n}}</span></span>
     </div>
     <div data-rail="rg" data-dz="{{rg.dz}}" style="{{rg.st}}">
@@ -1145,7 +1189,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <div role="list" aria-label="{{rg.title}} 선반 {{rg.n}}" style="position:absolute;left:8px;right:8px;top:0;height:50px;display:flex;gap:12px;justify-content:center;align-items:flex-end;pointer-events:auto">
         <sc-for list="{{rg.items}}" as="si" hint-placeholder-count="2"><div role="listitem" data-q="{{si.id}}" onPointerDown="{{si.down}}" aria-label="{{si.aria}}" style="{{si.st}}"><svg width="38" height="44" viewBox="{{si.pot.vb}}" aria-hidden="true"><path d="{{si.pot.d}}" fill="{{si.pot.fill}}"></path><path d="{{si.pot.d}}" fill="{{si.pot.tex}}" opacity="{{si.pot.texOp}}" style="mix-blend-mode:soft-light"></path><path d="{{si.pot.d}}" fill="url(#potTopLight)"></path><path d="{{si.pot.d}}" fill="{{si.pot.rings}}"></path><path d="{{si.pot.d}}" fill="#000" filter="url(#potGrain)" opacity="{{si.pot.grainOp}}"></path><path d="{{si.pot.d}}" fill="url(#potShade)" opacity=".75"></path><path d="{{si.pot.d}}" fill="none" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></path><path d="{{si.pot.b0}}" fill="none" stroke="{{si.pot.c0}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b1}}" fill="none" stroke="{{si.pot.c1}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{si.pot.b2}}" fill="none" stroke="{{si.pot.c2}}" stroke-width="{{si.pot.bw}}" stroke-linecap="round" stroke-linejoin="round"></path><ellipse cx="0" cy="{{si.pot.rimY}}" rx="{{si.pot.rimRx}}" ry="{{si.pot.rimRy}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}"></ellipse><path d="{{si.pot.rimD}}" fill="{{si.pot.inner}}" stroke="{{si.pot.edge}}" stroke-width="{{si.pot.sw}}" stroke-linejoin="round"></path></svg><span style="{{si.dot}}"></span><span style="{{si.kpSt}}">{{si.kp}}</span></div></sc-for>
       </div>
-      <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:linear-gradient(#A97B52,#7A5434);border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;top:48px;height:17px;border-radius:3px;background:{{rg.plank}};border-bottom:2px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.3)"></div>
       <span style="{{rg.tagSt}}"><span style="padding:0 8px;border-radius:7px;background:rgba(43,26,15,.55)">{{rg.title}} {{rg.n}}</span></span>
     </div>
    </div>
@@ -1419,7 +1463,7 @@ class Ctl_w extends StationBase {
   }
   claysDef() {
     var QL = this.qlib(), g = this.state && this.state.g ? this.state.g : this.loadG(), self = this, M = g.mats || {};
-    var ids = QL.isTut(g) ? ['cy1'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; });
+    var ids = QL.isTut(g) ? ['cy1'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; }).filter(function (k) { var cc = k.charAt(1); return !QL.unl || (!(cc === 'k' && !QL.unl(g, 'black')) && !(cc === 'r' && !QL.unl(g, 'red'))); }); /* 흑토·적토는 전시대 해금 뒤 */
     var out = ids.map(function (k) { var c = QL.clayOf(k); return { id: k, img: self.clayImg(k), n: c.name, res: 'CLAY', c: c.col, limit: c.thin, event: k === 'spring', grade: c.grade, note: c.note }; });
     if (!out.length) { out.push({ id: '', img: self.clayImg('cy1'), n: '흙 없음', res: 'CLAY', c: '#A89880', limit: 3, none: true }); }
     return out;
@@ -2533,6 +2577,7 @@ class Ctl_gz extends StationBase {
       { id: 'sakura', name: '벚꽃유', res: 'GLZ\nSAKURA', img: '_blob/9dfa7034fc62a520ec428f5b3bdebc0b.webp', fired: (g.glazesFound || {}).sakura ? '#E9A3B5' : '', raw: '#F2CCD5', price: self.matLbl(g, 'sakura'), event: true, owned: ((g.mats || {}).petal || 0) > 0 },
       { id: 'jinsa', name: '진사유', res: 'GLZ\nJINSA', img: (g.glazesFound || {}).jinsa ? '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' : '_blob/0caec5ae43f75125c715521e9b5528e2.webp', fired: (g.glazesFound || {}).jinsa ? '#A8443A' : '', raw: '#C9B1A8', price: self.matLbl(g, 'jinsa') }
     ];
+    var QLu = this.qlib(); if (QLu.unl) { defs = defs.filter(function (d) { return (d.id !== 'black' || QLu.unl(g, 'black')) && (d.id !== 'jinsa' || QLu.unl(g, 'red')); }); } /* 흑유·진사유는 전시대 해금 뒤 */
     var EG = this.gz(), curI = this.current(), goalG = curI && curI.goalGlaze ? curI.goalGlaze : '';
     var selG = defs[1];
     var cur0 = this.current();
@@ -3164,6 +3209,11 @@ class Ctl_ct extends StationBase {
             { label: '이야기를 들었어요', tone: 'go', run: function () { self.finishVisit(LN); } },
             { label: '다음에요', tone: '', run: function () { self.next('“언제든 다시 들를게.”'); } }
           ];
+        } else if (QL.questNeeds && QL.questNeeds(g, md).length) { /* 해금 · 설비가 없으면 맡을 수 없다 */
+          var NEED = QL.questNeeds(g, md);
+          mn.lines = [TX(md.intro)[0], '(이 의뢰는 ' + NEED.map(function (x) { return x.t; }).join(' · ') + ' 뒤에 맡을 수 있어요)'];
+          mn.card = { title: md.title + ' · 아직 못 맡아요', conds: itemConds.concat(NEED.map(function (x) { return { t: '🔒 ' + x.t }; })), reward: rewardTxt };
+          mn.choices = [{ label: '준비하고 올게요', tone: '', run: function () { self.next('“준비되면 다시 들를게.”'); } }];
         } else {
           mn.lines = TX(md.intro);
           mn.card = { title: md.title, conds: itemConds, reward: rewardTxt };
@@ -4177,7 +4227,7 @@ class Ctl_ds extends StationBase {
         if (!sellIds.length) { self.setState({ sellMode: false, sellPick: {}, pickKind: '' }); return; }
         self.smash(sellIds.slice());
       },
-      storeHint: this.state.sellMode ? '카드를 눌러 선택' : (D && D.from === 'shelf' ? '여기에 놓으면 보관' : '끌어서 진열대나 판매 상자로'),
+      storeHint: this.state.sellMode ? '카드를 눌러 선택' : (D && D.from === 'shelf' ? '여기에 놓으면 보관' : (window.__pano ? '판매는 「판매」 · 전시는 위 칸을 눌러요' : '끌어서 진열대나 판매 상자로')),
       sellBtnText: this.state.sellMode ? (sellIds.length ? '판매 ' + sellIds.length + '점' : '닫기') : '판매',
       sellBtnStyle: (this.state.sellMode && this.state.pickKind === 'smash' ? 'display:none!important;' : '') + 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 14px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (this.state.sellMode && sellIds.length ? 'background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;color:#FFFDF5;animation:navPulse 1s ease-in-out infinite' : 'background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;color:#5B3A24'),
       sellBtn: function () {
@@ -4415,6 +4465,8 @@ Ctl_ds.prototype.tutBoot = function () {};
 Ctl_ds.prototype.navBoot = function () {};
 Ctl_ds.prototype.trackBoot = function () {};
 Ctl_ds.prototype.sndBoot = function () {};
+var _mv0 = Ctl_ds.prototype.movePiece; Ctl_ds.prototype.movePiece = function (id, where, extra) { if (where === "shelf" && window.__pano) { this.say("위 전시대 칸을 눌러 기물을 올려요"); return; } return _mv0.apply(this, arguments); };
+var _rv0 = Ctl_ds.prototype.renderVals; Ctl_ds.prototype.renderVals = function () { var v = _rv0.apply(this, arguments); if (window.__pano) { v.visitorOn = false; v.canRecall = false; if (!this.state.sellMode) { v.storeHint = "판매는 「판매」 · 전시는 위 칸을 눌러요"; } } return v; };
 return Ctl_ds;
 })();
 
@@ -5834,8 +5886,12 @@ class Component extends DCLogic {
     var self = this; setTimeout(function () { self.qAutoNow(); }, 0);
   }
   qAutoNow() {
+    var g = this.loadG(), Q = this.qlib();
+    try { if (!g.slab) { var act = Q.active(g), AL = Q.alloc(g, act), tids = Q.tracked(g, act), sk = ''; /* 판성형 의뢰 기물 : 판 성형대 목표를 그 모양으로 */
+      act.forEach(function (q) { if (sk || tids.indexOf(q.id) < 0) { return; } ((AL[q.id] || {}).items || []).forEach(function (r) { if (!sk && r.it && r.it.slabTg && r.n - r.dl - r.readyN - r.wip > 0) { sk = r.it.slabTg; } }); });
+      if (sk && g.slabTg !== sk) { this.setG2({ slabTg: sk }); } } } catch (eS) {}
     var W = this.ctls.Wheel; if (!W || !W.state || W.drag) { return; }
-    var g = this.loadG(), QT; try { QT = W.questTargets(g); } catch (e) { return; }
+    var QT; try { QT = W.questTargets(g); } catch (e) { return; }
     var open = Object.keys(QT).filter(function (k) { return !QT[k].full; }); if (!open.length) { return; }
     var cur = W.state.target; if (QT[cur] && !QT[cur].full) { return; } /* 이미 모자란 의뢰 기물을 고른 상태면 그대로 */
     W.setState({ target: open[0], sheet: '' }); this.bump();
@@ -6305,12 +6361,12 @@ class Component extends DCLogic {
     var K = this.slabKind(sl.poly, Htot), t = QL.takeClay(g, sl.clay);
     var item = { id: 's' + Date.now(), fit: fit, fit0: fit, shape: K.shape, sk: 'slab', goalName: TG.free ? '' : TG.n, slabTg: TG.k, free: TG.free || undefined, slabName: fit >= 70 ? (TG.free ? MT.near.n : TG.n) : K.name, clay: sl.clay, form: fit >= 90 ? 5 : (fit >= 75 ? 4 : 3), prof: prof, H: Math.round(HT), poly: sl.poly, e: ee, wall: wall, Hw: Hw, sc: sc, slab: true };
     var up = { glazeList: (g.glazeList || []).concat([item]), slab: null, onSlab: item.id }; if (t && t.mats) { up.mats = t.mats; } if (t && t.matsQ) { up.matsQ = t.matsQ; }
-    this.slabFinSide = (this.slabTool === 'finger' || this.slabTool === 'wall') ? item.id : ''; /* 옆모습에서 완성하면 위에서 본 모습으로 바꾸지 않는다 */ this.setG2(up); this.slabTool = ''; this.slabView = 0; this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
+    this.slabFinSide = (this.slabTool === 'finger' || this.slabTool === 'wall') ? item.id : ''; /* 옆모습에서 완성하면 위에서 본 모습으로 바꾸지 않는다 */ this.setG2(up); try { this.qTag(item.id); } catch (eT) {} /* 판성형 의뢰 기물이면 의뢰 표시 */ this.slabTool = ''; this.slabView = 0; this.sfx('ok'); try { window.__buzz && window.__buzz([8, 40, 8]); } catch (e) {}
     var selfF = this; setTimeout(function () { var el = document.querySelector('[data-onslab] svg'); selfF.autoShelf(item.id, '[data-onslab] svg', el ? el.outerHTML : '', '[data-rail="rf"] [data-q="' + item.id + '"] svg', function () { selfF.shelvePiece(item.id); }); }, 650); /* 완성하면 잠깐 보여 준 뒤 선반으로 */
     this.say(item.slabName + ' 완성 · ' + (TG.free ? '자유 · 「' + (MT ? MT.near.n : '') + '」 닮음 ' : '목표 「' + TG.n + '」 일치 ') + fit + '% · 2층 선반으로 옮겨요'); this.bump();
   }
   /* ── 붓 무늬 : 소성 전 언제든 · 두 선반의 기물을 그림 받침에 끌어와 유약 색으로 그린다 ── */
-  PAL() { return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']]; }
+  PAL() { var g = this.loadG(), Q = this.qlib(); return [['white', '백자유'], ['celadon', '청자유'], ['black', '흑유'], ['jinsa', '진사유'], ['sakura', '벚꽃유']].filter(function (p) { return (p[0] !== 'black' || Q.unl(g, 'black')) && (p[0] !== 'jinsa' || Q.unl(g, 'red')); }); } /* 흑유·진사유는 전시대 해금 뒤 */
   /* ── 붓 시유대 ⇄ 담금 시유대 : 버튼으로 설비를 바꾼다 (시유그릇이 위로 사라지고 붓 시유대가 내려온다) ── */
   gzSwap() {
     var g = this.loadG(), G = this.ctls.Glaze, to = this.gzMode === 'brush' ? 'dip' : 'brush';
@@ -6320,7 +6376,7 @@ class Component extends DCLogic {
     this.gzMode = to; this.gzAt = Date.now(); this.sfx('thud'); var self = this; setTimeout(function () { self.bump(); }, 1100);
     this.say(to === 'brush' ? '붓 시유대 · 선반의 기물을 끌어다 올려요 (담금 시유한 기물도 돼요)' : '담금 시유대 · 선반의 기물을 시유그릇에 넣어요'); this.bump();
   }
-  bpref() { if (!this._bp) { var g = this.loadG(), pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; }), g0 = (pal[2] || pal[0])[0]; this._bp = { tool: 'brush', stamp: 'dot', gk: g0, col: this.fillOf({ glaze: g0 }, 'glazed') }; } return this._bp; } /* 붓 시유대 도구·색 (기물 없을 때도 유지) */
+  bpref() { if (!this._bp) { var g = this.loadG(), pal = this.PAL().filter(function (p) { return (g.glazesFound || {})[p[0]] || p[0] === 'white' || p[0] === 'celadon'; }), g0 = (pal[2] || pal[0])[0]; this._bp = { tool: 'brush', stamp: 'dot', gk: g0, col: this.fillOf({ glaze: g0 }, 'glazed') }; } if (this._bp.tool === 'stamp' && !this.qlib().unl(this.loadG(), 'stamp')) { this._bp.tool = 'brush'; } return this._bp; } /* 붓 시유대 도구·색 (기물 없을 때도 유지) */
   /* 다 만든 기물이 놓인 자리(물레·판 성형대·붓 시유대)에서 선반으로 날아가 앉는다 */
   autoShelf(id, srcSel, html, toSel, commit) {
     var self = this, src = document.querySelector(srcSel), r = src ? src.getBoundingClientRect() : null;
@@ -6418,6 +6474,39 @@ class Component extends DCLogic {
     if (kind === 'gpiece') { return this.shelveGlazed(data.id); }
     return false;
   }
+  /* ── 전시대 (패널 4) : 에피소드마다 자리 · 챕터를 끝내면 열리고, 조건에 맞는 명작을 올리면 해금 (영구 고정) ── */
+  dispEps() { return this.qlib().DISP || []; }
+  dispCur() { var E = this.dispEps(), i = Math.max(0, Math.min(E.length - 1, this.dispI || 0)); return E[i] || { slots: [] }; }
+  dispStep(d) { var n = this.dispEps().length; this.dispI = ((this.dispI || 0) + d + n) % n; this.dispSel = ''; this.dispPk = false; this.dispCf = ''; this.sfx('tap'); this.bump(); }
+  dispState(g, sl) { var Q = this.qlib(), pid = (g.disp || {})[sl.id]; if (pid && (g.pieces || {})[pid]) { return 'filled'; } return Q.chDone(g, sl.line, sl.ch) ? 'open' : 'locked'; }
+  dispTap(sl) {
+    var g = this.loadG(), Q = this.qlib(), st = this.dispState(g, sl);
+    if (this.dispSel === sl.id && st === 'open') { this.dispOpenPk(); return; }
+    this.dispSel = sl.id; this.dispCf = ''; this.sfx('tap');
+    if (st === 'locked') { this.say('「' + Q.chTitle(sl.line, sl.ch) + '」 챕터를 끝내면 열리는 자리예요'); }
+    this.bump();
+  }
+  dispOpenPk() { var g = this.loadG(), sl = this.dispSlot(); if (!sl) { return; } var st = this.dispState(g, sl);
+    if (st === 'locked') { this.say('「' + this.qlib().chTitle(sl.line, sl.ch) + '」 챕터를 끝내면 열려요'); this.sfx('fail'); return; }
+    if (st === 'filled') { this.say('이미 전시한 자리예요 · 한 번 올린 작품은 그대로 둬요'); return; }
+    this.dispPk = true; this.dispCf = ''; this.sfx('tap'); this.bump(); }
+  dispSlot() { var id = this.dispSel, L = this.dispCur().slots; return L.filter(function (x) { return x.id === id; })[0] || null; }
+  dispPut(pid) {
+    var g = this.loadG(), Q = this.qlib(), sl = this.dispSlot(); if (!sl) { return; }
+    var p = (g.pieces || {})[pid]; if (!p || p.where !== 'store') { return; }
+    if (Q.dispChecks(p, sl.need).some(function (x) { return !x.ok; })) { this.say('조건이 모자라요'); this.sfx('fail'); return; }
+    if (this.dispCf !== pid) { this.dispCf = pid; this.say('한 번 올리면 내릴 수 없어요 · 한 번 더 누르면 전시해요'); this.sfx('tap'); this.bump(); return; }
+    var ps = {}, k; for (k in g.pieces) { ps[k] = g.pieces[k]; } var np = {}; for (k in p) { np[k] = p[k]; } np.where = 'disp'; np.dispSlot = sl.id; ps[pid] = np;
+    var dp = {}; for (k in (g.disp || {})) { dp[k] = g.disp[k]; } dp[sl.id] = pid;
+    var un = {}; for (k in (g.unl || {})) { un[k] = g.unl[k]; } un[sl.rw] = true;
+    this.setG2({ pieces: ps, disp: dp, unl: un, order: (g.order || []).filter(function (x) { return x !== pid; }) });
+    if (sl.rw === 'gather') { try { if (!localStorage.getItem('tutG')) { localStorage.setItem('tutG', '1'); } } catch (e) {} } /* 채집 안내 시작 */
+    this.dispPk = false; this.dispCf = ''; this.sfx('ok'); try { window.__buzz && window.__buzz([30, 40, 60]); } catch (e) {}
+    var nm = Q.UNLN[sl.rw] || sl.rw, MSG = { black: '흑토·흑유를 쓸 수 있어요 · 상점·흙판·유약통에 나와요', red: '적토·진사유를 쓸 수 있어요', stamp: '붓 시유대에서 도장을 쓸 수 있어요', remodel: '상점 「리모델링」에서 공방을 꾸며요', gather: '하단 「채집」이 열렸어요 · 도깨비 골짜기로!', research: '하단 「연구」가 열려요', event: '이벤트 의뢰가 찾아와요' };
+    this.say('✨ 전시 완료 · 「' + nm + '」 해금! ' + (MSG[sl.rw] || ''));
+    var self = this; setTimeout(function () { try { var el = document.querySelector('[data-dispslot="' + sl.id + '"]'); window.__sparkle && window.__sparkle(el, { n: 30, r: 120, big: true, spread: true }); } catch (e) {} }, 120);
+    this.bump();
+  }
   renderVals() {
     var self = this, s = this.state, g = s.g || {}, Q = this.qlib(), now = Date.now();
     var v = { toast: s.toast, toastOn: !!s.toast };
@@ -6438,6 +6527,12 @@ class Component extends DCLogic {
     var GN = { white: '백자유', celadon: '청자유', black: '흑유', jinsa: '진사유', sakura: '벚꽃유', cheonmok: '천목유' };
     var GC = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#A8402E', sakura: '#E8B4C0', cheonmok: '#5A4030' };
     /* 레일 선반 2개 : 빚은 기물(물레 ↔ 유약) · 시유한 기물(유약 ↔ 가마) */
+    /* 공방 리모델링 (상점에서 산 벽·선반·가마·유약통) */
+    var DCO = (Q.DECO || {}), DU = ((g.sDeco || {}).use) || {}, dOf = function (pt) { var L = DCO[pt] || []; return L.filter(function (x) { return x.id === (DU[pt] || 'base'); })[0] || L[0] || {}; };
+    var dWall = dOf('wall'), dShelf = dOf('shelf'), dKiln = dOf('kiln'), dTub = dOf('tub');
+    v.wallSt = dWall.id && dWall.id !== 'base' ? 'position:absolute;left:0;top:0;width:1950px;height:500px;pointer-events:none;background:' + dWall.sw : 'display:none';
+    v.kilnF = dKiln.f && dKiln.f !== 'none' ? dKiln.f : 'none'; v.tubF = dTub.f && dTub.f !== 'none' ? dTub.f : 'none';
+    var PLANK = dShelf.id && dShelf.id !== 'base' ? 'linear-gradient(rgba(255,255,255,.18),rgba(0,0,0,.18)),' + dShelf.sw : 'linear-gradient(#A97B52,#7A5434)';
     var R = this.railPos(), CAP = this.KB().cap;
     function shelf(list, st, x, title, tot) { var LN = tot == null ? list.length : tot;
       var items = list.slice(0, CAP).map(function (it) {
@@ -6449,7 +6544,7 @@ class Component extends DCLogic {
           kp: it.kp >= 0.01 ? Math.round(it.kp * 100) + '%' : '', kpSt: it.kp >= 0.01 ? 'position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);padding:0 4px;border-radius:6px;background:#C0582E;font-family:Jua,sans-serif;font-size:11px;line-height:14px;color:#FFF' : 'display:none',
           st: 'position:relative;flex:0 0 44px;height:50px;display:flex;align-items:flex-end;justify-content:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none' };
       });
-      return { items: items, n: LN + '/' + CAP, title: title, full: LN >= CAP,
+      return { items: items, n: LN + '/' + CAP, title: title, full: LN >= CAP, plank: PLANK,
         st: 'position:absolute;left:' + x + 'px;top:' + (st === 'g' ? 56 : 122) + 'px;width:378px;height:66px;z-index:' + (st === 'g' ? 9 : 8) + ';pointer-events:none', /* 2층(위) 56 · 1층(아래) 122 · 천장에 줄로 매달림 */
         tagSt: 'position:absolute;left:0;right:0;top:49px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:15px;white-space:nowrap;pointer-events:none;color:' + (LN >= CAP ? '#FFE27A' : '#FFF4DE') + ';' };
     }
@@ -6679,7 +6774,7 @@ class Component extends DCLogic {
     /* 붓 시유 색 = 유약통과 같은 모양 · 누르면 그 유약으로 · 원료가 없으면 못 씀 (다 그렸어요 때 쓴 색마다 1개) */
     v.pbuckets = []; var BP = this.paint || this.bpref(); /* 붓 도구·색은 기물을 올리기 전에도 고를 수 있다 */
     v.ptTools = (function () { var IC = { brush: 'M15 -15 L-3 3 M-3 3 Q-9 5 -10 11 Q-4 11 -1 6', erase: 'M-10 4 L2 -8 L10 0 L-2 12 Z M-6 0 L6 8' }
-          return [['brush', '붓'], ['erase', '지우개']].concat(self.STAMPS()).map(function (t) { var isS = t[0] !== 'brush' && t[0] !== 'erase', on = isS ? (BP.tool === 'stamp' && BP.stamp === t[0]) : BP.tool === t[0];
+          return [['brush', '붓'], ['erase', '지우개']].concat(Q.unl(g, 'stamp') ? self.STAMPS() : []) /* 도장은 전시대 ②로 해금 */.map(function (t) { var isS = t[0] !== 'brush' && t[0] !== 'erase', on = isS ? (BP.tool === 'stamp' && BP.stamp === t[0]) : BP.tool === t[0];
             return { ico: isS ? self.stampPath(t[0], 0, 0, 8) : IC[t[0]], icoW: isS ? 3.4 : 2.6, label: t[1], aria: t[0] === 'brush' ? '붓으로 긋기' : (t[0] === 'erase' ? '지우개 · 문지른 획 지우기' : t[1] + ' 도장 찍기'), on: on ? 'true' : 'false',
               st: 'all:unset;cursor:pointer;box-sizing:border-box;width:44px;height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-family:Jua,sans-serif;font-size:10px;' + (on ? 'background:#FFE7A8;border:3px solid #E3B23C;color:#2B1A0F' : 'background:#FFF4DE;border:3px solid #8A6440;color:#5B3A24'),
               tap: function () { [self.paint, self.bpref()].forEach(function (o) { if (!o) { return; } if (isS) { o.tool = 'stamp'; o.stamp = t[0]; } else { o.tool = t[0]; } }); self.bump(); } }; }); })();
@@ -6811,7 +6906,7 @@ class Component extends DCLogic {
       var cur = -self.cd(e.i) + e.i; /* 고리에서 가까운 쪽 기준 : e.i < cur 이면 왼쪽 */
       var vis = Math.abs(self.cd(e.i)) < 0.55; if (vis) { return; }
       var it = { t: e.t, aria: e.a + ' · ' + ['카운터', '물레', '유약', '가마', '전시'][e.i] + '로 이동', tap: function () { self.goPanel(e.i); }, st: 'all:unset;cursor:pointer;box-sizing:border-box;padding:6px 6px;border-radius:' + (e.i < cur ? '0 12px 12px 0' : '12px 0 0 12px') + ';background:#FFF4DE;border:2px solid #C0582E;box-shadow:0 3px 0 rgba(43,26,15,.35);font-family:Jua,sans-serif;font-size:11.5px;color:#7A2E1A;white-space:nowrap;animation:bob 1.6s ease-in-out infinite' };
-      if (self.tgOpen && e.i < cur) { return; } /* 목표 쪽지를 펼친 동안 왼쪽 알림은 숨김 */
+      if ((self.tgOpen && e.i < cur) || self.dispPk) { return; } /* 쪽지·전시 고르기 창을 펼친 동안 숨김 */ /* 목표 쪽지를 펼친 동안 왼쪽 알림은 숨김 */
       (e.i < cur ? v.leftS : v.rightS).push(it);
     });
     /* 화면 안에 들어온 설비에는 오른쪽 위 배지 */
@@ -6820,6 +6915,50 @@ class Component extends DCLogic {
     /* 위쪽 : 모든 화면 공통 상단 바 (shared topVals) · 칩을 누르면 그 기물 작업으로 */
     var TV = window.PotteryShared.topVals.call(this, g, (this.ctls.Wheel && this.ctls.Wheel.state.target) || '', function (a, x) { if (!a) { self.goPanel(0); return; } self.reqPick(a, x); });
     for (var tk in TV) { v[tk] = TV[tk]; }
+    /* ── 전시대 (패널 4) ── */
+    if (!this._shFixT || now - this._shFixT > 3000) { this._shFixT = now; var psF = g.pieces || {}, chF = false, pF = {}; for (var kF in psF) { pF[kF] = psF[kF]; if (psF[kF] && psF[kF].where === 'shelf') { var cp = {}; for (var a9 in psF[kF]) { cp[a9] = psF[kF][a9]; } cp.where = 'store'; pF[kF] = cp; chF = true; } } if (chF) { setTimeout(function () { self.setG2({ pieces: pF }); }, 0); } } /* 예전 진열 칸 작품은 보관함으로 */
+    (function () {
+      var EP = self.dispCur(), slots = EP.slots || [], DP = g.disp || {}, ps = g.pieces || {}, sel = self.dispSlot(), NUM = ['①', '②', '③', '④', '⑤', '⑥'];
+      var CX = [52, 150, 248], CY = [96, 196], filledN = 0;
+      if (!sel && slots.length) { var fo = slots.filter(function (x) { return self.dispState(g, x) === 'open'; })[0]; self.dispSel = (fo || slots[0]).id; sel = self.dispSlot(); }
+      var dsl = slots.map(function (sl, i) {
+        var st = self.dispState(g, sl), on = sel && sel.id === sl.id, p = st === 'filled' ? ps[DP[sl.id]] : null; if (p) { filledN++; }
+        var rwN = (Q.UNLI[sl.rw] || '') + ' ' + (Q.UNLN[sl.rw] || '');
+        var bd = st === 'filled' ? 'border:2px solid rgba(255,214,107,.55);background:radial-gradient(ellipse at 50% 85%,rgba(255,231,168,.35),rgba(255,231,168,0) 70%)' : (st === 'open' ? 'border:2px dashed #FFD66B;background:rgba(255,231,168,.14);animation:navPulse 1.6s ease-in-out infinite' : 'border:2px dashed rgba(232,211,181,.35);background:rgba(30,15,5,.45)');
+        return { id: sl.id, filled: !!p, pot: p ? self.potOf(p, self.fillOf(p, 'glazed')) : { vb: '0 0 10 10', d: 'M0 0' }, on: on ? 'true' : 'false',
+          aria: NUM[i] + ' ' + Q.chTitle(sl.line, sl.ch) + ' 전시 자리 · ' + (st === 'locked' ? '잠김' : (st === 'open' ? '조건 ' + Q.dispTxt(sl.need) + ' · 올리면 ' + rwN + ' 해금' : (p.name || '') + ' 전시 중')),
+          tap: function () { self.dispTap(sl); },
+          st: 'all:unset;cursor:pointer;pointer-events:auto;position:absolute;left:' + CX[i % 3] + 'px;top:' + CY[Math.floor(i / 3)] + 'px;width:88px;height:84px;box-sizing:border-box;border-radius:12px;' + bd + (on ? ';box-shadow:0 0 0 3px #FFE27A,0 0 14px rgba(255,214,107,.8)' : ''),
+          ico: st === 'locked' ? '🔒' : (st === 'open' ? NUM[i] : ''), icoSt: st === 'filled' ? 'display:none' : 'position:absolute;left:0;right:0;top:' + (st === 'open' ? 6 : 10) + 'px;text-align:center;font-family:Jua,sans-serif;font-size:' + (st === 'open' ? 22 : 20) + 'px;line-height:1;color:#FFE7A8',
+          txt: st === 'locked' ? Q.chTitle(sl.line, sl.ch) : (st === 'open' ? Q.dispTxt(sl.need).split(' · ').slice(0, 2).join(' ') : ''),
+          txtSt: st === 'filled' ? 'display:none' : 'position:absolute;left:3px;right:3px;top:' + (st === 'open' ? 32 : 36) + 'px;text-align:center;font-family:Jua,sans-serif;font-size:10.5px;line-height:1.15;color:' + (st === 'open' ? '#FFF4DE' : '#C9B79C') + ';display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden',
+          rw: (st === 'filled' ? '✓ ' : '') + rwN, rwSt: 'position:absolute;left:2px;right:2px;bottom:2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 3px;border-radius:7px;font-family:Jua,sans-serif;font-size:10px;line-height:14px;' + (st === 'filled' ? 'background:#3B7A32;color:#FFFDF5' : (st === 'open' ? 'background:#7A3E8E;color:#FFF' : 'background:rgba(43,26,15,.7);color:#B9A88E')) };
+      });
+      var sst = sel ? self.dispState(g, sel) : 'locked', sp = sel && sst === 'filled' ? ps[DP[sel.id]] : null, CH = 'padding:1px 7px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;line-height:17px;white-space:nowrap;';
+      v.dp = { title: (EP.icon || '') + ' ' + (EP.title || ''), cnt: filledN + '/' + slots.length, slots: dsl,
+        prev: function () { self.dispStep(-1); }, next: function () { self.dispStep(1); },
+        barSt: 'position:absolute;left:14px;right:14px;top:362px;min-height:66px;box-sizing:border-box;padding:7px 10px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4);pointer-events:auto;display:flex;flex-direction:column;gap:5px',
+        selName: sel ? NUM[slots.indexOf(sel)] + ' ' + Q.chTitle(sel.line, sel.ch) + (sst === 'locked' ? ' · 챕터를 끝내면 열려요' : (sp ? ' · ' + (sp.name || '') : ' · 전시할 명작을 올려요')) : '',
+        selRw: sel ? (sst === 'filled' ? '✓ ' : '🎁 ') + (Q.UNLN[sel.rw] || '') + ' 해금' : '',
+        chips: sel ? Q.dispChecks(sp, sel.need).map(function (x) { return { t: (sp ? (x.ok ? '✓ ' : '✗ ') : '') + x.t, st: CH + (sp ? (x.ok ? 'background:#E9F2DC;color:#2F5022' : 'background:#F8E1DA;color:#A3442C') : 'background:#F3E3C4;color:#5B3A24') }; }) : [],
+        act: function () { self.dispOpenPk(); }, actTxt: sst === 'locked' ? '🔒 잠김' : (sst === 'filled' ? '전시 중' : '올리기'),
+        actSt: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (sst === 'open' ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E'),
+        pkOn: !!(this.dispPk && sel && sst === 'open'), pkClose: function () { self.dispPk = false; self.dispCf = ''; self.bump(); }, rows: [], pkEmpty: false, pkTitle: '', pkSub: '' };
+      if (v.dp.pkOn) {
+        var ids = (g.order || Object.keys(ps)).filter(function (id) { return ps[id] && ps[id].where === 'store'; });
+        var rows = ids.map(function (id) { var p = ps[id], ck = Q.dispChecks(p, sel.need), ok = ck.every(function (x) { return x.ok; }), cf = self.dispCf === id;
+          return { ok: ok, pot: self.potOf(p, self.fillOf(p, 'glazed')), name: p.name || self.pName(p), sub: (p.grade || '') + (typeof p.skill === 'number' ? ' · ' + p.skill + '점' : ''),
+            chips: ck.map(function (x) { return { t: (x.ok ? '✓ ' : '✗ ') + x.t, st: CH + 'font-size:10.5px;line-height:15px;' + (x.ok ? 'background:#E9F2DC;color:#2F5022' : 'background:#F8E1DA;color:#A3442C') }; }),
+            put: function () { if (ok) { self.dispPut(id); } else { self.say('조건이 모자라요 · ✗ 표시를 확인해요'); self.sfx('fail'); } },
+            btnTxt: ok ? (cf ? '정말 전시' : '올리기') : '조건 부족', aria: (p.name || '') + ' · ' + (ok ? '전시하기' : '조건 부족'),
+            btn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 10px;border-radius:12px;font-family:Jua,sans-serif;font-size:13px;' + (ok ? (cf ? 'background:#C0582E;color:#FFFDF5;border:3px solid #8A3A1A' : 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328') : 'background:#E6DCCB;color:#A0907A;border:3px solid #B9A88E'),
+            st: 'display:flex;align-items:center;gap:8px;box-sizing:border-box;padding:6px 8px;border-radius:14px;border:2px solid ' + (ok ? '#4F7A3A;background:#F4F9EC' : '#E2CBA2;background:#FFFBF2') };
+        });
+        rows.sort(function (a, b) { return (b.ok ? 1 : 0) - (a.ok ? 1 : 0); });
+        v.dp.rows = rows; v.dp.pkEmpty = !rows.length; v.dp.pkTitle = NUM[slots.indexOf(sel)] + ' ' + Q.chTitle(sel.line, sel.ch) + ' 전시 · ' + (Q.UNLN[sel.rw] || '') + ' 해금';
+        v.dp.pkSub = '조건 : ' + Q.dispTxt(sel.need) + ' · 한 번 올린 작품은 내릴 수 없어요';
+      }
+    }).call(this);
     return v;
   }
   loadG() {

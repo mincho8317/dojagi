@@ -345,14 +345,14 @@
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
       { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1', 't2', 't3'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지랑 사발, 대접까지 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데.)', '나/smile: (민 씨 아주머니도 그렇고… 할머니를 기다리는 사람이 이렇게 많았구나.)', '나: (남은 흙이 떨어질 때까지만, 좀 만들어 드려야겠다.)'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
-      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'black'] }, title: '새 메뉴, 새 그릇', intro: ['강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '근디 손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
+      { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11', 't12'], choose: { key: 't10', any: ['white', 'celadon'] }, title: '새 메뉴, 새 그릇', intro: ['강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '근디 손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 까만 흑유든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
       { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 나 없어도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠어?'], done: ['…그려. 이 접시여. 고마워, 정말.', '손주 녀석 국밥, 내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.'] },
       // ── 2챕터 · 차 선생의 찻자리 ──
-      { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], glz: { c2: { cov: [0.4, 0.7] }, c3: { ang: [30, 60] } }, title: '강 선생님의 제자', intro: ['윤 할매께 소식 들었습니다. …강 선생님께 흙을 배웠던 사람입니다.', '저는 결국 그릇 대신 차를 택했지요.', '다도 수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 선생님 잔을 처음 쥐었을 때가 떠오릅니다.'] },
+      { id: 'm06', npc: 'cha', ch: 'tea', st: ['c1', 'c2', 'c3'], glz: { c2: { cov: [0.4, 0.7] }, c3: { cov: [0.5, 0.8] } }, title: '강 선생님의 제자', intro: ['윤 할매께 소식 들었습니다. …강 선생님께 흙을 배웠던 사람입니다.', '저는 결국 그릇 대신 차를 택했지요.', '다도 수업에 쓸 잔이 필요합니다. 소박한 잔부터 부탁드려도 될까요?'], done: ['손에 감기는 맛이 좋군요. 선생님 잔을 처음 쥐었을 때가 떠오릅니다.'] },
       { id: 'm09', npc: 'cha', ch: 'tea', st: [], type: 'visit', rw: { gold: 800, shards: 20, mats: { gc1: 5 } }, title: '늦은 고백', intro: ['오늘은 그릇이 아니라… 드릴 말씀이 있어 왔습니다.', '선생님이 아프실 때, 저는 병원 앞까지 갔다가 돌아왔습니다. 세 번이나요.', '약해진 모습을 볼 자신이 없었습니다. {이름} 님은 1년을 곁에 있었다지요.', '나/sad: (…나도, 할머니한테 끝내 못 한 말이 있는데.)', '(차 선생이 철분 원료를 내민다) 선생님이 제게 맡겨 두신 겁니다. 이제 주인에게 돌려드려요.'], done: ['들어 주셔서 고맙습니다. 조금 가벼워졌습니다.'] },
-      { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], glz: { c14: { ang: [30, 60], cov: [0.4, 0.7] } }, unlockNote: '화병 · 다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '찻자리에 꽃 한 송이 꽂을 화병과, 두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다.', '다회 날, 첫 잔은 선생님 자리에 두겠습니다.'] },
+      { id: 'm10', npc: 'cha', ch: 'tea', st: ['c13', 'c14', 'c15'], glz: { c14: { cov: [0.4, 0.7] } }, unlockNote: '화병 · 다완', title: '다완 한 점', intro: ['다회를 열려 합니다. 손님은 한 분, 강 선생님입니다.', '찻자리에 꽃 한 송이 꽂을 화병과, 두 손에 감기는 찻사발, 다완을 부탁드립니다.'], done: ['…훌륭합니다.', '다회 날, 첫 잔은 선생님 자리에 두겠습니다.'] },
       // ── 3챕터 · 정윤의 화실 ──
-      { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], glz: { v2: { ang: [75, 105] } }, title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '(사정을 들은 정윤이, 들고 온 꽃다발을 말없이 작업대에 내려놓는다)', '…늦었네요, 제가.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병 하나랑, 가게에 둘 것도 몇 개요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
+      { id: 'm11', npc: 'jeong', ch: 'vase', st: ['v1', 'v2', 'v3'], glz: { v2: { ang: [75, 105] }, v3: { ang: [30, 60] } }, title: '강 여사님의 공방', intro: ['안녕하세요! 강 여사님 계세요? 저 꽃집 하는 정윤이에요.', '(사정을 들은 정윤이, 들고 온 꽃다발을 말없이 작업대에 내려놓는다)', '…늦었네요, 제가.', '(애써 웃으며) 창가에 둘 화병을 부탁하려고 왔어요. 한 송이만 꽂는 가는 병 하나랑, 가게에 둘 것도 몇 개요.'], done: ['창가에 두니 꽃이 훨씬 살아 보여요.', '여사님이 여기서 그림 그리게 해 주셨거든요. 저 구석 자리요.'] },
       { id: 'm12', npc: 'jeong', ch: 'vase', st: ['v4', 'v5', 'v6'], glz: { v5: { ang: [0, 15], cov: [0.3, 0.5] } }, title: '빈 캔버스', intro: ['(휴대폰 속 빈 캔버스 사진을 보여 주며) 이거, 1년째 이래요.', '서울에서 게임 회사 원화가였어요. 마감 끝나면 다음 마감이 와 있고… 어느 날 펜을 못 잡겠더라고요.', '…어? {이름} 님도 게임 회사였어요? 기획자요? 아, 그럼 다 아시겠네. 업데이트 전날 밤.', '(둘이 동시에 한숨을 쉬고, 정윤이 처음으로 크게 웃는다)', '그림 대신 병이라도 놓아 보려고요. 화실에 둘 병을 부탁해요.'], done: ['병을 놓으니 빈 캔버스가 덜 무서워요.', '다음엔 {이름} 님이 제 얼굴 좀 봐 주세요. 마감 전 표정인지 아닌지.'] },
       { id: 'm15', npc: 'jeong', ch: 'vase', st: ['v13', 'v14', 'v15'], glz: { v14: { ang: [120, 150], cov: [0.5, 0.8] } }, unlockNote: '항아리', title: '그림 속 항아리', intro: ['병을 놓고 나서, 다시 붓을 잡았어요. 그림 한 장을 끝냈어요!', '그래서… 동네 작은 전시에 나가기로 했어요. 무섭지만요.', '그림 속 공방 앞에 늘 항아리가 있었거든요. 여사님 공방 그림 옆에, {이름} 님 항아리를 같이 놓고 싶어요.'], done: ['그림보다 항아리가 더 예쁘다고들 해요. 질투 나네요!', '다음 전시도 같이 나가요. 이번엔 제가 먼저 신청할게요.'] },
       // ── 4챕터 · 장 씨네 장독대 ──
@@ -394,9 +394,9 @@
       var GL = ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'jinsa', 'black', 'white', 'celadon', 'jinsa', 'black', 'white'];
       var SZ = [{ k: 1, n: '' }]; // 크기 변형(큰/작은)은 물레에 없는 모양이라 쓰지 않는다
       var C = [
-        { id: 'table', pre: 't', n: 15, pool: ['dish', 'sabal', 'daejeop'], un: 'plate', cl: ['cy1', 'cy2', 'cw2'] },
-        { id: 'tea', pre: 'c', n: 15, pool: ['chatjan', 'dish', 'plate'], un: 'dawan', un2: { 13: 'hwabyeong' }, cl: ['cy1', 'cy2', 'cw3'] },
-        { id: 'vase', pre: 'v', n: 15, pool: ['hwabyeong', 'sabal', 'hwabyeong'], un: 'hangari', cl: ['cy2', 'cw2', 'cw3'] },
+        { id: 'table', pre: 't', n: 15, pool: ['dish', 'sabal', 'daejeop'], un: 'plate', cl: ['cy1', 'cy2', 'cw2'], gl: ['white', 'celadon', 'celadon', 'white', 'celadon', 'white', 'celadon', 'white', 'white', 'celadon', 'white', 'celadon', 'white', 'celadon', 'white'] }, /* 1챕터 : 백자유·청자유만 */
+        { id: 'tea', pre: 'c', n: 15, pool: ['chatjan', 'dish', 'plate'], un: 'dawan', un2: { 13: 'hwabyeong' }, cl: ['cy1', 'cy2', 'cw3'], gl: ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'black', 'black', 'white', 'celadon', 'white', 'black', 'white'] }, /* 진사 없음 (적토·진사유는 3챕터 전시 뒤) */
+        { id: 'vase', pre: 'v', n: 15, pool: ['hwabyeong', 'sabal', 'hwabyeong'], un: 'hangari', cl: ['cy2', 'cw2', 'cw3'], gl: ['white', 'celadon', 'black', 'white', 'celadon', 'black', 'celadon', 'white', 'celadon', 'black', 'white', 'celadon', 'white', 'black', 'white'] },
         { id: 'jar', pre: 'j', n: 15, pool: ['hangari', 'hangari', 'dish'], un: 'moonjar', cl: ['cy2', 'cr2', 'ck3'] },
         { id: 'season', pre: 's', n: 10, pool: ['chatjan', 'dish', 'sabal'], un: 'lotuscup', cl: ['cy2', 'cw2'] },
         { id: 'dok1', pre: 'da', n: 7, pool: ['daejeop', 'dish', 'sabal'], un: '', cl: ['ck1', 'cy1'], gl: ['black', 'white', 'black', 'celadon', 'white', 'black', 'celadon'] },
@@ -445,6 +445,58 @@
       { id: 'e04', npc: 'festa', ch: 'season', st: ['s10'], unlockNote: '연꽃잔', title: '봄 다회의 연꽃잔', intro: ['마지막 부탁이에요. 다회의 상징, 연꽃잔!', '낮고 활짝 핀 꽃처럼 빚어 주세요.'], done: ['다회의 주인공이 생겼네요. 정말 고마워요!', '연꽃잔 모양은 이제 공방 틀에 남을 거예요.'] }
     ];
     var GRANK = { '범작': 0, '양작': 1, '수작': 2, '명작': 3, '요변': 3 };
+    // ── 전시대 : 에피소드마다 · 챕터를 끝내면 자리가 열리고, 다음 챕터 조건을 미리 쓴 명작을 올리면 해금 (영구 고정) ──
+    var UNLN = { black: '흑토·흑유', red: '적토·진사유', stamp: '붓 시유 도장', remodel: '공방 리모델링', gather: '채집', research: '연구', event: '이벤트' };
+    var UNLI = { black: '⚫', red: '🔴', stamp: '🌸', remodel: '🏠', gather: '⛏', research: '📚', event: '🎉' };
+    /* 공방 리모델링 (전시대 ④로 해금 · 상점에서 산다) */
+    var DECO = {
+      wall: [{ id: 'base', n: '흙벽', d: '따뜻한 황토 흙벽', p: 0, sw: 'linear-gradient(#E8D2AE,#D6B88B)' }, { id: 'tile', n: '청자 타일', d: '은은한 청록 타일 벽', p: 600, sw: 'repeating-linear-gradient(0deg,#9FC4B4 0 22px,#8DB5A4 22px 24px),#9FC4B4' }, { id: 'hanji', n: '한지 창살', d: '창살 무늬 한지 벽', p: 900, sw: 'repeating-linear-gradient(90deg,rgba(122,84,52,.35) 0 3px,transparent 3px 30px),repeating-linear-gradient(0deg,rgba(122,84,52,.35) 0 3px,transparent 3px 30px),#F4EAD6' }, { id: 'night', n: '먹빛 나무벽', d: '차분한 짙은 나무 벽', p: 1200, sw: 'repeating-linear-gradient(90deg,#4A3326 0 40px,#43301F 40px 80px)' }],
+      kiln: [{ id: 'base', n: '붉은 벽돌 가마', d: '기본 가마', p: 0, sw: 'linear-gradient(#B35A3A,#7A3A24)', f: 'none' }, { id: 'white', n: '흰 회벽 가마', d: '회칠한 밝은 가마', p: 800, sw: 'linear-gradient(#EDE6DA,#BFB3A3)', f: 'saturate(.25) brightness(1.25)' }, { id: 'stone', n: '검은 돌가마', d: '단단한 현무암 가마', p: 1100, sw: 'linear-gradient(#5E5A57,#2E2B29)', f: 'grayscale(.75) brightness(.75) contrast(1.1)' }],
+      tub: [{ id: 'base', n: '나무 유약통', d: '기본 유약통', p: 0, sw: 'linear-gradient(#E9DCC4,#B98A5E)', f: 'none' }, { id: 'blue', n: '청화 유약통', d: '푸른 그림 유약통', p: 500, sw: 'linear-gradient(#DCE6F2,#5878A8)', f: 'hue-rotate(185deg) saturate(1.4)' }, { id: 'onggi', n: '옹기 유약통', d: '검붉은 옹기', p: 700, sw: 'linear-gradient(#8A5A3A,#4A2E1E)', f: 'sepia(.7) brightness(.72) saturate(1.3)' }],
+      shelf: [{ id: 'base', n: '참나무 선반', d: '기본 선반', p: 0, sw: '#8A5A36' }, { id: 'pine', n: '소나무 선반', d: '밝은 결의 선반', p: 300, sw: '#C89A62' }, { id: 'ebony', n: '흑단 선반', d: '짙고 고급스러운 선반', p: 900, sw: '#3E2A1E' }]
+    };
+    function unl(g, k) { return !!((g && g.unl) || {})[k]; }
+    var DISP = [
+      { ep: 'main', icon: '📖', title: '에피소드 1 · 강 할매네 공방', slots: [
+        { id: 'm1', line: 'main', ch: 'table', need: { sk: 'sabal', clay: 'y', cov: [0.4, 0.7], grade: '명작' }, rw: 'black' },
+        { id: 'm2', line: 'main', ch: 'tea', need: { sk: 'dawan', glaze: 'celadon', ang: [30, 60], grade: '명작' }, rw: 'stamp' },
+        { id: 'm3', line: 'main', ch: 'vase', need: { sk: 'hwabyeong', glaze: 'white', g2: true, grade: '명작' }, rw: 'red' },
+        { id: 'm4', line: 'main', ch: 'jar', need: { sk: 'moonjar', brush: true, grade: '명작' }, rw: 'remodel' }
+      ] },
+      { ep: 'dok', icon: '👹', title: '도깨비 이야기 1 · 김 서방, 오랜만이다!', slots: [
+        { id: 'd1', line: 'dok', ch: 'dok1', need: { sk: 'daejeop', clay: 'k', glaze: 'black', fireMin: 95, grade: '명작' }, rw: 'gather' },
+        { id: 'd2', line: 'dok', ch: 'dok2', need: { slab: 'sqp', grade: '명작' }, rw: 'research' },
+        { id: 'd3', line: 'dok', ch: 'dok3', need: { slab: 'sqb', brush: true, grade: '명작' }, rw: 'event' }
+      ] }
+    ];
+    function chDone(g, line, ch) { var L = lineState(g, line), last = -1; L.defs.forEach(function (d, i) { if (d.ch === ch) { last = i; } }); if (last < 0) { return false; } return L.i > last || (L.i === last && !!L.thanks); }
+    function chTitle(line, ch) { var E = EPIS[line], c = E ? E.chapters.filter(function (x) { return x.ch === ch; })[0] : null; return c ? c.title : ch; }
+    function dispChecks(p, need) {
+      var out = [], P = p || {};
+      if (need.slab) { out.push({ t: '판성형 ' + SLN[need.slab], ok: P.sk === 'slab' && P.slabTg === need.slab }); }
+      if (need.clay) { out.push({ t: CCOLOR[need.clay].n, ok: !!p && clayOf(P.clay).c === need.clay }); }
+      if (need.glaze) { out.push({ t: GNM[need.glaze], ok: !!p && glazeOk(P.glaze, need.glaze) }); }
+      if (need.sk) { out.push({ t: SKN[need.sk] || need.sk, ok: !!p && P.sk !== 'slab' && shapeKeyOf(P, need.sk) === need.sk }); }
+      glzChecks(P, need).forEach(function (x) { out.push({ t: x.t, ok: !!p && x.ok }); });
+      if (need.brush) { out.push({ t: '붓 무늬', ok: !!((P.brush && P.brush.length) || P.bru) }); }
+      if (need.fireMin) { out.push({ t: '소성 ' + need.fireMin + '점↑', ok: ((P.skillPts || {}).fire || 0) >= need.fireMin }); }
+      if (need.grade) { out.push({ t: need.grade, ok: (GRANK[P.grade] || 0) >= (GRANK[need.grade] || 0) }); }
+      return out;
+    }
+    function dispTxt(need) { return dispChecks(null, need).map(function (x) { return x.t; }).join(' · '); }
+    /* 의뢰를 맡으려면 필요한 해금 · 설비 (없으면 받을 수 없다) */
+    function questNeeds(g, q) {
+      var miss = [], add = function (k, t) { if (!miss.some(function (m) { return m.k === k; })) { miss.push({ k: k, t: t }); } };
+      ((q && q.items) || []).forEach(function (it) {
+        if (it.mat) { return; }
+        var gz = it.glazeAny || [it.glaze], c = it.clay ? clayOf(it.clay).c : '';
+        if ((gz.indexOf('black') >= 0 || c === 'k') && !unl(g, 'black')) { add('black', '전시대에서 「흑토·흑유」 해금'); }
+        if ((gz.indexOf('jinsa') >= 0 || c === 'r') && !unl(g, 'red')) { add('red', '전시대에서 「적토·진사유」 해금'); }
+        if (it.slabTg && !((g.fac || {}).slab)) { add('slab', '상점 「설비」에서 판 성형대 설치'); }
+        if (it.brush && !((g.fac || {}).paint)) { add('paint', '상점 「설비」에서 붓 시유대 설치'); }
+      });
+      return miss;
+    }
     var MATN = { cy1: '황토', cw1: '백토', cr1: '적토', ck1: '흑토', gw1: '장석', gc1: '철분', gb1: '철광', gj1: '진사', ry: '황토 원료', rw: '백토 원료', rr: '적토 원료', rk: '흑토 원료', ow: '장석 원석', oc: '철분 원석', ob: '철광 원석', oj: '진사 원석' };
     // 의뢰 종류 : make(빚어서 납품) · grade(등급 이상) · choose(두 유약 중 골라서 · 반응이 달라짐) · visit(이야기만 · 재료 선물) · gather(재료 납품)
     function buildLine(story, kind, lvOf) {
@@ -467,6 +519,14 @@
     MAIN.forEach(function (q) { if (q.reward) { q.reward.shards = mainShards(q.id); } }); /* 표시용 보상도 같은 값 */
     var SEASON = buildLine(SSTORY, 'season', function (q) { return q.id === 'e00' ? 1 : 2; });
     var DOK = buildLine(DSTORY, 'dok', function (q) { return CHLV[q.ch] || 1; });
+    /* 도깨비 챕터마다 새 조건 하나 : 1 두두리 = 흙 지정 · 2 불목이 = 소성 점수 · 3 방울이·도롱이 = 판성형 */
+    var SLN = { sqp: '네모 접시', rdp: '둥근 접시', ova: '타원 쟁반', lef: '나뭇잎 접시', sqb: '네모 통', rdv: '둥근 항아리' }, DSL = { dc1: 'sqp', dc2: 'rdp', dc6: 'sqb', dc7: 'rdv' };
+    DOK.forEach(function (q) { (q.items || []).forEach(function (it) {
+      if (it.mat) { return; }
+      if (q.ch === 'dok1') { it.clayReq = clayOf(it.clay).c; it.name += ' · ' + CCOLOR[it.clayReq].n + '로'; }
+      if (q.ch === 'dok2') { it.fireMin = 85; it.name += ' · 소성 85점↑'; }
+      if (q.ch === 'dok3' && DSL[it.key]) { it.slabTg = DSL[it.key]; it.prof = null; it.H = null; it.wshape = ''; it.sk = ''; it.shapeN = SLN[it.slabTg]; it.name = GP[it.glaze] + ' ' + SLN[it.slabTg] + ' · 판성형'; }
+    }); });
     SEASON.concat(DOK).forEach(function (q) { if (q.reward) { q.reward.shards = 0; } });
     function profileOf(it) {
       if (it && it.prof && it.prof.length >= 3) { return { r: it.prof, H: it.H || 110 }; }
@@ -507,6 +567,9 @@
       if (req.glazeAny ? req.glazeAny.indexOf(p.glaze) < 0 : !glazeOk(p.glaze, req.glaze)) { return false; }
       if (req.minGrade && (GRANK[p.grade] || 0) < (GRANK[req.minGrade] || 0)) { return false; }
       if (glzChecks(p, req).some(function (x) { return !x.ok; })) { return false; }
+      if (req.clayReq && clayOf(p.clay).c !== req.clayReq) { return false; }
+      if (req.fireMin && !(((p.skillPts || {}).fire || 0) >= req.fireMin)) { return false; }
+      if (req.slabTg) { return p.sk === 'slab' && p.slabTg === req.slabTg && (p.fit || 0) >= TUNE.fitMin; }
       if (req.sk && shapeKeyOf(p, req.sk) !== req.sk) { return false; }
       var sc = shapeScore(p, req);
       return sc.s >= TUNE.fitMin && sc.h >= TUNE.fitMin;
@@ -523,8 +586,8 @@
     function seasonOpen() { return Date.now() <= SEASON_UNTIL; }
     function lineState(g, line) {
       // 시즌(이벤트) 의뢰는 첫 메인 의뢰 납품을 마친 뒤부터 찾아온다 (이미 시작한 시즌 의뢰는 그대로)
-      if (line === 'season') { var mq0 = g.mq || {}, dq0 = g.dq || {}, mainOk = (mq0.i || 0) >= MAIN.filter(function (q) { return q.ch === MAIN[0].ch; }).length && (dq0.i || 0) >= DOK.filter(function (q) { return q.ch === DOK[0].ch; }).length; /* 에피소드 1의 1챕터 · 도깨비 1챕터를 끝낸 뒤 */ var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
-      if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (!!tg || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
+      if (line === 'season') { var mq0 = g.mq || {}, dq0 = g.dq || {}, mainOk = (mq0.i || 0) >= MAIN.filter(function (q) { return q.ch === MAIN[0].ch; }).length && (dq0.i || 0) >= DOK.filter(function (q) { return q.ch === DOK[0].ch; }).length; /* 에피소드 1의 1챕터 · 도깨비 1챕터를 끝낸 뒤 */ var sm = g.sq || {}, si = sm.i || 0, sd = SEASON[si] || null; return { line: 'season', key: 'sq', defs: SEASON, open: seasonOpen() && ((mainOk && !!g.shopOpen && unl(g, 'event')) || !!sm.acc || (sm.i || 0) > 0), i: si, def: sd, acc: !!sm.acc && !!sd, dl: sm.dl || {}, mig: sm.mig || {}, allDone: si >= SEASON.length, lvOk: sd ? (g.fameLv || 1) >= sd.needLv : false, thanks: !!sm.thanks }; }
+      if (line === 'dok') { var tg = ''; try { tg = localStorage.getItem('tutG') || ''; } catch (e) {} var dm = g.dq || {}, di = dm.i || 0, dd = DOK[di] || null; return { line: 'dok', key: 'dq', defs: DOK, open: !isTut(g) && (unl(g, 'black') || !!dm.acc || di > 0), i: di, def: dd, acc: !!dm.acc && !!dd, dl: dm.dl || {}, mig: dm.mig || {}, allDone: di >= DOK.length, lvOk: dd ? (g.fameLv || 1) >= dd.needLv : false, thanks: !!dm.thanks, pick: dm.pick || '' }; }
       var o = mainState(g); o.line = 'main'; o.key = 'mq'; o.defs = MAIN; o.open = true; return o;
     }
     // 단골별 진행 : 만났는지 · 끝낸 의뢰 수 · 챕터 완료
@@ -561,6 +624,8 @@
     // 만드는 중인 작품이 의뢰 조건을 아직 지키고 있는지 (모양 · 유약)
     function wipOk(w, it) {
       if (!w || w.broken) { return false; }
+      if (it.slabTg && (w.sk !== 'slab' || w.slabTg !== it.slabTg)) { return false; }
+      if (it.clayReq && w.clay && clayOf(w.clay).c !== it.clayReq) { return false; }
       if (it.wshape && w.shape && w.shape !== it.wshape) { return false; }
       if (it.sk && w.prof && shapeKeyOf(w, it.sk) !== it.sk) { return false; }
       if (it.prof && w.prof) { var sc = shapeScore(w, it); if (sc.s < TUNE.fitMin || sc.h < TUNE.fitMin) { return false; } }
@@ -712,7 +777,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { DECO: DECO, UNLN: UNLN, UNLI: UNLI, unl: unl, DISP: DISP, chDone: chDone, chTitle: chTitle, dispChecks: dispChecks, dispTxt: dispTxt, questNeeds: questNeeds, SLN: SLN, pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
@@ -923,11 +988,11 @@
       if (t >= UNL.length) { // 기초 튜토리얼 뒤 : 메뉴마다 해당 안내가 열릴 때까지 잠근다
         if (t !== DONE1) { return L; }
         var o3 = t2R(), k3 = o3 && typeof o3.k === 'number' ? o3.k : 99;
-        if (!gR()) { L.Gather = true; L.Shop = true; }
+        var UN = g.unl || {}; if (!UN.gather) { L.Gather = true; } if (!gR() && !g.shopOpen) { L.Shop = true; } /* 채집은 도깨비 전시대 ①로 해금 · 상점은 흙이 떨어지면 열림 */
         if (k3 < 3) { L.Display = true; }
-        if (!g.resUnl && !(k3 >= 99 && Object.keys(g.res || {}).some(function (k) { return /^r\d/.test(k); }))) { L.Research = true; } // 파편 100개 · 할머니 일지 컷신 뒤 열림
+        if (!UN.research || !g.resUnl) { L.Research = true; } // 도깨비 전시대 ②로 해금 → 할머니 일지 컷신 뒤 열림
         if (!g.shopOpen) { L.Contest = true; }
-        if (!((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) || g.evDone)) { L.Season = true; } // 벚꽃 의뢰를 납품하면 이벤트 버튼이 열림
+        if (!UN.event || !((g.sq && ((g.sq.i || 0) >= 1 || g.sq.thanks)) || g.evDone)) { L.Season = true; } // 벚꽃 의뢰를 납품하면 이벤트 버튼이 열림
         return L;
       }
       for (var i = t; i < UNL.length; i++) { UNL[i].forEach(function (p) { L[p] = true; }); }
@@ -1315,6 +1380,7 @@
         return;
       }
       if (!st) {
+        if (!(g.unl || {}).gather) { if (!g.shopOpen && g.starter3 && clayN(g) <= 0) { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); }); } return; } /* 채집 전엔 흙이 떨어지면 상점을 연다 */
         if (clayN(g) > 0 || !g.starter3) { return; } // 튜토리얼 끝 선물 흙(starter3)을 받은 뒤부터 센다
         window.PotteryShared.storyPlay('dok_intro', function () { gW(1); if (PAGE !== 'Gather') { goPage('Gather'); } });
         return;
@@ -1394,7 +1460,7 @@
       var rs = ''; try { rs = localStorage.getItem('tutR') || ''; } catch (e) {}
       var rW = function (v) { try { localStorage.setItem('tutR', v); } catch (e) {} };
       if (!g.resUnl) {
-        if (locked(g).Research && (g.shards || 0) >= 100 && PAGE !== 'Gather' && CRAFT.indexOf(PAGE) < 0) { window.PotteryShared.storyPlay('research_open', function () { var g2 = load(); g2.resUnl = true; save(g2); rW('1'); notify(); }); }
+        if (locked(g).Research && (g.unl || {}).research && PAGE !== 'Gather' && CRAFT.indexOf(PAGE) < 0) { window.PotteryShared.storyPlay('research_open', function () { var g2 = load(); g2.resUnl = true; save(g2); rW('1'); notify(); }); }
         return;
       }
       if (rs === 'done' || !rs) { return; }

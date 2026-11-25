@@ -505,7 +505,7 @@ class Component extends DCLogic {
   }
   claysDef() {
     var QL = this.qlib(), g = this.state && this.state.g ? this.state.g : this.loadG(), self = this, M = g.mats || {};
-    var ids = QL.isTut(g) ? ['cy1'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; });
+    var ids = QL.isTut(g) ? ['cy1'] : QL.CLAYKEYS.concat(['spring']).filter(function (k) { return (M[k] || 0) > 0; }).filter(function (k) { var cc = k.charAt(1); return !QL.unl || (!(cc === 'k' && !QL.unl(g, 'black')) && !(cc === 'r' && !QL.unl(g, 'red'))); }); /* 흑토·적토는 전시대 해금 뒤 */
     var out = ids.map(function (k) { var c = QL.clayOf(k); return { id: k, img: self.clayImg(k), n: c.name, res: 'CLAY', c: c.col, limit: c.thin, event: k === 'spring', grade: c.grade, note: c.note }; });
     if (!out.length) { out.push({ id: '', img: self.clayImg('cy1'), n: '흙 없음', res: 'CLAY', c: '#A89880', limit: 3, none: true }); }
     return out;

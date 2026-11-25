@@ -595,6 +595,7 @@ class Component extends DCLogic {
       { id: 'sakura', name: '벚꽃유', res: 'GLZ\nSAKURA', img: '_blob/9dfa7034fc62a520ec428f5b3bdebc0b.webp', fired: (g.glazesFound || {}).sakura ? '#E9A3B5' : '', raw: '#F2CCD5', price: self.matLbl(g, 'sakura'), event: true, owned: ((g.mats || {}).petal || 0) > 0 },
       { id: 'jinsa', name: '진사유', res: 'GLZ\nJINSA', img: (g.glazesFound || {}).jinsa ? '_blob/34ce3b19abfe3f12b26566e73ea9d191.webp' : '_blob/0caec5ae43f75125c715521e9b5528e2.webp', fired: (g.glazesFound || {}).jinsa ? '#A8443A' : '', raw: '#C9B1A8', price: self.matLbl(g, 'jinsa') }
     ];
+    var QLu = this.qlib(); if (QLu.unl) { defs = defs.filter(function (d) { return (d.id !== 'black' || QLu.unl(g, 'black')) && (d.id !== 'jinsa' || QLu.unl(g, 'red')); }); } /* 흑유·진사유는 전시대 해금 뒤 */
     var EG = this.gz(), curI = this.current(), goalG = curI && curI.goalGlaze ? curI.goalGlaze : '';
     var selG = defs[1];
     var cur0 = this.current();

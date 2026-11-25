@@ -385,6 +385,11 @@ class Component extends DCLogic {
             { label: '이야기를 들었어요', tone: 'go', run: function () { self.finishVisit(LN); } },
             { label: '다음에요', tone: '', run: function () { self.next('“언제든 다시 들를게.”'); } }
           ];
+        } else if (QL.questNeeds && QL.questNeeds(g, md).length) { /* 해금 · 설비가 없으면 맡을 수 없다 */
+          var NEED = QL.questNeeds(g, md);
+          mn.lines = [TX(md.intro)[0], '(이 의뢰는 ' + NEED.map(function (x) { return x.t; }).join(' · ') + ' 뒤에 맡을 수 있어요)'];
+          mn.card = { title: md.title + ' · 아직 못 맡아요', conds: itemConds.concat(NEED.map(function (x) { return { t: '🔒 ' + x.t }; })), reward: rewardTxt };
+          mn.choices = [{ label: '준비하고 올게요', tone: '', run: function () { self.next('“준비되면 다시 들를게.”'); } }];
         } else {
           mn.lines = TX(md.intro);
           mn.card = { title: md.title, conds: itemConds, reward: rewardTxt };
