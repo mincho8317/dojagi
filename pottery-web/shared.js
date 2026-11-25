@@ -2673,25 +2673,46 @@
   };
   /* 판 기물 2D 그림 (선반 · 시유 · 가마 · 전시) : 판 성형대 옆모습과 같은 모양으로 · 굽 바닥 → 휜 띠 → 테두리 두께 → 벽 */
   S.slabPot = function (it, P) {
-    var GE = this.slabGeo(it.poly, it.e), T = 7, Hw = it.wall ? (it.Hw || 0) : 0, sc = it.sc || [1, 1], n = sc.length;
-    function sAt(u) { var f = u * (n - 1), j0 = Math.min(n - 2, Math.floor(f)), t = f - j0, a = sc[Math.max(0, j0 - 1)], b = sc[j0], c = sc[j0 + 1], d = sc[Math.min(n - 1, j0 + 2)]; return 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t); }
-    var iL = 0, iR = 0; it.poly.forEach(function (q, i) { if (q[0] < it.poly[iL][0]) { iL = i; } if (q[0] > it.poly[iR][0]) { iR = i; } });
-    function col(i) { var c = GE[i], o = [[c.F[0], 0]]; c.band.forEach(function (b, k) { if (k) { o.push([b[0], -b[2]]); } }); o.push([c.R[0], -(c.e + T)]); if (Hw > 0) { for (var w = 1; w <= 12; w++) { o.push([c.R[0] * sAt(w / 12), -(c.e + T + Hw * w / 12)]); } } return o; }
-    var L = col(iL), R = col(iR), M = 0, Ht = 0;
-    L.concat(R).forEach(function (p) { M = Math.max(M, Math.abs(p[0])); Ht = Math.max(Ht, -p[1]); });
-    /* 물레 기물과 같은 그림법 : 굽 = 아래로 둥근 호, 옆선 = 부드러운 곡선, 입구 = 위로 둥근 호 */
-    function sm(q) { var s = ''; for (var k = 1; k < q.length - 1; k++) { var mx = (q[k][0] + q[k + 1][0]) / 2, my = (q[k][1] + q[k + 1][1]) / 2; s += ' Q' + q[k][0].toFixed(1) + ' ' + q[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); } var la = q[q.length - 1]; return s + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1); }
-    var Lr = L.slice().reverse(), lt = Lr[0], rt = R[R.length - 1], top = (Math.abs(lt[0]) + Math.abs(rt[0])) / 2, foot = (Math.abs(L[0][0]) + Math.abs(R[0][0])) / 2;
-    var ryF = Math.max(1.5, foot * 0.16), ryT = Math.max(2, Math.min(top * 0.16, ryF + Ht * 0.85));
-    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + foot.toFixed(1) + ' ' + ryF.toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R)
-      + ' A' + top.toFixed(1) + ' ' + ryT.toFixed(1) + ' 0 0 1 ' + lt[0].toFixed(1) + ' ' + lt[1].toFixed(1) + sm(Lr) + ' Z';
-    var side = Math.max(2 * M, Ht + ryT + ryF) + 20, o = {}, k;
+    /* 판 기물 2D : 실제 모양을 비스듬히 위에서 본 그림 (바닥 모양 그대로 · 테두리 · 벽) — 옆모습+타원 방식은 네모도 둥글게 보여서 버림 */
+    var g = this.slabProj(it), o = {}, k;
     for (k in P) { o[k] = P[k]; }
-    o.d = d; o.H = Ht; o.M = M; o.rimY = (-Ht).toFixed(1); o.rimRx = top.toFixed(1); o.rimRy = ryT.toFixed(1);
-    /* 안쪽 색 : 물레 그릇은 깊어서 어둡게(0.5) · 판 접시는 바닥이 훤히 보이니 밝게, 벽 있는 통은 그 사이 */
-    try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = Hw > 0 ? Math.max(0.6, 0.86 - Hw / Math.max(40, top * 2) * 0.5) : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
-    o.shRx = (foot * 1.18).toFixed(1); o.shRy = Math.max(3, foot * 0.26).toFixed(1); o.shCy = (ryF * 0.75).toFixed(1);
-    o.vb = (-side / 2).toFixed(1) + ' ' + ((ryF - Ht - ryT) / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1); o.sw = (side / 64).toFixed(2);
+    o.d = g.d; o.rimD = g.rimD; o.H = g.H; o.M = g.M; o.rimY = (-g.H).toFixed(1); o.rimRx = '0'; o.rimRy = '0';
+    try { var mI = /^#([0-9a-f]{6})$/i.exec(P.inner || ''); if (mI) { var vI = parseInt(mI[1], 16), AD = [24, 14.4, 7.2], kI = g.Hw > 0 ? Math.max(0.6, 0.86 - g.Hw / Math.max(40, g.M * 2) * 0.5) : 0.86, ch = [(vI >> 16) & 255, (vI >> 8) & 255, vI & 255].map(function (v, i) { var b0 = Math.max(0, Math.min(255, (v - AD[i] * 0.5) / 0.5)); return Math.max(0, Math.min(255, Math.round(b0 * kI + AD[i] * (1 - kI)))); }); o.inner = '#' + ((1 << 24) + (ch[0] << 16) + (ch[1] << 8) + ch[2]).toString(16).slice(1); } } catch (e) {}
+    o.shRx = (g.M * 1.08).toFixed(1); o.shRy = Math.max(3, g.dep * 0.9).toFixed(1); o.shCy = (g.yMax * 0.55).toFixed(1);
+    var side = Math.max(g.xMax - g.xMin, g.yMax - g.yMin) + 22, cx = (g.xMax + g.xMin) / 2, cy = (g.yMax + g.yMin) / 2;
+    o.vb = (cx - side / 2).toFixed(1) + ' ' + (cy - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1); o.sw = (side / 64).toFixed(2);
     return o;
+  };
+  S.slabProj = function (it) {
+    /* 3D 점(x 좌우, y 앞뒤, z 높이) → 화면 (x, -z + y·K) · 모든 면을 캔버스에 칠해 겉윤곽만 따낸다 (오목한 모양도 정확) */
+    var S = this, key = JSON.stringify([it.poly, it.e, it.wall ? it.Hw : 0, it.wall ? it.sc : 0]), C = S._spc || (S._spc = {});
+    if (C[key]) { return C[key]; }
+    var K = 0.32, T = 7, Hw = it.wall ? (it.Hw || 44) : 0, sc = it.sc || [1, 1], n = sc.length, GE = S.slabGeo(it.poly, it.e || []);
+    function sAt(u) { if (n < 2) { return 1; } var f = u * (n - 1), j0 = Math.min(n - 2, Math.floor(f)), t = f - j0, a = sc[Math.max(0, j0 - 1)], b = sc[j0], c = sc[j0 + 1], d = sc[Math.min(n - 1, j0 + 2)]; return 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (-a + 3 * b - 3 * c + d) * t * t * t); }
+    function pj(p) { return [p[0], -p[2] + p[1] * K]; }
+    var cols = GE.map(function (c) { var o = [[c.F[0], c.F[1], 0]]; c.band.forEach(function (b, j) { if (j) { o.push([b[0], b[1], b[2]]); } }); o.push([c.R[0], c.R[1], c.e + T]); if (Hw > 0) { for (var w = 1; w <= 10; w++) { var s = sAt(w / 10); o.push([c.R[0] * s, c.R[1] * s, c.e + T + Hw * w / 10]); } } return o.map(pj); });
+    var N = cols.length, L = cols[0].length, polys = [cols.map(function (c) { return c[0]; }), cols.map(function (c) { return c[L - 1]; })];
+    for (var i = 0; i < N; i++) { var A = cols[i], B = cols[(i + 1) % N]; for (var j = 0; j < L - 1; j++) { polys.push([A[j], B[j], B[j + 1], A[j + 1]]); } }
+    var xMin = 1e9, xMax = -1e9, yMin = 1e9, yMax = -1e9; polys.forEach(function (q) { q.forEach(function (p) { xMin = Math.min(xMin, p[0]); xMax = Math.max(xMax, p[0]); yMin = Math.min(yMin, p[1]); yMax = Math.max(yMax, p[1]); }); });
+    var sk = 2, PD = 3, W = Math.ceil((xMax - xMin) * sk) + PD * 2, Hh = Math.ceil((yMax - yMin) * sk) + PD * 2, out = null;
+    try {
+      var cv = document.createElement('canvas'); cv.width = W; cv.height = Hh; var x2 = cv.getContext('2d'); x2.fillStyle = '#000';
+      polys.forEach(function (q) { x2.beginPath(); q.forEach(function (p, m) { var X = (p[0] - xMin) * sk + PD, Y = (p[1] - yMin) * sk + PD; if (m) { x2.lineTo(X, Y); } else { x2.moveTo(X, Y); } }); x2.closePath(); x2.fill(); x2.lineWidth = 1.2; x2.strokeStyle = '#000'; x2.stroke(); });
+      var dat = x2.getImageData(0, 0, W, Hh).data, on = function (x, y) { return x >= 0 && y >= 0 && x < W && y < Hh && dat[(y * W + x) * 4 + 3] > 110; };
+      /* 겉윤곽 따라가기 (Moore) */
+      var sx = -1, sy = -1; for (var yy = 0; yy < Hh && sx < 0; yy++) { for (var xx = 0; xx < W; xx++) { if (on(xx, yy)) { sx = xx; sy = yy; break; } } }
+      var DX = [-1, -1, 0, 1, 1, 1, 0, -1], DY = [0, -1, -1, -1, 0, 1, 1, 1], ch = [[sx, sy]], cx = sx, cy = sy, bd = 0, guard = W * Hh;
+      while (guard-- > 0) { var found = false; for (var r = 0; r < 8; r++) { var dd = (bd + r) % 8, nx = cx + DX[dd], ny = cy + DY[dd]; if (on(nx, ny)) { cx = nx; cy = ny; bd = (dd + 5) % 8; found = true; break; } } if (!found || (cx === sx && cy === sy)) { break; } ch.push([cx, cy]); }
+      /* 계단 다듬기 (더글라스-포이커) */
+      function dp(pts, tol) { if (pts.length < 3) { return pts; } var a = pts[0], b = pts[pts.length - 1], mi = 0, md = 0, ex = b[0] - a[0], ey = b[1] - a[1], L2 = Math.hypot(ex, ey) || 1; for (var m = 1; m < pts.length - 1; m++) { var dist = Math.abs((pts[m][0] - a[0]) * ey - (pts[m][1] - a[1]) * ex) / L2; if (dist > md) { md = dist; mi = m; } } if (md <= tol) { return [a, b]; } return dp(pts.slice(0, mi + 1), tol).slice(0, -1).concat(dp(pts.slice(mi), tol)); }
+      var far = 0, fd = 0; ch.forEach(function (p, m) { var dq = Math.hypot(p[0] - sx, p[1] - sy); if (dq > fd) { fd = dq; far = m; } });
+      var simp = dp(ch.slice(0, far + 1), 1.1).slice(0, -1).concat(dp(ch.slice(far).concat([ch[0]]), 1.1).slice(0, -1));
+      out = simp.map(function (p) { return [(p[0] - PD) / sk + xMin, (p[1] - PD) / sk + yMin]; });
+    } catch (e) { out = null; }
+    if (!out || out.length < 3) { out = polys[0]; }
+    function sm(q) { var m = q.length, s = ''; for (var k = 0; k < m; k++) { var a = q[k], b = q[(k + 1) % m], mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2; s += (k ? ' Q' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' ' : 'M') + mx.toFixed(1) + ' ' + my.toFixed(1); } var a0 = q[0], b0 = q[1 % m]; return s + ' Q' + a0[0].toFixed(1) + ' ' + a0[1].toFixed(1) + ' ' + ((a0[0] + b0[0]) / 2).toFixed(1) + ' ' + ((a0[1] + b0[1]) / 2).toFixed(1) + ' Z'; }
+    var top = polys[1], H = 0, dep = 0; GE.forEach(function (c) { H = Math.max(H, c.e + T + Hw); dep = Math.max(dep, Math.abs(c.F[1]) * K); });
+    var res = { d: sm(out), rimD: sm(top), H: H, Hw: Hw, M: Math.max(Math.abs(xMin), Math.abs(xMax)), xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax, dep: dep };
+    C[key] = res; return res;
   };
 })();
