@@ -6520,7 +6520,7 @@ class Component extends DCLogic {
     this.setG2({ pieces: ps, disp: dp, unl: un, order: (g.order || []).filter(function (x) { return x !== pid; }) });
     this.dispPk = false; this.dispCf = ''; this.sfx('ok'); try { window.__buzz && window.__buzz([30, 40, 60]); } catch (e) {}
     var nm = Q.UNLN[sl.rw] || sl.rw, MSG = { black: '흑토·흑유를 쓸 수 있어요 · 상점·흙판·유약통에 나와요', red: '적토·진사유를 쓸 수 있어요', stamp: '붓 시유대에서 도장을 쓸 수 있어요', remodel: '상점 「리모델링」에서 공방을 꾸며요', gather: '두두리가 골짜기 길을 열어 줘요', research: '할머니의 일지를 찾아봐요', event: '이벤트 의뢰가 찾아와요' };
-    this.say('✨ 전시 완료 · 「' + nm + '」 해금! ' + (MSG[sl.rw] || ''));
+    this.say('✨ 전시 완료 · 「' + nm + '」 해금!'); /* 자세한 설명은 전시 연출(컷신)에서 */
     var self = this; setTimeout(function () { try { var el = document.querySelector('[data-dispslot="' + sl.id + '"]'); window.__sparkle && window.__sparkle(el, { n: 30, r: 120, big: true, spread: true }); } catch (e) {} }, 120);
     this.bump();
   }
@@ -6533,6 +6533,18 @@ class Component extends DCLogic {
     if (g.needIntro) { play('prologue', function () { self.setG2({ needIntro: 0 }); self.jumpTo(0); }); return; }
     var q = g.quests || {};
     if ((q.minDone || q.minThanks) && !sc.after_min) { play('after_min', function () { self.setG2({ shopOpen: true }); self.say('🔓 상점이 열렸어요 · 흙과 유약 재료를 살 수 있어요'); }); return; }
+    /* 첫 명작 · 전시대 칸마다 짧은 연출 (해금 보상을 이야기로) */
+    var ps = g.pieces || {}, hasM = false; for (var pk in ps) { if (ps[pk] && (Q.GRANK[ps[pk].grade] || 0) >= 3 && ps[pk].where !== 'kiln') { hasM = true; break; } }
+    if (hasM && !sc.first_master) { play('first_master', function () {}); return; }
+    var DP = g.disp || {}, dOn = function (id) { return !!(DP[id] && ps[DP[id]]); };
+    var DS = [['m1', 'disp_m1'], ['m2', 'disp_m2'], ['m3', 'disp_m3']];
+    for (var di = 0; di < DS.length; di++) { if (dOn(DS[di][0]) && !sc[DS[di][1]]) { play(DS[di][1], function () {}); return; } }
+    if (dOn('m4') && !sc.disp_full) { play('disp_full', function () {}); return; }
+    if (dOn('m4') && sc.disp_full && !sc.ep1_end) { play('ep1_end', function () {}); return; }
+    if (dOn('d3') && !sc.event_open) { play('event_open', function () {}); return; }
+    var fl = g.fameLv || 1; if (g.fameSeen == null) { this.setG2({ fameSeen: fl }); } else if (fl > g.fameSeen && S.storyCard) {
+      var T0 = S.fameTitle ? S.fameTitle(g.fameSeen) : '', T1 = S.fameTitle ? S.fameTitle(fl) : ''; this.setG2({ fameSeen: fl }); this._stOn = true;
+      S.storyCard('🏆', '명성 Lv.' + fl, T1 !== T0 ? '새 칭호 「' + T1 + '」' : '공방 소문이 퍼지고 있어요', T1 !== T0 ? '골목에서 「' + T1 + '」 소리를 듣기 시작했어요.\n더 많은 단골이 깊은 이야기를 들려줄 거예요.' : '찾아오는 손님이 늘었어요.\n명성이 오르면 단골들이 더 깊은 이야기를 들려줘요.', '좋아요', function () { self._stOn = false; self.bump(); }); return; }
     if (Q.unl(g, 'research') && !g.resUnl) { play('research_open', function () { self.setG2({ resUnl: true }); try { if (!localStorage.getItem('tutR')) { localStorage.setItem('tutR', '1'); } } catch (e) {} self.say('🔓 「연구」가 열렸어요 · 하단 메뉴에서 파편으로 연구해요'); }); return; }
     var dq = g.dq || {};
     if (Q.lineState(g, 'dok').open && !sc.dok_meet && !sc.dok_intro && !(dq.i > 0) && !dq.acc) { play('dok_meet', function () { self.say('👹 도깨비 의뢰가 열렸어요 · 카운터에 두두리가 찾아와요'); self.jumpTo(0); }); return; }
@@ -7100,7 +7112,14 @@ class Component extends DCLogic {
       ['settings', 'feedbacks', 'playerName', 'pname'].forEach(function (k) { if (g[k] !== undefined) { base[k] = g[k]; } }); g = base; try { localStorage.setItem('potVer', '2026-11-13-story'); } catch (e) {} /* 처음 시작 : 기본값(빈 목록·0골드)을 덮어쓴다 */
       ch = true;
     } else if (typeof g.tut === 'number' && g.tut < 99) { g.tut = 99; ch = true; }
-    if (!g.shopOpen && !g.needIntro && (((g.mq || {}).i || 0) > 0 || (g.dq || {}).i > 0)) { g.shopOpen = true; ch = true; } /* 예전 저장 : 이미 진행했으면 상점은 열린 채로 */
+    if (!g.shopOpen && !g.needIntro && (((g.mq || {}).i || 0) > 0 || (g.dq || {}).i > 0)) { g.shopOpen = true; ch = true; }
+    if (!g.scV2) { /* 예전 저장 : 이미 지난 전시·명작 연출은 다시 틀지 않는다 */
+      var sc2 = {}, k2; for (k2 in (g.scenes || {})) { sc2[k2] = g.scenes[k2]; } var D2 = g.disp || {}, P2 = g.pieces || {};
+      [['m1', 'disp_m1'], ['m2', 'disp_m2'], ['m3', 'disp_m3'], ['m4', 'disp_full'], ['d3', 'event_open']].forEach(function (x) { if (D2[x[0]]) { sc2[x[1]] = sc2[x[1]] || 1; } });
+      if (D2.m4) { sc2.ep1_end = sc2.ep1_end || 1; }
+      for (k2 in P2) { if (P2[k2] && P2[k2].grade === '명작') { sc2.first_master = sc2.first_master || 1; break; } }
+      g.scenes = sc2; g.scV2 = 1; ch = true;
+    } /* 예전 저장 : 이미 진행했으면 상점은 열린 채로 */
     ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'].forEach(function (k) { if (!Array.isArray(g[k])) { g[k] = []; ch = true; } }); /* 빠진 목록이 있으면 옛 화면이 견본 데이터를 채워 넣으므로 빈 목록으로 둔다 */
     if (!g.studioV || g.formedList.length || g.dryList.length || g.bisqueList.length) {
       g.studioV = 1; ch = true;

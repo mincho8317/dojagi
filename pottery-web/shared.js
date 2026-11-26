@@ -1698,7 +1698,7 @@
     }
     /* 배경음악 파일 (bgm/bgm_키.mp3) · 화면·컷신별 곡, 끝나기 전에 같은 곡을 겹쳐 틀어 끊김 없이 반복, 화면을 옮겨도 이어서 재생 · 파일을 못 읽으면 합성음으로 */
     var PAGE_BGM = { Main: 'main', MainSide: 'main', Queue: 'main', Codex: 'main', Settings: 'main', Resources: 'main', Wheel: 'craft', Dry: 'craft', Glaze: 'craft', Kiln: 'craft', KilnOpen: 'craft', Counter: 'counter', Commission: 'counter', Town: 'counter', Display: 'counter', Gather: 'gather', Shop: 'shop', Research: 'shop', Season: 'festa', Contest: 'festa' };
-    var SCENE_BGM = { prologue: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa' };
+    var SCENE_BGM = { prologue: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa', dok_meet: 'dok', dok_valley: 'dok', disp_m1: 'memory', disp_m2: 'memory', disp_m3: 'memory', disp_full: 'hope', first_master: 'hope', event_open: 'festa' };
     /* 곡은 화면을 옮겨도 끝까지 이어서 들려준다 · 한 곡이 끝날 때 지금 화면에 맞는 곡으로 넘어감 · 컷신은 바로 바꾸고 끝나면 듣던 곡·자리로 돌아감 */
     var BF = { cur: null, scene: null, prev: null, ok: false, dead: false, XF: 5 };
     function bgmWant() { return BF.scene || PAGE_BGM[PAGE] || 'main'; }
@@ -2319,6 +2319,29 @@
       dok_bye: { title: '지하실 너머', outfit: 'ws', steps: [
         { img: 'cg/d2.webp', pic: '🌫️', cap: '골짜기 입구', bg: '#20343A', amb: 'fog', lines: [['두두리', '크하하! 김 서방, 손이 제법인걸? 묵 할멈 손녀 맞네!'], ['두두리', '오늘은 여기까지! 어두우니까 조심히 올라가.'], ['두두리', '묵 잊지 말고! 흙이 모자라면 언제든 와!', { face: 'muk' }], ['나', '고마워요, 두두리. 또 올게요.', { face: 'smile' }]] }
       ] },
+      first_master: { title: '첫 명작', outfit: 'ws', steps: [
+        { pic: '🏆', cap: '가마 앞 · 갓 꺼낸 첫 명작', bg: '#4A3422', amb: 'sparkle', lines: [['', '가마에서 꺼낸 그릇을 한참 들여다봤다.', { fx: 'flash' }], ['나', '…할머니, 이거 명작이에요. 제가 빚은 거예요.', { face: 'proud' }], ['', '명작은 할머니의 전시대에 올릴 수 있다. 빈 칸 하나가, 조금 가까워졌다.']] }
+      ] },
+      disp_m1: { title: '전시대 · 둘째 칸', outfit: 'ws', steps: [
+        { pic: '🍲', cap: '전시대 · 윤 할매네 국밥 사발', bg: '#4A3422', amb: 'dust', lines: [['', '할머니가 비워 둔 칸에, 처음으로 내 그릇을 올렸다.'], ['나', '윤 할매네 국밥 그릇이에요, 할머니. 할매가 맛이 산다고 좋아하셨어요.', { face: 'smile' }]] },
+        { pic: '🗝️', cap: '창고 안쪽 · 검은 흙 자루와 흑유 항아리', bg: '#2E241C', amb: 'dark', lines: [['', '전시대 서랍에서 낡은 열쇠가 나왔다. 늘 잠겨 있던 창고 안쪽 칸의 열쇠였다.'], ['', '안에는 검은 흙 자루와 흑유 항아리. 그리고 할머니 글씨로 「다음 칸은 이걸로」.'], ['나', '…다 생각해 두셨구나.', { face: 'surprise' }], ['', '🔓 흑토 · 흑유를 쓸 수 있어요', { fx: 'flash' }]] }
+      ] },
+      disp_m2: { title: '전시대 · 셋째 칸', outfit: 'ws', steps: [
+        { pic: '🍵', cap: '전시대 · 청자 다완', bg: '#4A3422', amb: 'dust', lines: [['', '차 선생님 찻자리에 올렸던 다완과 꼭 같은 모양.'], ['나', '할머니, 차 선생님이 다회에 할머니 자리를 비워 두셨대요.', { face: 'smile' }]] },
+        { pic: '🌸', cap: '할머니의 도장 상자', bg: '#3A2E22', amb: 'memory', lines: [['', '서랍 안쪽에 작은 나무 상자가 있었다. 꽃, 별, 물결… 할머니가 그릇에 찍던 도장들.'], ['나', '이제 내 그릇에도 찍어 볼게요.', { face: 'smile' }], ['', '🔓 붓 시유대에서 도장을 쓸 수 있어요', { fx: 'flash' }]] }
+      ] },
+      disp_m3: { title: '전시대 · 넷째 칸', outfit: 'ws', steps: [
+        { pic: '💐', cap: '전시대 · 백자 화병', bg: '#4A3422', amb: 'dust', lines: [['', '정윤 씨 화실 창가에 놓였던 화병이 생각났다.'], ['나', '할머니, 정윤 씨가 다시 그림을 그려요. 할머니 공방을 그리고 있대요.', { face: 'smile' }]] },
+        { pic: '🔴', cap: '종이에 싼 붉은 흙과 진사 원석', bg: '#3A2420', amb: 'memory', lines: [['', '서랍 맨 아래, 붉은 흙 한 줌과 진사 원석이 한지에 싸여 있었다.'], ['할머니', '불을 잘 다루게 되거든 써 보렴. 가마 속에서 붉게 피어난단다.', { face: 'smile' }], ['', '🔓 적토 · 진사유를 쓸 수 있어요', { fx: 'flash' }]] }
+      ] },
+      disp_full: { title: '다 채운 전시대', outfit: 'ws', steps: [
+        { pic: '🌕', cap: '전시대 마지막 칸 · 달항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '마지막 칸에 달항아리를 올렸다.'], ['', '텅 비어 있던 할머니의 전시대가, 처음으로 가득 찼다.', { fx: 'flash' }]] },
+        { img: 'cg/r2.webp', pic: '✉️', cap: '편지 마지막 장', bg: '#3A2E22', amb: 'memory', lines: [['나', '할머니, 다 채웠어요. …할머니랑 같이 채운 거예요.', { face: 'sad' }], ['', '편지 마지막 장의 지운 줄이, 오늘은 조금 다르게 읽혔다.']] },
+        { pic: '🏠', cap: '공방 · 새로 그리는 도면', bg: '#4A3422', amb: 'sparkle', lines: [['나', '이제 이 공방을, 내 공방으로 꾸며 볼까.', { face: 'proud' }], ['', '🔓 공방 리모델링이 열렸어요 · 상점 「리모델링」에서 꾸며요', { fx: 'flash' }]] }
+      ] },
+      event_open: { title: '도깨비 마을 축제', outfit: 'ws', steps: [
+        { pic: '🎐', cap: '방울이와 도롱이의 초대장', bg: '#3A3042', amb: 'petals', lines: [['방울이', '김 서방! 곧 도깨비 마을에 축제가 열려!'], ['도롱이', '강 할머니는 해마다 축제 그릇을 빚어 줬어!'], ['나', '축제 그릇이라… 나도 빚어 볼게.', { face: 'smile' }], ['', '🔓 「이벤트」가 열렸어요 · 축제 철이면 축제 손님이 찾아와요', { fx: 'flash' }]] }
+      ] },
       dok_meet: { title: '지하실의 손님', outfit: 'ws', steps: [
         { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '전시대에 그릇을 하나 더 올린 날 밤.'], ['', '덜컹—!', { fx: 'shake' }], ['', '늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?', { face: 'surprise' }]] },
         { img: 'cg/s2.webp', pic: '👹', cap: '지하실에서 올라온 도깨비', bg: '#4A3422', amb: 'dust', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 골짜기 문지기 두두리.'], ['두두리', '공방에 불이 켜졌길래 올라와 봤지. 묵 할멈은 어디 갔어?'], ['나', '…할머니는 작년에 돌아가셨어요.', { face: 'sad' }], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
@@ -2522,6 +2545,7 @@
       document.body.appendChild(ov);
       try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
     }
+    S.storyCard = card;
     var SHN = { plate: '접시', dawan: '다완', maebyeong: '매병', moonjar: '달항아리', lotuscup: '연꽃잔', hwabyeong: '화병', hangari: '항아리' };
     var TOWN = { market: '오일장 매점', temple: '산사 다실', harbor: '항구 매점', gallery: '미술관 거리' };
     // 의뢰를 끝낸 뒤 · 새 모양 → 챕터 완료 → 에피소드 끝 순서로 보여 준다
@@ -2532,7 +2556,6 @@
         var C = L.chapterOf(md), E = L.EPIS[md.kind];
         if (C) { q.push(function (nx) { card(md.kind === 'dok' ? '👹' : '📖', C.title, (md.kind === 'dok' ? '도깨비 이야기 ' : '에피소드 ') + E.n + ' · ' + md.chNo + '챕터 완료', md.who + '의 이야기가 단골 수첩에 모두 채워졌어요.' + (C.town ? '\n마을 지도에 새 구역이 열렸어요 · ' + TOWN[C.town] : ''), '다음으로', nx); }); }
       }
-      if (md.id === 'm20') { q.push(function (nx) { S.storyPlay('ep1_end', nx); }); }
       if (md.id === 'd15') { q.push(function (nx) { card('🏺', '도깨비 이야기 1 · 끝', '이야기는 다음 에피소드로 이어져요', '마을 한가운데 큰 독은 왜 금이 갔을까요?\n강 할매는 도깨비 마을에 무엇을 남겼을까요?', '계속', nx); }); }
       (function run(i) { if (q[i]) { setTimeout(function () { q[i](function () { run(i + 1); }); }, i ? 200 : 900); } })(0);
     };
