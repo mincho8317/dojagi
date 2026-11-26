@@ -5879,14 +5879,16 @@ class Component extends DCLogic {
   /* ── 의뢰 자동 선택 : 받은 의뢰와 그 기물의 상태(빚음 · 시유 · 가마 · 굽는 중)가 바뀌면 물레 목표를 아직 모자란 의뢰 기물로 ── */
   qAuto(g) {
     var W = this.ctls.Wheel; if (!W || !W.state) { return; }
-    if ((W.touched && W.touched.length) || W.drag) { return; } /* 빚는 중엔 목표를 안 바꾼다 (다 빚은 뒤 다시 본다) */
+    if (W.drag || this.cutMode || g.onWheel) { return; } /* 손으로 빚는 순간 · 실로 자르는 중엔 다음 기회에 */
     var Q = this.qlib(), act; try { act = Q.active(g); } catch (e) { return; }
     var kf = g.kilnFilled || {}, key = act.map(function (a) { return a.id + ':' + (a.mid || '') + ':' + JSON.stringify(a.dl || {}); }).join('|') + '#' + (g.glazeList || []).map(function (x) { return x.goalSid || x.shape; }).join(',') + '/' + (g.kilnList || []).map(function (x) { return x.goalSid || x.shape; }).join(',') + '/' + Object.keys(kf).length + '/' + (g.kiln || '') + '/' + (g.batchItems || []).length + '/' + (g.onWheel || '');
     if (key === this._qaKey) { return; } this._qaKey = key;
     var self = this; setTimeout(function () { self.qAutoNow(); }, 0);
   }
   qAutoNow() {
-    var g = this.loadG(), Q = this.qlib();
+    var g = this.loadG(), Q = this.qlib(), self = this;
+    /* 의뢰 받기 전에 빚어 둔 기물 : 모양이 맞으면 그 의뢰 기물로 (모자란 수만큼) → 다음 목표로 넘어간다 */
+    try { ['glazeList', 'kilnList'].forEach(function (k) { (self.loadG()[k] || []).forEach(function (x) { if (!x.goalSid) { self.qTag(x.id); } }); }); g = this.loadG(); } catch (eT) {}
     try { if (!g.slab) { var act = Q.active(g), AL = Q.alloc(g, act), tids = Q.tracked(g, act), sk = ''; /* 판성형 의뢰 기물 : 판 성형대 목표를 그 모양으로 */
       act.forEach(function (q) { if (sk || tids.indexOf(q.id) < 0) { return; } ((AL[q.id] || {}).items || []).forEach(function (r) { if (!sk && r.it && r.it.slabTg && r.n - r.dl - r.readyN - r.wip > 0) { sk = r.it.slabTg; } }); });
       if (sk && g.slabTg !== sk) { this.setG2({ slabTg: sk }); } } } catch (eS) {}
