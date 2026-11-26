@@ -179,7 +179,9 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <span style="font-family:'Jua',sans-serif;font-size:14px;color:#B9533A">{{ct.card.title}}</span>
           <span style="display:flex;flex-wrap:wrap;gap:5px">
             <sc-for list="{{ct.card.conds}}" as="cd" hint-placeholder-count="2">
-              <span style="padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;font-size:11.5px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+              <span style="{{cd.st}}"><span style="font-size:12px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+                <sc-if value="{{cd.hasSub}}" hint-placeholder-val="{{false}}"><span style="display:flex;flex-wrap:wrap;gap:3px"><sc-for list="{{cd.subs}}" as="sb" hint-placeholder-count="3"><span style="padding:1px 7px;border-radius:7px;background:#F3E3C4;font-size:11px;font-weight:700;color:#7A3E1E">{{sb.t}}</span></sc-for></span></sc-if>
+              </span>
             </sc-for>
           </span>
           <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{ct.card.reward}}</span>
@@ -3189,7 +3191,7 @@ class Ctl_ct extends StationBase {
       var md = MS.def;
       var mn = { id: LN, cat: 'req', name: md.who, res: md.res, tone: md.tone, tag: LBL + ' · ' + (md.idx + 1) + '/' + MS.defs.length + ' · ' + md.role, tagBg: LN === 'season' ? '#C2577A' : (LN === 'dok' ? '#3E6B8A' : '#7A3E8E'), qt: md.title };
       var PO = QL.payout(md, MS), rewardTxt = PO.gold.toLocaleString() + 'G' + (PO.shards ? ' · 파편 ' + PO.shards : '') + ' · 명성 +' + QL.TUNE.questFame + (PO.mats ? ' · ' + Object.keys(PO.mats).map(function (k) { return (QL.MATN[k] || k) + ' ' + PO.mats[k]; }).join(' · ') : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
-      var itemConds = md.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : '') }; });
+      var itemConds = md.items.map(function (it) { return { t: (QL.baseName ? QL.baseName(it) : it.name) + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : ''), subs: QL.condList ? QL.condList(it) : [] }; });
       if (MS.thanks) {
         mn.kind = 'thanks'; mn.face = '기쁨'; mn.lines = TX((md.doneBy && MS.pick && md.doneBy[MS.pick]) || md.done).concat(['(의뢰 완료 · ' + rewardTxt + ')']);
         mn.choices = [{ label: MS.defs[md.idx + 1] ? '다음 이야기 듣기' : '고맙습니다', tone: 'go', run: function () {
@@ -3234,7 +3236,7 @@ class Ctl_ct extends StationBase {
         if (MA && MA.deliverable > 0 && MA.items.every(function (r) { return r.ok; })) { // 모든 기물이 준비돼야 납품
           mn.kind = 'deliver'; mn.face = '기대';
           mn.lines = md.type === 'gather' ? ['부탁한 재료, 구했어?', '(모아 둔 재료를 꺼내 보인다)'] : ['부탁한 그릇은 어떻게 되어가?', '(조건에 맞는 작품 ' + MA.deliverable + '점을 꺼내 보인다)'];
-          mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { t: r.it.name + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
+          mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { subs: QL.condList ? QL.condList(r.it) : [], t: (QL.baseName ? QL.baseName(r.it) : r.it.name) + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
           mn.choices = [
             { label: md.type === 'gather' ? '재료 건네기' : MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } },
             { label: '조금 더 다듬을게요', tone: '', run: function () { self.next('“천천히 해도 괜찮아.”'); } }
@@ -3615,7 +3617,7 @@ class Ctl_ct extends StationBase {
       meOn: /^나(?:\/\w+)?: /.test(String(lines[li] || '')),
       meImg: (function () { var mm = /^나(?:\/(\w+))?: /.exec(String(lines[li] || '')); if (!mm) { return ''; } var f = mm[1] || 'neutral', ws = (g.tut || 0) >= 9; if (ws && f === 'sad') { f = 'neutral'; } return 'char/b_' + (ws ? 'mews' : 'me') + '_' + f + '.webp'; })(),
       showCard: hasCard,
-      card: hasCard ? cur.card : { title: '', conds: [], reward: '' },
+      card: hasCard ? (function (c) { var o = {}, k; for (k in c) { o[k] = c[k]; } o.conds = (c.conds || []).map(function (d) { var sb = d.subs || [], hs = sb.length > 0; return { t: d.t, subs: sb, hasSub: hs, st: hs ? 'flex:1 1 100%;display:flex;flex-direction:column;gap:3px;padding:5px 8px;border-radius:10px;background:#FFF4DE;border:2px solid #8A6440' : 'display:inline-flex;padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440' }; }); return o; })(cur.card) : { title: '', conds: [], reward: '' }, /* 의뢰 기물마다 조건을 풀어서 */
       showChoices: choices.length > 0,
       choices: choices,
       choiceTop: hasCard ? 330 - (choices.length - 2) * 30 : 400 - (choices.length - 2) * 30,
@@ -5438,7 +5440,7 @@ class Component extends DCLogic {
       var y = {}, k; for (k in x) { y[k] = x[k]; } var A = AL[id];
       y.kind = 'wait'; y.face = '평온';
       y.lines = ['천천히 해도 괜찮아요. 여기서 기다릴게요.'];
-      if (A && A.items) { y.card = { title: (title || x.qt || '의뢰') + ' · 기다리는 중', conds: A.items.map(function (r) { var have = Math.min(r.n, (r.dl || 0) + (r.readyN || 0)); return { t: (r.it.name || '') + ' ' + (have >= r.n ? '✓ ' : '') + have + '/' + r.n }; }), reward: rw || (x.card && x.card.reward) || '완성되면 바로 건네요' }; }
+      if (A && A.items) { y.card = { title: (title || x.qt || '의뢰') + ' · 기다리는 중', conds: A.items.map(function (r) { var have = Math.min(r.n, (r.dl || 0) + (r.readyN || 0)); return { subs: self.qlib().condList(r.it), t: self.qlib().baseName(r.it) + ' ' + (have >= r.n ? '✓ ' : '') + have + '/' + r.n }; }), reward: rw || (x.card && x.card.reward) || '완성되면 바로 건네요' }; }
       y.choices = [{ label: '작업하러 가기', tone: 'go', run: function () { self.goPanel(1); } }];
       return y;
     }
@@ -5487,7 +5489,7 @@ class Component extends DCLogic {
     var self = this, Q = ctl.qlib(), seed = (cq.n || 0) + 1, d = this.normalDef(g, seed), dur = this.durOf(d.items), po = Q.payout({ items: d.items }, { mig: {} });
     return { id: 'nv' + seed, cat: 'req', kind: 'offer', name: d.who, res: d.res, tone: '#6B5A45', tag: '일반 의뢰 · 동네 손님', tagBg: '#8A7A63', face: '부탁', qt: d.title,
       lines: ['안녕하세요, 그릇을 부탁드리고 싶어요.', '(기한 ' + this.fmtDur(dur) + ' · 기한 안에 건네면 보상 2배)'],
-      card: { title: d.title, conds: d.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') }; }), reward: po.gold.toLocaleString() + 'G' + (po.shards ? ' · 파편 ' + po.shards : '') + ' (기한 안 ×2)' },
+      card: { title: d.title, conds: d.items.map(function (it) { return { subs: self.qlib().condList(it), t: self.qlib().baseName(it) + (it.n > 1 ? ' ×' + it.n : '') }; }), reward: po.gold.toLocaleString() + 'G' + (po.shards ? ' · 파편 ' + po.shards : '') + ' (기한 안 ×2)' },
       choices: [
         full ? { label: '받은 의뢰를 먼저 끝내요', tone: '', run: function () { ctl.say('의뢰는 한 번에 하나씩 · 카운터에서 기다리는 손님 의뢰를 먼저 끝내요'); } } :
         { label: '맡을게요', tone: 'go', run: function () { var g2 = ctl.loadG(), now = Date.now(); ctl.setG({ nq: (g2.nq || []).concat([{ id: 'n' + seed + '_' + now, who: d.who, res: d.res, title: d.title, items: d.items, at: now, due: now + dur, dl: {} }]), cq: advance('norm') }); ctl.say('「' + d.title + '」 의뢰를 받았어요 · 기한 ' + self.fmtDur(dur)); ctl.setState({ gi: 0, line: 0, enterN: (ctl.state.enterN || 0) + 1 }); } },
@@ -5501,7 +5503,7 @@ class Component extends DCLogic {
     var po = Q.payout({ items: o.items }, { mig: {} }), fast = Date.now() <= o.due;
     base.kind = 'deliver'; base.face = '기대';
     base.lines = ['부탁드린 그릇, 되었나요?', '(조건에 맞는 작품 ' + A.deliverable + '점을 꺼내 보인다)'];
-    base.card = { title: o.title + ' · 납품', conds: A.items.map(function (r) { return { t: r.it.name + ' ✓ ' + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: (po.gold * (fast ? 2 : 1)).toLocaleString() + 'G' + (fast ? ' (기한 안 ×2)' : ' (기한 지남)') };
+    base.card = { title: o.title + ' · 납품', conds: A.items.map(function (r) { return { subs: self.qlib().condList(r.it), t: self.qlib().baseName(r.it) + ' ✓ ' + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: (po.gold * (fast ? 2 : 1)).toLocaleString() + 'G' + (fast ? ' (기한 안 ×2)' : ' (기한 지남)') };
     base.choices = [{ label: A.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverNormal(ctl, o.id); } }, { label: '조금 더 다듬을게요', tone: '', run: function () { ctl.next(''); } }];
     return base;
   }

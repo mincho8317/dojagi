@@ -131,7 +131,9 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
           <span style="font-family:'Jua',sans-serif;font-size:14px;color:#B9533A">{{card.title}}</span>
           <span style="display:flex;flex-wrap:wrap;gap:5px">
             <sc-for list="{{card.conds}}" as="cd" hint-placeholder-count="2">
-              <span style="padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440;font-size:11.5px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+              <span style="{{cd.st}}"><span style="font-size:12px;font-weight:700;color:#5B3A24">{{cd.t}}</span>
+                <sc-if value="{{cd.hasSub}}" hint-placeholder-val="{{false}}"><span style="display:flex;flex-wrap:wrap;gap:3px"><sc-for list="{{cd.subs}}" as="sb" hint-placeholder-count="3"><span style="padding:1px 7px;border-radius:7px;background:#F3E3C4;font-size:11px;font-weight:700;color:#7A3E1E">{{sb.t}}</span></sc-for></span></sc-if>
+              </span>
             </sc-for>
           </span>
           <span style="font-size:12px;font-weight:700;color:#2E6B5F">보상 · {{card.reward}}</span>
@@ -365,7 +367,7 @@ class Component extends DCLogic {
       var md = MS.def;
       var mn = { id: LN, cat: 'req', name: md.who, res: md.res, tone: md.tone, tag: LBL + ' · ' + (md.idx + 1) + '/' + MS.defs.length + ' · ' + md.role, tagBg: LN === 'season' ? '#C2577A' : (LN === 'dok' ? '#3E6B8A' : '#7A3E8E'), qt: md.title };
       var PO = QL.payout(md, MS), rewardTxt = PO.gold.toLocaleString() + 'G' + (PO.shards ? ' · 파편 ' + PO.shards : '') + ' · 명성 +' + QL.TUNE.questFame + (PO.mats ? ' · ' + Object.keys(PO.mats).map(function (k) { return (QL.MATN[k] || k) + ' ' + PO.mats[k]; }).join(' · ') : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 모양 해금' : '');
-      var itemConds = md.items.map(function (it) { return { t: it.name + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : '') }; });
+      var itemConds = md.items.map(function (it) { return { t: (QL.baseName ? QL.baseName(it) : it.name) + (it.n > 1 ? ' ×' + it.n : '') + (MS.dl[it.key] >= it.n ? ' ✓' : ''), subs: QL.condList ? QL.condList(it) : [] }; });
       if (MS.thanks) {
         mn.kind = 'thanks'; mn.face = '기쁨'; mn.lines = TX((md.doneBy && MS.pick && md.doneBy[MS.pick]) || md.done).concat(['(의뢰 완료 · ' + rewardTxt + ')']);
         mn.choices = [{ label: MS.defs[md.idx + 1] ? '다음 이야기 듣기' : '고맙습니다', tone: 'go', run: function () {
@@ -410,7 +412,7 @@ class Component extends DCLogic {
         if (MA && MA.deliverable > 0 && MA.items.every(function (r) { return r.ok; })) { // 모든 기물이 준비돼야 납품
           mn.kind = 'deliver'; mn.face = '기대';
           mn.lines = md.type === 'gather' ? ['부탁한 재료, 구했어?', '(모아 둔 재료를 꺼내 보인다)'] : ['부탁한 그릇은 어떻게 되어가?', '(조건에 맞는 작품 ' + MA.deliverable + '점을 꺼내 보인다)'];
-          mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { t: r.it.name + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
+          mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { subs: QL.condList ? QL.condList(r.it) : [], t: (QL.baseName ? QL.baseName(r.it) : r.it.name) + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
           mn.choices = [
             { label: md.type === 'gather' ? '재료 건네기' : MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } },
             { label: '조금 더 다듬을게요', tone: '', run: function () { self.next('“천천히 해도 괜찮아.”'); } }
@@ -791,7 +793,7 @@ class Component extends DCLogic {
       meOn: /^나(?:\/\w+)?: /.test(String(lines[li] || '')),
       meImg: (function () { var mm = /^나(?:\/(\w+))?: /.exec(String(lines[li] || '')); if (!mm) { return ''; } var f = mm[1] || 'neutral', ws = (g.tut || 0) >= 9; if (ws && f === 'sad') { f = 'neutral'; } return 'char/b_' + (ws ? 'mews' : 'me') + '_' + f + '.webp'; })(),
       showCard: hasCard,
-      card: hasCard ? cur.card : { title: '', conds: [], reward: '' },
+      card: hasCard ? (function (c) { var o = {}, k; for (k in c) { o[k] = c[k]; } o.conds = (c.conds || []).map(function (d) { var sb = d.subs || [], hs = sb.length > 0; return { t: d.t, subs: sb, hasSub: hs, st: hs ? 'flex:1 1 100%;display:flex;flex-direction:column;gap:3px;padding:5px 8px;border-radius:10px;background:#FFF4DE;border:2px solid #8A6440' : 'display:inline-flex;padding:2px 9px;border-radius:8px;background:#FFF4DE;border:2px solid #8A6440' }; }); return o; })(cur.card) : { title: '', conds: [], reward: '' }, /* 의뢰 기물마다 조건을 풀어서 */
       showChoices: choices.length > 0,
       choices: choices,
       choiceTop: hasCard ? 330 - (choices.length - 2) * 30 : 400 - (choices.length - 2) * 30,
