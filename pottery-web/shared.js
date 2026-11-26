@@ -652,6 +652,7 @@
       var out = [];
       WIPK.forEach(function (k) { (g[k] || []).forEach(function (it) { out.push({ it: it, at: k }); }); });
       ((g.bisque || {}).items || []).forEach(function (it) { out.push({ it: it, at: 'bisque' }); });
+      ((g.pk2 || {}).k || []).forEach(function (x) { if (x && x.it) { out.push({ it: x.it, at: 'firing' }); } }); /* 공방 가마에서 굽는 중 */
       var kf = g.kilnFilled || {}; for (var c in kf) { if (kf[c] && typeof kf[c] === 'object') { out.push({ it: kf[c], at: 'kiln' }); } }
       if (g.kiln === 'firing') { (g.batchItems || []).forEach(function (it) { if (!it.broken) { out.push({ it: it, at: 'firing' }); } }); }
       return out;
@@ -2581,9 +2582,13 @@
     v.ptDue = due ? (left > 0 ? fmt(left) + ' 남음' : '기한 지남') : '';
     v.ptDueSt = 'flex:none;font-size:10.5px;font-weight:700;color:' + (due && left <= 0 ? '#FFB49A' : (due && left < 600000 ? '#FFD08A' : '#E8D3B5'));
     v.ptChips = (r.items || []).slice(0, 3).map(function (x, k) {
-      var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === sel, nm = (x.it && (x.it.name || x.it.shapeN)) || '기물';
-      return { t: (done ? '✓ ' : '') + nm + ' ' + have + '/' + x.n, aria: '요구 기물 ' + (k + 1) + ' · ' + nm + ' ' + have + '/' + x.n + (done ? ' · 완료' : ' · 눌러서 작업'),
-        st: CH + (done ? 'background:#2F6328;color:#FFFDF5;border:2px solid #2F6328' : (on ? 'background:#FFE7A8;color:#2B1A0F;border:2px solid #E3B23C' : 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440')),
+      var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === sel, nm = (x.it && (Q && Q.baseName ? Q.baseName(x.it) : (x.it.name || x.it.shapeN))) || '기물';
+      /* 진행 단계 : 🏺 성형 완료 · 🎨 시유 완료 · 🔥 굽는 중 · ✓ 완성 */
+      var W = x.wipAt || {}, stg = done ? 'ok' : (W.firing || W.kiln ? 'fire' : (W.kilnList ? 'glz' : (W.glazeList || W.bisqueList || W.dryList || W.formedList ? 'form' : '')));
+      var SI = { ok: '✓ ', fire: '🔥', glz: '🎨', form: '🏺', '': '' }, SN = { ok: '완성', fire: '굽는 중', glz: '시유 완료', form: '성형 완료', '': '아직 안 빚음' };
+      var BG = { ok: 'background:#2F6328;color:#FFFDF5;border:2px solid #2F6328', fire: 'background:#FFE0C2;color:#8A3A1A;border:2px solid #E07A3C', glz: 'background:#DDEBF5;color:#24506E;border:2px solid #5B8DB8', form: 'background:#F3E3C4;color:#5B3A24;border:2px solid #B98A5C', '': 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440' };
+      return { t: SI[stg] + nm + (x.n > 1 ? ' ' + have + '/' + x.n : ''), aria: '요구 기물 ' + (k + 1) + ' · ' + nm + ' ' + have + '/' + x.n + ' · ' + SN[stg] + (done ? '' : ' · 누르면 이 모양·유약으로 골라요'), stage: SN[stg],
+        st: CH + BG[stg] + (on && !done ? ';box-shadow:0 0 0 2px #FFE27A' : ''),
         tap: function () { if (pick) { pick(a, x); return; } try { sessionStorage.setItem('potPick', JSON.stringify({ tag: x.tag || '', id: a.id, key: x.key || '' })); } catch (e) {} go('Main.dc.html'); } };
     });
     if (!v.ptChips.length) { v.ptChips = [{ t: a.who ? a.who + '에게 가 보기' : '카운터에서 확인', aria: '카운터로', st: CH + 'background:#FFF4DE;color:#5B3A24;border:2px solid #8A6440', tap: function () { if (pick) { pick(null, null); } else { try { sessionStorage.setItem('potPick', JSON.stringify({ counter: 1 })); } catch (e) {} go('Main.dc.html'); } } }]; }

@@ -1214,7 +1214,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <sc-for list="{{rightS}}" as="rs" hint-placeholder-count="0"><button type="button" onClick="{{rs.tap}}" style="{{rs.st}}" aria-label="{{rs.aria}}">{{rs.t}} ▶</button></sc-for>
   </div>
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
-    <div role="status" style="position:absolute;left:6px;right:6px;top:3px;height:50px;z-index:120;box-sizing:border-box;padding:0 12px;border-radius:14px;background:rgba(43,26,15,.96);border:3px solid #FFE7A8;display:flex;align-items:center;justify-content:center;font-family:Jua,sans-serif;font-size:14px;line-height:1.3;color:#FFF4DE;text-align:center;pointer-events:none;animation:pop .25s ease both"><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{toast}}</span></div>
+    <div role="status" style="{{toastSt}}"><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{toast}}</span></div>
   </sc-if>
   <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;z-index:50">
     <a href="Main.dc.html" aria-label="공방" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
@@ -5856,27 +5856,25 @@ class Component extends DCLogic {
   lift() { var R = (this.stripEl || document.body).getBoundingClientRect(); return Math.round(76 * R.width / 390); } /* 끄는 물건을 손가락 위로 띄우는 높이 */
   /* 위쪽 의뢰 칩 : 고른 요구 기물의 다음 작업으로 · 시유 화면이면 그 기물을 시유그릇에, 아니면 물레 목표로 */
   curPanel() { for (var i = 0; i < 5; i++) { if (this.inView(i)) { return i; } } return -1; }
-  reqPick(q, r) {
-    var self = this, g = this.loadG(), W = this.ctls.Wheel, nm = (r.it && (r.it.name || r.it.shapeN)) || '기물', P = this.curPanel();
-    var have = (r.dl || 0) + (r.readyN || 0); if (have >= r.n) { this.say(nm + '은 다 준비됐어요' + (P === 0 ? '' : ' · 카운터에서 건네요')); return; }
-    if (r.it && r.it.mat) { this.say(nm + ' ' + r.n + '개를 모아 카운터에서 건네요'); return; }
-    if (!r.tag || !(r.it && r.it.prof)) { this.say(nm + ' · 카운터에서 의뢰 내용을 확인해요'); return; }
-    var formed = (g.glazeList || []).filter(function (x) { return x.goalSid === r.tag; })[0];
-    var glazed = (g.kilnList || []).filter(function (x) { return x.goalSid === r.tag; })[0];
-    if (W) { W.setState({ target: r.tag, sheet: '' }); }
-    if (P === 2 || (P !== 1 && formed)) {
-      if (formed) {
-        var G = this.ctls.Glaze;
-        if (G && G.state.sel === formed.id) { if (P !== 2) { this.goPanel(2); } this.say(nm + ' · 시유그릇에 있어요 · 유약에 담가요'); return; }
-        if (P !== 2) { this.goPanel(2); }
-        setTimeout(function () { if (self.putPiece(formed.id)) { self.say(nm + '을 시유그릇에 올렸어요 · ' + ((r.it.glaze && (self.qlib().GP || {})[r.it.glaze]) || '유약') + '에 담가요'); } self.bump(); }, P === 2 ? 0 : 650);
-        return;
-      }
-      if (glazed) { this.say(nm + '은 시유를 마쳤어요 · 가마에 넣어 구워요'); return; }
-      this.say(nm + '을 먼저 빚어요 · 물레 목표로 정했어요'); setTimeout(function () { self.goPanel(1); }, 500); return;
+  reqPick(q, r) { /* 위쪽 의뢰 칩 : 그 기물의 모양(물레·판 목표)과 유약(시유그릇·붓)을 고른다 · 화면은 그대로 */
+    var self = this, g = this.loadG(), Q = this.qlib(), W = this.ctls.Wheel, it = r.it || {}, nm = Q.baseName ? Q.baseName(it) : (it.name || '기물'), P = this.curPanel();
+    var have = (r.dl || 0) + (r.readyN || 0); if (have >= r.n) { this.say('✓ ' + nm + ' · 다 준비됐어요 · 카운터에서 건네요'); return; }
+    if (it.mat) { this.say(nm + ' ' + r.n + '개를 모아 카운터에서 건네요'); return; }
+    var WA = r.wipAt || {}, stg = WA.firing || WA.kiln ? '굽는 중' : (WA.kilnList ? '시유 완료' : (WA.glazeList ? '성형 완료' : ''));
+    var shp = '';
+    if (it.slabTg) { if (g.slabTg !== it.slabTg) { this.setG2({ slabTg: it.slabTg }); } shp = '판 목표'; }
+    else if (r.tag && it.prof && W) { W.setState({ target: r.tag, sheet: '' }); shp = '물레 목표'; }
+    var z = it.glaze || (it.glazeAny || [])[0] || '', gzn = z ? ((Q.GNM || {})[z] || z) : '';
+    if (z) {
+      var G = this.ctls.Glaze; if (G && G.state) { var cur = G.current ? G.current() : null; G.setState({ glaze: z, glazeManual: cur ? cur.id : (G.state.glazeManual || '') }); }
+      var BP = this.bpref(); if (this.PAL().some(function (p) { return p[0] === z; })) { BP.gk = z; BP.col = this.fillOf({ glaze: z }, 'glazed'); if (this.paint) { this.paint.gk = z; this.paint.col = BP.col; } }
     }
-    if (P !== 1) { this.goPanel(1); }
-    this.say('물레 목표 · ' + nm); this.bump();
+    /* 시유 화면에서 그릇이 비어 있으면 그 기물을 바로 올린다 */
+    var formed = (g.glazeList || []).filter(function (x) { return x.goalSid === r.tag; })[0];
+    if (P === 2 && formed && this.gzMode !== 'brush') { var G2 = this.ctls.Glaze; if (G2 && !G2.state.sel) { this.putPiece(formed.id); } }
+    var nxt = stg === '굽는 중' ? ' · 가마에서 굽는 중' : (stg === '시유 완료' ? ' · 시유 완료 → 가마로' : (stg === '성형 완료' ? ' · 성형 완료 → 시유' : ''));
+    this.say('✓ ' + nm + ' 선택 · ' + (Q.condList ? Q.condList(it).map(function (c) { return c.t; }).slice(0, 3).join(' · ') : '') + nxt);
+    this.sfx('tap'); this.bump();
   }
   /* ── 의뢰 자동 선택 : 받은 의뢰와 그 기물의 상태(빚음 · 시유 · 가마 · 굽는 중)가 바뀌면 물레 목표를 아직 모자란 의뢰 기물로 ── */
   qAuto(g) {
@@ -6904,6 +6902,10 @@ class Component extends DCLogic {
     var cDel = 0, cOffer = false; try { var A = Q.alloc(g, act); act.forEach(function (a) { var r = A[a.id]; if (r && r.deliverable > 0 && r.items.every(function (x) { return x.ok; })) { cDel++; } }); } catch (e) {}
     cOffer = act.length < 3;
     var ev = [{ i: 3, n: doneN, t: '🔥' + doneN, a: '가마 완료 ' + doneN }, { i: 0, n: cDel, t: '📦' + cDel, a: '납품 가능 ' + cDel }, { i: 0, n: cDel ? 0 : (cOffer ? 1 : 0), t: '🛎', a: '손님 대기' }];
+    /* 알림 자리 : 화면마다 비어 있는 곳 (일치율 판 · 선반 · 도구를 가리지 않게) · 화면 좌표는 상단 바(56) 포함 */
+    (function () { var cp = -1, bd = 9; for (var ii = 0; ii < 5; ii++) { var dd = Math.abs(self.cd(ii)); if (dd < bd) { bd = dd; cp = ii; } }
+      var TP = { 0: 'left:60px;right:60px;top:62px', 1: 'left:100px;right:8px;top:184px', 2: self.gzMode === 'brush' ? 'left:44px;right:44px;top:247px' : 'left:20px;right:20px;top:584px', 3: 'left:70px;right:20px;top:603px', 4: 'left:30px;right:30px;top:342px' }[cp] || 'left:20px;right:20px;top:184px';
+      v.toastSt = 'position:absolute;' + TP + ';z-index:120;box-sizing:border-box;padding:4px 10px;border-radius:11px;background:rgba(43,26,15,.9);border:2px solid #FFE7A8;font-family:Jua,sans-serif;font-size:12.5px;line-height:1.3;color:#FFF4DE;text-align:center;pointer-events:none;animation:pop .25s ease both'; })();
     v.leftS = []; v.rightS = []; v.sideLT = Math.abs(this.cd(3)) < 0.5 ? 560 : 300; /* 가마 화면은 온도계·가마 칸과 겹치니 바닥 쪽으로 */
     ev.forEach(function (e) {
       if (!e.n) { return; }
