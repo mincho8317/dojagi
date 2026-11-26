@@ -908,7 +908,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <span style="position:absolute;left:22px;top:26px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#9A6A44,#6B4429);border:2px solid #3E2616"></span><span style="position:absolute;left:12px;top:12px;width:70px;height:16px;border-radius:8px;background:linear-gradient(#A97B52,#7A5434);border:2px solid #3E2616"></span>
         <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;left:6px;top:62px;background:#7A2A10;color:#FFE7A8">🪵 {{woodTxt}}</span>
       </div>
-      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}<br>초록(적정)에 오래 둘수록 소성 점수↑<br>콘이 다 누우면 완성 ✨ 눌러서 꺼내기</div>
+      <div style="position:absolute;left:146px;top:592px;width:236px;z-index:5;box-sizing:border-box;padding:6px 9px;border-radius:12px;background:rgba(43,26,15,.8);font-family:'Jua',sans-serif;font-size:11px;line-height:1.45;color:#F3E3C4;pointer-events:none">{{kHead}}</div>
 
       </sc-if>
     </div>
@@ -6008,12 +6008,12 @@ class Component extends DCLogic {
       if ((g.kilnList || []).length >= this.KB().cap) { this.say('1층 선반이 가득 찼어요'); this.sfx('fail'); return false; }
       this.setG2({ glazeList: (g.glazeList || []).filter(function (x) { return x.id !== id; }), kilnList: (g.kilnList || []).concat([it]), glzWait: '' });
       try { G && G.setState({ sel: '', lastId: '' }); } catch (e) {}
-      window.__glzWait = false; this.sfx('ok'); this.say('1층 선반에 올렸어요 · 가마 쪽으로 넘기면 선반이 따라와요'); return true;
+      window.__glzWait = false; this.sfx('ok'); return true;
     }
     if (g.glzWait !== id) { return false; }
     window.__glzWait = false; this.setG2({ glzWait: '' }); this.sfx('ok');
     try { var G = this.ctls.Glaze; G && G.setState({ lastId: '' }); } catch (e) {}
-    this.say('1층 선반에 올렸어요 · 가마 쪽으로 넘기면 선반이 따라와요'); return true;
+    return true;
   }
   putGlaze(b) { if (b.on) { this.say(b.name + '이 이미 시유그릇에 들어 있어요'); return false; } if (b.pick) { b.pick(); } this.sfx('ok'); this.say(b.name + '을 시유그릇에 부었어요 · 시유 준비'); return true; }
   /* 실을 물레에 대면 : 실이 밑동을 가로지르는 연출 → 잘라 낸 기물이 물레 위에 남는다 */
@@ -6026,7 +6026,7 @@ class Component extends DCLogic {
     var tut = false; try { tut = this.qlib().isTut(g); } catch (e) {}
     if (!tut && (g.glazeList || []).length >= this.KB().cap) { this.say('2층 선반이 가득 찼어요 (6/6) · 유약을 발라 자리를 비워요'); this.sfx('fail'); return false; }
     /* 실을 물레에 대면 자르기 자세로 : 점선이 나오고, 손가락으로 실을 잡아 점선을 따라 끝까지 당겨야 잘린다 */
-    this.cutMode = true; this.cutPx = null; this.sfx('tap'); this.say('실이 걸렸어요 · 왼쪽 손잡이를 잡고 점선을 따라 끝까지 당겨요'); this.bump();
+    this.cutMode = true; this.cutPx = null; this.sfx('tap'); this.bump();
     return true;
   }
   cutGeom() { var W = this.ctls.Wheel, r = (W && W.state && W.state.r) || [40], mx = Math.max.apply(null, r.concat([20])), half = Math.round(mx * 1.04 + 26); return { x0: 195 - half, x1: 195 + half, y: 382, tol: 22 }; }
@@ -6079,7 +6079,6 @@ class Component extends DCLogic {
     var g = this.loadG(); if (g.onWheel !== id && g.onSlab !== id) { return false; }
     this.setG2(g.onSlab === id ? { onSlab: '' } : { onWheel: '' }); this.sfx('ok'); try { window.__buzz && window.__buzz(10); } catch (e) {}
     var n = (this.loadG().glazeList || []).length;
-    this.say('2층 선반에 올렸어요 (' + n + '/' + this.KB().cap + ') · 유약 쪽으로 넘기면 선반이 따라와요');
     return true;
   }
   carryStart(e, kind, data, html, w, h, tap, opt) {
