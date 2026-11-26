@@ -432,10 +432,11 @@ class Component extends DCLogic {
       m.kind = !q.min ? 'offer' : (!q.minDone ? (cups.length ? 'deliver' : 'wait') : 'thanks');
       m.qt = '할머님 잔을 닮은 찻잔';
       if (!q.min) {
-        m.face = '부탁'; m.askAt = 2; m.lines = ['강 선생님! …아, 손녀분이시구나. (한참 말이 없다) …그러셨구나.', '저는 골목 찻집 하는 민이에요. 선생님께 받은 찻잔이 지난겨울에 깨졌어요.', '염치없지만… 찻잔 하나만 부탁드려도 될까요. 똑같지 않아도 괜찮아요.', '나: (…할머니라면 거절 안 하셨겠지.)']; /* 첫 의뢰 대사 9줄 → 4줄 */
+        var PNm = g.pname || '손녀';
+        m.face = '부탁'; m.askAt = 7; m.lines = ['강 선생님! …아, 손녀분이시구나. (한참 말이 없다) …그러셨구나.', '저는 골목 찻집 하는 민이에요. 선생님께 받은 찻잔이 지난겨울에 깨졌어요.', '나: 죄송해요. 공방은… 정리하러 온 거라서요.', '…' + PNm + ' 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.', '나/surprise: (…그걸 아직 기억하셨구나.)', '나/sad: (할머니 무릎에 앉아, 할머니 손 아래 내 손을 얹고 돌리던 물레…)', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚어 주시면, 그걸로 충분해요.']; /* 주인공 마음을 돌리는 대사 */
         m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }], reward: '400G · 명성 +20' };
         m.choices = [
-          { label: '한 번만… 해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
+          { label: '해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
           { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
         ];
         if (self.tutNow() === 0) { m.choices = [m.choices[0]]; }
@@ -443,7 +444,7 @@ class Component extends DCLogic {
         if (cups.length) {
           var best = g.pieces[cups[0]];
           var pay = Math.round(400 * (gradeMul[best.grade] || 1) / 10) * 10;
-          m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손녀분이 빚은 잔이라 더 좋아요.', '나/smile: (…할머니, 보셨어요?)'];
+          m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손끝이 똑같네요.', '선생님이 늘 그러셨어요. 우리 ' + (g.pname || '손녀') + '이 언젠가 돌아오면 줄 게 있다고.', '부치지도 못할 편지를 자꾸 쓰시더니… 공방 전시대 안에 모아 두셨어요.', '나/surprise: (…할머니가, 편지를?)'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
               var f = fame(20);

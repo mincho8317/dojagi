@@ -3252,10 +3252,11 @@ class Ctl_ct extends StationBase {
       m.kind = !q.min ? 'offer' : (!q.minDone ? (cups.length ? 'deliver' : 'wait') : 'thanks');
       m.qt = '할머님 잔을 닮은 찻잔';
       if (!q.min) {
-        m.face = '부탁'; m.askAt = 2; m.lines = ['강 선생님! …아, 손녀분이시구나. (한참 말이 없다) …그러셨구나.', '저는 골목 찻집 하는 민이에요. 선생님께 받은 찻잔이 지난겨울에 깨졌어요.', '염치없지만… 찻잔 하나만 부탁드려도 될까요. 똑같지 않아도 괜찮아요.', '나: (…할머니라면 거절 안 하셨겠지.)']; /* 첫 의뢰 대사 9줄 → 4줄 */
+        var PNm = g.pname || '손녀';
+        m.face = '부탁'; m.askAt = 7; m.lines = ['강 선생님! …아, 손녀분이시구나. (한참 말이 없다) …그러셨구나.', '저는 골목 찻집 하는 민이에요. 선생님께 받은 찻잔이 지난겨울에 깨졌어요.', '나: 죄송해요. 공방은… 정리하러 온 거라서요.', '…' + PNm + ' 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.', '나/surprise: (…그걸 아직 기억하셨구나.)', '나/sad: (할머니 무릎에 앉아, 할머니 손 아래 내 손을 얹고 돌리던 물레…)', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚어 주시면, 그걸로 충분해요.']; /* 주인공 마음을 돌리는 대사 */
         m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }], reward: '400G · 명성 +20' };
         m.choices = [
-          { label: '한 번만… 해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
+          { label: '해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
           { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
         ];
         if (self.tutNow() === 0) { m.choices = [m.choices[0]]; }
@@ -3263,7 +3264,7 @@ class Ctl_ct extends StationBase {
         if (cups.length) {
           var best = g.pieces[cups[0]];
           var pay = Math.round(400 * (gradeMul[best.grade] || 1) / 10) * 10;
-          m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손녀분이 빚은 잔이라 더 좋아요.', '나/smile: (…할머니, 보셨어요?)'];
+          m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손끝이 똑같네요.', '선생님이 늘 그러셨어요. 우리 ' + (g.pname || '손녀') + '이 언젠가 돌아오면 줄 게 있다고.', '부치지도 못할 편지를 자꾸 쓰시더니… 공방 전시대 안에 모아 두셨어요.', '나/surprise: (…할머니가, 편지를?)'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
               var f = fame(20);
@@ -6474,17 +6475,19 @@ class Component extends DCLogic {
   }
   /* ── 전시대 (패널 4) : 에피소드마다 자리 · 챕터를 끝내면 열리고, 조건에 맞는 명작을 올리면 해금 (영구 고정) ── */
   dispEps() { return this.qlib().DISP || []; }
-  dispCur() { var E = this.dispEps(), i = Math.max(0, Math.min(E.length - 1, this.dispI || 0)); return E[i] || { slots: [] }; }
+  dispCur() { var E = this.dispEps(), i = Math.max(0, Math.min(E.length - 1, this.dispI || 0)), e = E[i] || { slots: [] }; if (e.ep === 'main') { var o = {}, k; for (k in e) { o[k] = e[k]; } o.slots = [{ id: 'm0', fixed: true }].concat(e.slots); return o; } return e; } /* 에피소드 1 첫째 칸 : 어릴 적 처음 빚은 그릇 (할머니가 놓아 둔 것) */
+  firstBowl() { var g = this.loadG(); return { id: 'm0', name: (g.pname || '손녀') + '의 첫 그릇', shape: 'bowl', sk: 'sabal', clay: 'cy1', glaze: 'celadon', H: 44, prof: [28, 39, 31, 44, 35, 48, 38, 52, 41, 47, 50, 44], cov: 0.7 }; }
   dispStep(d) { var n = this.dispEps().length; this.dispI = ((this.dispI || 0) + d + n) % n; this.dispSel = ''; this.dispPk = false; this.dispCf = ''; this.sfx('tap'); this.bump(); }
-  dispState(g, sl) { var Q = this.qlib(), pid = (g.disp || {})[sl.id]; if (pid && (g.pieces || {})[pid]) { return 'filled'; } return Q.chDone(g, sl.line, sl.ch) ? 'open' : 'locked'; }
+  dispState(g, sl) { if (sl.fixed) { return 'filled'; } var Q = this.qlib(), pid = (g.disp || {})[sl.id]; if (pid && (g.pieces || {})[pid]) { return 'filled'; } return Q.chDone(g, sl.line, sl.ch) ? 'open' : 'locked'; }
   dispTap(sl) {
     var g = this.loadG(), Q = this.qlib(), st = this.dispState(g, sl);
+    if (sl.fixed) { this.dispSel = sl.id; this.say('할머니 쪽지 · 「우리 ' + (g.pname || '손녀') + '이 처음 빚은 그릇」'); this.sfx('tap'); this.bump(); return; }
     if (this.dispSel === sl.id && st === 'open') { this.dispOpenPk(); return; }
     this.dispSel = sl.id; this.dispCf = ''; this.sfx('tap');
     if (st === 'locked') { this.say('「' + Q.chTitle(sl.line, sl.ch) + '」 챕터를 끝내면 열리는 자리예요'); }
     this.bump();
   }
-  dispOpenPk() { var g = this.loadG(), sl = this.dispSlot(); if (!sl) { return; } var st = this.dispState(g, sl);
+  dispOpenPk() { var g = this.loadG(), sl = this.dispSlot(); if (!sl || sl.fixed) { return; } var st = this.dispState(g, sl);
     if (st === 'locked') { this.say('「' + this.qlib().chTitle(sl.line, sl.ch) + '」 챕터를 끝내면 열려요'); this.sfx('fail'); return; }
     if (st === 'filled') { this.say('이미 전시한 자리예요 · 한 번 올린 작품은 그대로 둬요'); return; }
     this.dispPk = true; this.dispCf = ''; this.sfx('tap'); this.bump(); }
@@ -6927,28 +6930,29 @@ class Component extends DCLogic {
     (function () {
       var EP = self.dispCur(), slots = EP.slots || [], DP = g.disp || {}, ps = g.pieces || {}, sel = self.dispSlot(), NUM = ['①', '②', '③', '④', '⑤', '⑥'];
       var CX = [52, 150, 248], CY = [96, 196], filledN = 0;
-      if (!sel && slots.length) { var fo = slots.filter(function (x) { return self.dispState(g, x) === 'open'; })[0]; self.dispSel = (fo || slots[0]).id; sel = self.dispSlot(); }
+      var FX = slots.length && slots[0].fixed ? 1 : 0, numOf = function (sl) { return sl.fixed ? '🥣' : NUM[slots.indexOf(sl) - FX]; };
+      if (!sel && slots.length) { var fo = slots.filter(function (x) { return self.dispState(g, x) === 'open'; })[0]; self.dispSel = (fo || slots[FX] || slots[0]).id; sel = self.dispSlot(); }
       var dsl = slots.map(function (sl, i) {
-        var st = self.dispState(g, sl), on = sel && sel.id === sl.id, p = st === 'filled' ? ps[DP[sl.id]] : null; if (p) { filledN++; }
-        var rwN = (Q.UNLI[sl.rw] || '') + ' ' + (Q.UNLN[sl.rw] || '');
+        var st = self.dispState(g, sl), on = sel && sel.id === sl.id, p = st === 'filled' ? (sl.fixed ? self.firstBowl() : ps[DP[sl.id]]) : null; if (p && !sl.fixed) { filledN++; }
+        var rwN = sl.fixed ? '할머니 쪽지' : (Q.UNLI[sl.rw] || '') + ' ' + (Q.UNLN[sl.rw] || '');
         var bd = st === 'filled' ? 'border:2px solid rgba(255,214,107,.55);background:radial-gradient(ellipse at 50% 85%,rgba(255,231,168,.35),rgba(255,231,168,0) 70%)' : (st === 'open' ? 'border:2px dashed #FFD66B;background:rgba(255,231,168,.14);animation:navPulse 1.6s ease-in-out infinite' : 'border:2px dashed rgba(232,211,181,.35);background:rgba(30,15,5,.45)');
         return { id: sl.id, filled: !!p, pot: p ? self.potOf(p, self.fillOf(p, 'glazed')) : { vb: '0 0 10 10', d: 'M0 0' }, on: on ? 'true' : 'false',
-          aria: NUM[i] + ' ' + Q.chTitle(sl.line, sl.ch) + ' 전시 자리 · ' + (st === 'locked' ? '잠김' : (st === 'open' ? '조건 ' + Q.dispTxt(sl.need) + ' · 올리면 ' + rwN + ' 해금' : (p.name || '') + ' 전시 중')),
+          aria: sl.fixed ? '첫째 칸 · ' + p.name + ' · 할머니 쪽지' : numOf(sl) + ' ' + Q.chTitle(sl.line, sl.ch) + ' 전시 자리 · ' + (st === 'locked' ? '잠김' : (st === 'open' ? '조건 ' + Q.dispTxt(sl.need) + ' · 올리면 ' + rwN + ' 해금' : (p.name || '') + ' 전시 중')),
           tap: function () { self.dispTap(sl); },
           st: 'all:unset;cursor:pointer;pointer-events:auto;position:absolute;left:' + CX[i % 3] + 'px;top:' + CY[Math.floor(i / 3)] + 'px;width:88px;height:84px;box-sizing:border-box;border-radius:12px;' + bd + (on ? ';box-shadow:0 0 0 3px #FFE27A,0 0 14px rgba(255,214,107,.8)' : ''),
-          ico: st === 'locked' ? '🔒' : (st === 'open' ? NUM[i] : ''), icoSt: st === 'filled' ? 'display:none' : 'position:absolute;left:0;right:0;top:' + (st === 'open' ? 6 : 10) + 'px;text-align:center;font-family:Jua,sans-serif;font-size:' + (st === 'open' ? 22 : 20) + 'px;line-height:1;color:#FFE7A8',
+          ico: st === 'locked' ? '🔒' : (st === 'open' ? numOf(sl) : ''), icoSt: st === 'filled' ? 'display:none' : 'position:absolute;left:0;right:0;top:' + (st === 'open' ? 6 : 10) + 'px;text-align:center;font-family:Jua,sans-serif;font-size:' + (st === 'open' ? 22 : 20) + 'px;line-height:1;color:#FFE7A8',
           txt: st === 'locked' ? Q.chTitle(sl.line, sl.ch) : (st === 'open' ? Q.dispTxt(sl.need).split(' · ').slice(0, 2).join(' ') : ''),
           txtSt: st === 'filled' ? 'display:none' : 'position:absolute;left:3px;right:3px;top:' + (st === 'open' ? 32 : 36) + 'px;text-align:center;font-family:Jua,sans-serif;font-size:10.5px;line-height:1.15;color:' + (st === 'open' ? '#FFF4DE' : '#C9B79C') + ';display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden',
-          rw: (st === 'filled' ? '✓ ' : '') + rwN, rwSt: 'position:absolute;left:2px;right:2px;bottom:2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 3px;border-radius:7px;font-family:Jua,sans-serif;font-size:10px;line-height:14px;' + (st === 'filled' ? 'background:#3B7A32;color:#FFFDF5' : (st === 'open' ? 'background:#7A3E8E;color:#FFF' : 'background:rgba(43,26,15,.7);color:#B9A88E')) };
+          rw: (st === 'filled' && !sl.fixed ? '✓ ' : '') + rwN, rwSt: 'position:absolute;left:2px;right:2px;bottom:2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 3px;border-radius:7px;font-family:Jua,sans-serif;font-size:10px;line-height:14px;' + (sl.fixed ? 'background:#FFF4DE;color:#8A5A36' : st === 'filled' ? 'background:#3B7A32;color:#FFFDF5' : (st === 'open' ? 'background:#7A3E8E;color:#FFF' : 'background:rgba(43,26,15,.7);color:#B9A88E')) };
       });
-      var sst = sel ? self.dispState(g, sel) : 'locked', sp = sel && sst === 'filled' ? ps[DP[sel.id]] : null, CH = 'padding:1px 7px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;line-height:17px;white-space:nowrap;';
-      v.dp = { title: (EP.icon || '') + ' ' + (EP.title || ''), cnt: filledN + '/' + slots.length, slots: dsl,
+      var sst = sel ? self.dispState(g, sel) : 'locked', sp = sel && sst === 'filled' ? (sel.fixed ? self.firstBowl() : ps[DP[sel.id]]) : null, CH = 'padding:1px 7px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;line-height:17px;white-space:nowrap;';
+      v.dp = { title: (EP.icon || '') + ' ' + (EP.title || ''), cnt: filledN + '/' + (slots.length - FX), slots: dsl,
         prev: function () { self.dispStep(-1); }, next: function () { self.dispStep(1); },
         barSt: 'position:absolute;left:14px;right:14px;top:362px;min-height:66px;box-sizing:border-box;padding:7px 10px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4);pointer-events:auto;display:flex;flex-direction:column;gap:5px',
-        selName: sel ? NUM[slots.indexOf(sel)] + ' ' + Q.chTitle(sel.line, sel.ch) + (sst === 'locked' ? ' · 챕터를 끝내면 열려요' : (sp ? ' · ' + (sp.name || '') : ' · 전시할 명작을 올려요')) : '',
-        selRw: sel ? (sst === 'filled' ? '✓ ' : '🎁 ') + (Q.UNLN[sel.rw] || '') + ' 해금' : '',
-        chips: sel ? Q.dispChecks(sp, sel.need).map(function (x) { return { t: (sp ? (x.ok ? '✓ ' : '✗ ') : '') + x.t, st: CH + (sp ? (x.ok ? 'background:#E9F2DC;color:#2F5022' : 'background:#F8E1DA;color:#A3442C') : 'background:#F3E3C4;color:#5B3A24') }; }) : [],
-        act: function () { self.dispOpenPk(); }, actTxt: sst === 'locked' ? '🔒 잠김' : (sst === 'filled' ? '전시 중' : '올리기'),
+        selName: sel && sel.fixed ? '🥣 「우리 ' + (g.pname || '손녀') + '이 처음 빚은 그릇」 · 할머니 쪽지' : sel ? numOf(sel) + ' ' + Q.chTitle(sel.line, sel.ch) + (sst === 'locked' ? ' · 챕터를 끝내면 열려요' : (sp ? ' · ' + (sp.name || '') : ' · 전시할 명작을 올려요')) : '',
+        selRw: sel && sel.fixed ? '어릴 적 추억' : sel ? (sst === 'filled' ? '✓ ' : '🎁 ') + (Q.UNLN[sel.rw] || '') + ' 해금' : '',
+        chips: sel && sel.fixed ? [{ t: '할머니 손 아래 내 손을 얹고 처음 돌린 물레', st: CH + 'background:#F3E3C4;color:#5B3A24' }] : sel ? Q.dispChecks(sp, sel.need).map(function (x) { return { t: (sp ? (x.ok ? '✓ ' : '✗ ') : '') + x.t, st: CH + (sp ? (x.ok ? 'background:#E9F2DC;color:#2F5022' : 'background:#F8E1DA;color:#A3442C') : 'background:#F3E3C4;color:#5B3A24') }; }) : [],
+        act: function () { self.dispOpenPk(); }, actTxt: sel && sel.fixed ? '추억' : sst === 'locked' ? '🔒 잠김' : (sst === 'filled' ? '전시 중' : '올리기'),
         actSt: 'all:unset;cursor:pointer;flex:0 0 auto;padding:6px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (sst === 'open' ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E'),
         pkOn: !!(this.dispPk && sel && sst === 'open'), pkClose: function () { self.dispPk = false; self.dispCf = ''; self.bump(); }, rows: [], pkEmpty: false, pkTitle: '', pkSub: '' };
       if (v.dp.pkOn) {
@@ -6962,7 +6966,7 @@ class Component extends DCLogic {
             st: 'display:flex;align-items:center;gap:8px;box-sizing:border-box;padding:6px 8px;border-radius:14px;border:2px solid ' + (ok ? '#4F7A3A;background:#F4F9EC' : '#E2CBA2;background:#FFFBF2') };
         });
         rows.sort(function (a, b) { return (b.ok ? 1 : 0) - (a.ok ? 1 : 0); });
-        v.dp.rows = rows; v.dp.pkEmpty = !rows.length; v.dp.pkTitle = NUM[slots.indexOf(sel)] + ' ' + Q.chTitle(sel.line, sel.ch) + ' 전시 · ' + (Q.UNLN[sel.rw] || '') + ' 해금';
+        v.dp.rows = rows; v.dp.pkEmpty = !rows.length; v.dp.pkTitle = numOf(sel) + ' ' + Q.chTitle(sel.line, sel.ch) + ' 전시 · ' + (Q.UNLN[sel.rw] || '') + ' 해금';
         v.dp.pkSub = '조건 : ' + Q.dispTxt(sel.need) + ' · 한 번 올린 작품은 내릴 수 없어요';
       }
     }).call(this);

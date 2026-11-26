@@ -344,7 +344,7 @@
     };
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지 하나만 좀 부탁해도 되겠어?', '나: (…정리하러 온 건데.)', '나/smile: (민 씨 아주머니도 그렇고… 할머니를 기다리는 사람이 이렇게 많았구나.)', '나: (남은 흙이 떨어질 때까지만, 좀 만들어 드려야겠다.)'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지 하나만 좀 부탁해도 되겠어?', '나/smile: (할머니 단골이시구나.)', '나: 할머니 그릇만은 못해도, 국밥 맛 안 떨어지게 빚어 드릴게요.', '…허, 말하는 건 강 할매 판박이네.'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
       { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11'], choose: { key: 't10', any: ['white', 'celadon'] }, title: '새 메뉴, 새 그릇', intro: ['강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '근디 손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 푸른 청자든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
       { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 나 없어도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠어?'], done: ['…그려. 이 접시여. 고마워, 정말.', '손주 녀석 국밥, 내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.'] },
       // ── 2챕터 · 차 선생의 찻자리 ──
@@ -1397,7 +1397,7 @@
         return;
       }
       if (!st) {
-        if (!(g.unl || {}).gather) { if (!g.shopOpen && g.starter3 && clayN(g) <= 0) { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); }); } return; } /* 채집 전엔 흙이 떨어지면 상점을 연다 */
+        if (!(g.unl || {}).gather) { if (!g.shopOpen) { var g5 = load(); g5.shopOpen = true; save(g5); notify(); } return; } /* 상점은 「할머니의 전시대」 컷신 뒤 열림 (예전 저장 보정) */
         if (clayN(g) > 0 || !g.starter3) { return; } // 튜토리얼 끝 선물 흙(starter3)을 받은 뒤부터 센다
         window.PotteryShared.storyPlay('dok_intro', function () { gW(1); if (PAGE !== 'Gather') { goPage('Gather'); } });
         return;
@@ -1440,14 +1440,14 @@
           gW('bye');
           setTimeout(function () {
             window.PotteryShared.storyPlay('dok_bye', function () {
-              window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); });
+              (load().shopOpen ? function (k0, f0) { f0(); } : window.PotteryShared.storyPlay)('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); });
             });
           }, 300);
         });
         return;
       }
       if (st === 'bye' && !document.querySelector('.st-ov')) { // 배웅 컷신 중에 닫혔으면 이어서
-        window.PotteryShared.storyPlay('dok_bye', function () { window.PotteryShared.storyPlay('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); }); });
+        window.PotteryShared.storyPlay('dok_bye', function () { (load().shopOpen ? function (k0, f0) { f0(); } : window.PotteryShared.storyPlay)('open_shop', function () { var g2 = load(), ga = {}; for (var k in (g2.gather || {})) { ga[k] = g2.gather[k]; } ga.tix = 5; ga.at = Date.now(); g2.gather = ga; g2.shopOpen = true; save(g2); gW('done'); notify(); goPage('Main'); }); });
       }
     }
     // ── 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번 ──
@@ -1506,7 +1506,7 @@
           var showFin = function () {
             overlay('<div class="ic">' + (window.PotteryShared.ICO || String)((fin ? '🏆' : '🔓')) + '</div><h3>' + (fin ? '기초 튜토리얼 완료!' : '새 기능이 열렸어요') + '</h3><div class="chips">' + names.map(function (n) { return '<i>' + n + '</i>'; }).join('') + '</div><p>' + (fin ? '민 씨 의뢰를 마쳤어요! 모든 기능이 열렸어요.\n이어서 명작 진열과 와장창, 의뢰 받기, 제작 중 의뢰 확인, 연구를 짧게 알려 드릴게요.' : '다음 목표: ' + STEPS[nt].goal + (STEPS[nt].hint ? '\n\n' + STEPS[nt].hint : '')) + '</p>', [{ label: fin ? '좋아요' : '확인', run: function () { try { localStorage.setItem('tutCardSeen', String(nt)); } catch (e) {} if (fin) { setTimeout(function () { tour(load()); }, 300); return; } showCard(load(), false); guideRetry(450, 8); } }]);
           };
-          if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', showFin); }
+          if (fin && window.PotteryShared.storyPlay) { window.PotteryShared.storyPlay('after_min', function () { var g2 = load(); g2.shopOpen = true; save(g2); notify(); showFin(); }); } /* 할머니의 전시대 → 상점 열림 */
           else if (fin) { showFin(); }
           else { /* 중간 단계는 화면을 가리지 않는다 : 목표 칩 갱신 + 짧은 알림 */ toast('🎯 다음 목표 ' + stepNo(nt) + '/' + (STEPS.length - 1) + ' · ' + STEPS[nt].goal + (names.length ? '  (🔓 ' + names.join(', ') + ')' : '')); setTimeout(function () { showCard(load(), false); var mm = document.querySelector('.tut-mini'); if (mm && mm.animate) { mm.animate([{ transform: mm.style.transform + ' scale(1)' }, { transform: mm.style.transform + ' scale(1.35)' }, { transform: mm.style.transform + ' scale(1)' }], { duration: 600, iterations: 2 }); } guideRetry(450, 8); }, 100); }
           notify();
@@ -2256,9 +2256,13 @@
         { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33', img: 'cg/p2.webp' },
         { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
       ] },
-      after_min: { title: '마지막 납품', steps: [
-        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '오랜만이라 그런가… 꽤 뿌듯하네.', { face: 'smile' }], ['나', '만족하셔서 다행이야.', { face: 'smile' }], ['나', '…할머니, 오랜만에 가마에 불 넣었어요.', { face: 'sad' }], ['나', '시간이 많이 지났으니, 오늘은 이만 들어가야겠다.']] },
-        { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 공방 앞에 줄 선 손님들', bg: '#5A4A30', amb: 'morning', lines: [['', '그런데 다음 날부터, 공방 앞에 손님들이 줄을 서서 기다리기 시작했다.'], ['', '다들 할머니를 찾으며.']] }
+      after_min: { title: '할머니의 전시대', steps: [
+        { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '…전시대에, 편지?', { face: 'surprise' }]] },
+        { img: 'cg/p3.webp', pic: '🗄️', cap: '공방 안쪽, 유리문 달린 전시대', bg: '#4A3422', amb: 'dust', lines: [['', '공방 안쪽, 늘 먼지만 쌓여 있던 전시대의 유리문을 열었다.'], ['', '텅 빈 칸들 사이, 맨 아래에 끈으로 묶은 편지 한 다발이 있었다.']] },
+        { img: 'cg/r2.webp', pic: '✉️', cap: '부치지 못한 편지들', bg: '#3A2E22', amb: 'dust', lines: [['할머니', '우리 아가, 타지 생활 많이 고되지? 힘들면 언제든 돌아와도 괜찮여.', { face: 'smile' }], ['할머니', '이 공방, 너 줄라고 지키고 있는 거여. 이어받아서 걱정 없이 살았으면 좋겄다.', { face: 'smile' }], ['할머니', '너랑 물레 앞에 붙어 앉아 있던 그때가, 할미 평생에 제일 행복했어.', { face: 'smile' }], ['', '…마지막 장.'], ['할머니', '손님들 그릇만 빚다 보니, 정작 이 전시대는 끝내 못 채웠구먼.'], ['할머니', '텅 빈 칸 보고 있으면 허전하고… 그게 제일 아쉬워.']] },
+        { img: 'cg/p3.webp', pic: '🥣', cap: '전시대 첫째 칸 · 울퉁불퉁한 그릇', bg: '#4A3422', amb: 'dust', lines: [['', '전시대 첫째 칸에는, 울퉁불퉁한 그릇 하나가 놓여 있었다.'], ['', '그 옆에 할머니 글씨로 쓴 쪽지. 「우리 {이름}이 처음 빚은 그릇」'], ['나', '…이걸, 여태 갖고 계셨어요?', { face: 'sad' }], ['나', '할머니 무릎에 앉아서, 할머니 손 아래 내 손을 얹고 돌리던 물레…', { face: 'sad' }]] },
+        { img: 'cg/p3.webp', pic: '🔥', cap: '결심', bg: '#4A3422', amb: 'sparkle', lines: [['나', '정리는 그만할게요, 할머니.'], ['나', '남은 칸은 제가 채울게요. 이 공방도, 제가 이어 갈게요.', { face: 'smile' }], ['', '그날 밤, 할머니가 쓰던 흙집 장부를 찾아 흙과 유약 재료를 주문했다.']] },
+        { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 영업 중', bg: '#5A4A30', amb: 'morning', lines: [['', '다음 날 아침, 공방 앞에 「영업 중」 팻말이 걸렸다.'], ['', '할머니를 찾아온 단골들이 하나둘 줄을 서기 시작했다.']] }
       ] },
       dok_intro: { title: '지하실 너머', outfit: 'ws', steps: [
         { img: 'cg/d0.webp', pic: '🫙', cap: '텅 빈 흙통', bg: '#2A2018', amb: 'dark', lines: [['', '저녁 무렵, 흙통 바닥이 드러났다.'], ['나', '…흙이 다 떨어졌네.'], ['나', '아직 받은 의뢰도 다 못 끝냈는데… 어떡하지.', { face: 'worry' }], ['', '빈 흙통 앞에 한참을 서 있었다.']] },
