@@ -2259,7 +2259,7 @@
       after_min: { title: '할머니의 전시대', steps: [
         { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '…전시대에, 편지?', { face: 'surprise' }]] },
         { img: 'cg/p3.webp', pic: '🗄️', cap: '공방 안쪽, 유리문 달린 전시대', bg: '#4A3422', amb: 'dust', lines: [['', '공방 안쪽, 늘 먼지만 쌓여 있던 전시대의 유리문을 열었다.'], ['', '텅 빈 칸들 사이, 맨 아래에 끈으로 묶은 편지 한 다발이 있었다.']] },
-        { img: 'cg/r2.webp', pic: '✉️', cap: '부치지 못한 편지들', bg: '#3A2E22', amb: 'dust', lines: [['할머니', '우리 아가, 타지 생활 많이 고되지? 힘들면 언제든 돌아와도 괜찮여.', { face: 'smile' }], ['할머니', '이 공방, 너 줄라고 지키고 있는 거여. 이어받아서 걱정 없이 살았으면 좋겄다.', { face: 'smile' }], ['할머니', '너랑 물레 앞에 붙어 앉아 있던 그때가, 할미 평생에 제일 행복했어.', { face: 'smile' }], ['', '…마지막 장.'], ['할머니', '손님들 그릇만 빚다 보니, 정작 이 전시대는 끝내 못 채웠구먼.'], ['할머니', '텅 빈 칸 보고 있으면 허전하고… 그게 제일 아쉬워.']] },
+        { img: 'cg/r2.webp', pic: '✉️', cap: '부치지 못한 편지들', bg: '#3A2E22', amb: 'dust', lines: [['할머니', '우리 아가, 타지 생활 많이 고되지? 힘들면 언제든 돌아와도 괜찮여.', { face: 'smile' }], ['할머니', '이 공방, 너 줄라고 지키고 있는 거여. 이어받아서 걱정 없이 살았으면 좋겄다.', { face: 'smile' }], ['할머니', '너랑 물레 앞에 붙어 앉아 있던 그때가, 할미 평생에 제일 행복했어.', { face: 'smile' }], ['나', '(읽다 보니, 어느새 마지막 장이네…)', { face: 'sad' }], ['할머니', '손님들 그릇만 빚다 보니, 정작 이 전시대는 아직도 채우질 못하고 있어.'], ['할머니', '텅 빈 칸 보고 있으면 허전하고… 그게 제일 아쉬워.'], ['할머니', '~~네가 와서 할미랑 같이 채워 주면 좋을 텐데…~~']] },
         { img: 'cg/p3.webp', pic: '🥣', cap: '전시대 첫째 칸 · 울퉁불퉁한 그릇', bg: '#4A3422', amb: 'dust', lines: [['', '전시대 첫째 칸에는, 울퉁불퉁한 그릇 하나가 놓여 있었다.'], ['', '그 옆에 할머니 글씨로 쓴 쪽지. 「우리 {이름}이 처음 빚은 그릇」'], ['나', '…이걸, 여태 갖고 계셨어요?', { face: 'sad' }], ['나', '할머니 무릎에 앉아서, 할머니 손 아래 내 손을 얹고 돌리던 물레…', { face: 'sad' }]] },
         { img: 'cg/p3.webp', pic: '🔥', cap: '결심', bg: '#4A3422', amb: 'sparkle', lines: [['나', '정리는 그만할게요, 할머니.'], ['나', '남은 칸은 제가 채울게요. 이 공방도, 제가 이어 갈게요.', { face: 'smile' }], ['', '그날 밤, 할머니가 쓰던 흙집 장부를 찾아 흙과 유약 재료를 주문했다.']] },
         { img: 'cg/a2.webp', pic: '🚶', cap: '다음 날 아침, 영업 중', bg: '#5A4A30', amb: 'morning', lines: [['', '다음 날 아침, 공방 앞에 「영업 중」 팻말이 걸렸다.'], ['', '할머니를 찾아온 단골들이 하나둘 줄을 서기 시작했다.']] }
@@ -2379,7 +2379,7 @@
       var steps = sc.steps.filter(function (s) { return !(opt.replay && s.input); }), si = 0, li = 0;
       var dlg = null, bust = null, typing = null, lastWho = null;
       function finish() { stopType(); ov.remove(); try { if (window.__bgmScene) { window.__bgmScene(null); } } catch (e) {} var g = load(), seen = {}; for (var k in (g.scenes || {})) { seen[k] = 1; } seen[id] = 1; patch({ scenes: seen }); if (done) { done(); } }
-      function stopType(full) { if (typing) { clearInterval(typing.t); if (full) { typing.el.innerHTML = ''; typing.el.textContent = typing.s; } typing = null; if (dlg) { var nx = dlg.querySelector('.st-next'); if (nx) { nx.style.visibility = 'visible'; } } } }
+      function stopType(full) { if (typing) { clearInterval(typing.t); if (full) { typing.el.innerHTML = ''; (typing.cs || []).forEach(function (o) { typing.el.appendChild(chEl(o)); }); } typing = null; if (dlg) { var nx = dlg.querySelector('.st-next'); if (nx) { nx.style.visibility = 'visible'; } } } }
       function fx(kind) {
         if (kind === 'shake' || kind === 'knock') { box.classList.remove('fx-shake', 'fx-knock'); void box.offsetWidth; box.classList.add('fx-' + kind); try { window.__sfx && window.__sfx(kind === 'shake' ? 'shake' : 'thud'); } catch (e) {} if (kind === 'knock') { setTimeout(function () { try { window.__sfx && window.__sfx('thud'); } catch (e) {} }, 260); } }
         if (kind === 'enter') { var cg0 = box.querySelector('.st-cg'); if (cg0) { cg0.style.animation = 'none'; void cg0.offsetWidth; cg0.style.animation = 'stEnter 1.3s ease-in forwards'; } var lt = document.createElement('div'); lt.className = 'st-enter'; box.appendChild(lt); setTimeout(function () { lt.remove(); }, 1500); try { window.__sfx && window.__sfx('whoosh'); } catch (e) {} }
@@ -2420,14 +2420,18 @@
         dlg.className = 'st-dlg' + (who ? '' : ' narr');
         var side = a ? a.side : 'l';
         dlg.innerHTML = (who ? '<span class="st-who ' + side + '">' + tx(who === '나' ? PN() : who) + '</span>' : '') + '<div class="st-txt" aria-live="polite"></div><span class="st-next" style="visibility:hidden">눌러서 계속 ▼</span>';
-        var el = dlg.querySelector('.st-txt'), chars = Array.from(text), n = 0, sp = who ? 34 : 42;
-        stopType(); typing = { el: el, s: text };
+        /* ~~…~~ : 취소선 (차마 하지 못한 말) */
+        var el = dlg.querySelector('.st-txt'), cs = [], stk = false, sp = who ? 34 : 42, n = 0;
+        String(text).split('~~').forEach(function (seg, k) { if (k > 0) { stk = !stk; } Array.from(seg).forEach(function (ch) { cs.push({ c: ch, s: stk }); }); });
+        var chars = cs.map(function (o) { return o.c; });
+        stopType(); typing = { el: el, s: chars.join(''), cs: cs };
         typing.t = setInterval(function () {
           if (n >= chars.length) { stopType(); return; }
-          var c = document.createElement('span'); c.className = 'ch'; c.textContent = chars[n++]; el.appendChild(c); if (n % 2 === 1 && /\S/.test(chars[n - 1])) { try { window.__sfx && window.__sfx('type'); } catch (e) {} }
+          var c = chEl(cs[n++]); el.appendChild(c); if (n % 2 === 1 && /\S/.test(chars[n - 1])) { try { window.__sfx && window.__sfx('type'); } catch (e) {} }
         }, sp);
         if (ln[2] && ln[2].fx) { fx(ln[2].fx); }
       }
+      function chEl(o) { var c = document.createElement('span'); c.className = 'ch'; c.textContent = o.c; if (o.s) { c.style.textDecoration = 'line-through'; c.style.textDecorationThickness = '2px'; c.style.opacity = '.6'; } return c; }
       function render() {
         var st = steps[si]; if (!st) { finish(); return; }
         if (li === 0) { scene(st); }
