@@ -414,12 +414,14 @@ class Component extends DCLogic {
           mn.lines = md.type === 'gather' ? ['부탁한 재료, 구했어?', '(모아 둔 재료를 꺼내 보인다)'] : ['부탁한 그릇은 어떻게 되어가?', '(조건에 맞는 작품 ' + MA.deliverable + '점을 꺼내 보인다)'];
           mn.card = { title: md.title + ' · 납품', conds: MA.items.map(function (r) { return { subs: QL.condList ? QL.condList(r.it) : [], t: (QL.baseName ? QL.baseName(r.it) : r.it.name) + ' ' + (r.dl + r.readyN >= r.n ? '✓ ' : '') + Math.min(r.n, r.dl + r.readyN) + '/' + r.n }; }), reward: MA.items.every(function (r) { return r.ok; }) ? '이번에 모두 채우면 · ' + rewardTxt : '일부 납품 · 나머지는 완성되면 다시 건네기' };
           mn.choices = [
-            { label: md.type === 'gather' ? '재료 건네기' : MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } },
-            { label: '조금 더 다듬을게요', tone: '', run: function () { self.next('“천천히 해도 괜찮아.”'); } }
+            { label: md.type === 'gather' ? '재료 건네기' : MA.deliverable + '점 건네기', tone: 'go', run: function () { self.deliverMain(LN); } }
           ];
         } else {
           mn.kind = 'wait'; mn.face = '평온'; mn.lines = ['천천히 해도 괜찮아.'];
-          mn.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+          mn.choices = [{ label: '다음 손님 받기', tone: 'go', run: function () { self.setState({ cAsk: '' }); self.next(''); } }, self.cancelChoice(LN, md.title, function () {
+            var m0 = self.state.g[KEY] || {}, patch = {}; patch[KEY] = { i: m0.i || 0, acc: false, dl: {}, mig: {}, thanks: false, log: m0.log || [] };
+            patch.tracks = (self.state.g.tracks || []).filter(function (x) { return x !== LN; }); if (self.state.g.track === LN) { patch.track = patch.tracks[0] || null; }
+            self.setG(patch); }, !!Object.keys(MS.dl || {}).length)];
         }
       }
       list.push(mn);
@@ -436,8 +438,7 @@ class Component extends DCLogic {
         m.face = '부탁'; m.askAt = 7; m.lines = ['강 선생님! …아, 손녀분이시구나. (한참 말이 없다) …그러셨구나.', '저는 골목 찻집 하는 민이에요. 선생님께 받은 찻잔이 지난겨울에 깨졌어요.', '나: 죄송해요. 공방은… 정리하러 온 거라서요.', '…' + PNm + ' 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.', '나/surprise: (…그걸 아직 기억하셨구나.)', '나/sad: (할머니 무릎에 앉아, 할머니 손 아래 내 손을 얹고 돌리던 물레…)', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚어 주시면, 그걸로 충분해요.']; /* 주인공 마음을 돌리는 대사 */
         m.card = { title: '할머님 잔을 닮은 찻잔', conds: [{ t: '찻잔' }, { t: '청자유' }], reward: '400G · 명성 +20' };
         m.choices = [
-          { label: '해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } },
-          { label: '지금은 어려워요', tone: '', run: function () { self.next('“그럼 다음에 또 들를게요.”'); } }
+          { label: '해 볼게요', tone: 'go', run: function () { self.setQ({ min: true }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); } }
         ];
         if (self.tutNow() === 0) { m.choices = [m.choices[0]]; }
       } else if (!q.minDone) {
@@ -451,8 +452,7 @@ class Component extends DCLogic {
               self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; qq.minThanks = true; return qq; })() });
               self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
               self.say('의뢰 완료 · 골드 +' + pay + ' · 명성 +20 · 신뢰 +1');
-            } },
-            { label: '조금만 더 다듬을게요', tone: '', run: function () { self.next('“네, 천천히 하세요.”'); } }
+            } }
           ];
           if (typeof self.tutNow() === 'number' && self.tutNow() < 9) { m.choices = [m.choices[0]]; }
         } else {
@@ -487,11 +487,10 @@ class Component extends DCLogic {
           u.face = '무심'; u.lines = ['주문한 밥공기 있나요?', '(' + b.name + '을(를) 내민다)'];
           u.choices = [
             { label: b.name + ' 건네기 · 350G', tone: 'go', run: function () { self.give([bowls[0]], { gold: g.gold + 350, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.guestDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('의뢰 완료 · 골드 +350'); } },
-            { label: '아직이에요', tone: '', run: function () { self.next(''); } }
           ];
         } else {
           u.face = '무심'; u.lines = ['주문한 밥공기 있나요?', '아직이군요. 내일 또 올게요.'];
-          u.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+          u.choices = [{ label: '다음 손님 받기', tone: 'go', run: function () { self.setState({ cAsk: '' }); self.next(''); } }, self.cancelChoice('guest', '둥근 밥공기', function () { self.setQ({ guest: false }); }, false)];
         }
       } else {
         u.face = '미소'; u.lines = ['밥맛이 좋아졌어요. 그릇 덕인가 봐요.'];
@@ -517,11 +516,10 @@ class Component extends DCLogic {
           c.face = '감탄'; c.lines = ['세 점 다 되었다고요?', '(백자 찻잔 세 점을 나란히 올려둔다)', '와… 창가에 두면 정말 예쁘겠어요.'];
           c.choices = [
             { label: '세 점 건네기 · 3,600G', tone: 'go', run: function () { self.give(whites.slice(0, 3), { gold: g.gold + 3600, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.weekDone = true; return qq; })() }); self.setState({ line: 0 }); self.say('주간 의뢰 완료 · 골드 +3,600'); } },
-            { label: '조금만 더요', tone: '', run: function () { self.next(''); } }
           ];
         } else {
           c.face = '평온'; c.lines = ['잔은 몇 점이나 되었나요?', '지금 ' + whites.length + '점이군요. 세 점이 모이면 다시 올게요.'];
-          c.choices = [{ label: '다음 손님 받기', tone: '', run: function () { self.next(''); } }];
+          c.choices = [{ label: '다음 손님 받기', tone: 'go', run: function () { self.setState({ cAsk: '' }); self.next(''); } }, self.cancelChoice('week', '카페 잔 세트', function () { self.setQ({ week: false }); }, false)];
         }
       } else {
         c.face = '기쁨'; c.lines = ['손님들이 잔을 보고 어디서 샀냐고 물어요. 공방 이름을 알려드렸어요.'];
@@ -710,6 +708,13 @@ class Component extends DCLogic {
       if (this.state.ctab !== t) { try { localStorage.setItem('ctab', t); } catch (e) {} this.setState({ ctab: t, gi: 0, line: 0, enterN: this.state.enterN + 1 }); }
     }
     this.pdel = d;
+  }
+  cancelChoice(key, title, fn, lost) { /* 받은 의뢰 취소 : 두 번 눌러 확정 */
+    var self = this, ask = this.state.cAsk === key;
+    return { label: ask ? '정말 취소할게요' : '의뢰 취소하기', tone: ask ? 'warn' : '', run: function () {
+      if (self.state.cAsk !== key) { self.setState({ cAsk: key }); self.say('한 번 더 누르면 「' + title + '」 의뢰를 취소해요' + (lost ? ' · 이미 건넨 기물은 돌아오지 않아요' : '')); return; }
+      fn(); self.setState({ cAsk: '', line: 0, enterN: self.state.enterN + 1 }); self.say('「' + title + '」 의뢰를 취소했어요 · 다시 찾아오면 맡을 수 있어요');
+    } };
   }
   next(msg) {
     if (this.state.deliver) { var sk = {}; for (var k0 in (this.state.delSkip || {})) { sk[k0] = true; } sk[this.state.deliver] = true; this.setState({ delSkip: sk }); }
