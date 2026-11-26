@@ -344,7 +344,7 @@
     };
     var STORY = [
       // ── 1챕터 · 윤 할매의 국밥집 ──
-      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지 하나만 좀 부탁해도 되겠어?', '나/smile: (할머니 단골이시구나.)', '나: 할머니 그릇만은 못해도, 국밥 맛 안 떨어지게 빚어 드릴게요.', '…허, 말하는 건 강 할매 판박이네.'], accLabel: '남은 흙만큼만요', done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
+      { id: 'm01', npc: 'yoon', ch: 'table', st: ['t1'], title: '강 할매 있슈?', intro: ['골목 끝에 불이 켜졌길래 와 봤어.', '…알고 왔어. 장례 때는 무릎이 말을 안 들어서 못 갔고.', '(빈 작업대를 한참 바라본다)', '그래도 국밥집 그릇은 깨지더라. 종지 하나만 좀 부탁해도 되겠어?', '나/smile: (할머니 단골이시구나.)', '나: 할머니 그릇만은 못해도, 국밥 맛 안 떨어지게 빚어 드릴게요.', '…허, 말하는 건 강 할매 판박이네.'], done: ['…손맛이 강 할매 그릇이랑 닮았네.', '쬐끄만 게 맨날 흙 묻히고 다니더니, 이젠 그릇을 빚네. 또 올게.'] },
       { id: 'm04', npc: 'yoon', ch: 'table', st: ['t10', 't11'], choose: { key: 't10', any: ['white', 'celadon'] }, title: '새 메뉴, 새 그릇', intro: ['강 할매랑 나, 같은 해에 이 골목에 가게를 열었어. 벌써 40년이여.', '근디 손주 녀석이 가게를 물려받겠다네. 새 메뉴도 만들자고.', '새 메뉴 그릇은 자네가 골라 줘. 하얀 백자든 푸른 청자든.'], done: ['손주가 그릇 사진을 찍어 가더라.'], doneBy: { white: ['하얀 그릇이라… 강 할매는 늘 까만 걸 줬는디.', '손주가 그러더라. 새 메뉴니께 새 얼굴이 좋대.'], black: ['까만 그릇이네. 강 할매랑 똑같이 골랐어.', '손주가 그러더라. 할머니 국밥 맛은 그대로 두재.'] } },
       { id: 'm05', npc: 'yoon', ch: 'table', st: ['t13', 't14', 't15'], unlockNote: '접시', title: '할매의 접시', intro: ['가게는 손주한테 맡기기로 했어. 나 없어도 맛은 안 끊기더라고.', '강 할매가 마지막으로 빚어 준다던 접시가 있어. 끝내 못 받았지.', '그걸 자네가 빚어 주겠어?'], done: ['…그려. 이 접시여. 고마워, 정말.', '손주 녀석 국밥, 내 거랑 맛이 좀 달라. 근디 손님은 더 늘었어.'] },
       // ── 2챕터 · 차 선생의 찻자리 ──
@@ -673,7 +673,7 @@
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var dk = lineState(g, 'dok'); if (dk.open && dk.acc && !dk.thanks && dk.def.type !== 'visit') { var d2 = dk.def; out.push({ id: 'dok', mid: d2.id, kind: 'dok', tag: '도깨비', who: d2.who, role: d2.role, res: d2.res, title: d2.title, items: d2.items, reward: d2.reward, dl: dk.dl, unlock: d2.unlock, unlockNote: d2.unlockNote, chapter: d2.ch, idx: d2.idx }); }
-      (g.nq || []).forEach(function (o) { var po = payout({ items: o.items }, { mig: {} }); out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: { gold: po.gold, shards: po.shards, fame: po.fame, text: po.gold.toLocaleString() + 'G · 파편 ' + po.shards + ' · 기한 안에 납품하면 2배' }, dl: o.dl || {}, at: o.at, due: o.due }); });
+      (g.nq || []).forEach(function (o) { var po = payout({ items: o.items }, { mig: {} }); out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: { gold: po.gold, shards: po.shards, fame: po.fame, text: po.gold.toLocaleString() + 'G · 파편 ' + po.shards }, dl: o.dl || {}, at: o.at, due: o.due }); });
       return out.concat(sideQuests(g));
     }
     var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
@@ -2679,7 +2679,7 @@
     var due = a.kind === 'normal' ? a.due : (KEYS[a.id] && at ? at + (3600 + 1800 * Math.max(0, nIt - 1)) * 1000 : 0), left = due ? due - now : 0;
     function fmt(ms) { var m = Math.round(ms / 60000); return m >= 60 ? Math.floor(m / 60) + '시간' + (m % 60 ? ' ' + (m % 60) + '분' : '') : m + '분'; }
     v.ptN = '1건'; v.ptT = a.title || a.who || '의뢰';
-    v.ptDue = due ? (left > 0 ? fmt(left) + ' 남음' : '기한 지남') : '';
+    v.ptDue = ''; /* 의뢰 기한 없음 */
     v.ptDueSt = 'flex:none;font-size:10.5px;font-weight:700;color:' + (due && left <= 0 ? '#FFB49A' : (due && left < 600000 ? '#FFD08A' : '#E8D3B5'));
     v.ptChips = (r.items || []).slice(0, 3).map(function (x, k) {
       var have = Math.min(x.n, (x.dl || 0) + (x.readyN || 0)), done = have >= x.n, on = !!x.tag && x.tag === sel, nm = (x.it && (Q && Q.baseName ? Q.baseName(x.it) : (x.it.name || x.it.shapeN))) || '기물';

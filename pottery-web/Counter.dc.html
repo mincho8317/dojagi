@@ -450,7 +450,7 @@ class Component extends DCLogic {
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
               var f = fame(20);
-              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; qq.minThanks = true; return qq; })() });
+              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
               self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
               self.say('의뢰 완료 · 골드 +' + pay + '');
             } }
