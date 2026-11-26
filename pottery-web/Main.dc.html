@@ -5353,6 +5353,7 @@ class Component extends DCLogic {
   pickFromOther() {
     var raw = null; try { raw = sessionStorage.getItem('potPick'); sessionStorage.removeItem('potPick'); } catch (e) {} if (!raw) { return; }
     var o = JSON.parse(raw), g = this.loadG(), Q = this.qlib(), act = Q.active(g), a = act[0];
+    if (o.panel != null) { this.jumpTo(o.panel); return; } /* 도감 「목표」에서 온 이동 */
     if (o.counter || !a) { this.jumpTo(0); return; }
     var r = ((Q.alloc(g, act)[a.id] || {}).items || []).filter(function (x) { return (o.tag && x.tag === o.tag) || (!o.tag && x.key === o.key); })[0];
     if (r) { this.reqPick(a, r); } else { this.jumpTo(0); }

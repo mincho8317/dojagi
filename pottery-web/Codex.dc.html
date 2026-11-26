@@ -84,6 +84,24 @@ button{font-family:inherit;cursor:pointer}
       </div>
     </sc-if>
 
+    <sc-if value="{{isGoal}}" hint-placeholder-val="{{true}}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{goalSecs}}" as="gs" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">{{gs.h}}</span><span style="font-size:11.5px;font-weight:700;color:#8A6440">{{gs.sub}}</span></div>
+            <sc-for list="{{gs.items}}" as="gi" hint-placeholder-count="2">
+              <button type="button" onClick="{{gi.tap}}" aria-label="{{gi.t}} · {{gi.prog}} · {{gi.sub}}" style="{{gi.card}}">
+                <span style="display:flex;align-items:center;gap:7px"><span aria-hidden="true" style="flex:0 0 auto;font-size:18px">{{gi.ic}}</span><span style="flex:1 1 auto;min-width:0;font-family:'Jua',sans-serif;font-size:14.5px;color:#2B1A0F">{{gi.t}}</span><span style="{{gi.progSt}}">{{gi.prog}}</span></span>
+                <span style="height:7px;border-radius:4px;background:rgba(43,26,15,.15);overflow:hidden"><span style="display:block;{{gi.bar}}"></span></span>
+                <span style="font-size:12px;line-height:1.45;font-weight:700;color:#5B3A24;word-break:keep-all">{{gi.sub}}</span>
+                <sc-if value="{{gi.hintOn}}" hint-placeholder-val="{{false}}"><span style="font-size:11.5px;font-weight:700;color:#7A3E8E">{{gi.hint}}</span></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
     <sc-if value="{{isStory}}" hint-placeholder-val="{{false}}">
       <div style="display:flex;flex-direction:column;gap:8px">
         <span style="font-size:12px;font-weight:700;color:#7A5434">본 장면은 다시 볼 수 있어요</span>
@@ -173,7 +191,7 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { g: this.loadG(), tab: 'npc', armed: false, toast: '' };
+    this.state = { g: this.loadG(), tab: 'goal', armed: false, toast: '' };
   }
   gdef() {
     return {
@@ -315,7 +333,7 @@ class Component extends DCLogic {
     var allCount = WORK_SLOTS + glazes.length + shapes.length;
     var foundCount = worksFound + glazesFound + shapesFound;
 
-    var tabDefs = [{ id: 'npc', label: '단골' }, { id: 'story', label: '이야기' }, { id: 'works', label: '작품' }, { id: 'glazes', label: '유약' }, { id: 'shapes', label: '형태' }];
+    var tabDefs = [{ id: 'goal', label: '목표' }, { id: 'story', label: '이야기' }, { id: 'works', label: '작품' }, { id: 'glazes', label: '유약' }, { id: 'shapes', label: '형태' }];
     var tabs = tabDefs.map(function (d) {
       var on = d.id === self.state.tab;
       return {
@@ -328,7 +346,17 @@ class Component extends DCLogic {
     var armed = this.state.armed;
     return {
       tabs: tabs,
-      isNpc: this.state.tab === 'npc', isStory: this.state.tab === 'story',
+      isNpc: false, isStory: this.state.tab === 'story', isGoal: this.state.tab === 'goal',
+      goalSecs: (function () {
+        var QG = self.qlib(), G0 = QG.goals ? QG.goals(g) : { final: [], now: [], fac: [] };
+        var mk = function (x) { return { ic: x.ic, t: x.t, sub: x.sub, prog: x.prog, hint: x.hint || '', hintOn: !!x.hint,
+          card: 'all:unset;cursor:pointer;box-sizing:border-box;width:100%;padding:9px 11px;border-radius:14px;display:flex;flex-direction:column;gap:4px;background:' + (x.done ? '#E9F2DC' : (x.locked ? '#EADBC0' : '#F3E3C4')) + ';border:3px ' + (x.locked ? 'dashed #A8987C' : 'solid ' + (x.done ? '#4F7A3A' : (x.warn ? '#C9962E' : '#8A6440'))) + (x.warn ? ';box-shadow:0 0 0 2px rgba(227,178,60,.5)' : ''),
+          bar: 'width:' + Math.round(Math.max(0, Math.min(1, x.pct || 0)) * 100) + '%;height:100%;border-radius:4px;background:' + (x.done ? '#4F7A3A' : '#E3B23C'),
+          progSt: 'flex:0 0 auto;padding:1px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:11.5px;' + (x.done ? 'background:#3B7A32;color:#FFFDF5' : 'background:#5B3A24;color:#FFE7A8'),
+          tap: function () { var gt = x.go || {}; if (gt.href) { if (window.__potGo) { window.__potGo(gt.href); } else { location.href = gt.href; } return; } try { sessionStorage.setItem('potPick', JSON.stringify({ panel: gt.panel || 0 })); } catch (e) {} if (window.__potGo) { window.__potGo('Main.dc.html'); } else { location.href = 'Main.dc.html'; } } }; };
+        var sec = function (h, sub, L) { L = L.slice().sort(function (a, b) { return (a.done ? 1 : 0) - (b.done ? 1 : 0); }); return { h: h, sub: sub, items: L.map(mk) }; };
+        return [sec('🏆 최종 목표', '공방을 이어 가는 큰 그림', G0.final), sec('🎯 지금 할 일', '다음 이야기로 가려면', G0.now), sec('🛠 설비', '상점에서 설치해요', G0.fac)];
+      })(),
       npcs: (function () {
         var QLn = self.qlib(), PN = g.pname || '손녀', IC = { min: '🍵', yoon: '🍲', cha: '🫖', jeong: '🎨', jang: '🏺', dudu: '👹', bulmok: '🔨', kids: '🎈' };
         return Object.keys(QLn.PROF).map(function (id) {

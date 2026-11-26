@@ -483,6 +483,47 @@
       if (need.grade) { out.push({ t: need.grade, ok: (GRANK[P.grade] || 0) >= (GRANK[need.grade] || 0) }); }
       return out;
     }
+    /* ── 목표 (도감 「목표」 탭) : 최종 목표 · 지금 목표 · 설비 — 게임 상태에서 바로 계산 ── */
+    function goals(g) {
+      var out = { final: [], now: [], fac: [] }, DP = g.disp || {}, ps = g.pieces || {}, FAC = g.fac || {};
+      var go = function (panel) { return { panel: panel }; };
+      var slotSt = function (sl) { var pid = DP[sl.id]; if (pid && ps[pid]) { return 'filled'; } return chDone(g, sl.line, sl.ch) ? 'open' : 'locked'; };
+      var E1 = DISP[0], E1f = E1.slots.filter(function (sl) { return slotSt(sl) === 'filled'; }).length;
+      var nx1 = E1.slots.filter(function (sl) { return slotSt(sl) !== 'filled'; })[0];
+      // 최종 목표 1 : 할머니 전시대 채우기 → 공방 리모델링
+      out.final.push({ ic: '🏠', t: '할머니의 전시대 채우기', sub: unl(g, 'remodel') ? '공방 리모델링이 열렸어요 · 상점 「리모델링」에서 꾸며요' : '에피소드 1 전시대 4칸을 모두 채우면 「공방 리모델링」이 열려요', prog: E1f + '/4', pct: E1f / 4, done: E1f >= 4, go: unl(g, 'remodel') ? { href: 'Shop.dc.html' } : go(4),
+        hint: nx1 && !unl(g, 'remodel') ? '다음 칸 : ' + chTitle(nx1.line, nx1.ch) + (slotSt(nx1) === 'open' ? ' · 지금 올릴 수 있어요' : ' · 챕터를 끝내면 열려요') : '' });
+      // 최종 목표 2 : 달항아리 명작
+      var mjShape = !!((g.shapesFound || {}).moonjar), mjAny = false, mjBest = false;
+      for (var k in ps) { var P = ps[k]; if (P && shapeKeyOf(P, 'moonjar') === 'moonjar' && P.sk !== 'slab') { mjAny = true; if ((GRANK[P.grade] || 0) >= 3) { mjBest = true; } } }
+      out.final.push({ ic: '🌕', t: '보름달 같은 달항아리 빚기', sub: mjBest ? '명작 달항아리를 빚었어요!' : (mjShape ? '달항아리 모양이 열렸어요 · 명작으로 빚어 보세요' : '4챕터 「장 씨네 장독대」를 끝내면 달항아리 모양이 열려요'), prog: mjBest ? '명작 ✓' : (mjAny ? '빚음 · 명작 전' : (mjShape ? '모양 열림' : '잠김')), pct: mjBest ? 1 : (mjAny ? 0.66 : (mjShape ? 0.33 : 0)), done: mjBest, go: go(1), hint: '' });
+      // 지금 목표 1 : 메인 의뢰
+      var M = mainState(g);
+      if (!M.allDone) {
+        var d = M.def, chQ = MAIN.filter(function (q) { return q.ch === d.ch; }), chI = chQ.indexOf(d), CT = chTitle('main', d.ch), need = questNeeds(g, d);
+        var st = M.acc ? '진행 중 · 「' + d.title + '」 기물을 만들어 건네요' : (need.length ? '「' + d.title + '」을 맡으려면 ' + need.map(function (x) { return x.t; }).join(' · ') : '카운터에서 「' + d.title + '」 의뢰를 받아요');
+        out.now.push({ ic: '📖', t: '메인 의뢰 · ' + CT, sub: st, prog: (chI + (M.thanks ? 1 : 0)) + '/' + chQ.length, pct: (chI + (M.thanks ? 1 : 0)) / chQ.length, done: false, warn: !M.acc && need.length > 0, go: need.length && !M.acc ? (need[0].k === 'slab' || need[0].k === 'paint' ? { href: 'Shop.dc.html' } : go(4)) : go(M.acc ? 1 : 0), hint: '' });
+      } else { out.now.push({ ic: '📖', t: '메인 의뢰 · 에피소드 1', sub: '에피소드 1을 모두 마쳤어요', prog: '완료', pct: 1, done: true, go: go(0), hint: '' }); }
+      // 지금 목표 2 : 전시대 (열린 칸 먼저)
+      DISP.forEach(function (E) {
+        var open = E.slots.filter(function (sl) { return slotSt(sl) === 'open'; }), fN = E.slots.filter(function (sl) { return slotSt(sl) === 'filled'; }).length;
+        if (E.ep === 'dok' && !lineState(g, 'dok').open && !fN) { return; }
+        var sl = open[0] || E.slots.filter(function (x) { return slotSt(x) === 'locked'; })[0];
+        if (!sl) { out.now.push({ ic: E.icon, t: '전시대 · ' + E.title.split(' · ')[0], sub: '모든 칸을 채웠어요', prog: fN + '/' + E.slots.length, pct: 1, done: true, go: go(4), hint: '' }); return; }
+        var isOpen = slotSt(sl) === 'open';
+        out.now.push({ ic: E.icon, t: '전시대 · ' + E.title.split(' · ')[0], sub: isOpen ? '「' + chTitle(sl.line, sl.ch) + '」 칸이 열렸어요 · ' + dispTxt(sl.need) : '「' + chTitle(sl.line, sl.ch) + '」 챕터를 끝내면 다음 칸이 열려요', prog: fN + '/' + E.slots.length, pct: fN / E.slots.length, done: false, warn: isOpen, go: go(4), hint: '보상 · ' + (UNLI[sl.rw] || '') + ' ' + (UNLN[sl.rw] || '') + ' 해금' });
+      });
+      // 지금 목표 3 : 도깨비 의뢰
+      var D = lineState(g, 'dok');
+      if (D.open && D.def) { var dd = D.def, dQ = DOK.filter(function (q) { return q.ch === dd.ch; }), dI = dQ.indexOf(dd), nd = questNeeds(g, dd);
+        out.now.push({ ic: '👹', t: '도깨비 의뢰 · ' + chTitle('dok', dd.ch), sub: D.acc ? '진행 중 · 「' + dd.title + '」' : (nd.length ? '「' + dd.title + '」을 맡으려면 ' + nd.map(function (x) { return x.t; }).join(' · ') : '카운터에 도깨비 손님이 와요 · 「' + dd.title + '」'), prog: dI + '/' + dQ.length, pct: dI / dQ.length, done: false, warn: !D.acc && nd.length > 0, go: go(D.acc ? 1 : 0), hint: '' }); }
+      else if (!D.open) { out.now.push({ ic: '👹', t: '도깨비 이야기', sub: '전시대 ①에 명작을 올려 흑토·흑유를 해금하면 찾아와요', prog: '잠김', pct: 0, done: false, locked: true, go: go(4), hint: '' }); }
+      // 설비
+      [['slab', '판 성형대', '판으로 접시·통을 만들어요 · 도깨비 3챕터 · 도깨비 전시대 ②③에 필요'], ['paint', '붓 시유대', '붓·도장으로 무늬를 그려요 · 전시대 ④ · 도깨비 전시대 ③에 필요']].forEach(function (f) {
+        out.fac.push({ ic: f[0] === 'slab' ? '🪵' : '🖌', t: f[1] + ' 설치', sub: FAC[f[0]] ? '설치했어요' : f[2], prog: FAC[f[0]] ? '설치됨' : '상점 · 설비', pct: FAC[f[0]] ? 1 : 0, done: !!FAC[f[0]], go: { href: 'Shop.dc.html' }, hint: '' });
+      });
+      return out;
+    }
     /* 의뢰 기물 조건을 하나하나 풀어 쓴 목록 : 모양 · 유약 · 흙 · 시유 깊이 · 기울기 · 덧시유 · 소성 · 무늬 */
     function condList(it) {
       if (!it || it.mat) { return []; }
@@ -794,7 +835,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { condList: condList, baseName: baseName, DECO: DECO, UNLN: UNLN, UNLI: UNLI, unl: unl, DISP: DISP, chDone: chDone, chTitle: chTitle, dispChecks: dispChecks, dispTxt: dispTxt, questNeeds: questNeeds, SLN: SLN, pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { goals: goals, condList: condList, baseName: baseName, DECO: DECO, UNLN: UNLN, UNLI: UNLI, unl: unl, DISP: DISP, chDone: chDone, chTitle: chTitle, dispChecks: dispChecks, dispTxt: dispTxt, questNeeds: questNeeds, SLN: SLN, pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
