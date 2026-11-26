@@ -468,7 +468,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <g data-cuthand="1" transform="{{cg.hand}}"><g style="{{cg.pulse}}"><circle cx="0" cy="0" r="22" fill="rgba(255,226,122,.25)" stroke="#FFE27A" stroke-width="2"></circle><rect x="-7" y="-15" width="14" height="30" rx="6" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect></g></g>
         </svg>
         <div style="{{cg.hintSt}}"><span style="display:inline-block;padding:5px 11px;border-radius:11px;background:rgba(43,26,15,.85);font-family:'Jua',sans-serif;font-size:13px;color:#FFE7A8">실 손잡이를 잡고 점선을 따라 → 끝까지</span></div>
-        <button type="button" onClick="{{cg.cancel}}" aria-label="실 내려놓기" style="all:unset;cursor:pointer;position:absolute;right:86px;top:540px;z-index:11;padding:4px 9px;border-radius:10px;background:#FFF4DE;border:2px solid #8A6440;font-family:'Jua',sans-serif;font-size:12px;color:#5B3A24">✕ 실 내려놓기</button>
+        
       </sc-if>
       </div>
       <div aria-hidden="true" style="position:absolute;left:6px;top:650px;width:296px;height:20px;border-radius:7px;background:linear-gradient(#B98A5E,#8A5E3A);border:3px solid #5B3A24;box-shadow:0 6px 0 rgba(43,26,15,.35)"></div>
@@ -476,7 +476,6 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
         <sc-for list="{{lumps}}" as="lp" hint-placeholder-count="3"><div role="button" aria-label="{{lp.aria}}" onPointerDown="{{lp.down}}" style="{{lp.st}}"><img dc-src="{{lp.img}}" alt="" aria-hidden="true" draggable="false" style="width:52px;height:46px;object-fit:contain;pointer-events:none"></div><span style="{{lp.tagSt}}">{{lp.tag}}</span></sc-for>
       </div>
       <div data-wshift="1" style="position:absolute;left:0;top:44px;width:390px;height:696px;pointer-events:none">
-      <span aria-hidden="true" style="position:absolute;left:344px;top:552px;width:10px;height:10px;border-radius:50%;background:#5B3A24;z-index:6"></span>
       <img src="_blob/3c9b10b6a96c1ab7d724ba551332b361.webp" alt="" aria-hidden="true" draggable="false" data-eqtable="1" style="position:absolute;left:70px;top:319px;width:268px;height:215px;clip-path:inset(47% 0 0 0);pointer-events:none;{{eqTable}}"></div>
       <style>@keyframes cfPop{0%{opacity:1;transform-box:fill-box;transform-origin:center;transform:scale(.4)}100%{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(2.2)}}
 @keyframes eqUp{from{transform:none}to{transform:translateY(-640px)}}@keyframes eqDrop{0%{transform:translateY(-560px)}78%{transform:translateY(0)}86%{transform:translateY(0) scaleY(.96)}100%{transform:none}}@keyframes eqSlabIn{0%{transform:perspective(760px) translate(9px,-520px) scale(.55) rotateX(66deg)}38%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}45%{transform:perspective(760px) translate(9px,109px) scale(.55,.5) rotateX(66deg)}55%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:none}}@keyframes eqSlabOut{0%{transform:none}45%{transform:perspective(760px) translate(9px,107px) scale(.55) rotateX(66deg)}100%{transform:perspective(760px) translate(9px,-560px) scale(.55) rotateX(66deg)}}[data-eq="up"] [data-wheelstage]{animation:eqUp .32s cubic-bezier(.5,0,.9,.4) both}[data-eq="drop"] [data-wheelstage]{animation:eqDrop .42s .62s cubic-bezier(.55,0,1,.45) both}@keyframes eqFadeIn{from{opacity:0}to{opacity:1}}@keyframes eqFadeOut{from{opacity:1}to{opacity:0}}</style>
@@ -578,10 +577,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
           <div style="display:flex;gap:10px"><button type="button" onClick="{{sw.no}}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">그대로 둘래요</button><button type="button" onClick="{{sw.yes}}" style="all:unset;cursor:pointer;padding:9px 16px;border-radius:14px;background:#B9533A;border:3px solid #7A2F1E;font-family:'Jua',sans-serif;font-size:15px;color:#FFF4DE">바꾸기</button></div>
         </div>
       </sc-if>
-      <div role="button" aria-label="실 · 물레에 끌어다 대고 점선을 따라 당겨 자르기" onPointerDown="{{wireDown}}" style="{{wireBoardSt}}">
-        <svg width="70" height="70" viewBox="0 0 62 70" aria-hidden="true"><path d="M31 0 L10 30 M31 0 L52 30" stroke="#5B3A24" stroke-width="1.5"></path><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"></rect><path d="M10 30 Q31 66 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"></path></svg>
-        <span style="position:absolute;padding:1px 7px;border-radius:8px;background:rgba(43,26,15,.78);font-family:'Jua',sans-serif;font-size:10.5px;line-height:15px;color:#FFF4DE;white-space:nowrap;pointer-events:none;position:relative;margin-top:2px">실 · 물레에 대기</span>
-      </div>
+      <button type="button" onClick="{{wfin.tap}}" aria-label="{{wfin.aria}}" style="{{wfin.st}}"><span style="font-size:20px;line-height:1">{{wfin.ico}}</span><span style="font-family:'Jua',sans-serif;font-size:15px;line-height:1.1">{{wfin.txt}}</span><span style="font-size:10px;font-weight:700;opacity:.85;line-height:1.1">{{wfin.sub}}</span></button>
 
       </sc-if>
     </div>
@@ -6011,7 +6007,7 @@ class Component extends DCLogic {
     var tut = false; try { tut = this.qlib().isTut(g); } catch (e) {}
     if (!tut && (g.glazeList || []).length >= this.KB().cap) { this.say('2층 선반이 가득 찼어요 (6/6) · 유약을 발라 자리를 비워요'); this.sfx('fail'); return false; }
     /* 실을 물레에 대면 자르기 자세로 : 점선이 나오고, 손가락으로 실을 잡아 점선을 따라 끝까지 당겨야 잘린다 */
-    this.cutMode = true; this.cutPx = null; this.sfx('tap'); this.say('실 손잡이를 잡고 점선을 따라 끝까지 당겨요'); this.bump();
+    this.cutMode = true; this.cutPx = null; this.sfx('tap'); this.say('실이 걸렸어요 · 왼쪽 손잡이를 잡고 점선을 따라 끝까지 당겨요'); this.bump();
     return true;
   }
   cutGeom() { var W = this.ctls.Wheel, r = (W && W.state && W.state.r) || [40], mx = Math.max.apply(null, r.concat([20])), half = Math.round(mx * 1.04 + 26); return { x0: 195 - half, x1: 195 + half, y: 382, tol: 22 }; }
@@ -6708,7 +6704,12 @@ class Component extends DCLogic {
     }
     var FAC = g.fac || {}; v.facSlab = !!FAC.slab || !!this.slabOn; v.facPaint = !!FAC.paint; /* 상점에서 설치해야 보인다 */
     v.paintStand = function () { self.say('선반의 기물(빚은 기물·담금 시유한 기물)을 끌어다 올려요'); };
-    v.wireBoardSt = 'position:absolute;left:310px;top:490px;width:78px;height:112px;z-index:6;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;' + (this.cutMode ? 'opacity:.25;' : '') + (SON ? 'display:none;' : ''); /* 실은 설비 변경 버튼 위 · 판 성형대에선 숨김 (display:none 은 맨 뒤에 둬야 flex 에 덮이지 않는다) */
+    /* 물레 완성 버튼 : 누르면 실이 물레에 걸려 자를 점선이 나온다 (같은 자리가 취소 버튼으로) */
+    var WSH = !!(Wc && Wc.state && Wc.state.stage === 'shape' && !wEmpty), CUTM = !!this.cutMode;
+    v.wfin = { ico: CUTM ? '✕' : '✓', txt: CUTM ? '취소' : '완성', sub: CUTM ? '실 내려놓기' : '실로 자르기',
+      aria: CUTM ? '자르기 취소 · 실 내려놓기' : '완성 · 실로 잘라 선반에',
+      tap: function () { if (self.cutMode) { self.cutCancel(); } else { self.cutWire(); } },
+      st: 'all:unset;cursor:pointer;position:absolute;left:310px;top:528px;width:76px;height:72px;z-index:7;box-sizing:border-box;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + (CUTM ? 'background:#FFF4DE;border:3px solid #A3442C;color:#A3442C;box-shadow:0 4px 0 rgba(43,26,15,.35)' : (WSH ? 'background:#3B7A32;border:3px solid #2F6328;color:#FFFDF5;box-shadow:0 4px 0 #2F6328' : 'background:#E6DCCB;border:3px solid #B9A88E;color:#A0907A')) + (SON || g.onWheel ? ';display:none' : '') };
     v.onPop = '';
     v.onW = !!it0; v.onP = { pot: it0 ? this.potOf(it0, this.fillOf(it0, 'dry')) : EMPTY };
     /* 잘라 낸 기물 : 물레 위에서 빚던 그 크기·모양·흙빛 그대로 (물레 화면과 같은 좌표) */
