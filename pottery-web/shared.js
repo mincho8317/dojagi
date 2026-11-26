@@ -489,7 +489,7 @@
       var o = [], c = it.clay ? clayOf(it.clay).c : (it.clayReq || '');
       o.push({ k: 'shape', t: it.slabTg ? '판성형 ' + SLN[it.slabTg] : (SKN[it.sk] || it.shapeN || '') + ' 모양' });
       o.push({ k: 'glaze', t: it.glazeAny ? it.glazeAny.map(function (z) { return GNM[z]; }).join(' 또는 ') : (it.glaze ? GNM[it.glaze] : '유약 무관') });
-      if (c && CCOLOR[c]) { o.push({ k: 'clay', t: CCOLOR[c].n + (it.clayReq ? ' 필수' : ' 권장') }); }
+      if (it.clayReq && CCOLOR[it.clayReq]) { o.push({ k: 'clay', t: CCOLOR[it.clayReq].n + ' 필수' }); } /* 흙은 필수일 때만 */
       if (it.ang) { o.push({ k: 'ang', t: it.ang[1] <= 15 ? '굽부터 똑바로 담금' : (it.ang[0] >= 165 ? '입구부터 거꾸로 담금' : '기울여 담금 ' + it.ang[0] + '~' + it.ang[1] + '°') }); }
       if (it.cov) { o.push({ k: 'cov', t: '시유 깊이 ' + Math.round(it.cov[0] * 100) + '~' + Math.round(it.cov[1] * 100) + '%' }); }
       if (it.g2) { o.push({ k: 'g2', t: '덧시유' + (it.g2 !== true ? ' ' + GNM[it.g2] : ' (아무 유약)') }); }
