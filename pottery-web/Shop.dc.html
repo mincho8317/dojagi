@@ -64,7 +64,14 @@ button{font-family:inherit;cursor:pointer}
 
     <sc-if value="{{isDeco}}" hint-placeholder-val="{{false}}">
       <sc-if value="{{decoOff}}" hint-placeholder-val="{{true}}">
-        <div style="box-sizing:border-box;padding:18px 14px;background:#FFF4DE;border:3px dashed #8A6440;border-radius:16px;text-align:center;font-family:'Jua',sans-serif;font-size:15px;line-height:1.5;color:#5B3A24">🔒 공방 리모델링<br><span style="font-size:13px;color:#8A6440">전시대 「에피소드 1」 ④ 자리에<br>달항아리 명작을 올리면 열려요</span></div>
+        <div style="box-sizing:border-box;padding:16px 14px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:18px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <span style="font-size:40px;line-height:1" aria-hidden="true">🏠</span>
+          <span style="font-family:'Jua',sans-serif;font-size:19px;color:#2B1A0F">공방 리모델링</span>
+          <span style="font-size:12.5px;line-height:1.5;color:#7A5434">할머니 공방을 새로 단장해요.<br>물레 · 성형대 · 시유대 · 벽지 · 탁자 · 선반이 한 번에 바뀌고,<br>그 뒤로 꾸미기 아이템을 하나씩 살 수 있어요.</span>
+          <div role="progressbar" aria-label="리모델링 비용 모으기" aria-valuenow="{{rmPctN}}" aria-valuemin="0" aria-valuemax="100" style="width:100%;height:14px;box-sizing:border-box;border-radius:8px;background:#E6D6B8;border:2px solid #8A6440;overflow:hidden"><div style="{{rmBar}}"></div></div>
+          <span style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">{{rmProg}}</span>
+          <button type="button" onClick="{{rmBuy}}" aria-label="공방 리모델링 · {{rmPrice}}" style="{{rmBtn}}">{{rmLabel}}</button>
+        </div>
       </sc-if>
       <sc-if value="{{decoOn}}" hint-placeholder-val="{{false}}">
       <div style="flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-bottom:6px">
@@ -100,7 +107,7 @@ button{font-family:inherit;cursor:pointer}
     <div role="status" style="position:absolute;left:36px;right:36px;top:380px;padding:12px 14px;border-radius:16px;background:rgba(43,26,15,.92);border:3px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:14px;color:#FFF4DE;text-align:center">{{toast}}</div>
   </sc-if>
 
-  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;z-index:50">
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;z-index:50">
     <a href="Main.dc.html" aria-label="공방" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
@@ -120,6 +127,10 @@ button{font-family:inherit;cursor:pointer}
     <a href="Shop.dc.html" aria-label="상점" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">상점</span>
+    </a>
+    <a href="Contest.dc.html" aria-label="품평회" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="ui/tutorial_trophy.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">품평회</span>
     </a>
   </nav>
 
@@ -202,7 +213,7 @@ class Component extends DCLogic {
     var self = this;
     var s = this.state;
     var G = s.g;
-    var tabDefs = [{ id: 'mat', label: '재료' }, { id: 'fac', label: '설비' }, { id: 'deco', label: (this.qlib().unl && this.qlib().unl(G, 'remodel') ? '' : '🔒 ') + '리모델링' }];
+    var tabDefs = [{ id: 'mat', label: '재료' }, { id: 'fac', label: '설비' }, { id: 'deco', label: (G.remod ? '' : '🏠 ') + '리모델링' }];
     var tabs = tabDefs.map(function (d) {
       var on = d.id === s.tab;
       return {
@@ -254,8 +265,16 @@ class Component extends DCLogic {
         } };
     });
     /* 리모델링 : 전시대 ④(달항아리)로 해금 */
-    var DOn = UNq('remodel'), DD = QLs.DECO || {}, SD = G.sDeco || { own: {}, use: {} }, PN = { wall: '벽', shelf: '선반', kiln: '가마', tub: '유약통' }, decos = [];
-    if (DOn) { ['wall', 'shelf', 'kiln', 'tub'].forEach(function (pt) { (DD[pt] || []).forEach(function (it) {
+    var DOn = !!G.remod, DD = QLs.DECO || {}, SD = G.sDeco || { own: {}, use: {} }, PN = { wall: '벽', shelf: '선반', kiln: '가마', tub: '유약통', wheel: '물레', desk: '탁자', slab: '판 성형대', paint: '붓 시유대' }, decos = [];
+    var RMC = QLs.REMODEL_COST || 300000, gd0 = G.gold || 0, rmOk = gd0 >= RMC;
+    var RSET = { wall: 'hanji', shelf: 'pine', kiln: 'white', tub: 'blue', wheel: 'birch', desk: 'walnut', slab: 'birch', paint: 'birch' }; /* 리모델링하면 한 번에 바뀌는 묶음 */
+    var rmV = { rmProg: Math.min(gd0, RMC).toLocaleString() + ' / ' + RMC.toLocaleString() + 'G', rmPctN: Math.round(Math.min(1, gd0 / RMC) * 100), rmBar: 'height:100%;width:' + (Math.min(1, gd0 / RMC) * 100).toFixed(1) + '%;background:linear-gradient(90deg,#E3B23C,#F3D27A)', rmPrice: RMC.toLocaleString() + 'G',
+      rmLabel: rmOk ? RMC.toLocaleString() + 'G · 리모델링하기' : (RMC - gd0).toLocaleString() + 'G 더 모아요',
+      rmBtn: 'all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:10px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:16px;' + (rmOk ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E'),
+      rmBuy: function () { var G2 = self.loadG(); if (G2.remod) { return; } if ((G2.gold || 0) < RMC) { self.say('골드가 ' + (RMC - (G2.gold || 0)).toLocaleString() + 'G 모자라요'); return; }
+        var S0 = G2.sDeco || { own: {}, use: {} }, own = {}, use = {}, k; for (k in (S0.own || {})) { own[k] = S0.own[k]; } for (k in (S0.use || {})) { use[k] = S0.use[k]; } for (k in RSET) { own[k + ':' + RSET[k]] = true; use[k] = RSET[k]; }
+        if (self.spend(RMC, '🏠 공방 리모델링 완료! 공방이 새로 단장됐어요 · 이제 꾸미기 아이템을 살 수 있어요', { remod: true, sDeco: { own: own, use: use } })) { try { window.__sfx && window.__sfx('unlock'); window.PotteryShared.confetti && window.PotteryShared.confetti(); } catch (e) {} } } };
+    if (DOn) { ['wall', 'wheel', 'desk', 'shelf', 'slab', 'paint', 'kiln', 'tub'].forEach(function (pt) { (DD[pt] || []).forEach(function (it) {
       var key = pt + ':' + it.id, has = it.id === 'base' || !!(SD.own || {})[key], using = ((SD.use || {})[pt] || 'base') === it.id;
       decos.push({ part: PN[pt], name: it.n, desc: it.d, sw: 'flex:0 0 52px;height:52px;box-sizing:border-box;border-radius:12px;border:2px solid #8A6440;background:' + it.sw,
         label: using ? '사용 중' : (has ? '적용' : it.p.toLocaleString() + 'G'),
@@ -265,7 +284,7 @@ class Component extends DCLogic {
           own[key] = true; use[pt] = it.id; self.spend(it.p, it.n + ' 리모델링 · 공방에 바로 적용했어요', { sDeco: { own: own, use: use } }); } });
     }); }); }
     return {
-      decos: decos, isDeco: s.tab === 'deco', decoOn: DOn, decoOff: !DOn,
+      decos: decos, isDeco: s.tab === 'deco', decoOn: DOn, decoOff: !DOn, rmProg: rmV.rmProg, rmPctN: rmV.rmPctN, rmBar: rmV.rmBar, rmPrice: rmV.rmPrice, rmLabel: rmV.rmLabel, rmBtn: rmV.rmBtn, rmBuy: rmV.rmBuy,
       facs: facs,
       tabs: tabs,
       isFac: s.tab === 'fac',

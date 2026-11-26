@@ -72,6 +72,10 @@ body:has([data-zoom]) a[aria-label^="이야기 진행"],body:has([aria-modal="tr
 [data-zst="Display"] #dshelf>div{visibility:hidden !important}
 [data-zst="Display"] div[style*="top:420px;height:62px"]{display:none !important}
 [data-zst="Glaze"] img[src*="77f6907c1843f9b7401e349e55ada0fa"]{filter:var(--tubF,none) drop-shadow(0 5px 4px rgba(43,26,15,.35)) !important}
+img[data-eqtable]{filter:var(--wheelF,none) !important}
+[data-zst="Counter"] img[src*="afa5b1b61c1caeaf1edef99c030ed1ea"]{filter:var(--deskF,none) !important}
+[aria-label^="판 성형대 · "]{filter:var(--slabF,none)}
+[aria-label^="붓 시유대 · "]{filter:var(--paintF,none)}
 [data-zst="Glaze"] div[style*="top:604px"]{display:none !important}
 [data-zst="Glaze"] a[href="Main.dc.html"]{display:none !important}
 body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
@@ -81,7 +85,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
 @keyframes wireSlit2{0%{transform:scaleX(.2);opacity:1}40%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1.05);opacity:0}}@keyframes cutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}@keyframes wireSlit{0%,35%{transform:scaleX(0);opacity:0}55%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}@keyframes wireCut{0%{transform:translate(-150px,-6px)}45%{transform:translate(0,4px)}100%{transform:translate(170px,-2px);opacity:.2}}
 </style>
 </helmet>
-<div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F;--tubF:{{tubF}}">
+<div data-pano="1" data-wempty="{{wEmptyA}}" data-studio="1" style="position:relative;width:390px;height:844px;overflow:hidden;background:#3E2616;color:#2B1A0F;--tubF:{{tubF}};--wheelF:{{wheelF}};--deskF:{{deskF}};--slabF:{{slabF}};--paintF:{{paintF}}">
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
 <linearGradient id="potShade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".42"></stop><stop offset=".2" stop-color="#000" stop-opacity=".12"></stop><stop offset=".33" stop-color="#fff" stop-opacity="0"></stop><stop offset=".4" stop-color="#fff" stop-opacity=".42"></stop><stop offset=".47" stop-color="#fff" stop-opacity=".1"></stop><stop offset=".6" stop-color="#fff" stop-opacity="0"></stop><stop offset=".8" stop-color="#000" stop-opacity=".16"></stop><stop offset="1" stop-color="#000" stop-opacity=".46"></stop></linearGradient>
 <linearGradient id="potTopLight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"></stop><stop offset=".35" stop-color="#fff" stop-opacity="0"></stop><stop offset=".85" stop-color="#000" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".18"></stop></linearGradient>
@@ -1212,7 +1216,7 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
     <div role="status" onPointerDown="{{toastTap}}" onClick="{{toastTap}}" style="{{toastSt}}"><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{toast}}</span></div>
   </sc-if>
-  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;z-index:50">
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;z-index:50">
     <a href="Main.dc.html" aria-label="공방" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
       <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">공방</span>
@@ -1232,6 +1236,10 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
     <a href="Shop.dc.html" aria-label="상점" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
       <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+    <a href="Contest.dc.html" aria-label="품평회" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="ui/tutorial_trophy.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">품평회</span>
     </a>
   </nav>
 
@@ -6568,6 +6576,12 @@ class Component extends DCLogic {
     var play = function (id, cb) { self._stOn = true; S.storyPlay(id, function () { self._stOn = false; try { cb && cb(); } catch (e) {} self.bump(); }); };
     if (g.needIntro) { play('prologue', function () { self.setG2({ needIntro: 0 }); self.jumpTo(0); }); return; }
     var q = g.quests || {};
+    if (sc.after_min && !g.goalIntro && S.storyCard && g.shopOpen) { /* 「할머니의 전시대」 뒤 : 최종 목표 두 가지를 바로 알려 준다 */
+      this.setG2({ goalIntro: 1 }); this._stOn = true;
+      S.storyCard('🏺', '목표 ① 할머니의 전시대', '에피소드 1 전시대 4칸 채우기', '단골 이야기를 하나씩 끝낼 때마다 전시대 칸이 열려요.\n조건에 맞는 명작을 올리면 새 재료와 기능이 열리고,\n마지막 칸에 「달항아리」 명작을 올리면 「품평회」가 열려요.', '다음', function () {
+        S.storyCard('🏠', '목표 ② 공방 리모델링', (Q.REMODEL_COST || 300000).toLocaleString() + 'G 모으기', '의뢰와 판매로 골드를 모아 상점 「리모델링」에서 공방을 새로 단장해요.\n물레 · 성형대 · 시유대 · 벽지 · 탁자가 한 번에 바뀌고, 꾸미기 아이템도 살 수 있어요.\n\n목표는 도감 「목표」 탭에서 언제든 볼 수 있어요.', '좋아요', function () { self._stOn = false; self.bump(); });
+      }); return;
+    }
     if (q.minThanks && !sc.after_min) { play('after_min', function () { self.setG2({ shopOpen: true }); self.say('🔓 상점이 열렸어요 · 흙과 유약 재료를 살 수 있어요'); }); return; }
     /* 전시대 칸마다 짧은 연출 (해금 보상을 이야기로) */
     var ps = g.pieces || {};
@@ -6709,6 +6723,7 @@ class Component extends DCLogic {
     var DCO = (Q.DECO || {}), DU = ((g.sDeco || {}).use) || {}, dOf = function (pt) { var L = DCO[pt] || []; return L.filter(function (x) { return x.id === (DU[pt] || 'base'); })[0] || L[0] || {}; };
     var dWall = dOf('wall'), dShelf = dOf('shelf'), dKiln = dOf('kiln'), dTub = dOf('tub');
     v.wallSt = dWall.id && dWall.id !== 'base' ? 'position:absolute;left:0;top:0;width:1950px;height:500px;pointer-events:none;background:' + dWall.sw : 'display:none';
+    ['wheel', 'desk', 'slab', 'paint'].forEach(function (pt) { var d0 = dOf(pt); v[pt + 'F'] = d0.f && d0.f !== 'none' ? d0.f : 'none'; }); /* 리모델링 스킨 (그래픽 나오기 전 임시 : 색 필터) */
     v.kilnF = dKiln.f && dKiln.f !== 'none' ? dKiln.f : 'none'; v.tubF = dTub.f && dTub.f !== 'none' ? dTub.f : 'none';
     var PLANK = dShelf.id && dShelf.id !== 'base' ? 'linear-gradient(rgba(255,255,255,.18),rgba(0,0,0,.18)),' + dShelf.sw : 'linear-gradient(#A97B52,#7A5434)';
     var R = this.railPos(), CAP = this.KB().cap;
@@ -7173,6 +7188,8 @@ class Component extends DCLogic {
       ch = true;
     } else if (typeof g.tut === 'number' && g.tut < 99) { g.tut = 99; ch = true; }
     if (!g.shopOpen && !g.needIntro && (((g.mq || {}).i || 0) > 0 || (g.dq || {}).i > 0)) { g.shopOpen = true; ch = true; }
+    if ((g.unl || {}).remodel && !g.remod) { g.remod = true; ch = true; } /* 예전 저장 : 전시대로 리모델링을 연 경우 그대로 */
+    if ((g.disp || {}).m4 && !(g.unl || {}).contest) { var u3 = {}, k3; for (k3 in (g.unl || {})) { u3[k3] = g.unl[k3]; } u3.contest = true; g.unl = u3; ch = true; }
     if (!g.scV2) { /* 예전 저장 : 이미 지난 전시·명작 연출은 다시 틀지 않는다 */
       var sc2 = {}, k2; for (k2 in (g.scenes || {})) { sc2[k2] = g.scenes[k2]; } var D2 = g.disp || {}, P2 = g.pieces || {};
       [['m1', 'disp_m1'], ['m2', 'disp_m2'], ['m3', 'disp_m3'], ['m4', 'disp_full'], ['d3', 'event_open']].forEach(function (x) { if (D2[x[0]]) { sc2[x[1]] = sc2[x[1]] || 1; } });

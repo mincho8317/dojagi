@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#2B1A0F">
+<title>품평회</title>
+<script src="./support.js"></script>
+<script src="./shared.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
+a{color:#5B3A24}
+@keyframes cpIn{0%{transform:translateY(16px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes cpPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes cpGlow{0%,100%{box-shadow:0 0 0 3px #FFE27A,0 0 10px rgba(255,214,107,.6)}50%{box-shadow:0 0 0 3px #FFE27A,0 0 22px rgba(255,214,107,1)}}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:linear-gradient(#EFE0C4,#E2CBA2);color:#2B1A0F">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="cpShade" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".38"></stop><stop offset=".45" stop-color="#fff" stop-opacity="0"></stop><stop offset="1" stop-color="#000" stop-opacity=".32"></stop></linearGradient></defs></svg>
+  <div style="position:absolute;left:12px;right:12px;top:12px;display:flex;align-items:center;gap:8px;z-index:5">
+    <a href="Main.dc.html" aria-label="공방으로" style="flex:0 0 auto;width:42px;height:42px;box-sizing:border-box;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 #5B3A24;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:'Jua',sans-serif;font-size:20px;color:#5B3A24">‹</a>
+    <div style="flex:1 1 auto;height:42px;display:flex;align-items:center;justify-content:center;background:#7A3E8E;clip-path:polygon(0 0,100% 0,95% 50%,100% 100%,0 100%,5% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #4A2058">🏆 품평회</div>
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:2px;font-family:'Jua',sans-serif;font-size:12px">
+      <span aria-label="골드 {{gold}}" style="padding:1px 8px;border-radius:9px;background:rgba(43,26,15,.85);border:2px solid #E3B23C;color:#FFF4DE">💰 {{gold}}</span>
+      <span aria-label="옥 {{jade}}" style="padding:1px 8px;border-radius:9px;background:rgba(43,26,15,.85);border:2px solid #4FB08F;color:#FFF4DE">💎 {{jade}}</span>
+    </div>
+  </div>
+
+  <section aria-label="이번 회차" style="position:absolute;left:12px;right:12px;top:64px;box-sizing:border-box;padding:9px 12px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:10px">
+    <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
+      <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">제 {{round}}회 · 주제 「{{themeName}}」</span>
+      <span style="font-size:11.5px;color:#7A5434">{{dday}} · 1등 30,000G+💎30 · 2등 15,000G+💎20 · 3등 8,000G+💎10</span>
+    </div>
+    <span style="flex:0 0 auto;padding:3px 9px;border-radius:10px;background:#7A3E8E;color:#FFF;font-family:'Jua',sans-serif;font-size:13px">참가 {{entryN}}점</span>
+  </section>
+
+  <div role="tablist" aria-label="품평회 보기" style="position:absolute;left:12px;right:12px;top:132px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3"><button type="button" role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="{{t.st}}">{{t.label}}</button></sc-for>
+  </div>
+
+  <div style="position:absolute;left:12px;right:12px;top:178px;bottom:100px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding-bottom:6px">
+    <!-- 순위 -->
+    <sc-if value="{{isRank}}" hint-placeholder-val="{{true}}">
+      <div aria-label="이번 회차 1~3등" style="display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:6px;padding:10px 6px 0;border-radius:16px;background:rgba(255,244,222,.7);border:2px solid #C9A27A">
+        <sc-for list="{{podium}}" as="x" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;animation:cpIn .35s both">
+            <span style="display:flex;align-items:flex-end;justify-content:center;height:{{x.ph}}px"><svg width="{{x.pw}}" height="{{x.ph}}" viewBox="{{x.pot.vb}}" aria-hidden="true"><path d="{{x.pot.d}}" fill="{{x.pot.fill}}" stroke="{{x.pot.edge}}" stroke-width="{{x.pot.sw}}"></path><path d="{{x.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+            <span style="font-family:'Jua',sans-serif;font-size:12.5px;color:#2B1A0F;text-align:center;line-height:1.2">{{x.name}}</span>
+            <span style="font-size:11px;color:#7A5434">👍 {{x.votes}}</span>
+            <div style="{{x.base}}"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#FFF">{{x.medal}}</span></div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{meRowOn}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:8px 10px;border-radius:14px;background:#F4F9EC;border:3px solid #4F7A3A;animation:cpGlow 2s ease-in-out infinite">
+          <span style="font-family:'Jua',sans-serif;font-size:18px;color:#2F5022;width:42px;text-align:center">{{meRank}}</span>
+          <span style="flex:1 1 auto;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">내 출품작 · {{meName}}</span>
+          <span style="font-size:12.5px;color:#2F5022">👍 {{meVotes}}</span>
+        </div>
+      </sc-if>
+      <sc-for list="{{ranks}}" as="r" hint-placeholder-count="5">
+        <div style="{{r.st}}">
+          <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24;width:30px;text-align:center">{{r.n}}</span>
+          <span style="flex:0 0 auto;width:34px;height:34px;display:flex;align-items:flex-end;justify-content:center"><svg width="30" height="34" viewBox="{{r.pot.vb}}" aria-hidden="true"><path d="{{r.pot.d}}" fill="{{r.pot.fill}}" stroke="{{r.pot.edge}}" stroke-width="{{r.pot.sw}}"></path><path d="{{r.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+          <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column"><span style="font-family:'Jua',sans-serif;font-size:13.5px;color:#2B1A0F">{{r.name}}</span><span style="font-size:10.5px;color:#8A6440">{{r.sub}}</span></span>
+          <span style="font-size:12px;color:#5B3A24">👍 {{r.votes}}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{lastOn}}" hint-placeholder-val="{{true}}">
+        <div style="margin-top:4px;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">지난 회차 수상작 · 「{{lastTheme}}」</div>
+        <div style="display:flex;gap:6px">
+          <sc-for list="{{last}}" as="l" hint-placeholder-count="3"><div style="flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px;border-radius:12px;background:#FFF4DE;border:2px solid #C9A27A"><span style="height:40px;display:flex;align-items:flex-end"><svg width="36" height="40" viewBox="{{l.pot.vb}}" aria-hidden="true"><path d="{{l.pot.d}}" fill="{{l.pot.fill}}" stroke="{{l.pot.edge}}" stroke-width="{{l.pot.sw}}"></path><path d="{{l.pot.d}}" fill="url(#cpShade)"></path></svg></span><span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#2B1A0F">{{l.medal}} {{l.name}}</span></div></sc-for>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- 내 출품작 -->
+    <sc-if value="{{isMine}}" hint-placeholder-val="{{false}}">
+      <sc-if value="{{hasEntry}}" hint-placeholder-val="{{false}}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4)">
+          <span style="height:130px;display:flex;align-items:flex-end"><svg width="120" height="130" viewBox="{{my.pot.vb}}" aria-hidden="true"><path d="{{my.pot.d}}" fill="{{my.pot.fill}}" stroke="{{my.pot.edge}}" stroke-width="{{my.pot.sw}}"></path><path d="{{my.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+          <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{myName}}</span>
+          <div style="display:flex;gap:8px;font-family:'Jua',sans-serif;font-size:14px">
+            <span style="padding:3px 10px;border-radius:10px;background:#7A3E8E;color:#FFF">지금 {{myRank}}</span>
+            <span style="padding:3px 10px;border-radius:10px;background:#3B7A32;color:#FFF">👍 {{myVotes}}표</span>
+          </div>
+          <span style="font-size:11.5px;color:#7A5434;text-align:center">{{myTip}}</span>
+        </div>
+        <div style="font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">다른 공방의 평가 {{cmtN}}개</div>
+        <sc-for list="{{cmts}}" as="c" hint-placeholder-count="3">
+          <div style="display:flex;gap:8px;align-items:flex-start;box-sizing:border-box;padding:8px 10px;border-radius:14px;background:#FFFBF2;border:2px solid #E2CBA2;animation:cpIn .3s both">
+            <span style="flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:{{c.col}};display:flex;align-items:center;justify-content:center;font-family:'Jua',sans-serif;font-size:13px;color:#FFF">{{c.ini}}</span>
+            <span style="flex:1 1 auto;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:12.5px;color:#7A5434">{{c.who}} {{c.up}}</span><span style="font-size:13px;color:#2B1A0F">{{c.t}}</span></span>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{noEntry}}" hint-placeholder-val="{{true}}">
+        <div style="box-sizing:border-box;padding:12px;border-radius:16px;background:#FFF4DE;border:3px dashed #8A6440;font-size:13px;line-height:1.55;color:#5B3A24;text-align:center">이번 주제는 <b>「{{themeName}}」</b>이에요.<br>보관함에 있는 {{themeName}} 중 하나를 골라 출품해요 · 회차마다 한 점</div>
+        <sc-for list="{{cands}}" as="k" hint-placeholder-count="2">
+          <div style="{{k.st}}">
+            <span style="flex:0 0 auto;width:54px;height:56px;display:flex;align-items:flex-end;justify-content:center"><svg width="50" height="56" viewBox="{{k.pot.vb}}" aria-hidden="true"><path d="{{k.pot.d}}" fill="{{k.pot.fill}}" stroke="{{k.pot.edge}}" stroke-width="{{k.pot.sw}}"></path><path d="{{k.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14.5px;color:#2B1A0F">{{k.name}}</span><span style="font-size:11.5px;color:#7A5434">{{k.sub}}</span></span>
+            <button type="button" onClick="{{k.pick}}" aria-label="{{k.name}} · {{k.btnTxt}}" style="{{k.btn}}">{{k.btnTxt}}</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{noCand}}" hint-placeholder-val="{{false}}">
+          <div style="padding:16px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#8A6440">아직 출품할 {{themeName}}이(가) 없어요<br><span style="font-size:12px">공방에서 빚어 구운 뒤 다시 와요</span></div>
+        </sc-if>
+      </sc-if>
+    </sc-if>
+
+    <!-- 평가하기 -->
+    <sc-if value="{{isVote}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:13.5px;color:#5B3A24"><span>다른 공방의 출품작을 추천해요</span><span>오늘 남은 추천 {{recLeft}}/10</span></div>
+      <sc-if value="{{voteOn}}" hint-placeholder-val="{{true}}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;box-sizing:border-box;padding:14px 12px;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);animation:cpPop .3s both">
+          <span style="font-size:11.5px;color:#8A6440">{{vIdx}}</span>
+          <span style="height:150px;display:flex;align-items:flex-end"><svg width="140" height="150" viewBox="{{v.pot.vb}}" aria-hidden="true"><path d="{{v.pot.d}}" fill="{{v.pot.fill}}" stroke="{{v.pot.edge}}" stroke-width="{{v.pot.sw}}"></path><path d="{{v.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+          <span style="font-family:'Jua',sans-serif;font-size:18px;color:#2B1A0F">{{vName}}</span>
+          <span style="font-size:12px;color:#7A5434">{{vSub}}</span>
+          <div style="display:flex;gap:8px;width:100%;margin-top:4px">
+            <button type="button" onClick="{{vSkip}}" style="all:unset;cursor:pointer;flex:1 1 0;text-align:center;padding:10px 0;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">다음 작품 ›</button>
+            <button type="button" onClick="{{vRec}}" aria-label="{{vName}} 추천하기" style="{{vRecSt}}">{{vRecTxt}}</button>
+          </div>
+        </div>
+        <span style="font-size:11.5px;color:#7A5434;text-align:center">추천할 때마다 내 출품작도 다른 공방에 소개돼요 (최대 +40표)</span>
+      </sc-if>
+      <sc-if value="{{voteOff}}" hint-placeholder-val="{{false}}"><div style="padding:18px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#8A6440">{{voteOffTxt}}</div></sc-if>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{resOn}}" hint-placeholder-val="{{false}}">
+    <div role="dialog" aria-label="품평회 결과" style="position:absolute;inset:0;z-index:60;background:rgba(30,15,5,.6);display:flex;align-items:center;justify-content:center">
+      <div style="width:300px;box-sizing:border-box;padding:18px 16px;border-radius:22px;background:#FFF4DE;border:4px solid #5B3A24;box-shadow:0 0 40px rgba(255,214,107,.6);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;animation:cpPop .4s both">
+        <span style="font-size:46px;line-height:1">{{resIc}}</span>
+        <span style="font-family:'Jua',sans-serif;font-size:20px;color:#2B1A0F">제 {{resRound}}회 품평회 결과</span>
+        <span style="font-size:13.5px;line-height:1.55;color:#5B3A24;white-space:pre-line">{{resTxt}}</span>
+        <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2F5022">{{resRw}}</span>
+        <button type="button" onClick="{{resClaim}}" style="all:unset;cursor:pointer;box-sizing:border-box;width:100%;text-align:center;padding:10px 0;border-radius:14px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:16px;color:#FFFDF5">보상 받기</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" style="position:absolute;left:30px;right:30px;top:178px;z-index:70;padding:10px 12px;border-radius:14px;background:rgba(43,26,15,.92);border:2px solid #FFE7A8;font-family:'Jua',sans-serif;font-size:13.5px;color:#FFF4DE;text-align:center">{{toast}}</div>
+  </sc-if>
+  <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;z-index:50">
+    <a href="Main.dc.html" aria-label="공방" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
+    </a>
+    <a href="Gather.dc.html" aria-label="채집" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
+    </a>
+    <a href="Research.dc.html" aria-label="연구" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/6a66a73c9fc4b6c62852fd952628acea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">연구</span>
+    </a>
+    <a href="Codex.dc.html" aria-label="도감" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/ec31190f776d7005da6bd6a0febe0402.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">도감</span>
+    </a>
+    <a href="Shop.dc.html" aria-label="상점" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">상점</span>
+    </a>
+    <a href="Contest.dc.html" aria-label="품평회" aria-current="page" style="background:rgba(255,214,107,.2);position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
+      <img src="ui/tutorial_trophy.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">품평회</span>
+    </a>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { g: this.loadG(), toast: '', tab: 'rank', vi: 0, cf: '' }; }
+  loadG() {
+    var d = { gold: 0, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, mats: {} };
+    try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
+    return d;
+  }
+  setG(p) { var c = this.loadG(), g = {}, k; for (k in c) { g[k] = c[k]; } for (k in p) { g[k] = p[k]; } try { localStorage.setItem('pottery-proto-v1', JSON.stringify(g)); } catch (e) {} this.setState({ g: g }); }
+  tutBoot() { return window.PotteryShared.tutBoot.call(this, 'Contest'); }
+  sndBoot() { return window.PotteryShared.sndBoot.call(this); }
+  qlib() { return window.PotteryShared.qlib.call(this); }
+  navBoot() { return window.PotteryShared.navBoot.call(this); }
+  componentDidMount() {
+    try { this.tutBoot(); } catch (e) {} try { this.sndBoot(); } catch (e) {}
+    var self = this; setTimeout(function () { try { self.navBoot(); } catch (e) {} }, 0);
+    this.settle();
+    this.tk = setInterval(function () { self.setState({ t: Date.now() }); }, 30000);
+  }
+  componentWillUnmount() { clearInterval(this.tk); clearTimeout(this.tt); }
+  say(m) { var self = this; clearTimeout(this.tt); this.setState({ toast: m }); this.tt = setTimeout(function () { self.setState({ toast: '' }); }, 2200); }
+  sfx(n) { try { window.__sfx && window.__sfx(n); } catch (e) {} }
+  potOf(it, fill) {
+    var T = { dish: { H: 70, f: function (u) { return 40 + 50 * Math.sqrt(u); } }, cup: { H: 130, f: function (u) { return 34 + 14 * u; } }, bowl: { H: 95, f: function (u) { return 38 + 62 * Math.pow(u, 0.6); } }, jar: { H: 140, f: function (u) { return 34 + 34 * Math.sin(Math.PI * Math.min(1, u * 0.95)); } } };
+    var r = it && it.prof, H = it && it.H;
+    if (!r || r.length < 3) { var tt = T[it && it.shape] || T.cup; r = []; for (var i = 0; i < 12; i++) { r.push(tt.f(i / 11)); } H = tt.H; }
+    H = H || 110;
+    var n = r.length, M = 0, R = [], L = [];
+    for (var j = 0; j < n; j++) { M = Math.max(M, r[j]); var y = -H * j / (n - 1); R.push([r[j], y]); L.push([-r[j], y]); }
+    function sm(pts) { var d = ''; for (var k = 1; k < pts.length - 1; k++) { var mx = (pts[k][0] + pts[k + 1][0]) / 2, my = (pts[k][1] + pts[k + 1][1]) / 2; d += ' Q' + pts[k][0].toFixed(1) + ' ' + pts[k][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); } var la = pts[pts.length - 1]; return d + ' L' + la[0].toFixed(1) + ' ' + la[1].toFixed(1); }
+    var _r0 = r[0], _f = (fill || '#C9A68C').toLowerCase();
+    var _raw = ['#4e4540', '#8e837a', '#9a5a40', '#b48a58', '#c9c2b4', '#d49a7e', '#e2c79e', '#f2eee6', '#e8dccb', '#9c6a50', '#c9a68c', '#a9876f', '#d8c2ae', '#bdb0a0', '#e6ddd2', '#c8c2b6', '#efebe3', '#d0cbc2', '#f5f2ec', '#ead8c4', '#b98a7e', '#f0d3c7', '#ccc', '#cccccc'];
+    var _gl = /^#[0-9a-f]{6}$/.test(_f) && _raw.indexOf(_f) < 0;
+    var _CLF = { cw1: '#E4DED2', cw2: '#E4DED2', cw3: '#E4DED2', cy1: '#D2AE7C', cy2: '#D2AE7C', cy3: '#D2AE7C', cr1: '#B9765A', cr2: '#B9765A', cr3: '#B9765A', ck1: '#6E625A', ck2: '#6E625A', ck3: '#6E625A', basic: '#B58A6C', refined: '#C2A48C', kaolin: '#CFC3B4', porcelain: '#D8D2C6', premium: '#E2DDD3', spring: '#D9A898' };
+    function _dk(h, k) { if (!/^#[0-9a-f]{6}$/.test(h)) { return '#3E2616'; } var nn = parseInt(h.slice(1), 16), rr = (nn >> 16) & 255, gg = (nn >> 8) & 255, bb = nn & 255; rr = Math.round(rr * k + 40 * (1 - k) * 0.6); gg = Math.round(gg * k + 24 * (1 - k) * 0.6); bb = Math.round(bb * k + 12 * (1 - k) * 0.6); return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1); }
+    var _part = _gl && it && it.cov != null && (it.cov < 0.97 || !!it.g2 || !!((it.brush && it.brush.length || it.bru))), _clay = _CLF[it && it.clay] || _CLF.basic;
+    var _cvf = _part && window.PotteryShared && window.PotteryShared.covFillAng ? window.PotteryShared.covFillAng.call(window.PotteryShared, fill, _clay, it, { H: H, r: r, drip: _dk(_f, 0.72) }) : (fill || '#C9A68C');
+    var Lr = L.slice().reverse();
+    var d = 'M' + L[0][0].toFixed(1) + ' 0 A' + r[0].toFixed(1) + ' ' + (r[0] * 0.22).toFixed(1) + ' 0 0 0 ' + R[0][0].toFixed(1) + ' 0' + sm(R) + ' A' + r[n - 1].toFixed(1) + ' ' + Math.max(2, r[n - 1] * 0.16).toFixed(1) + ' 0 0 1 ' + Lr[0][0].toFixed(1) + ' ' + Lr[0][1].toFixed(1) + sm(Lr) + ' Z';
+    var side = Math.max(2 * M, H) + 20;
+    var _bg = (function () { var o = { b0: '', c0: 'none', b1: '', c1: 'none', b2: '', c2: 'none' }, cols = []; ((it && it.brush) || []).forEach(function (s) { if (!s || !s.p) { return; } var k = cols.indexOf(s.c); if (k < 0 && cols.length < 3) { cols.push(s.c); k = cols.length - 1; } if (k < 0) { k = 2; } o['b' + k] += ' ' + s.p; o['c' + k] = cols[k]; }); return o; })(); /* 붓 무늬 : 색마다 한 줄 */
+    var _tx = { fill: 'none', op: 0 }; try { _tx = window.PotteryShared.potTex.call(window.PotteryShared, it, H, r); } catch (eT) {}
+    return (function (P) { try { if (it && it.sk === 'slab' && it.poly && window.PotteryShared && window.PotteryShared.slabPot) { return window.PotteryShared.slabPot(it, P); } } catch (e) {} P.rimD = P.rimD || 'M0 0'; return P; })({ b0: _bg.b0 || 'M0 0', c0: _bg.c0, b1: _bg.b1 || 'M0 0', c1: _bg.c1, b2: _bg.b2 || 'M0 0', c2: _bg.c2, bw: (Math.max(2.5, (typeof side !== 'undefined' ? side : 100) / 34)).toFixed(1), inner: _dk(_f, 0.5), edge: _dk(_f, 0.42), shRx: (_r0 * 1.18).toFixed(1), shRy: Math.max(3, _r0 * 0.26).toFixed(1), shCy: (_r0 * 0.12).toFixed(1), d: d, vb: (-side / 2).toFixed(1) + ' ' + (-H / 2 - side / 2).toFixed(1) + ' ' + side.toFixed(1) + ' ' + side.toFixed(1), rimY: (-H).toFixed(1), rimRx: r[n - 1].toFixed(1), rimRy: Math.max(2, r[n - 1] * 0.16).toFixed(1), sw: (side / 64).toFixed(2), fill: _cvf, H: H, M: M, tex: _tx.fill, texOp: _tx.op, rings: 'url(#potRings)', grainOp: it && it.glaze && it.glaze !== 'none' ? 0.06 : 0.07 }); /* 흙 질감(건조 기물과 같은 결) · 판 기물은 판 성형대 옆모습 그대로 */
+  }
+  fillOf(it, stage) {
+    var CL = { cw1: ['#C9C2B4', '#F2EEE6'], cw2: ['#C9C2B4', '#F2EEE6'], cw3: ['#C9C2B4', '#F2EEE6'], cy1: ['#B48A58', '#E2C79E'], cy2: ['#B48A58', '#E2C79E'], cy3: ['#B48A58', '#E2C79E'], cr1: ['#9A5A40', '#D49A7E'], cr2: ['#9A5A40', '#D49A7E'], cr3: ['#9A5A40', '#D49A7E'], ck1: ['#4E4540', '#8E837A'], ck2: ['#4E4540', '#8E837A'], ck3: ['#4E4540', '#8E837A'], basic: ['#9C6A50', '#C9A68C'], refined: ['#A9876F', '#D8C2AE'], kaolin: ['#BDB0A0', '#E6DDD2'], porcelain: ['#C8C2B6', '#EFEBE3'], premium: ['#D0CBC2', '#F5F2EC'], spring: ['#B98A7E', '#F0D3C7'] };
+    var GZ = { white: '#ECE8DE', celadon: '#9DBFA9', black: '#3B3230', jinsa: '#B5534A', sakura: '#EFB3C2', cheonmok: '#2E2A25' };
+    var c = CL[it && it.clay] || CL.basic;
+    if (stage === 'wet') { return c[0]; }
+    if (stage === 'dry' || stage === 'bisque') { return c[1]; }
+    if (it && !it.glaze && (it.brush && it.brush.length || it.bru)) { return c[1]; } /* 붓 시유만 한 기물 : 몸은 흙빛 그대로 */
+    if (it && it.tint) { return it.tint; }
+    return GZ[it && it.glaze] || '#ECE8DE';
+  }
+  /* ── 회차 · 가상 서버 ── */
+  WEEK() { return 7 * 86400000; }
+  EPOCH() { return Date.UTC(2026, 10, 22, 15, 0, 0); } /* 2026-11-23(월) 0시 KST */
+  wkNow() { return Math.floor((Date.now() - this.EPOCH()) / this.WEEK()) + 1; }
+  wkStart(w) { return this.EPOCH() + (w - 1) * this.WEEK(); }
+  rng(seed) { var a = (seed * 2654435761) >>> 0; return function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  themeOf(w, g) {
+    var C = this.loadG().contest || {}; if (C.themes && C.themes[w]) { return C.themes[w]; }
+    var Q = this.qlib(), known = Q.knownShapes(g) || [], L = ['chatjan', 'sabal', 'dish', 'daejeop', 'dawan', 'hwabyeong', 'plate', 'hangari', 'maebyeong', 'moonjar'].filter(function (k) { return Q.SHP[k] && known.indexOf(k) >= 0; });
+    if (!L.length) { L = ['chatjan']; } return L[(w * 7 + 3) % L.length];
+  }
+  npcs(w, theme) {
+    var Q = this.qlib(), R = this.rng(w * 131 + 17), S = Q.SHP[theme] || Q.SHP.chatjan, out = [];
+    var A = ['달빛', '청솔', '흙내음', '소나무', '물결', '고요', '하늘', '연두', '바람', '은하', '새벽', '들꽃', '솔향', '모래', '이슬', '단풍', '눈꽃', '돌담', '노을', '산들'], B = ['공방', '도예', '가마', '도방', '흙집', '요'];
+    var GL = ['white', 'celadon', 'black', 'jinsa', 'sakura', 'celadon', 'white'], CL = ['cy1', 'cw1', 'cr1', 'ck1', 'cw1'], GD = ['명작', '수작', '수작', '범작', '범작', '수작'];
+    for (var i = 0; i < 36; i++) {
+      var q = Math.pow(R(), 0.8), H = Math.round(S.H * (0.92 + R() * 0.16)), prof = S.p.map(function (x) { return Math.round(x * (0.92 + R() * 0.16)); });
+      var gz = GL[Math.floor(R() * GL.length)], name = A[Math.floor(R() * A.length)] + B[Math.floor(R() * B.length)];
+      out.push({ id: 'n' + w + '_' + i, name: name, piece: { shape: Q.WSM ? (Q.WSM[theme] || 'cup') : 'cup', sk: theme, prof: prof, H: H, glaze: gz, clay: CL[Math.floor(R() * CL.length)], cov: 0.55 + R() * 0.4, grade: GD[Math.floor(q * GD.length) % GD.length] }, V: Math.round(60 + q * 480) });
+    }
+    return out;
+  }
+  frac(w) { var f = (Date.now() - this.wkStart(w)) / this.WEEK(); f = Math.max(0.03, Math.min(1, f)); return 1 - Math.pow(1 - f, 1.6); }
+  myV(e, w) { var G = { '명작': 0.72, '수작': 0.5, '범작': 0.32 }, p = e.snap || {}, R = this.rng(w * 7 + (p.H || 1)), q = (G[p.grade] || 0.22) + Math.min(0.15, ((p.skill || 0) / 200) * 0.15) + R() * 0.12; return Math.round(60 + q * 480); }
+  board(w, g) {
+    var C = g.contest || {}, cur = (C.cur && C.cur.wk === w) ? C.cur : { wk: w }, f = this.frac(w), rec = cur.rec || {}, self = this;
+    var L = this.npcs(w, this.themeOf(w, g)).map(function (n) { return { id: n.id, name: n.name, piece: n.piece, votes: Math.round(n.V * f) + (rec[n.id] ? 1 : 0), me: false }; });
+    if (cur.entry) { var bonus = Math.min(40, (cur.given || 0) * 2); L.push({ id: 'me', name: (g.wsName || '강 할매네 공방'), piece: cur.entry.snap, votes: Math.round(this.myV(cur.entry, w) * f) + bonus, me: true }); }
+    L.sort(function (a, b) { return b.votes - a.votes; });
+    return L;
+  }
+  REW() { return [{ gold: 30000, jade: 30 }, { gold: 15000, jade: 20 }, { gold: 8000, jade: 10 }]; }
+  settle() { /* 지난 회차 마감 : 순위 확정 → 보상 대기 */
+    var g = this.loadG(), C = g.contest || {}, w = this.wkNow();
+    if (C.cur && C.cur.wk < w) {
+      var cur = C.cur, res = C.res || null;
+      if (cur.entry) { var f0 = this.frac, self = this; this.frac = function () { return 1; }; var B = this.board(cur.wk, g); this.frac = f0; var rk = 0; B.forEach(function (x, i) { if (x.me) { rk = i + 1; } }); var me = B[rk - 1] || {}, RW = this.REW()[rk - 1] || { gold: 1000, jade: 3 };
+        res = { wk: cur.wk, theme: this.themeOf(cur.wk, g), rank: rk, votes: me.votes || 0, n: B.length, gold: RW.gold, jade: RW.jade, claimed: false }; }
+      var C2 = {}, k; for (k in C) { C2[k] = C[k]; } C2.cur = { wk: w, rec: {}, given: 0 }; if (res && res.wk === cur.wk) { C2.res = res; }
+      var th = {}; for (k in (C.themes || {})) { th[k] = C.themes[k]; } C2.themes = th;
+      this.setG({ contest: C2 });
+    }
+    if (!C.cur) { var C3 = {}, k3; for (k3 in C) { C3[k3] = C[k3]; } C3.cur = { wk: w, rec: {}, given: 0 }; this.setG({ contest: C3 }); }
+    var g2 = this.loadG(), C4 = g2.contest || {}; if (!(C4.themes || {})[w]) { var t2 = {}, k4; for (k4 in (C4.themes || {})) { t2[k4] = C4.themes[k4]; } t2[w] = this.themeOf(w, g2); var C5 = {}; for (k4 in C4) { C5[k4] = C4[k4]; } C5.themes = t2; this.setG({ contest: C5 }); }
+  }
+  curC() { var g = this.loadG(), C = g.contest || {}, w = this.wkNow(); return (C.cur && C.cur.wk === w) ? C.cur : { wk: w, rec: {}, given: 0 }; }
+  putC(cur) { var g = this.loadG(), C = g.contest || {}, C2 = {}, k; for (k in C) { C2[k] = C[k]; } C2.cur = cur; this.setG({ contest: C2 }); }
+  cmts(e, w, f) {
+    var p = e.snap || {}, R = this.rng(w * 53 + 9), n = Math.min(12, 1 + Math.floor(f * 11)), out = [];
+    var GZ = { celadon: ['청자 빛이 맑아요', '비취색이 참 곱네요'], white: ['눈처럼 하얀 백자네요', '단정하고 깨끗해요'], black: ['흑유 윤기가 깊어요', '검은 빛이 묵직하니 멋져요'], jinsa: ['진사 붉은빛이 살아 있어요', '불을 잘 다루셨네요'], sakura: ['벚꽃빛이 사랑스러워요', '봄 같은 그릇이에요'] };
+    var GOOD = ['선이 단정해요', '굽이 안정적이에요', '손맛이 느껴져요', '주제에 딱 맞아요', '비례가 아름다워요', '유약이 고르게 앉았어요', '오래 보고 싶은 그릇이에요'], SO = ['조금 두꺼워 보여요', '다음 작품이 더 기대돼요', '모양이 조금 아쉬워요'];
+    var A = ['달빛', '청솔', '흙내음', '물결', '고요', '바람', '새벽', '들꽃', '솔향', '노을'], B = ['공방', '도예', '가마', '도방'], COL = ['#B9533A', '#3E6B8A', '#4F7A3A', '#7A3E8E', '#C2577A', '#8A6440'];
+    var good = (p.grade === '명작' || p.grade === '수작');
+    for (var i = 0; i < n; i++) { var pool = (GZ[p.glaze] || []).concat(GOOD).concat(good ? [] : SO), who = A[Math.floor(R() * A.length)] + B[Math.floor(R() * B.length)];
+      out.push({ who: who, ini: who.charAt(0), col: COL[i % COL.length], t: pool[Math.floor(R() * pool.length)], up: R() < (good ? 0.85 : 0.55) ? '👍' : '' }); }
+    return out.reverse();
+  }
+  renderVals() {
+    var self = this, s = this.state, g = s.g, Q = this.qlib(), w = this.wkNow(), theme = this.themeOf(w, g), TN = Q.SKN[theme] || Q.SN[theme] || theme, cur = this.curC();
+    var B = this.board(w, g), f = this.frac(w), jade = g.jadeV === 2 && g.jade != null ? g.jade : 0;
+    var left = this.wkStart(w + 1) - Date.now(), dd = Math.floor(left / 86400000), hh = Math.floor((left % 86400000) / 3600000);
+    var P = function (pc) { var it = pc || {}; return self.potOf(it, self.fillOf(it, 'glazed')); };
+    var TABS = [['rank', '🏆 순위'], ['mine', '🏺 내 출품작'], ['vote', '👍 평가하기']];
+    var v = { gold: (g.gold || 0).toLocaleString(), jade: jade.toLocaleString(), round: w, themeName: TN, dday: '마감까지 ' + (dd > 0 ? dd + '일 ' : '') + hh + '시간', entryN: B.length,
+      tabs: TABS.map(function (t) { var on = s.tab === t[0]; return { label: t[1], sel: on ? 'true' : 'false', pick: function () { self.setState({ tab: t[0], cf: '' }); self.sfx('tap'); }, st: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0 6px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#FFF4DE;color:#5B3A24;box-shadow:0 3px 0 #3E2616' : 'background:#C9B08C;color:#5B3A24') }; }),
+      isRank: s.tab === 'rank', isMine: s.tab === 'mine', isVote: s.tab === 'vote', toast: s.toast, toastOn: !!s.toast };
+    /* 순위 */
+    var MD = ['🥇', '🥈', '🥉'], top = B.slice(0, 3), ord = [1, 0, 2];
+    v.podium = ord.filter(function (i) { return top[i]; }).map(function (i) { var x = top[i], h = [86, 104, 74][ord.indexOf(i)]; return { name: x.me ? '⭐ ' + x.name : x.name, votes: x.votes, medal: MD[i], pot: P(x.piece), ph: i === 0 ? 74 : 60, pw: i === 0 ? 66 : 54, base: 'width:100%;height:' + [46, 30, 22][i] + 'px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;background:' + ['#E3B23C', '#AEB6BE', '#C08A5A'][i] }; });
+    var myIdx = -1; B.forEach(function (x, i) { if (x.me) { myIdx = i; } });
+    v.meRowOn = myIdx >= 0; v.meRank = myIdx >= 0 ? (myIdx + 1) + '위' : ''; v.meName = TN; v.meVotes = myIdx >= 0 ? B[myIdx].votes : 0;
+    v.ranks = B.slice(3, 15).map(function (x, i) { return { n: i + 4, name: x.me ? '⭐ ' + x.name : x.name, sub: (Q.GNM[x.piece.glaze] || '') + ' · ' + TN, votes: x.votes, pot: P(x.piece), st: 'display:flex;align-items:center;gap:8px;box-sizing:border-box;padding:5px 8px;border-radius:12px;' + (x.me ? 'background:#F4F9EC;border:2px solid #4F7A3A' : 'background:rgba(255,251,242,.85);border:2px solid #E2CBA2') }; });
+    var pw = w - 1, lastB = pw >= 1 ? (function () { var f0 = self.frac; self.frac = function () { return 1; }; var L = self.board(pw, g).slice(0, 3); self.frac = f0; return L; })() : [];
+    v.lastOn = lastB.length > 0; v.lastTheme = pw >= 1 ? (Q.SKN[this.themeOf(pw, g)] || '') : ''; v.last = lastB.map(function (x, i) { return { medal: MD[i], name: x.name, pot: P(x.piece) }; });
+    /* 내 출품작 */
+    v.hasEntry = !!cur.entry; v.noEntry = !cur.entry;
+    if (cur.entry) { var me = B[myIdx] || { votes: 0 }; v.my = { pot: P(cur.entry.snap) }; v.myName = cur.entry.snap.name || TN; v.myRank = (myIdx + 1) + '위 / ' + B.length; v.myVotes = me.votes;
+      v.myTip = myIdx < 3 ? '수상권이에요! 마감까지 자리를 지켜요' : '「평가하기」에서 다른 작품을 추천하면 내 작품도 더 알려져요'; var CM = this.cmts(cur.entry, w, f); v.cmts = CM; v.cmtN = CM.length; }
+    else { v.my = { pot: P({}) }; v.cmts = []; v.cmtN = 0; v.myName = ''; v.myRank = ''; v.myVotes = 0; v.myTip = ''; }
+    var ps = g.pieces || {}, cands = Object.keys(ps).filter(function (id) { var p = ps[id]; return p && p.where === 'store' && p.sk !== 'slab' && Q.shapeKeyOf(p, theme) === theme; });
+    v.cands = cands.map(function (id) { var p = ps[id], cf = s.cf === id; return { name: p.name || TN, sub: (p.grade || '') + (typeof p.skill === 'number' ? ' · ' + p.skill + '점' : ''), pot: P(p), btnTxt: cf ? '정말 출품' : '출품하기',
+      btn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (cf ? 'background:#C0582E;color:#FFFDF5;border:3px solid #8A3A1A' : 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328'),
+      st: 'display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:8px 10px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24',
+      pick: function () { if (s.cf !== id) { self.setState({ cf: id }); self.say('출품하면 이번 회차엔 바꿀 수 없어요 · 한 번 더 누르면 출품해요'); return; }
+        var c2 = self.curC(), snap = {}, k; for (k in p) { snap[k] = p[k]; } c2 = { wk: c2.wk, rec: c2.rec || {}, given: c2.given || 0, entry: { pid: id, snap: snap, at: Date.now() } }; self.putC(c2); self.setState({ cf: '', tab: 'mine' }); self.sfx('unlock'); self.say('🏺 출품했어요! 마감 때 순위가 정해져요'); try { window.PotteryShared.confetti && window.PotteryShared.confetti(); } catch (e) {} } }; });
+    v.noCand = !cands.length;
+    /* 평가하기 */
+    var rec = cur.rec || {}, today = new Date().toDateString(), used = cur.recDay === today ? (cur.recN || 0) : 0, recLeft = Math.max(0, 10 - used);
+    var pool = B.filter(function (x) { return !x.me; }), vi = s.vi % Math.max(1, pool.length), V = pool[vi];
+    v.recLeft = recLeft; v.voteOn = !!V; v.voteOff = !V; v.voteOffTxt = '아직 출품작이 없어요';
+    if (V) { var did = !!rec[V.id]; v.v = { pot: P(V.piece) }; v.vName = V.name; v.vSub = (Q.GNM[V.piece.glaze] || '') + ' · ' + TN + ' · 👍 ' + V.votes; v.vIdx = (vi + 1) + ' / ' + pool.length;
+      v.vRecTxt = did ? '추천했어요 ✓' : (recLeft ? '👍 추천' : '오늘은 끝'); v.vRecSt = 'all:unset;cursor:pointer;flex:1 1 0;text-align:center;padding:10px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (did ? 'background:#E9F2DC;color:#2F5022;border:3px solid #4F7A3A' : (recLeft ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E'));
+      v.vSkip = function () { self.setState({ vi: s.vi + 1 }); self.sfx('tap'); };
+      v.vRec = function () { if (did) { self.setState({ vi: s.vi + 1 }); return; } if (!recLeft) { self.say('오늘 추천은 다 썼어요 · 내일 다시 와요'); return; }
+        var c2 = self.curC(), r2 = {}, k; for (k in (c2.rec || {})) { r2[k] = c2.rec[k]; } r2[V.id] = 1; var u = c2.recDay === today ? (c2.recN || 0) : 0;
+        self.putC({ wk: c2.wk, rec: r2, given: (c2.given || 0) + 1, recDay: today, recN: u + 1, entry: c2.entry }); self.sfx('ok'); try { window.__buzz && window.__buzz(12); } catch (e) {} setTimeout(function () { self.setState({ vi: self.state.vi + 1 }); }, 350); }; }
+    else { v.v = { pot: P({}) }; v.vName = ''; v.vSub = ''; v.vIdx = ''; v.vRecTxt = ''; v.vRecSt = ''; v.vSkip = function () {}; v.vRec = function () {}; }
+    /* 결과 */
+    var RS = (g.contest || {}).res; v.resOn = !!(RS && !RS.claimed);
+    if (v.resOn) { v.resRound = RS.wk; v.resIc = RS.rank === 1 ? '🥇' : (RS.rank === 2 ? '🥈' : (RS.rank === 3 ? '🥉' : '🏺')); v.resTxt = '주제 「' + (Q.SKN[RS.theme] || '') + '」 · ' + RS.n + '점 중 ' + RS.rank + '위 · 👍 ' + RS.votes + '표' + (RS.rank <= 3 ? '\n축하해요! 수상작에 올랐어요' : '\n다음 회차에도 도전해요'); v.resRw = '💰 ' + RS.gold.toLocaleString() + 'G · 💎 ' + RS.jade;
+      v.resClaim = function () { var G2 = self.loadG(), C = G2.contest || {}, C2 = {}, k; for (k in C) { C2[k] = C[k]; } var r2 = {}; for (k in RS) { r2[k] = RS[k]; } r2.claimed = true; C2.res = r2; self.setG({ contest: C2, gold: (G2.gold || 0) + RS.gold, jadeV: 2, jade: (G2.jadeV === 2 && G2.jade != null ? G2.jade : 0) + RS.jade }); self.sfx('coin'); if (RS.rank <= 3) { try { window.PotteryShared.confetti && window.PotteryShared.confetti(); } catch (e) {} } }; }
+    else { v.resRound = ''; v.resIc = ''; v.resTxt = ''; v.resRw = ''; v.resClaim = function () {}; }
+    return v;
+  }
+}
+</script>
+</body>
+</html>

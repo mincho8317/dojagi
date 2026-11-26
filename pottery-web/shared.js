@@ -446,22 +446,27 @@
     ];
     var GRANK = { '범작': 0, '양작': 1, '수작': 2, '명작': 3, '요변': 3 };
     // ── 전시대 : 에피소드마다 · 챕터를 끝내면 자리가 열리고, 다음 챕터 조건을 미리 쓴 명작을 올리면 해금 (영구 고정) ──
-    var UNLN = { black: '흑토·흑유', red: '적토·진사유', stamp: '붓 시유 도장', remodel: '공방 리모델링', gather: '채집', research: '연구', event: '이벤트' };
-    var UNLI = { black: '⚫', red: '🔴', stamp: '🌸', remodel: '🏠', gather: '⛏', research: '📚', event: '🎉' };
+    var UNLN = { black: '흑토·흑유', red: '적토·진사유', stamp: '붓 시유 도장', remodel: '공방 리모델링', gather: '채집', research: '연구', event: '이벤트', contest: '품평회' };
+    var UNLI = { black: '⚫', red: '🔴', stamp: '🌸', remodel: '🏠', gather: '⛏', research: '📚', event: '🎉', contest: '🏆' };
     /* 공방 리모델링 (전시대 ④로 해금 · 상점에서 산다) */
     var DECO = {
       wall: [{ id: 'base', n: '흙벽', d: '따뜻한 황토 흙벽', p: 0, sw: 'linear-gradient(#E8D2AE,#D6B88B)' }, { id: 'tile', n: '청자 타일', d: '은은한 청록 타일 벽', p: 600, sw: 'repeating-linear-gradient(0deg,#9FC4B4 0 22px,#8DB5A4 22px 24px),#9FC4B4' }, { id: 'hanji', n: '한지 창살', d: '창살 무늬 한지 벽', p: 900, sw: 'repeating-linear-gradient(90deg,rgba(122,84,52,.35) 0 3px,transparent 3px 30px),repeating-linear-gradient(0deg,rgba(122,84,52,.35) 0 3px,transparent 3px 30px),#F4EAD6' }, { id: 'night', n: '먹빛 나무벽', d: '차분한 짙은 나무 벽', p: 1200, sw: 'repeating-linear-gradient(90deg,#4A3326 0 40px,#43301F 40px 80px)' }],
       kiln: [{ id: 'base', n: '붉은 벽돌 가마', d: '기본 가마', p: 0, sw: 'linear-gradient(#B35A3A,#7A3A24)', f: 'none' }, { id: 'white', n: '흰 회벽 가마', d: '회칠한 밝은 가마', p: 800, sw: 'linear-gradient(#EDE6DA,#BFB3A3)', f: 'saturate(.25) brightness(1.25)' }, { id: 'stone', n: '검은 돌가마', d: '단단한 현무암 가마', p: 1100, sw: 'linear-gradient(#5E5A57,#2E2B29)', f: 'grayscale(.75) brightness(.75) contrast(1.1)' }],
       tub: [{ id: 'base', n: '나무 유약통', d: '기본 유약통', p: 0, sw: 'linear-gradient(#E9DCC4,#B98A5E)', f: 'none' }, { id: 'blue', n: '청화 유약통', d: '푸른 그림 유약통', p: 500, sw: 'linear-gradient(#DCE6F2,#5878A8)', f: 'hue-rotate(185deg) saturate(1.4)' }, { id: 'onggi', n: '옹기 유약통', d: '검붉은 옹기', p: 700, sw: 'linear-gradient(#8A5A3A,#4A2E1E)', f: 'sepia(.7) brightness(.72) saturate(1.3)' }],
+      wheel: [{ id: 'base', n: '할머니 물레', d: '오래 쓴 기본 물레', p: 0, sw: 'linear-gradient(#C9A27A,#8A6440)', f: 'none' }, { id: 'birch', n: '자작나무 물레', d: '밝고 산뜻한 새 물레', p: 6000, sw: 'linear-gradient(#F1E2C4,#C9A980)', f: 'brightness(1.18) saturate(.75)' }, { id: 'lacquer', n: '옻칠 물레', d: '검붉게 윤이 나는 물레', p: 9000, sw: 'linear-gradient(#7A2E22,#3A1610)', f: 'sepia(.5) saturate(1.6) hue-rotate(-12deg) brightness(.72)' }],
+      desk: [{ id: 'base', n: '카운터 탁자', d: '기본 나무 탁자', p: 0, sw: 'linear-gradient(#C9A27A,#8A6440)', f: 'none' }, { id: 'walnut', n: '호두나무 탁자', d: '짙고 묵직한 탁자', p: 5000, sw: 'linear-gradient(#7A5236,#4A2E1E)', f: 'brightness(.78) saturate(1.15)' }, { id: 'hanok', n: '한옥 소반 탁자', d: '단청 빛이 도는 탁자', p: 8000, sw: 'linear-gradient(#B9533A,#3E6B8A)', f: 'hue-rotate(-18deg) saturate(1.5)' }],
+      slab: [{ id: 'base', n: '기본 성형대', d: '기본 판 성형대', p: 0, sw: 'linear-gradient(#B98A5C,#7A5434)', f: 'none' }, { id: 'birch', n: '자작 성형대', d: '밝은 결의 성형대', p: 4000, sw: 'linear-gradient(#F1E2C4,#C9A980)', f: 'brightness(1.15) saturate(.75)' }],
+      paint: [{ id: 'base', n: '기본 시유대', d: '기본 붓 시유대', p: 0, sw: 'linear-gradient(#E9DCC4,#B98A5E)', f: 'none' }, { id: 'birch', n: '자작 시유대', d: '밝은 결의 시유대', p: 4000, sw: 'linear-gradient(#F1E2C4,#C9A980)', f: 'brightness(1.12) saturate(.8)' }],
       shelf: [{ id: 'base', n: '참나무 선반', d: '기본 선반', p: 0, sw: '#8A5A36' }, { id: 'pine', n: '소나무 선반', d: '밝은 결의 선반', p: 300, sw: '#C89A62' }, { id: 'ebony', n: '흑단 선반', d: '짙고 고급스러운 선반', p: 900, sw: '#3E2A1E' }]
     };
+    var REMODEL_COST = 300000; /* 공방 리모델링 비용 */
     function unl(g, k) { return !!((g && g.unl) || {})[k]; }
     var DISP = [
       { ep: 'main', icon: '📖', title: '에피소드 1 · 강 할매네 공방', slots: [
         { id: 'm1', line: 'main', ch: 'table', need: { sk: 'sabal', clay: 'y', cov: [0.4, 0.7], grade: '명작' }, rw: 'black' },
         { id: 'm2', line: 'main', ch: 'tea', need: { sk: 'dawan', glaze: 'celadon', ang: [30, 60], grade: '명작' }, rw: 'stamp' },
         { id: 'm3', line: 'main', ch: 'vase', need: { sk: 'hwabyeong', glaze: 'white', g2: true, grade: '명작' }, rw: 'red' },
-        { id: 'm4', line: 'main', ch: 'jar', need: { sk: 'moonjar', brush: true, grade: '명작' }, rw: 'remodel' }
+        { id: 'm4', line: 'main', ch: 'jar', need: { sk: 'moonjar', brush: true, grade: '명작' }, rw: 'contest' }
       ] },
       { ep: 'dok', icon: '👹', title: '도깨비 이야기 1 · 김 서방, 오랜만이다!', slots: [
         { id: 'd1', line: 'dok', ch: 'dok1', need: { sk: 'daejeop', clay: 'k', glaze: 'black', fireMin: 95, grade: '명작' }, rw: 'gather' },
@@ -490,9 +495,12 @@
       var slotSt = function (sl) { var pid = DP[sl.id]; if (pid && ps[pid]) { return 'filled'; } return chDone(g, sl.line, sl.ch) ? 'open' : 'locked'; };
       var E1 = DISP[0], E1f = E1.slots.filter(function (sl) { return slotSt(sl) === 'filled'; }).length;
       var nx1 = E1.slots.filter(function (sl) { return slotSt(sl) !== 'filled'; })[0];
-      // 최종 목표 1 : 할머니 전시대 채우기 → 공방 리모델링
-      out.final.push({ ic: '🏠', t: '할머니의 전시대 채우기', sub: unl(g, 'remodel') ? '공방 리모델링이 열렸어요 · 상점 「리모델링」에서 꾸며요' : '에피소드 1 전시대 4칸을 모두 채우면 「공방 리모델링」이 열려요', prog: E1f + '/4', pct: E1f / 4, done: E1f >= 4, go: unl(g, 'remodel') ? { href: 'Shop.dc.html' } : go(4),
-        hint: nx1 && !unl(g, 'remodel') ? '다음 칸 : ' + chTitle(nx1.line, nx1.ch) + (slotSt(nx1) === 'open' ? ' · 지금 올릴 수 있어요' : ' · 챕터를 끝내면 열려요') : '' });
+      // 최종 목표 1 : 할머니 전시대 채우기 → 품평회
+      out.final.push({ ic: '🏺', t: '할머니의 전시대 채우기', sub: unl(g, 'contest') ? '전시대를 다 채웠어요 · 하단 「품평회」에 출품해요' : '에피소드 1 전시대 4칸을 모두 채우면 「품평회」가 열려요', prog: E1f + '/4', pct: E1f / 4, done: E1f >= 4, go: unl(g, 'contest') ? { href: 'Contest.dc.html' } : go(4),
+        hint: nx1 && !unl(g, 'contest') ? '다음 칸 : ' + chTitle(nx1.line, nx1.ch) + (slotSt(nx1) === 'open' ? ' · 지금 올릴 수 있어요' : ' · 챕터를 끝내면 열려요') : '' });
+      // 최종 목표 3 : 공방 리모델링 (골드)
+      var RM = REMODEL_COST, gd = g.gold || 0;
+      out.final.push({ ic: '🏠', t: '공방 리모델링', sub: g.remod ? '리모델링을 마쳤어요 · 상점 「리모델링」에서 꾸며요' : RM.toLocaleString() + 'G를 모으면 상점에서 공방을 새로 꾸며요', prog: g.remod ? '완료' : Math.min(gd, RM).toLocaleString() + ' / ' + RM.toLocaleString() + 'G', pct: g.remod ? 1 : Math.min(1, gd / RM), done: !!g.remod, go: { href: 'Shop.dc.html' }, hint: '' });
       // 최종 목표 2 : 달항아리 명작
       var mjShape = !!((g.shapesFound || {}).moonjar), mjAny = false, mjBest = false;
       for (var k in ps) { var P = ps[k]; if (P && shapeKeyOf(P, 'moonjar') === 'moonjar' && P.sk !== 'slab') { mjAny = true; if ((GRANK[P.grade] || 0) >= 3) { mjBest = true; } } }
@@ -836,7 +844,7 @@
       });
       return { offers: offers, accepted: accepted };
     }
-    this._ql = { goals: goals, condList: condList, baseName: baseName, DECO: DECO, UNLN: UNLN, UNLI: UNLI, unl: unl, DISP: DISP, chDone: chDone, chTitle: chTitle, dispChecks: dispChecks, dispTxt: dispTxt, questNeeds: questNeeds, SLN: SLN, pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
+    this._ql = { REMODEL_COST: REMODEL_COST, goals: goals, condList: condList, baseName: baseName, DECO: DECO, UNLN: UNLN, UNLI: UNLI, unl: unl, DISP: DISP, chDone: chDone, chTitle: chTitle, dispChecks: dispChecks, dispTxt: dispTxt, questNeeds: questNeeds, SLN: SLN, pieceCap: pieceCap, BOARD: 6, reqCounts: reqCounts, fireFinish: fireFinish, glzChecks: glzChecks, glzTxt: glzTxt, angAbs: angAbs, clayOf: clayOf, CGRADE: CGRADE, CCOLOR: CCOLOR, CLAYKEYS: CLAYKEYS, GGRADE: GGRADE, glazeMatKey: glazeMatKey, clayLv: clayLv, glazePts: glazePts, glazeMatName: glazeMatName, isTut: isTut, GMAT: GMAT, GMATN: GMATN, qualBonus: qualBonus, addMat: addMat, takeClay: takeClay, topQ: topQ, settleKiln: settleKiln, migrate: migrate, migrateSeason: migrateSeason, SEASON: SEASON, DOK: DOK, npcProg: npcProg, chapterOf: chapterOf, lineState2: null, EPIS: EPIS, PROF: PROF, MATN: MATN, GRANK: GRANK, SEASON_UNTIL: SEASON_UNTIL, seasonOpen: seasonOpen, lineState: lineState, payout: payout, estVal: estVal, mainShards: mainShards, matValue: matValue, MATPRICE: MATPRICE, TUNE: TUNE, NPC: NPC, MAIN: MAIN, ST: ST, GP: GP, GNM: GNM, SN: SN, CLN: CLN, fits: fits, shapeScore: shapeScore, profileOf: profileOf, sideQuests: sideQuests, mainState: mainState, active: active, tracked: tracked, alloc: alloc, reqLabel: reqLabel, stepCond: stepCond, glazeOk: glazeOk, GLZ: GLZ, FXM: FXM, RCAT: RCAT, RROW: RROW, RNODE: RNODE, UPG: UPG, RCOND: RCOND, fx: fx, fxVal: fxVal, fxFmt: fxFmt, resState: resState, kMatch: kMatch, kTemps: kTemps, skillOf: skillOf, colorRoll: colorRoll, tintOf: tintOf, colorPctOf: colorPctOf, BASE: BASE, SHP: SHP, WSM: WSM, SKN: SKN, knownShapes: knownShapes, shapeKeyOf: shapeKeyOf, shapeN: shapeN, wipOk: wipOk };
     return this._ql;
   };
   // </qlib>
@@ -1010,7 +1018,7 @@
     if (window.__tutBooted) { return; }
     window.__tutBooted = true;
     var KEY = 'pottery-proto-v1';
-    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Glaze: '유약 바르기', Kiln: '소성', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '스테이지', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
+    var NAMES = { Gather: '채집', Wheel: '물레', Dry: '건조대', Queue: '작업 대기함', Glaze: '유약 바르기', Kiln: '소성', KilnOpen: '가마 열기', Display: '진열', Counter: '카운터 손님', Commission: '의뢰 내역서', Shop: '상점', Contest: '품평회', Research: '연구', Codex: '도감', Season: '봄 축제', Town: '마을' };
     var UNL = [['Wheel'], ['Dry', 'Queue'], [], ['Glaze'], ['Kiln', 'KilnOpen'], ['Display'], ['Shop', 'Contest', 'Research', 'Codex', 'Season', 'Town', 'Gather']];
     var DONE1 = 9; // 기초 튜토리얼 완료 값 (화면 코드의 tut < 9 판정과 맞춤)
     var STEPS = [
@@ -1046,7 +1054,7 @@
       if (typeof t !== 'number') { return L; }
       if (t >= UNL.length) { // 기초 튜토리얼 뒤 : 메뉴마다 해당 안내가 열릴 때까지 잠근다
         var UN = g.unl || {};
-        if (t !== DONE1) { /* 튜토리얼을 끈 공방(99) : 전시대 해금 규칙만 */ if (!UN.gather) { L.Gather = true; } if (!g.shopOpen) { L.Shop = true; } if (!UN.research || !g.resUnl) { L.Research = true; } if (!UN.event) { L.Season = true; } return L; }
+        if (t !== DONE1) { /* 튜토리얼을 끈 공방(99) : 전시대 해금 규칙만 */ if (!UN.gather) { L.Gather = true; } if (!g.shopOpen) { L.Shop = true; } if (!UN.research || !g.resUnl) { L.Research = true; } if (!UN.event) { L.Season = true; } if (!UN.contest) { L.Contest = true; } return L; }
         var o3 = t2R(), k3 = o3 && typeof o3.k === 'number' ? o3.k : 99;
         if (!UN.gather) { L.Gather = true; } if (!gR() && !g.shopOpen) { L.Shop = true; } /* 채집은 도깨비 전시대 ①로 해금 · 상점은 「할머니의 전시대」 뒤 */
         if (k3 < 3) { L.Display = true; }
@@ -2336,7 +2344,7 @@
       disp_full: { title: '다 채운 전시대', outfit: 'ws', steps: [
         { pic: '🌕', cap: '전시대 마지막 칸 · 달항아리', bg: '#2A2A44', amb: 'moon', lines: [['', '마지막 칸에 달항아리를 올렸다.'], ['', '텅 비어 있던 할머니의 전시대가, 처음으로 가득 찼다.', { fx: 'flash' }]] },
         { img: 'cg/r2.webp', pic: '✉️', cap: '편지 마지막 장', bg: '#3A2E22', amb: 'memory', lines: [['나', '할머니, 다 채웠어요. …할머니랑 같이 채운 거예요.', { face: 'sad' }], ['', '편지 마지막 장의 지운 줄이, 오늘은 조금 다르게 읽혔다.']] },
-        { pic: '🏠', cap: '공방 · 새로 그리는 도면', bg: '#4A3422', amb: 'sparkle', lines: [['나', '이제 이 공방을, 내 공방으로 꾸며 볼까.', { face: 'proud' }], ['', '🔓 공방 리모델링이 열렸어요 · 상점 「리모델링」에서 꾸며요', { fx: 'flash' }]] }
+        { pic: '🏆', cap: '공방 앞으로 온 품평회 초대장', bg: '#4A3422', amb: 'sparkle', lines: [['', '며칠 뒤, 공방 앞으로 편지 한 통이 왔다. 「도자기 품평회 · 초대장」'], ['나', '할머니 공방 이름으로… 저를요?', { face: 'surprise' }], ['', '할머니 그릇들 옆에서, 이제 내 그릇을 세상에 내보일 차례다.'], ['', '🔓 「품평회」가 열렸어요 · 하단 메뉴에서 출품해요', { fx: 'flash' }]] }
       ] },
       event_open: { title: '도깨비 마을 축제', outfit: 'ws', steps: [
         { pic: '🎐', cap: '방울이와 도롱이의 초대장', bg: '#3A3042', amb: 'petals', lines: [['방울이', '김 서방! 곧 도깨비 마을에 축제가 열려!'], ['도롱이', '강 할머니는 해마다 축제 그릇을 빚어 줬어!'], ['나', '축제 그릇이라… 나도 빚어 볼게.', { face: 'smile' }], ['', '🔓 「이벤트」가 열렸어요 · 축제 철이면 축제 손님이 찾아와요', { fx: 'flash' }]] }
