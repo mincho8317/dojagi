@@ -92,6 +92,12 @@ button{font-family:inherit;cursor:pointer}
       <span style="font-family:'Jua',sans-serif;font-size:16px;color:#5B3A24">데이터</span>
       <button type="button" onClick="{{tutAgain}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;background:#FFFDF5;border:2px solid #5B3A24;color:#5B3A24">튜토리얼 처음부터 다시 하기</button>
       <button type="button" onClick="{{reset}}" style="{{resetStyle}}">{{resetLabel}}</button>
+    </section>
+    <section aria-label="테스트" style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A3E8E">🧪 테스트용</span>
+      <button type="button" onClick="{{qaAll}}" style="{{qaAllStyle}}">{{qaAllLabel}}</button>
+      <button type="button" onClick="{{qaRich}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;background:#FFFDF5;border:2px solid #7A3E8E;color:#7A3E8E">골드 +300,000 · 옥 +1,000 · 재료 가득</button>
+      <span style="font-size:10.5px;color:#7A5434;text-align:center">테스트용 버튼이에요 · 되돌리려면 「진행 상황 초기화」</span>
       <span style="font-size:10.5px;color:#7A5434;text-align:center">진행 상황은 이 기기에만 저장돼요</span>
     </section>
 
@@ -304,6 +310,32 @@ class Component extends DCLogic {
         try { localStorage.setItem('pottery-proto-v1', JSON.stringify(keep)); Object.keys(localStorage).forEach(function (k) { if (/^(tut|ctab$|lastCraft|wheelWip|trkOpen2_|t2auto|contestCh|resFocus)/.test(k) && k !== 'tutMig') { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); } catch (e) {}
         self.setState({ g: self.loadG(), armed: false });
         self.say('진행 상황이 처음으로 돌아갔어요 · 설정과 피드백은 유지');
+      },
+      qaAllLabel: s.qaArm ? '한 번 더 누르면 모든 의뢰·기능이 열려요' : '모든 의뢰 · 기능 해금',
+      qaAllStyle: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (s.qaArm ? 'background:#7A3E8E;border:3px solid #4A2058;color:#FFFDF5;' : 'background:#FFFDF5;border:2px solid #7A3E8E;color:#7A3E8E;'),
+      qaAll: function () {
+        if (!s.qaArm) { self.setState({ qaArm: true }); return; }
+        var o = {}; try { o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) {}
+        if (o.tut === undefined) { self.setState({ qaArm: false }); self.say('공방을 한 번 연 뒤에 눌러 주세요'); return; }
+        var Q = window.PotteryShared.qlib.call(self), k;
+        o.needIntro = 0; o.tut = 99; o.shopOpen = true; o.resUnl = true; o.goalIntro = 1; o.gd1 = 1; o.qaAll = 1; o.wEmpty = o.wEmpty !== false;
+        var qq = {}; for (k in (o.quests || {})) { qq[k] = o.quests[k]; } qq.min = true; qq.minDone = true; qq.minThanks = true; o.quests = qq;
+        var un = {}; for (k in (o.unl || {})) { un[k] = o.unl[k]; } ['black', 'red', 'stamp', 'gather', 'research', 'event', 'contest'].forEach(function (x) { un[x] = true; }); o.unl = un;
+        var sc = {}; for (k in (o.scenes || {})) { sc[k] = o.scenes[k]; } ['prologue', 'after_min', 'open_shop', 'dok_intro', 'dok_meet', 'dok_valley', 'dok_bye', 'research_open', 'disp_m1', 'disp_m2', 'disp_m3', 'disp_full', 'ep1_end', 'event_open'].forEach(function (x) { sc[x] = sc[x] || 1; }); o.scenes = sc; o.scV2 = 1;
+        var sf = {}; for (k in (o.shapesFound || {})) { sf[k] = o.shapesFound[k]; } for (k in (Q.SHP || {})) { sf[k] = true; } ['dish', 'cup', 'bowl', 'jar'].forEach(function (x) { sf[x] = true; }); o.shapesFound = sf;
+        var gf = {}; for (k in (o.glazesFound || {})) { gf[k] = o.glazesFound[k]; } ['white', 'celadon', 'black', 'jinsa', 'sakura'].forEach(function (x) { gf[x] = true; }); o.glazesFound = gf;
+        var fc = {}; for (k in (o.fac || {})) { fc[k] = o.fac[k]; } fc.slab = true; fc.paint = true; o.fac = fc;
+        if (o.pk2) { var K = {}; for (k in o.pk2) { K[k] = o.pk2[k]; } K.open = 6; o.pk2 = K; } else { o.pk2 = { open: 6, T: 40, at: Date.now(), k: [null, null, null, null, null, null] }; }
+        o.newMk = {};
+        try { localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); localStorage.setItem('tutG', 'done'); localStorage.setItem('tutR', 'done'); localStorage.setItem('tutEv', '2'); } catch (e) {}
+        self.setState({ g: self.loadG(), qaArm: false }); self.say('🧪 모든 의뢰 · 기능을 열었어요 · 공방으로 돌아가면 적용돼요');
+      },
+      qaRich: function () {
+        var o = {}; try { o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) {}
+        o.gold = (o.gold || 0) + 300000; o.jadeV = 2; o.jade = (o.jadeV === 2 && o.jade != null ? o.jade : 0) + 1000;
+        var M = {}, k; for (k in (o.mats || {})) { M[k] = o.mats[k]; } ['cy1', 'cw1', 'cr1', 'ck1', 'gw1', 'gc1', 'gb1', 'gj1', 'gs1', 'ry', 'rw', 'rr', 'rk', 'ow', 'oc', 'ob', 'oj'].forEach(function (x) { M[x] = Math.max(M[x] || 0, 99); }); o.mats = M;
+        try { localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); } catch (e) {}
+        self.setState({ g: self.loadG() }); self.say('🧪 골드 +300,000 · 옥 +1,000 · 재료 99개씩');
       },
       tutAgain: function () {
         try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); delete o.tut; localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); ['tutProg', 'tutCardSeen', 'tutJade_dry', 'tutJade_bq', 'tutJade_kiln'].forEach(function (k) { localStorage.removeItem(k); }); Object.keys(localStorage).forEach(function (k) { if (/^tutWh_/.test(k)) { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); self.setState({ g: self.loadG() }); } catch (e) {}
