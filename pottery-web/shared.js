@@ -436,7 +436,7 @@
     function shapeN(p) { var k = shapeKeyOf(p); return SKN[k] || SN[(p || {}).shape] || '그릇'; }
     try { if (typeof window !== 'undefined') { window.__shN = shapeN; } } catch (e) {}
     // ── 시즌 의뢰 (기존 시즌 스테이지 s1~s10 이관 · 인물·대사는 기획 예시) ──
-    var SEASON_UNTIL = new Date('2026-11-17T23:59:59+09:00').getTime();
+    var SEASON_UNTIL = new Date('2027-12-31T23:59:59+09:00').getTime();
     // 벚꽃 축제 여는 의뢰 : 도깨비 1챕터 · 에피소드 1의 1챕터를 끝낸 뒤 찾아온다 · 받으면 두두리가 벚꽃 채집터를 알려 준다
     ST.s0 = { id: 's0', ch: 'season', name: '벚꽃 찻잔', shapeN: '찻잔', sk: 'chatjan', prof: SHP.chatjan.p.slice(), H: SHP.chatjan.H, glaze: 'sakura', clay: 'cy1', wshape: 'cup', newShape: '' };
     var SSTORY = [

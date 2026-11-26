@@ -225,7 +225,7 @@ class Component extends DCLogic {
     });
     return {
       goSeasonStage: function () { try { localStorage.setItem('ctab', 'req'); } catch (e) {} },
-      petals: sea.petals, dday: Math.max(0, Math.ceil((new Date('2026-11-17T00:00:00+09:00') - Date.now()) / 86400000)),
+      petals: sea.petals, dday: Math.max(0, Math.ceil((new Date('2027-12-31T00:00:00+09:00') - Date.now()) / 86400000)),
       missions: missions, items: items, toast: s.toast, toastOn: s.toast !== '',
       jade: jade.toLocaleString(), packs: packs,
       askOn: !!s.ask, ask: s.ask ? { n: s.ask.n, price: s.ask.price, after: (jade - s.ask.price).toLocaleString() } : { n: 0, price: 0, after: '' },
