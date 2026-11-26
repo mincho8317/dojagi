@@ -239,8 +239,8 @@ class Component extends DCLogic {
     // 설비 : 판 성형대 · 붓 시유대 (기본 잠김 · 지금은 0G)
     var FAC = G.fac || {}, BTN = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;border-radius:13px;font-family:Jua,sans-serif;font-size:16px;';
     var facs = [
-      { id: 'slab', name: '판 성형대', desc: '흙을 밀대로 펴서 판으로 · 모양대로 잘라 접시를 만들어요 (물레 화면 구석)', price: 3000, img: '', slab: true },
-      { id: 'paint', name: '붓 시유대', desc: '유약을 붓에 찍어 기물에 무늬를 그려요 (유약 화면 오른쪽)', price: 4000, img: '_blob/3e347c192eea1b786ae04b3d3606b5bc.webp' }
+      { id: 'slab', name: '판 성형대', desc: '흙을 밀대로 펴서 판으로 · 모양대로 잘라 접시를 만들어요 (물레 화면 구석)', price: 7500, img: '', slab: true },
+      { id: 'paint', name: '붓 시유대', desc: '유약을 붓에 찍어 기물에 무늬를 그려요 (유약 화면 오른쪽)', price: 10000, img: '_blob/3e347c192eea1b786ae04b3d3606b5bc.webp' }
     ].map(function (d) {
       var own = !!FAC[d.id], pr = d.price ? d.price.toLocaleString() + 'G' : '무료';
       return { name: d.name, desc: d.desc, img: d.img, imgOn: !!d.img, slabOn: !!d.slab,
