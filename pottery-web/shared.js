@@ -1044,9 +1044,10 @@
       var t = g.tut, L = {};
       if (typeof t !== 'number') { return L; }
       if (t >= UNL.length) { // 기초 튜토리얼 뒤 : 메뉴마다 해당 안내가 열릴 때까지 잠근다
-        if (t !== DONE1) { return L; }
+        var UN = g.unl || {};
+        if (t !== DONE1) { /* 튜토리얼을 끈 공방(99) : 전시대 해금 규칙만 */ if (!UN.gather) { L.Gather = true; } if (!g.shopOpen) { L.Shop = true; } if (!UN.research || !g.resUnl) { L.Research = true; } if (!UN.event) { L.Season = true; } return L; }
         var o3 = t2R(), k3 = o3 && typeof o3.k === 'number' ? o3.k : 99;
-        var UN = g.unl || {}; if (!UN.gather) { L.Gather = true; } if (!gR() && !g.shopOpen) { L.Shop = true; } /* 채집은 도깨비 전시대 ①로 해금 · 상점은 흙이 떨어지면 열림 */
+        if (!UN.gather) { L.Gather = true; } if (!gR() && !g.shopOpen) { L.Shop = true; } /* 채집은 도깨비 전시대 ①로 해금 · 상점은 「할머니의 전시대」 뒤 */
         if (k3 < 3) { L.Display = true; }
         if (!UN.research || !g.resUnl) { L.Research = true; } // 도깨비 전시대 ②로 해금 → 할머니 일지 컷신 뒤 열림
         if (!g.shopOpen) { L.Contest = true; }
@@ -1429,8 +1430,9 @@
     function rawMax(g) { var M = g.mats || {}, b = 0; ['ry', 'rr', 'rw', 'rk'].forEach(function (k) { b = Math.max(b, M[k] || 0); }); return b; }
     function goPage(p) { if (window.__potGo) { window.__potGo(p + '.dc.html'); } else { location.href = p + '.dc.html'; } }
     function gatherTour(g) {
-      if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
+      if (g.tut < DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
       var st = gR();
+      if (g.tut !== DONE1 && (!st || st === 'done')) { return; } /* 튜토리얼을 끈 공방(99) : 전시대 「채집」 해금으로 tutG 가 켜진 뒤만 */
       if (st === 'done') { // 예전 저장 : 채집은 끝났는데 아직 공방을 안 열었으면
         var gmD = g.mats || {}, didG = ['ry', 'rr', 'rw', 'rk', 'ow', 'oc', 'ob', 'oj'].some(function (k) { return k in gmD; }) || (g.gather && Object.keys(g.gather).length > 0);
         if (!didG && !g.shopOpen) { gW(''); return; } /* 채집을 한 적 없는데 'done' 이면 지난 진행의 흔적 → 채집 튜토리얼부터 */
@@ -1452,16 +1454,17 @@
       var tabOf = function (t) { return tabs.filter(function (b) { return (b.textContent || '').indexOf(t) >= 0; })[0] || null; };
       var gotoTab = function (t, key, msg) { var tb = tabOf(t); if (tb && tb.getAttribute('aria-selected') !== 'true') { act(key, true, function () { return tb; }, msg); return true; } return false; };
       var mukEl = qsel('[aria-label^="메밀묵 "]');
+      var played = function (k) { return k in (((g.gather || {}).best) || {}); };
       var seen = function (k) { try { return !!localStorage.getItem('tutGs_' + k); } catch (e) { return false; } }, mark = function (k) { try { localStorage.setItem('tutGs_' + k, '1'); } catch (e) {} };
       if (st === '1') {
-        if (clayN(g) > 0) { gW('r'); return; }
+        if (g.tut === DONE1 ? clayN(g) > 0 : played('dig2')) { gW('r'); return; } /* 99 : 흙이 남아 있어도 한 번은 파 보게 */
         if (gotoTab('채집', 'tgTab1', '「채집」 탭으로 가요')) { return; }
         if (!seen('muk0')) { act('tgMuk0', true, mukEl, '🥣 메밀묵은 도깨비 골짜기에 들어가는 값이에요 · 채집 한 판에 한 그릇 · 오늘은 두두리가 그냥 들여보내 줬어요', function () { mark('muk0'); }); return; }
         act('tgDig', true, qsel('button[aria-label="흙 파기 시작"]'), '「흙 파기」로 땅을 파서 흙 원료를 캐요');
         return;
       }
       if (st === 'r') {
-        if (glN > 0) { gW('m'); return; }
+        if (g.tut === DONE1 ? glN > 0 : played('rock')) { gW('m'); return; }
         if (gotoTab('채집', 'tgTabR', '「채집」 탭으로 가요')) { return; }
         act('tgRock', true, qsel('button[aria-label="돌 부수기 시작"]'), '이번엔 「돌 부수기」! 돌을 쓸어 부수면 유약 원석이 나와요');
         return;
@@ -1493,7 +1496,7 @@
     }
     // ── 시즌 이벤트 안내 : 시즌 의뢰를 받은 뒤 한 번 ──
     function seasonTour(g) {
-      if (g.tut !== DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
+      if (g.tut < DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
       var ev = ''; try { ev = localStorage.getItem('tutEv') || ''; } catch (e) {}
       var evW = function (v) { try { localStorage.setItem('tutEv', v); } catch (e) {} };
       // 벚꽃 의뢰를 받고 두두리 컷신을 본 뒤 : 축제 채집지에서 벚꽃 재 캐기
@@ -1514,7 +1517,7 @@
     }
     // ── 연구 이벤트 : 파편이 100개 모이면 할머니의 일지 → 연구 열림 → 연구 안내 ──
     function resTour(g) {
-      if (g.tut !== DONE1 || !g.shopOpen || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
+      if (g.tut < DONE1 || !g.shopOpen || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }
       var rs = ''; try { rs = localStorage.getItem('tutR') || ''; } catch (e) {}
       var rW = function (v) { try { localStorage.setItem('tutR', v); } catch (e) {} };
       if (!g.resUnl) {
@@ -2314,6 +2317,16 @@
       ] },
       dok_bye: { title: '지하실 너머', outfit: 'ws', steps: [
         { img: 'cg/d2.webp', pic: '🌫️', cap: '골짜기 입구', bg: '#20343A', amb: 'fog', lines: [['두두리', '크하하! 김 서방, 손이 제법인걸? 묵 할멈 손녀 맞네!'], ['두두리', '오늘은 여기까지! 어두우니까 조심히 올라가.'], ['두두리', '묵 잊지 말고! 흙이 모자라면 언제든 와!', { face: 'muk' }], ['나', '고마워요, 두두리. 또 올게요.', { face: 'smile' }]] }
+      ] },
+      dok_meet: { title: '지하실의 손님', outfit: 'ws', steps: [
+        { img: 'cg/d1.webp', pic: '🚪', cap: '공방 안쪽, 늘 잠겨 있던 지하실 문', bg: '#1E2230', amb: 'dark', lines: [['', '전시대에 그릇을 하나 더 올린 날 밤.'], ['', '덜컹—!', { fx: 'shake' }], ['', '늘 잠겨 있던 지하실 문이 흔들린다.'], ['나', '…누구 있어요?', { face: 'surprise' }]] },
+        { img: 'cg/s2.webp', pic: '👹', cap: '지하실에서 올라온 도깨비', bg: '#4A3422', amb: 'dust', lines: [['???', '크하하! 김 서방, 오랜만이다!', { fx: 'shake' }], ['나', '기, 김 서방…? 저는 {이름}인데요.', { face: 'surprise' }], ['두두리', '여기 오는 사람은 다 김 서방이야! 나는 골짜기 문지기 두두리.'], ['두두리', '공방에 불이 켜졌길래 올라와 봤지. 묵 할멈은 어디 갔어?'], ['나', '…할머니는 작년에 돌아가셨어요.', { face: 'sad' }], ['두두리', '……그렇구나.', { face: 'sulk' }], ['', '커다란 어깨가 축 처진다.']] },
+        { img: 'cg/s2.webp', pic: '🏺', cap: '전시대 앞', bg: '#4A3422', amb: 'dust', lines: [['두두리', '…이 전시대, 묵 할멈이 늘 채우고 싶다던 거잖아.'], ['나', '네. 이제 제가 채우려고요.', { face: 'smile' }], ['두두리', '크하하! 그럼 나도 거들어야지! 도깨비들도 그릇이 한가득 필요하거든.', { face: 'laugh' }], ['두두리', '도깨비 부탁을 잘 들어주면, 묵 할멈이 다니던 흙 좋은 골짜기 길도 열어 줄게!'], ['', '그날부터 카운터에 도깨비 손님이 찾아오기 시작했다.']] }
+      ] },
+      dok_valley: { title: '지하실 너머', outfit: 'ws', steps: [
+        { img: 'cg/d1b.webp', pic: '🚪', cap: '활짝 열린 지하실 문', bg: '#141A28', amb: 'fog', lines: [['두두리', '김 서방! 약속대로 골짜기 길을 열어 줄게!', { fx: 'shake' }], ['', '문틈으로 푸른 빛이 새어 나온다.', { fx: 'enter' }]] },
+        { img: 'cg/d2.webp', pic: '🌫️', cap: '지하실 너머, 안개 낀 골짜기', bg: '#20343A', amb: 'fog', lines: [['', '문 너머로 안개 낀 골짜기가 펼쳐졌다.'], ['두두리', '여기서 땅을 파면 흙이 나오고, 돌을 부수면 유약 원석이 나와.'], ['나', '할머니가 쓰던 흙이 여기서 왔구나…', { face: 'surprise' }]] },
+        { img: 'cg/d3.webp', pic: '🥣', cap: '메밀묵 한 그릇', bg: '#3A3022', amb: 'steam', lines: [['두두리', '대신 들어올 땐 메밀묵 한 그릇! 묵 할멈이랑 하던 약속이야.', { face: 'muk' }], ['나', '좋아요. 묵은 제가 챙길게요.', { face: 'smile' }], ['두두리', '크하하! 약속이다, 김 서방!', { fx: 'flash' }]] }
       ] },
       open_shop: { title: '공방에 불을 켜다', outfit: 'ws', steps: [
         { img: 'cg/p3.webp', pic: '🫙', cap: '공방 안', bg: '#4A3422', amb: 'dust', lines: [['', '흙이 다시 쌓였다. 묵 한 그릇에, 흙 한 짐.'], ['나', '…도깨비라니. 할머니, 대체 뭘 하고 사신 거예요.', { face: 'smile' }], ['', '창고를 정리하다, 할머니가 아끼던 그릇들을 찾았다.'], ['나', '이대로 창고에 두긴 아깝잖아.'], ['나', '…흙이 있는 동안만이라도, 공방 문을 열어 두자.', { face: 'proud' }]] },

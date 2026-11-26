@@ -399,8 +399,8 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
   <sc-if value="{{w.boardFull}}" hint-placeholder-val="{{false}}">
     <div role="status" style="position:absolute;left:44px;right:44px;top:250px;z-index:6;box-sizing:border-box;padding:12px 14px 13px;border-radius:16px;background:rgba(255,248,235,.96);border:3px solid #8A6440;box-shadow:0 4px 0 rgba(43,26,15,.35);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
       <span style="font-family:'Jua',sans-serif;font-size:18px;color:#A3442C">{{w.boardTxt}}</span>
-      <span style="font-size:12.5px;line-height:1.45;color:#5B3A24">다 빚은 기물을 유약통으로 옮기면<br>자리가 생겨 새로 빚을 수 있어요.</span>
-      <a href="Main.dc.html" style="all:unset;cursor:pointer;margin-top:2px;padding:6px 14px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">← 공방에서 옮기기</a>
+      <span style="font-size:12.5px;line-height:1.45;color:#5B3A24">빚은 기물에 유약을 입히면 아래층 선반으로 옮겨져<br>자리가 생겨요. 그다음 새로 빚을 수 있어요.</span>
+      <button type="button" onClick="{{boardGo}}" style="all:unset;cursor:pointer;margin-top:2px;padding:6px 14px;border-radius:12px;background:#3B7A32;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328;font-family:'Jua',sans-serif;font-size:14px;color:#FFFDF5">시유대로 가기 →</button>
     </div>
   </sc-if>
   <sc-if value="{{w.noClay}}" hint-placeholder-val="{{false}}">
@@ -5362,6 +5362,7 @@ class Component extends DCLogic {
     var self = this;
     try { this.sndBoot(); } catch (e) {}
     setTimeout(function () { try { self.navBoot(); } catch (e) {} }, 0);
+    setTimeout(function () { try { if (!window.__tutPano) { window.__tutPano = 1; window.PotteryShared.tutBoot.call(self, 'Main'); } } catch (e) {} }, 50); /* 하단 메뉴 잠금 표시 (전시대 해금 규칙) */
     setTimeout(function () { try { self.pickFromOther(); } catch (e) {} }, 900); /* 다른 화면 상단 바에서 고른 요구 기물 */
     this.allCtls().forEach(function (c) { setTimeout(function () { try { c.componentDidMount && c.componentDidMount(); } catch (e) { try { console.error(e); } catch (e2) {} } }, 0); });
     this.onNavClick = function (e) {
@@ -6394,7 +6395,7 @@ class Component extends DCLogic {
     var itQ = this.qTag(id); if (itQ) { it = itQ; } var GG = it.goalGlaze; /* 의뢰 기물 : 그 유약 색을 먼저 들고 시작 */
     if (GG && pal.some(function (p) { return p[0] === GG; })) { g0 = GG; BPf.gk = GG; BPf.col = self.fillOf({ glaze: GG }, 'glazed'); }
     this.paint = { id: id, st: st, view: 0, sv: { 0: (it.brush || []).slice(), 1: (bv[1] || []).slice(), 2: (bv[2] || []).slice(), 3: (bv[3] || []).slice() }, strokes: (it.brush || []).slice(), col: self.fillOf({ glaze: g0 }, 'glazed'), gk: g0, tool: BPf.tool, stamp: BPf.stamp, live: '', used: {} };
-    this.sfx('tap'); this.say('붓으로 긋거나 도장을 찍어 무늬를 넣어요 · 다 하면 「다 그렸어요」'); this.bump(); return true;
+    this.sfx('tap'); this.bump(); return true;
   }
   paintItem() { var P = this.paint; if (!P) { return null; } var g = this.loadG(), L = P.st === 'g' ? (g.glazeList || []) : (g.kilnList || []), it = L.filter(function (x) { return x.id === P.id; })[0]; return it || null; }
   paintPt(e, raw) { var svg = document.querySelector('[data-paint-svg]'); if (!svg || !svg.getScreenCTM) { return null; } var m = svg.getScreenCTM(); if (!m) { return null; } var p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY - (raw ? 0 : 26); var q = p.matrixTransform(m.inverse()); return [Math.round(q.x * 10) / 10, Math.round(q.y * 10) / 10]; } /* 붓 끝은 손가락보다 조금 위 · 도장은 손가락 자리 그대로 */
@@ -6502,12 +6503,25 @@ class Component extends DCLogic {
     var dp = {}; for (k in (g.disp || {})) { dp[k] = g.disp[k]; } dp[sl.id] = pid;
     var un = {}; for (k in (g.unl || {})) { un[k] = g.unl[k]; } un[sl.rw] = true;
     this.setG2({ pieces: ps, disp: dp, unl: un, order: (g.order || []).filter(function (x) { return x !== pid; }) });
-    if (sl.rw === 'gather') { try { if (!localStorage.getItem('tutG')) { localStorage.setItem('tutG', '1'); } } catch (e) {} } /* 채집 안내 시작 */
     this.dispPk = false; this.dispCf = ''; this.sfx('ok'); try { window.__buzz && window.__buzz([30, 40, 60]); } catch (e) {}
-    var nm = Q.UNLN[sl.rw] || sl.rw, MSG = { black: '흑토·흑유를 쓸 수 있어요 · 상점·흙판·유약통에 나와요', red: '적토·진사유를 쓸 수 있어요', stamp: '붓 시유대에서 도장을 쓸 수 있어요', remodel: '상점 「리모델링」에서 공방을 꾸며요', gather: '하단 「채집」이 열렸어요 · 도깨비 골짜기로!', research: '하단 「연구」가 열려요', event: '이벤트 의뢰가 찾아와요' };
+    var nm = Q.UNLN[sl.rw] || sl.rw, MSG = { black: '흑토·흑유를 쓸 수 있어요 · 상점·흙판·유약통에 나와요', red: '적토·진사유를 쓸 수 있어요', stamp: '붓 시유대에서 도장을 쓸 수 있어요', remodel: '상점 「리모델링」에서 공방을 꾸며요', gather: '두두리가 골짜기 길을 열어 줘요', research: '할머니의 일지를 찾아봐요', event: '이벤트 의뢰가 찾아와요' };
     this.say('✨ 전시 완료 · 「' + nm + '」 해금! ' + (MSG[sl.rw] || ''));
     var self = this; setTimeout(function () { try { var el = document.querySelector('[data-dispslot="' + sl.id + '"]'); window.__sparkle && window.__sparkle(el, { n: 30, r: 120, big: true, spread: true }); } catch (e) {} }, 120);
     this.bump();
+  }
+  /* ── 이야기 진행 (튜토리얼을 끈 공방 화면용) : 컷신이 나올 때를 게임 상태로 정한다 ── */
+  storyCheck() {
+    var now = Date.now(); if (this._stT && now - this._stT < 900) { return; } this._stT = now;
+    var S = window.PotteryShared; if (!S || !S.storyPlay || this._stOn || document.querySelector('.st-ov,.tut-ov,.sm-ov') || this.reveal) { return; }
+    var g = this.loadG(), sc = g.scenes || {}, self = this, Q = this.qlib();
+    var play = function (id, cb) { self._stOn = true; S.storyPlay(id, function () { self._stOn = false; try { cb && cb(); } catch (e) {} self.bump(); }); };
+    if (g.needIntro) { play('prologue', function () { self.setG2({ needIntro: 0 }); self.jumpTo(0); }); return; }
+    var q = g.quests || {};
+    if ((q.minDone || q.minThanks) && !sc.after_min) { play('after_min', function () { self.setG2({ shopOpen: true }); self.say('🔓 상점이 열렸어요 · 흙과 유약 재료를 살 수 있어요'); }); return; }
+    if (Q.unl(g, 'research') && !g.resUnl) { play('research_open', function () { self.setG2({ resUnl: true }); try { if (!localStorage.getItem('tutR')) { localStorage.setItem('tutR', '1'); } } catch (e) {} self.say('🔓 「연구」가 열렸어요 · 하단 메뉴에서 파편으로 연구해요'); }); return; }
+    var dq = g.dq || {};
+    if (Q.lineState(g, 'dok').open && !sc.dok_meet && !sc.dok_intro && !(dq.i > 0) && !dq.acc) { play('dok_meet', function () { self.say('👹 도깨비 의뢰가 열렸어요 · 카운터에 두두리가 찾아와요'); self.jumpTo(0); }); return; }
+    if (Q.unl(g, 'gather') && !sc.dok_valley && !sc.dok_intro) { play('dok_valley', function () { try { if (!localStorage.getItem('tutG')) { localStorage.setItem('tutG', '1'); } } catch (e) {} self.say('🔓 「채집」이 열렸어요 · 하단 「채집」을 눌러 골짜기로 가요'); }); return; }
   }
   renderVals() {
     var self = this, s = this.state, g = s.g || {}, Q = this.qlib(), now = Date.now();
@@ -6575,7 +6589,7 @@ class Component extends DCLogic {
         tagSt: 'position:absolute;left:' + (i * 58 - 4) + 'px;top:76px;width:60px;box-sizing:border-box;text-align:center;font-family:Jua,sans-serif;font-size:12px;line-height:18px;border-radius:9px;background:rgba(43,26,15,.82);white-space:nowrap;pointer-events:none;color:' + (on ? '#FFE27A' : '#FFF4DE'),
         down: function (e) { if (own === 0) { self.say(c.n + ' 흙이 없어요 · 채집에서 캐 와요'); self.sfx('fail'); return; } self.carryStart(e, 'clay', c, self.clayCyl(c.c), 62, 88, function () { self.say(c.n + ' 흙을 끌어서 물레에 올려요'); }, { sc: 1.05 }); } };
     });
-    v.wEmpty = wEmpty && !it0; v.wEmptyA = wEmpty ? '1' : '0';
+    v.wEmpty = wEmpty && !it0 && (g.glazeList || []).length < (Q.BOARD || 6); /* 선반이 가득 차면 물레 안내 카드가 대신 나온다 */ v.wEmptyA = wEmpty ? '1' : '0';
     if (onWid && !it0) { setTimeout(function () { self.setG2({ onWheel: '' }); }, 0); }
     v.cutOn = !!(this.cutAt && now - this.cutAt < 500);
     if (this.cutMode && (wEmpty || !Wc || !Wc.state || Wc.state.stage !== 'shape')) { this.cutMode = false; }
@@ -6710,6 +6724,7 @@ class Component extends DCLogic {
     v.paintStand = function () { self.say('선반의 기물(빚은 기물·담금 시유한 기물)을 끌어다 올려요'); };
     /* 물레 완성 버튼 : 누르면 실이 물레에 걸려 자를 점선이 나온다 (같은 자리가 취소 버튼으로) */
     var WSH = !!(Wc && Wc.state && Wc.state.stage === 'shape' && !wEmpty), CUTM = !!this.cutMode;
+    v.boardGo = function () { self.jumpTo(2); };
     v.wfin = { ico: CUTM ? '✕' : '✓', txt: CUTM ? '취소' : '완성', sub: CUTM ? '실 내려놓기' : '실로 자르기',
       aria: CUTM ? '자르기 취소 · 실 내려놓기' : '완성 · 실로 잘라 선반에',
       tap: function () { if (self.cutMode) { self.cutCancel(); } else { self.cutWire(); } },
@@ -6894,7 +6909,7 @@ class Component extends DCLogic {
     var cT = Math.round(800 + T * 5);
     v.kTemp = cT.toLocaleString() + '℃';
     var ZN = this.kZoneOf(T); v.kZone = T > B.hi ? '과열' : ZN[2] + ' · ' + ZN[1] + '점';
-    v.kZoneSt = 'position:absolute;left:0;top:-17px;width:64px;text-align:center;font-family:Jua,sans-serif;font-size:11px;line-height:13px;color:' + (ZN[1] >= 100 ? '#2F6328' : (ZN[1] >= 80 ? '#5E7A1E' : '#A3442C'));
+    v.kZoneSt = 'position:absolute;left:2px;top:-19px;white-space:nowrap;padding:1px 6px;border-radius:8px;background:rgba(255,248,235,.92);box-shadow:0 1px 0 rgba(43,26,15,.25);z-index:6;font-family:Jua,sans-serif;font-size:11px;line-height:14px;color:' + (ZN[1] >= 100 ? '#2F6328' : (ZN[1] >= 80 ? '#5E7A1E' : '#A3442C'));
     v.thFill = 'position:absolute;left:0;right:0;bottom:0;height:' + Math.round(Math.min(100, T)) + '%;background:linear-gradient(#FF9A3C,#E2562B);transition:height .6s';
     v.thMark = 'position:absolute;left:-7px;right:-7px;height:3px;background:#2B1A0F;bottom:calc(' + Math.round(Math.min(100, T)) + '% - 1px);transition:bottom .6s';
     v.fireGlow = 'position:absolute;left:166px;top:458px;width:118px;height:62px;border-radius:52px 52px 4px 4px;border:3px solid #2B1A0F;background:radial-gradient(circle at 50% 88%,#FFE07A,#F08A2C ' + Math.round(30 + T * 0.4) + '%,#5A1E0C);box-shadow:0 0 ' + Math.round(6 + T * 0.3) + 'px ' + Math.round(2 + T * 0.1) + 'px rgba(255,150,50,' + (0.25 + T / 200).toFixed(2) + ')' + (this.woodAt && now - this.woodAt < 400 ? ';transform:scale(1.06)' : '');
@@ -6971,6 +6986,7 @@ class Component extends DCLogic {
         v.dp.pkSub = '조건 : ' + Q.dispTxt(sel.need) + ' · 한 번 올린 작품은 내릴 수 없어요';
       }
     }).call(this);
+    setTimeout(function () { try { self.storyCheck(); } catch (eS) {} }, 0);
     return v;
   }
   loadG() {
@@ -6989,10 +7005,11 @@ class Component extends DCLogic {
   boot(g) {
     var ch = false;
     if (g.tut === undefined) {
-      var base = { tut: 99, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], mats: { cy1: 6, cw1: 2, gw1: 4, gc1: 4, gb1: 2 }, matsQ: {}, gv2: 1, gv3: 1, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var base = { needIntro: 1, tut: 99, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], mats: { cy1: 6, cw1: 2, gw1: 4, gc1: 4, gb1: 2 }, matsQ: {}, gv2: 1, gv3: 1, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'pname'].forEach(function (k) { if (g[k] !== undefined) { base[k] = g[k]; } }); g = base; try { localStorage.setItem('potVer', '2026-11-13-story'); } catch (e) {} /* 처음 시작 : 기본값(빈 목록·0골드)을 덮어쓴다 */
       ch = true;
     } else if (typeof g.tut === 'number' && g.tut < 99) { g.tut = 99; ch = true; }
+    if (!g.shopOpen && !g.needIntro && (((g.mq || {}).i || 0) > 0 || (g.dq || {}).i > 0)) { g.shopOpen = true; ch = true; } /* 예전 저장 : 이미 진행했으면 상점은 열린 채로 */
     ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'].forEach(function (k) { if (!Array.isArray(g[k])) { g[k] = []; ch = true; } }); /* 빠진 목록이 있으면 옛 화면이 견본 데이터를 채워 넣으므로 빈 목록으로 둔다 */
     if (!g.studioV || g.formedList.length || g.dryList.length || g.bisqueList.length) {
       g.studioV = 1; ch = true;
