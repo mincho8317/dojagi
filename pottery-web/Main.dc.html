@@ -3166,7 +3166,7 @@ class Ctl_ct extends StationBase {
     ids.forEach(function (id) { var p = {}; for (var a in pieces[id]) { p[a] = pieces[id][a]; } p.where = 'sold'; pieces[id] = p; });
     var patch = { pieces: pieces };
     for (var e in extra) { patch[e] = extra[e]; }
-    if (extra && extra.gold != null) { try { if (window.__mainHost) { window.__mainHost.payFx(); } else { window.__sfx && window.__sfx('coin'); } } catch (er) {} }
+    if (extra && extra.gold != null) { try { if (window.__mainHost) { window.__mainHost.payFx(ids); } else { window.__sfx && window.__sfx('coin'); } } catch (er) {} }
     this.setG(patch);
   }
   tutNow() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'); var t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return t; } catch (e) { return null; } }
@@ -3484,7 +3484,7 @@ class Ctl_ct extends StationBase {
       if (md.unlock) { var sf = {}; for (var s0 in (g.shapesFound || {})) { sf[s0] = g.shapesFound[s0]; } (md.unlocks || [md.unlock]).forEach(function (u) { sf[u] = true; }); patch.shapesFound = sf; }
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
       patch[KEY].grades = [];
-      try { window.__sfx && window.__sfx('unlock'); } catch (e) {} try { window.__mainHost && window.__mainHost.payFx(); } catch (e) {}
+      try { window.__sfx && window.__sfx('unlock'); } catch (e) {} try { window.__mainHost && window.__mainHost.payFx(ids); } catch (e) {}
       this.say((LN === 'season' ? '시즌' : (LN === 'dok' ? '도깨비' : '메인')) + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + (pay.shards ? ' · 파편 +' + pay.shards : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
     } else {
       try { window.__sfx && window.__sfx('ok'); } catch (e) {}
@@ -5369,7 +5369,7 @@ class Component extends DCLogic {
     var self = this;
     try { this.sndBoot(); } catch (e) {}
     setTimeout(function () { try { self.navBoot(); } catch (e) {} }, 0);
-    clearInterval(this._gdT); this._gdT = setInterval(function () { try { self.gdTick(); } catch (e) {} }, 300); /* 첫 작업 안내 */
+    clearInterval(this._gdT); this._gdT = setInterval(function () { try { self.gdTick(); } catch (e) {} try { self.fxTick(); } catch (e) {} }, 300); /* 첫 작업 안내 */
     setTimeout(function () { try { if (!window.__tutPano) { window.__tutPano = 1; window.PotteryShared.tutBoot.call(self, 'Main'); } } catch (e) {} }, 50); /* 하단 메뉴 잠금 표시 (전시대 해금 규칙) */
     setTimeout(function () { try { self.pickFromOther(); } catch (e) {} }, 900); /* 다른 화면 상단 바에서 고른 요구 기물 */
     this.allCtls().forEach(function (c) { setTimeout(function () { try { c.componentDidMount && c.componentDidMount(); } catch (e) { try { console.error(e); } catch (e2) {} } }, 0); });
@@ -5411,7 +5411,24 @@ class Component extends DCLogic {
       window.__sfx && window.__sfx('thud'); window.__buzz && window.__buzz(18);
     } catch (e) {}
   }
-  payFx() { try { window.__sfx && window.__sfx('coin'); var gEl = document.querySelector('a[aria-label^="골드"]'); if (gEl && window.__sparkle) { window.__sparkle(gEl, { n: 18, r: 60 }); } } catch (e) {} }
+  /* 정산 : 건넨 기물이 손님에게 날아가고 → 동전이 골드 표시로 */
+  payFx(ids) {
+    var self = this;
+    try {
+      var g = this.loadG(), p = ids && ids.length ? (g.pieces || {})[ids[0]] : null, W = window.innerWidth, H = window.innerHeight;
+      var who = { x: W / 2, y: H * 0.34 }, from = { x: W / 2, y: H * 0.7 }, gEl = document.querySelector('a[aria-label^="골드"]'), gR = gEl ? gEl.getBoundingClientRect() : { left: W - 120, top: 4, width: 82, height: 23 };
+      var fly = function (el, x0, y0, x1, y1, ms, delay, sc1, done) { el.style.cssText += ';position:fixed;left:0;top:0;z-index:9600;pointer-events:none;will-change:transform'; document.body.appendChild(el);
+        if (!el.animate) { el.remove(); done && done(); return; }
+        var mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 60, an = el.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) translate(-50%,-50%) scale(1)', opacity: 1 }, { transform: 'translate(' + mx + 'px,' + my + 'px) translate(-50%,-50%) scale(' + ((1 + sc1) / 2) + ')', opacity: 1, offset: .55 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) translate(-50%,-50%) scale(' + sc1 + ')', opacity: .2 }], { duration: ms, delay: delay || 0, easing: 'cubic-bezier(.4,0,.3,1)', fill: 'both' });
+        an.onfinish = function () { el.remove(); done && done(); }; };
+      var coins = function () { var gx = gR.left + 14, gy = gR.top + gR.height / 2, n = 7, got = 0;
+        for (var i = 0; i < n; i++) { var c = document.createElement('div'); c.setAttribute('aria-hidden', 'true'); c.style.cssText = 'width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF3B0,#E3B23C 60%,#B8862A);border:2px solid #8A5A1E;box-sizing:border-box';
+          fly(c, who.x + (Math.random() - 0.5) * 70, who.y + (Math.random() - 0.5) * 40, gx, gy, 620, i * 70, 0.7, function () { got++; if (got === 1 || got === n) { try { window.__sfx && window.__sfx('coin'); } catch (e) {} } if (got === n && gEl && window.__sparkle) { window.__sparkle(gEl, { n: 16, r: 50 }); } }); } };
+      if (p && self.potOf && self.potSvg) { var pe = document.createElement('div'); pe.setAttribute('aria-hidden', 'true'); pe.style.cssText = 'width:80px;height:80px;display:flex;align-items:flex-end;justify-content:center;filter:drop-shadow(0 0 8px #FFE27A)'; pe.innerHTML = self.potSvg(self.potOf(p, self.fillOf(p, 'glazed'))); var sv = pe.querySelector('svg'); if (sv) { sv.setAttribute('width', '70'); sv.setAttribute('height', '70'); }
+        try { window.__sfx && window.__sfx('whoosh'); } catch (e) {} fly(pe, from.x, from.y, who.x, who.y + 30, 650, 0, 0.55, coins); }
+      else { coins(); }
+    } catch (e) { try { window.__sfx && window.__sfx('coin'); } catch (e2) {} }
+  }
   goSlot(i) { var el = this.stripEl; if (!el) { return; } i = Math.max(0, Math.min(4, i)); try { el.scrollTo({ left: i * 390, behavior: 'smooth' }); } catch (e) { el.scrollLeft = i * 390; } }
   goPanel(i) { var el = this.stripEl; if (!el) { return; } var d = Math.round(this.cd(i)); this.goSlot(Math.round((this.sl || 0) / 390) + d); }
   bump() { this.setState({ t: Date.now() }); }
@@ -5548,7 +5565,7 @@ class Component extends DCLogic {
     var lv = g.fameLv || 1, xp = (g.fameXp || 0) + po.fame; while (xp >= 100) { lv++; xp -= 100; }
     var cq = g.cq || { i: 0, n: 0, sp: 0.1 };
     ctl.setG({ pieces: pieces, gold: (g.gold || 0) + gold, shards: (g.shards || 0) + sh, fameLv: lv, fameXp: xp, nq: (g.nq || []).filter(function (x) { return x.id !== id; }), cq: { i: cq.i || 0, n: cq.n || 0, sp: Math.min(1, (cq.sp || 0.1) + 0.1) } });
-    try { window.__sfx && window.__sfx('unlock'); } catch (e) {} this.payFx();
+    try { window.__sfx && window.__sfx('unlock'); } catch (e) {} this.payFx(ids);
     ctl.say('의뢰 완료! 골드 +' + gold.toLocaleString() + (mul > 1 ? ' (기한 안 2배)' : '') + ' · 파편 +' + sh);
     ctl.setState({ deliver: '', line: 0, enterN: (ctl.state.enterN || 0) + 1 });
   }
@@ -6532,7 +6549,8 @@ class Component extends DCLogic {
     var ps = {}, k; for (k in g.pieces) { ps[k] = g.pieces[k]; } var np = {}; for (k in p) { np[k] = p[k]; } np.where = 'disp'; np.dispSlot = sl.id; ps[pid] = np;
     var dp = {}; for (k in (g.disp || {})) { dp[k] = g.disp[k]; } dp[sl.id] = pid;
     var un = {}; for (k in (g.unl || {})) { un[k] = g.unl[k]; } un[sl.rw] = true;
-    this.setG2({ pieces: ps, disp: dp, unl: un, order: (g.order || []).filter(function (x) { return x !== pid; }) });
+    var NM = { black: ['lump:흑토', 'bucket:흑유'], red: ['lump:적토', 'bucket:진사'], stamp: ['stamp'] }[sl.rw], nk = {}; for (k in (g.newMk || {})) { nk[k] = g.newMk[k]; } (NM || []).forEach(function (x) { nk[x] = 1; });
+    this.setG2({ pieces: ps, disp: dp, unl: un, newMk: nk, order: (g.order || []).filter(function (x) { return x !== pid; }) });
     this.dispPk = false; this.dispCf = ''; this.sfx('ok'); try { window.__buzz && window.__buzz([30, 40, 60]); } catch (e) {}
     var nm = Q.UNLN[sl.rw] || sl.rw, MSG = { black: '흑토·흑유를 쓸 수 있어요 · 상점·흙판·유약통에 나와요', red: '적토·진사유를 쓸 수 있어요', stamp: '붓 시유대에서 도장을 쓸 수 있어요', remodel: '상점 「리모델링」에서 공방을 꾸며요', gather: '두두리가 골짜기 길을 열어 줘요', research: '할머니의 일지를 찾아봐요', event: '이벤트 의뢰가 찾아와요' };
     this.say('✨ 전시 완료 · 「' + nm + '」 해금!'); /* 자세한 설명은 전시 연출(컷신)에서 */
@@ -6553,7 +6571,7 @@ class Component extends DCLogic {
     var DP = g.disp || {}, dOn = function (id) { return !!(DP[id] && ps[DP[id]]); };
     var DS = [['m1', 'disp_m1'], ['m2', 'disp_m2'], ['m3', 'disp_m3']];
     for (var di = 0; di < DS.length; di++) { if (dOn(DS[di][0]) && !sc[DS[di][1]]) { play(DS[di][1], function () {}); return; } }
-    if (dOn('m4') && !sc.disp_full) { play('disp_full', function () {}); return; }
+    if (dOn('m4') && !sc.disp_full) { play('disp_full', function () { try { S.confetti && S.confetti(); } catch (e) {} }); return; }
     if (dOn('m4') && sc.disp_full && !sc.ep1_end) { play('ep1_end', function () {}); return; }
     if (dOn('d3') && !sc.event_open) { play('event_open', function () {}); return; }
     if (Q.unl(g, 'research') && !g.resUnl) { play('research_open', function () { self.setG2({ resUnl: true }); try { if (!localStorage.getItem('tutR')) { localStorage.setItem('tutR', '1'); } } catch (e) {} self.say('🔓 「연구」가 열렸어요 · 하단 메뉴에서 파편으로 연구해요'); }); return; }
@@ -6637,7 +6655,33 @@ class Component extends DCLogic {
       if (S.at === 'top') { Bb.style.left = ((W - bw) / 2) + 'px'; Bb.style.top = '64px'; }
     } else { R.style.display = 'none'; A.style.display = 'none'; Bb.style.left = ((W - bw) / 2) + 'px'; Bb.style.top = Math.round(H * 0.42) + 'px'; }
   }
-  renderVals() {
+  /* 새로 해금된 흙·유약·도장 : 처음 보일 때 「NEW」 표시 (4초 보이거나 누르면 사라짐) · 물레 일치율 100% 축하 */
+  fxTick() {
+    var g = this.loadG(), mk = g.newMk || {}, keys = Object.keys(mk), self = this, now = Date.now();
+    var busy = document.querySelector('.st-ov,.tut-ov,.uf-ov');
+    var findEl = function (k) { var t = k.split(':'), q = t[0] === 'lump' ? '[aria-label="흙판 · 흙을 골라 물레에 올려요"] [role=button]' : (t[0] === 'bucket' ? '[aria-label="유약통 · 골라서 시유그릇에"] [role=button]' : '[aria-label$=" 도장 찍기"]');
+      return [].slice.call(document.querySelectorAll(q)).filter(function (e) { return (!t[1] || (e.getAttribute('aria-label') || '').indexOf(t[1]) === 0) && self.gdEl(e); })[0] || null; };
+    this._nmEl = this._nmEl || {}; this._nmT = this._nmT || {}; var done = [];
+    keys.forEach(function (k) {
+      var el = busy ? null : findEl(k), b = self._nmEl[k];
+      if (!el) { if (b) { b.style.display = 'none'; } return; }
+      if (!b) { b = document.createElement('div'); b.setAttribute('aria-hidden', 'true'); b.className = 'nmk'; b.innerHTML = '<span style="position:absolute;inset:-4px;border-radius:14px;box-shadow:0 0 0 3px #FFD66B,0 0 14px 4px rgba(255,214,107,.8);animation:pgdP 1.2s ease-in-out infinite"></span><b style="position:absolute;right:-10px;top:-12px;padding:1px 6px;border-radius:9px;background:#C0392B;border:2px solid #FFF4DE;color:#FFF;font:12px Jua,sans-serif;line-height:16px;animation:pgdA .9s ease-in-out infinite">NEW</b>'; document.body.appendChild(b); self._nmEl[k] = b;
+        el.addEventListener('pointerdown', function () { self._nmT[k] = 99999; }, { once: true }); }
+      var r = el.getBoundingClientRect(); b.style.cssText = 'position:fixed;z-index:8999;pointer-events:none;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;height:' + r.height + 'px;display:block';
+      self._nmT[k] = (self._nmT[k] || 0) + 300; if (self._nmT[k] >= 4000) { done.push(k); }
+    });
+    if (done.length) { var m2 = {}; keys.forEach(function (k) { if (done.indexOf(k) < 0) { m2[k] = 1; } }); done.forEach(function (k) { var b = self._nmEl[k]; if (b) { b.remove(); } delete self._nmEl[k]; }); this.setG2({ newMk: m2 }); }
+    /* 일치율 100% */
+    var fit = (window.__wheelTut || {}).fit || 0, P = this.curPanel();
+    if (P === 1 && !window.__wEmpty && fit >= 100 && (this._fitPrev || 0) < 100 && now - (this._fitFxT || 0) > 3000) {
+      this._fitFxT = now; var wk = document.querySelector('[aria-label^="물레 위의 흙"]'), mt = document.querySelector('[data-panel="1"] [role=meter]');
+      try { window.__sfx && window.__sfx('rare'); window.__buzz && window.__buzz([20, 30, 40]); } catch (e) {}
+      if (wk && window.__sparkle) { window.__sparkle(wk, { n: 30, r: 110, big: true, spread: true }); }
+      if (mt) { var rr = mt.getBoundingClientRect(), pop = document.createElement('div'); pop.setAttribute('aria-hidden', 'true'); pop.textContent = '100%!'; pop.style.cssText = 'position:fixed;left:' + (rr.left + rr.width / 2) + 'px;top:' + (rr.bottom + 14) + 'px;z-index:9600;pointer-events:none;font:34px Jua,sans-serif;color:#FFE27A;-webkit-text-stroke:2px #5B3A24;text-shadow:0 3px 0 rgba(43,26,15,.5)'; document.body.appendChild(pop);
+        if (pop.animate) { pop.animate([{ transform: 'translate(-50%,0) scale(.3)', opacity: 0 }, { transform: 'translate(-50%,0) scale(1.25)', opacity: 1, offset: .35 }, { transform: 'translate(-50%,0) scale(1)', opacity: 1, offset: .7 }, { transform: 'translate(-50%,-16px) scale(1)', opacity: 0 }], { duration: 1400, fill: 'both' }).onfinish = function () { pop.remove(); }; } else { setTimeout(function () { pop.remove(); }, 1400); } }
+    }
+    this._fitPrev = fit;
+  }  renderVals() {
     var self = this, s = this.state, g = s.g || {}, Q = this.qlib(), now = Date.now();
     var v = { toast: s.toast, toastOn: !!s.toast };
     var rc = { accepted: 0, offers: 0 }; try { rc = Q.reqCounts(g); } catch (e) {}

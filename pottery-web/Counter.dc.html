@@ -346,7 +346,7 @@ class Component extends DCLogic {
     ids.forEach(function (id) { var p = {}; for (var a in pieces[id]) { p[a] = pieces[id][a]; } p.where = 'sold'; pieces[id] = p; });
     var patch = { pieces: pieces };
     for (var e in extra) { patch[e] = extra[e]; }
-    if (extra && extra.gold != null) { try { if (window.__mainHost) { window.__mainHost.payFx(); } else { window.__sfx && window.__sfx('coin'); } } catch (er) {} }
+    if (extra && extra.gold != null) { try { if (window.__mainHost) { window.__mainHost.payFx(ids); } else { window.__sfx && window.__sfx('coin'); } } catch (er) {} }
     this.setG(patch);
   }
   tutNow() { try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'), p = localStorage.getItem('tutProg'); var t = o.tut; if (typeof t === 'number' && p !== null && +p > t) { t = +p; } return t; } catch (e) { return null; } }
@@ -664,7 +664,7 @@ class Component extends DCLogic {
       if (md.unlock) { var sf = {}; for (var s0 in (g.shapesFound || {})) { sf[s0] = g.shapesFound[s0]; } (md.unlocks || [md.unlock]).forEach(function (u) { sf[u] = true; }); patch.shapesFound = sf; }
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
       patch[KEY].grades = [];
-      try { window.__sfx && window.__sfx('unlock'); } catch (e) {} try { window.__mainHost && window.__mainHost.payFx(); } catch (e) {}
+      try { window.__sfx && window.__sfx('unlock'); } catch (e) {} try { window.__mainHost && window.__mainHost.payFx(ids); } catch (e) {}
       this.say((LN === 'season' ? '시즌' : (LN === 'dok' ? '도깨비' : '메인')) + ' 의뢰 완료! 골드 +' + pay.gold.toLocaleString() + (pay.bonus ? ' (등급 보너스 +' + pay.bonus + ')' : '') + (pay.shards ? ' · 파편 +' + pay.shards : '') + (md.unlockNote ? ' · 「' + md.unlockNote + '」 해금' : ''));
     } else {
       try { window.__sfx && window.__sfx('ok'); } catch (e) {}

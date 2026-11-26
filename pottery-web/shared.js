@@ -2545,6 +2545,21 @@
       try { window.__sfx && window.__sfx('unlock'); } catch (e) {}
     }
     S.storyCard = card;
+    /* 축하 꽃가루 (챕터 · 이야기 완료) */
+    function confetti() {
+      try {
+        var W = window.innerWidth, H = window.innerHeight, cols = ['#E3B23C', '#C0582E', '#4F7A3A', '#5878A8', '#C2577A', '#FFF4DE'];
+        for (var i = 0; i < 46; i++) {
+          var c = document.createElement('div'), w = 6 + Math.random() * 6; c.setAttribute('aria-hidden', 'true');
+          c.style.cssText = 'position:fixed;left:' + (Math.random() * W) + 'px;top:-20px;width:' + w + 'px;height:' + (w * 1.6) + 'px;background:' + cols[i % cols.length] + ';z-index:10001;pointer-events:none;border-radius:2px';
+          document.body.appendChild(c);
+          if (!c.animate) { c.remove(); continue; }
+          var dx = (Math.random() - 0.5) * 160, rot = (Math.random() - 0.5) * 900, d = 1600 + Math.random() * 1400;
+          c.animate([{ transform: 'translate(0,0) rotate(0deg)', opacity: 1 }, { transform: 'translate(' + dx + 'px,' + (H * 0.6) + 'px) rotate(' + (rot / 2) + 'deg)', opacity: 1, offset: .7 }, { transform: 'translate(' + (dx * 1.4) + 'px,' + (H + 40) + 'px) rotate(' + rot + 'deg)', opacity: 0 }], { duration: d, delay: Math.random() * 400, easing: 'cubic-bezier(.3,.6,.6,1)', fill: 'both' }).onfinish = (function (el) { return function () { el.remove(); }; })(c);
+        }
+      } catch (e) {}
+    }
+    S.confetti = confetti;
     var SHN = { plate: '접시', dawan: '다완', maebyeong: '매병', moonjar: '달항아리', lotuscup: '연꽃잔', hwabyeong: '화병', hangari: '항아리' };
     var TOWN = { market: '오일장 매점', temple: '산사 다실', harbor: '항구 매점', gallery: '미술관 거리' };
     // 의뢰를 끝낸 뒤 · 새 모양 → 챕터 완료 → 에피소드 끝 순서로 보여 준다
@@ -2553,9 +2568,9 @@
       if (md.unlock) { q.push(function (nx) { card('🏺', '새 모양 「' + ((md.unlocks && md.unlocks.length ? md.unlocks : [md.unlock]).map(function (u) { return SHN[u] || u; }).join(' · ') || md.unlockNote) + '」', '물레에서 고를 수 있어요', md.who + '의 부탁 덕분에 새 모양을 익혔어요.', '물레에서 써 볼게요', nx); }); }
       if (md.chEnd) {
         var C = L.chapterOf(md), E = L.EPIS[md.kind];
-        if (C) { q.push(function (nx) { card(md.kind === 'dok' ? '👹' : '📖', C.title, (md.kind === 'dok' ? '도깨비 이야기 ' : '에피소드 ') + E.n + ' · ' + md.chNo + '챕터 완료', md.who + '의 이야기가 단골 수첩에 모두 채워졌어요.' + (C.town ? '\n마을 지도에 새 구역이 열렸어요 · ' + TOWN[C.town] : ''), '다음으로', nx); }); }
+        if (C) { q.push(function (nx) { confetti(); card(md.kind === 'dok' ? '👹' : '📖', C.title, (md.kind === 'dok' ? '도깨비 이야기 ' : '에피소드 ') + E.n + ' · ' + md.chNo + '챕터 완료', md.who + '의 이야기가 단골 수첩에 모두 채워졌어요.' + (C.town ? '\n마을 지도에 새 구역이 열렸어요 · ' + TOWN[C.town] : ''), '다음으로', nx); }); }
       }
-      if (md.id === 'd15') { q.push(function (nx) { card('🏺', '도깨비 이야기 1 · 끝', '이야기는 다음 에피소드로 이어져요', '마을 한가운데 큰 독은 왜 금이 갔을까요?\n강 할매는 도깨비 마을에 무엇을 남겼을까요?', '계속', nx); }); }
+      if (md.id === 'd15') { q.push(function (nx) { confetti(); card('🏺', '도깨비 이야기 1 · 끝', '이야기는 다음 에피소드로 이어져요', '마을 한가운데 큰 독은 왜 금이 갔을까요?\n강 할매는 도깨비 마을에 무엇을 남겼을까요?', '계속', nx); }); }
       (function run(i) { if (q[i]) { setTimeout(function () { q[i](function () { run(i + 1); }); }, i ? 200 : 900); } })(0);
     };
     // 명성 칭호
