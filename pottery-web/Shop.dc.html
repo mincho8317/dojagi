@@ -219,13 +219,18 @@ class Component extends DCLogic {
     var UNq = function (k) { return !QLs.unl || QLs.unl(G, k); };
     ['y', 'w', 'r', 'k'].filter(function (c) { return (c !== 'k' || UNq('black')) && (c !== 'r' || UNq('red')); }).forEach(function (c) { var k = 'c' + c + '1', d = QLs.clayOf(k); matDefs.push({ id: k, img: IMGC[c], res: 'CLAY', name: d.name, desc: '최소 ' + d.thin + 'mm · ' + d.note.split(' · ')[0], price: (QLs.MATPRICE ? QLs.MATPRICE.clay[c] : 30) }); });
     ['white', 'celadon', 'black', 'jinsa'].filter(function (z) { return (z !== 'black' || UNq('black')) && (z !== 'jinsa' || UNq('red')); }).forEach(function (z) { matDefs.push({ id: QLs.glazeMatKey(z), img: IMGG[z], res: 'GLZ', name: QLs.glazeMatName(z), desc: QLs.GNM[z] + ' 1회분', price: QLs.MATPRICE ? QLs.MATPRICE.glaze[z] : (z === 'jinsa' ? 500 : 30) }); });
+    /* 흙(또는 유약 원료)이 하나도 없고 살 돈도 모자라면 무료 · 막혀서 못 하는 일이 없게 */
+    var MM = G.mats || {}, cnt = function (re) { var n = 0; for (var k in MM) { if (re.test(k)) { n += MM[k] || 0; } } return n; };
+    var noClay = cnt(/^(c[ywrk]\d|spring|r[ywrk])$/) <= 0, noGlz = cnt(/^(g[wcbj]\d|o[wcbj])$/) <= 0;
     var mats = matDefs.map(function (m) {
+      var free = (m.res === 'CLAY' ? noClay : noGlz) && (G.gold || 0) < m.price;
       return {
-        res: m.res, img: m.img, name: m.name, desc: m.desc, price: m.price.toLocaleString(),
+        res: m.res, img: m.img, name: m.name, desc: free ? '지금은 무료 · ' + (m.res === 'CLAY' ? '흙이 다 떨어졌어요' : '유약 원료가 다 떨어졌어요') : m.desc, price: free ? '무료' : m.price.toLocaleString(),
         own: (G.mats || {})[m.id] || 0,
         buy: function () {
           var o = {}; for (var k in G.mats) { o[k] = G.mats[k]; }
           o[m.id] = (o[m.id] || 0) + 1;
+          if (free) { self.setG({ mats: o }); self.say(m.name + '을(를) 무료로 받았어요 · 돈을 모으면 다시 사요'); return; }
           self.spend(m.price, m.name + '을(를) 샀어요', { mats: o });
         }
       };
