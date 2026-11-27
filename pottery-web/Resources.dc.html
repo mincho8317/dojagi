@@ -16,37 +16,43 @@ body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif}
 a{color:#5B3A24}a:hover{color:#3E2616}
 </style>
 </helmet>
-<div style="width:1330px;height:2880px;box-sizing:border-box;padding:48px 56px;background:#FFF4DE;color:#2B1A0F;display:flex;flex-direction:column;gap:28px">
-
+<div style="width:1330px;box-sizing:border-box;padding:48px 56px 64px;background:#FFF4DE;color:#2B1A0F;display:flex;flex-direction:column;gap:26px">
   <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
     <div style="display:flex;flex-direction:column;gap:8px">
-      <h1 style="margin:0;font-family:'Jua',sans-serif;font-size:40px;font-weight:400;color:#5B3A24">그래픽 리소스 목록</h1>
-      <p style="margin:0;font-size:14px;color:#7A5434">목업의 점선 박스와 1:1로 대응. 크기는 1080×2340 기준 @3x 권장값이며, 투명 PNG(배경 제외)로 제작.</p>
+      <h1 style="margin:0;font-family:'Jua',sans-serif;font-size:40px;font-weight:400;color:#5B3A24">그래픽 리소스 목록 · 2차</h1>
+      <p style="margin:0;font-size:14px;color:#7A5434">지금 게임에 들어간 화면 기준으로 다시 정리. 크기는 화면 폭 390 기준 ×3(@3x), 배경 외에는 투명 PNG/WebP.</p>
     </div>
-    <div style="display:flex;gap:10px">
-      <span style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;border:2px dashed #8A6440;font-size:13px;color:#5B3A24">점선 = 리소스 자리</span>
-      <span style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:12px;background:#5B3A24;font-size:13px;font-weight:700;color:#FFE7A8">총 {{total}}종</span>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <sc-for list="{{legend}}" as="l" hint-placeholder-count="4"><span style="{{l.st}}">{{l.t}} {{l.n}}</span></sc-for>
+      <span style="padding:6px 12px;border-radius:12px;background:#5B3A24;font-size:13px;font-weight:700;color:#FFE7A8">총 {{total}}종</span>
     </div>
   </div>
-
-  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;flex:1 1 auto;min-height:0">
+  <section style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+    <sc-for list="{{rules}}" as="ru" hint-placeholder-count="3">
+      <div style="padding:14px 16px;border-radius:16px;background:#FFFDF5;border:2px solid #E2CBA2;display:flex;flex-direction:column;gap:6px">
+        <span style="font-family:'Jua',sans-serif;font-size:17px;color:#B9533A">{{ru.t}}</span>
+        <span style="font-size:12.5px;line-height:1.6;color:#3E2616;white-space:pre-line">{{ru.d}}</span>
+      </div>
+    </sc-for>
+  </section>
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px">
     <sc-for list="{{columns}}" as="col" hint-placeholder-count="2">
-      <div style="display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;flex-direction:column;gap:22px;min-width:0">
         <sc-for list="{{col.groups}}" as="g" hint-placeholder-count="3">
           <section style="display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;align-items:baseline;gap:10px;padding-bottom:6px;border-bottom:3px solid #5B3A24">
               <h2 style="margin:0;font-family:'Jua',sans-serif;font-size:20px;font-weight:400;color:#B9533A">{{g.title}}</h2>
               <span style="font-size:12px;color:#7A5434">{{g.note}}</span>
             </div>
-            <div style="display:grid;grid-template-columns:200px 1fr 120px 150px;gap:0;font-size:11px;font-weight:900;color:#8A6440;padding:2px 0 4px">
-              <span>ID</span><span>용도</span><span>권장 크기</span><span>사용 화면</span>
+            <div style="display:grid;grid-template-columns:52px 170px 1fr 104px;gap:0 8px;font-size:11px;font-weight:900;color:#8A6440;padding:2px 0 4px">
+              <span>상태</span><span>ID</span><span>내용</span><span>크기 @3x</span>
             </div>
             <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="5">
-              <div style="display:grid;grid-template-columns:200px 1fr 120px 150px;gap:0;align-items:center;padding:4px 0;border-bottom:1px solid #EAD8B6;font-size:12.5px">
-                <span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;color:#2B1A0F">{{r.id}}</span>
+              <div style="display:grid;grid-template-columns:52px 170px 1fr 104px;gap:0 8px;align-items:start;padding:5px 0;border-bottom:1px solid #EAD8B6;font-size:12.5px;line-height:1.45">
+                <span style="{{r.chip}}">{{r.st}}</span>
+                <span style="font-family:ui-monospace,Menlo,monospace;font-size:11.5px;font-weight:700;color:#2B1A0F;word-break:break-all">{{r.id}}</span>
                 <span style="color:#3E2616">{{r.use}}</span>
                 <span style="color:#5B3A24">{{r.size}}</span>
-                <span style="color:#7A5434">{{r.where}}</span>
               </div>
             </sc-for>
           </section>
@@ -56,122 +62,98 @@ a{color:#5B3A24}a:hover{color:#3E2616}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":2880}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":2240}}'>
 class Component extends DCLogic {
   renderVals() {
-    function R(id, use, size, where) { return { id: id, use: use, size: size, where: where }; }
+    var CH = { '신규': ['#FFFDF5', '#B9533A'], '분리': ['#FFFDF5', '#3E6B8A'], '교체': ['#FFFDF5', '#7A3E8E'], '유지': ['#8A6440', '#F3E3C4'] };
+    function R(st, id, use, size) { var c = CH[st] || CH['신규']; return { st: st, id: id, use: use, size: size, chip: 'justify-self:start;padding:1px 7px;border-radius:8px;font-size:11px;font-weight:700;color:' + c[0] + ';background:' + c[1] }; }
     var left = [
-      { title: '배경', note: '화면 전체 · 불투명', rows: [
-        R('BG_WORKSHOP', '공방 내부 전경', '1080×2340', '공방 메인, 진열대'),
-        R('BG_WHEEL', '물레 클로즈업', '1080×2340', '물레 성형'),
-        R('BG_GLAZE', '시유 작업대', '1080×2340', '유약 바르기'),
-        R('BG_KILN_INSIDE', '가마 내부 벽돌', '960×960', '가마 배치'),
-        R('BG_KILN_OPEN', '열린 가마, 어두운 톤', '1080×2340', '가마 개봉'),
-        R('BG_QUEST_BOARD', '장부 배경 (나무 · 종이)', '1080×2340', '의뢰 내역서'),
-        R('BG_QUEUE_SHELF', '공정별 대기 선반', '1080×2340', '작업 대기함'),
-        R('BG_COUNTER_TALK', '카운터 너머 가게 안 · 창밖 골목', '1080×2340', '카운터 대화'),
-        R('BG_SHOP', '장터 진열', '1080×2340', '상점'),
-        R('BG_RESEARCH_MAP', '양피지 도면', '1098×900', '연구'),
-        R('BG_CODEX', '오래된 장부 펼침면', '1080×2340', '도감'),
-        R('BG_DRYROOM', '볕 드는 건조실', '1080×2340', '건조대'),
-        R('BG_SKY_ROOF', '하늘 · 지붕 (단면 뷰)', '1080×300', '단면 메인'),
-        R('ROOM_WORK / DRY / GLAZE', '방 단면 배경 ×3', '1056×420', '단면 메인'),
-        R('ROOM_KILN / GALLERY', '방 단면 배경 ×2', '1056×420', '단면 메인'),
-        R('ROOM_LOCKED', '미개방 층 (비계·천막)', '1056×360', '단면 메인'),
-        R('BG_TOP_YARD / WALL_TOP', '탑뷰 마당 · 벽 테두리', '1080×2340', '메인 탑뷰'),
-        R('FLOOR_TILE / FLOOR_LOCKED', '나무 바닥 타일 · 확장 구역', '162×162', '메인 탑뷰'),
-        R('ROOM_SIDE_* (설비별)', '측면 파노라마 배경 · 좌우 이음면 맞춤', '1170×2340 ×8', '메인 측면'),
-        R('WALL_DECO', '벽 장식(선반·창·도구)', '288×210', '메인 측면')
+      { title: '공방 배경 · 바닥 기준', note: '배경은 지금 그림 유지', rows: [
+        R('유지', 'BG_WORKSHOP_PANO', '공방 가로 파노라마(카운터·물레·시유·가마·전시대 5칸). 벽/바닥 경계선은 위에서 500(×3=1500)으로 고정', '5850×2088'),
+        R('신규', 'FX_CONTACT_SHADOW', '바닥 물건 공통 접지 그림자(납작한 타원 · 반투명 갈색) · 크기만 바꿔 재사용', '600×80')
       ]},
-      { title: '오브젝트', note: '공방에 배치 · 투명 PNG', rows: [
-        R('OBJ_WHEEL', '물레 (대기)', '510×450', '공방 메인'),
-        R('OBJ_DRYRACK', '건조대 2슬롯', '516×360', '공방 메인'),
-        R('OBJ_KILN_ELEC', '전기가마 + 불빛 루프', '504×600', '공방 메인'),
-        R('OBJ_GLAZE_TABLE', '유약대', '504×330', '공방 메인'),
-        R('OBJ_SHELF', '진열장 (공방 배치용)', '450×360', '공방 메인'),
-        R('OBJ_WHEEL_HEAD', '회전 물레판 스프라이트', '810×252', '물레 성형'),
-        R('OBJ_GLAZE_TUB', '유약통, 액면 틴트', '834×450', '유약 바르기'),
-        R('OBJ_DISPLAY_SHELF', '3단 진열장 (확장)', '1074×900', '진열대'),
-        R('OBJ_DRYRACK_SHELF', '건조 선반 칸 프레임', '480×630', '건조대'),
-        R('OBJ_*_SIDE', '설비 측면도 (물레·건조대·유약대·가마·진열대)', '300×300 ×5', '단면 메인'),
-        R('OBJ_*_TOP', '설비 탑뷰 (크기 = 칸 수 × 162)', '162~324 ×10', '메인 탑뷰'),
-        R('OBJ_BISQUE_TOP / SIDE', '초벌 가마 (작은 전기가마)', '162 · 660×720', '메인'),
-        R('OBJ_*_SIDE (메인 측면용)', '설비 큰 측면도 · 카운터 포함', '660×720 ×8', '메인 측면')
+      { title: '작업대 · 설비 (A안 분리)', note: '고정 받침 + 위에 올리는 설비', rows: [
+        R('분리', 'OBJ_WORKBENCH', '물레·판 성형 공용 나무 작업대. 다리 끝이 바닥 약 630에 닿게', '810×330'),
+        R('분리', 'OBJ_WHEEL_HEAD', '물레 머리: 돌림판 + 물받이 + 도구통 · 작업대 위에 올림(지금 물레 그림의 윗부분)', '780×360'),
+        R('신규', 'OBJ_SLAB_BOARD', '판 성형판 · 작업대 위에 놓인 모습 1컷 + 위에서 내려다본 확대 1컷', '780×300 · 930×930'),
+        R('신규', 'OBJ_GLAZE_STAND', '시유 받침대(담금·붓 공용) · 다리 4개, 바닥 약 630에 닿게', '800×270'),
+        R('교체', 'OBJ_GLAZE_BASIN', '담금 시유그릇 · 받침대 위에 올리는 그릇(지금 그림 다듬기 · 유약 액면 색 바뀜)', '834×420'),
+        R('신규', 'OBJ_BRUSH_TURNTABLE', '붓 시유 돌림판 · 받침대 위에 올림(지금은 허공에 뜬 판)', '780×300'),
+        R('신규', 'OBJ_GLAZE_BENCH', '유약통 3개를 올리는 낮은 평상', '600×110'),
+        R('교체', 'OBJ_GLAZE_BUCKET', '유약통 1종 + 액면 마스크(색은 코드로 바꿈)', '170×170'),
+        R('신규', 'OBJ_KILN', '장작가마 본체 · 6칸 문 자리, 굴뚝, 아궁이 포함 (지금은 CSS 벽돌)', '960×1170'),
+        R('유지', 'KILN_DOOR_L/R · BOLT · GLOW · FIRE', '가마 칸 문짝·빗장·불빛 (있는 그림)', '-'),
+        R('신규', 'OBJ_KILN_APRON', '아궁이 앞 바닥 돌판', '1030×120'),
+        R('신규', 'OBJ_WOODPILE', '장작더미(3단) + 장작 1개(끌기용)', '360×160 · 150×50'),
+        R('신규', 'OBJ_WALL_SHELF', '벽걸이 선반 2층·1층 · 받침쇠와 끈 보이게 (지금은 CSS 판)', '1170×80'),
+        R('신규', 'OBJ_CLAY_BOARD', '흙판(흙덩이 올려 두는 벽 선반)', '900×70'),
+        R('교체', 'OBJ_COUNTER_DESK', '카운터 탁자 · 종·장부·천 소품 포함', '1050×330'),
+        R('신규', 'OBJ_DISPLAY_CABINET', '할머니 전시대 유리장 · 칸 9개 자리', '1050×1350'),
+        R('신규', 'OBJ_TARGET_NOTE', '「목표 모양」 쪽지(벽에 핀으로 꽂힌 종이)', '400×170')
       ]},
-      { title: '캐릭터', note: '표정 3종 기본', rows: [
-        R('PORTRAIT_PLAYER', '플레이어 프로필', '162×162', '공방 메인'),
-        R('CHAR_MIN', '민 씨 SD (공방 방문)', '174×210', '공방 메인'),
-        R('PORTRAIT_MIN', '민 씨 흉상', '288×360', '의뢰'),
-        R('PORTRAIT_GUEST', '일반 손님 흉상', '156×156', '의뢰'),
-        R('CHAR_CURATOR', '큐레이터 입상', '570×870', '진열대'),
-        R('PORTRAIT_CAFE', '카페 사장 흉상', '192×192', '의뢰(주간)'),
-        R('ICON_VISITOR', '방문객 재호출', '90×90', '진열대'),
-        R('CHAR_MIN / CURATOR / GUEST', '카운터 앞 손님 입상', '330×600 ×3', '메인 측면'),
-        R('CHAR_MIN / GUEST / CAFE / CURATOR', '대화용 손님 입상 · 표정 3종', '600×900 ×4', '카운터 대화'),
-        R('CHAR_WALK_A ~ F', '일반 손님 입상 6종 (이웃·직장인·여행객·할머니·신혼부부·미대생)', '600×900 ×6', '카운터 대화'),
-        R('ICON_CAT_TABLE / TEA / VASE / JAR / SEASON', '스테이지 분류 아이콘 (식기·찻잔·꽃병·항아리·시즌)', '84×72 ×5', '스테이지'),
-        R('BANNER_CAT_* · BANNER_SEASON_STAGE', '스테이지 분류 배너', '1110×192 ×5', '스테이지'),
-        R('BANNER_SEASON_SPRING', '시즌 메인 배너 · 시즌마다 교체', '1110×354', '시즌 이벤트'),
-        R('GLZ_SAKURA · PTN_PLUM · DECO_TEABED · DECO_FLOWER_LAMP · MAT_SPRING_CLAY · ITEM_INVITE', '봄 시즌 한정 물품 아이콘', '162×162 ×6', '시즌 이벤트'),
-        R('ICON_PETAL · ICON_SEASON · ICON_STAGE · ICON_TOWN', '시즌 재화·메인 바로가기 아이콘', '72×72 ×4', '공방, 시즌'),
-        R('BG_TOWN_MAP', '마을 지도 일러스트 · 구역 추가 시 확장', '1170×2340', '마을 지도'),
-        R('OBJ_TOWN_HOME / MARKET / TEMPLE / HARBOR / GALLERY', '지도 위 매점 건물', '300×270 ×5', '마을 지도'),
-        R('SCENE_SHOP_*', '매점 전경', '1110×360 ×5', '마을 지도'),
-        R('CHAR_MKT_* · CHAR_TMP_* · CHAR_HBR_* · CHAR_GAL_*', '구역별 손님 입상', '600×900 ×11', '마을, 카운터'),
-        R('PORTRAIT_* (장부)', '장부 카드용 흉상', '192×228 ×3', '의뢰 내역서')
+      { title: '리모델링 · 꾸미기 스킨', note: '부위마다 기본 + 골드 + 💎옥 · 위 설비와 같은 크기', rows: [
+        R('신규', 'SKIN_WALL ×4', '벽 덮개: 청자 타일 · 한지 창살 · 먹빛 나무벽 · 💎달빛 창호 벽 (벽 부분만, 경계선 위)', '5850×1500'),
+        R('신규', 'SKIN_WHEEL ×3', '물레 머리 + 작업대 세트: 자작나무 · 옻칠 · 💎나전', '위 2종 크기'),
+        R('신규', 'SKIN_SLAB ×2', '판 성형판: 자작 · 💎옥돌', 'OBJ_SLAB_BOARD'),
+        R('신규', 'SKIN_GLAZE_STAND ×2', '시유 받침대 + 붓 돌림판: 자작 · 💎옥돌', '위 2종 크기'),
+        R('신규', 'SKIN_BASIN ×3', '담금 시유그릇: 청화 · 옹기 · 💎상감 청자', 'OBJ_GLAZE_BASIN'),
+        R('신규', 'SKIN_KILN ×3', '가마: 흰 회벽 · 검은 돌가마 · 💎청기와', 'OBJ_KILN'),
+        R('신규', 'SKIN_DESK ×3', '카운터 탁자: 호두나무 · 한옥 소반 · 💎자개', 'OBJ_COUNTER_DESK'),
+        R('신규', 'SKIN_SHELF ×3', '벽걸이 선반: 소나무 · 흑단 · 💎대나무', 'OBJ_WALL_SHELF'),
+        R('신규', 'ICON_SKIN_* ×23', '상점 목록용 미리보기 (스킨 그림을 잘라 써도 됨)', '156×156'),
+        R('신규', 'BANNER_REMODEL', '상점 리모델링 카드 그림(단장 전·후)', '1050×360')
       ]},
-      { title: '이펙트', note: '시퀀스 또는 스파인', rows: [
-        R('FX_HAND_GUIDE', '드래그 유도 손', '216×216', '물레 성형'),
-        R('FX_GLAZE_DRIP', '유약 흘러내림', '240×240', '유약 바르기'),
-        R('FX_OPEN_RAYS', '개봉 후광, 등급별 색', '960×960', '가마 개봉'),
-        R('FX_SPARKLE', '반짝임', '174×174', '가마 개봉'),
-        R('FX_DUST_LAND', '설비 착지 먼지 + 화면 흔들림', '840×180', '메인 측면'),
-        R('HAND_L / HAND_R', '감싸기 양손', '90×228 ×2', '물레')
+      { title: '이펙트', note: '시퀀스 또는 코드', rows: [
+        R('유지', 'FX_SPARKLE · RAYS_* · RIB_*', '반짝임, 등급별 후광·리본 (있는 그림)', '-'),
+        R('신규', 'FX_LIFT_DUST', '물레 머리를 들어 올리거나 판을 내려놓을 때 먼지 4프레임', '600×180'),
+        R('신규', 'FX_CONFETTI', '챕터 카드·품평회 결과 종이 가루 (지금은 코드 사각형)', '96×96 ×6')
       ]}
     ];
     var right = [
-      { title: '재화 · 보상 아이콘', note: '원형 · 소형 사용 고려', rows: [
-        R('ICON_GOLD', '골드', '108×108', '전 화면'),
-        R('ICON_SHARD', '파편', '108×108', '공방, 연구'),
-        R('ICON_FAME', '명성', '108×108', '의뢰, 진열대'),
-        R('ICON_TRUST', '신뢰도', '108×108', '의뢰'),
-        R('ICON_MUSEUM', '미술관 소장 배지', '108×108', '진열대')
+      { title: '컷신 CG', note: '9:16 · 있는 16장 + 빈 자리', rows: [
+        R('유지', 'cg/p1 · p2 · p3', '프롤로그: 병실 · 닫힌 공방 문 · 먼지 앉은 공방', '1170×2080'),
+        R('신규', 'cg/m1', '가마 앞 · 문을 두드린 민 씨 (새 튜토리얼 · 지금 p3 대신 씀)', '1170×2080'),
+        R('신규', 'cg/m2', '불이 오른 가마와 찻잔 · 민 씨 대화 둘째 장면', '1170×2080'),
+        R('유지', 'cg/a1 · a2', '찻잔 안고 돌아가는 민 씨 · 영업 중 아침', '1170×2080'),
+        R('신규', 'cg/a3 · a4 · a5', '할머니의 전시대: 유리문 연 전시대 · 금 간 사발 클로즈업 · 결심 (지금 p3 세 번 반복)', '1170×2080 ×3'),
+        R('유지', 'cg/r1 · r2 · r3', '할머니의 일지 · 편지 · 파편 작업대', '1170×2080'),
+        R('신규', 'cg/x1 · x2', '전시대 둘째 칸: 국밥 사발 · 창고의 흑토와 흑유 항아리', '1170×2080 ×2'),
+        R('신규', 'cg/x3 · x4', '전시대 셋째 칸: 청자 다완 · 할머니의 도장 상자', '1170×2080 ×2'),
+        R('신규', 'cg/x5 · x6', '전시대 넷째 칸: 백자 화병 · 붉은 흙과 진사 원석', '1170×2080 ×2'),
+        R('신규', 'cg/x7 · x8', '다 채운 전시대: 달항아리 · 품평회 초대장', '1170×2080 ×2'),
+        R('신규', 'cg/v1', '방울이와 도롱이의 축제 초대장', '1170×2080'),
+        R('유지', 'cg/d0~d3 · d1b · s1~s3 · e1 · e2', '도깨비·시즌·에피소드 끝 (있는 그림)', '1170×2080')
       ]},
-      { title: 'UI 아이콘', note: '네비게이션 · 버튼', rows: [
-        R('NAV_HOME', '하단 메뉴: 공방', '120×120', '하단 도크'),
-        R('NAV_QUEST', '하단 메뉴: 의뢰', '120×120', '하단 도크'),
-        R('NAV_CRAFT', '하단 메뉴: 제작 (중앙)', '132×132', '하단 도크'),
-        R('NAV_RESEARCH', '하단 메뉴: 연구', '120×120', '하단 도크'),
-        R('NAV_SHOP', '하단 메뉴: 상점', '120×120', '하단 도크'),
-        R('ICON_LOG', '플로팅 의뢰 내역서 버튼', '96×84', '공방 메인'),
-        R('ICON_QUEUE', '작업 대기함 버튼 (공방·작업 화면 상단)', '96×84', '공방, 작업 화면'),
-        R('OBJ_COUNTER_TOP / SIDE', '카운터 탑뷰(2×1) · 대화용 계산대', '324×162 · 990×372', '메인, 카운터'),
-        R('ICON_ROTATE / ICON_STORE', '배치 편집: 회전 · 수납', '72×72 ×2', '메인 배치'),
-        R('ICON_BOOK', '플로팅 도감 버튼', '96×84', '공방 메인'),
-        R('ICON_FIRE', '불 지피기', '90×90', '가마 배치'),
-        R('ICON_FLAME_LOW/MID/HIGH', '소성 온도 3단', '102×90 ×3', '가마 배치'),
-        R('ICON_LOCK', '잠김 표시', '102×102', '상점, 연구')
+      { title: '캐릭터', note: '입상 3표정 · 흉상', rows: [
+        R('유지', 'c_* (9명) · f_* · b_*', '단골·도깨비·주인공·할머니 (있는 그림)', '-'),
+        R('신규', 'CHAR_WALK_A~F', '일반 손님 6명: 이웃 · 직장인 · 여행객 · 동네 할머니 · 신혼부부 · 미대생 (지금 실루엣) · 부탁/기다림/기쁨', '600×900 ×18'),
+        R('신규', 'b_min_*', '민 씨 컷신용 흉상 3표정 (컷신에서 민 씨만 그림 없음)', '600×900 ×3')
       ]},
-      { title: '아이템 아이콘', note: '슬롯 프레임 안에 배치', rows: [
-        R('GLZ_WHITE / CELADON / BLACK', '기본 유약 3종', '138×138 ×3', '유약, 의뢰'),
-        R('GLZ_UNKNOWN', '미발견 유약', '138×138', '유약'),
-        R('SHAPE_CUP 외', '형태 아이콘 (찻잔, 밥공기…)', '138×138', '의뢰 조건'),
-        R('FAC_TRIMMING', '굽깎이대', '288×288', '상점'),
-        R('FAC_BRUSH', '붓 · 시유대', '288×288', '상점'),
-        R('FAC_KILN_ELEC', '전기가마 3×3', '288×288', '상점'),
-        R('FAC_KILN_GAS', '가스가마 + 실루엣판', '288×288', '상점'),
-        R('RES_GLAZE1 / CLAY1', '연구 노드: 완료분', '156×156 ×2', '연구'),
-        R('RES_REDUCE', '연구 노드: 환원소성', '156×156', '연구'),
-        R('RES_MIX / YOBYEON', '연구 노드: 잠김분', '156×156 ×2', '연구'),
-        R('RES_* (기법·공방 10종)', '연구 노드 나머지', '156×156 ×10', '연구'),
-        R('CLAY_* / MAT_PLASTER / GLZ_JINSA', '재료 상품', '156×156 ×6', '상점 재료'),
-        R('DECO_LAMP / PLANT / RUG / SIGN', '꾸미기 상품', '240~360 ×4', '상점 꾸미기'),
-        R('SIL_UNKNOWN', '미발견 실루엣', '138×162', '도감')
+      { title: '품평회', note: '하단 탭 맨 오른쪽', rows: [
+        R('신규', 'BG_CONTEST', '품평회장 배경(전시 단상, 관람객)', '1170×2340'),
+        R('신규', 'OBJ_PODIUM', '1·2·3등 시상대', '1050×450'),
+        R('신규', 'ICON_MEDAL_1/2/3 · ICON_RECOMMEND', '순위 메달 3종 · 추천(엄지) 버튼', '144×144 ×4'),
+        R('신규', 'ICON_CONTEST_INVITE', '초대장(해금 연출·결과 팝업)', '300×300'),
+        R('신규', 'BANNER_CONTEST_RESULT', '결과 팝업 상단 배너', '1050×300')
+      ]},
+      { title: 'UI · 아이콘', note: '하단 메뉴 6칸 · 재화 · 목표', rows: [
+        R('교체', 'NAV_* ×6', '하단 메뉴: 공방 · 채집 · 연구 · 도감 · 상점 · 품평회(지금 튜토리얼 트로피 재사용) + 잠김 상태', '132×132 ×12'),
+        R('유지', 'ICON_GOLD · ui_jade · shards', '골드 · 옥 · 파편', '-'),
+        R('신규', 'ICON_GOAL_DISPLAY / REMODEL / MOONJAR', '최종 목표 카드 3종(전시대 · 리모델링 · 달항아리)', '216×216 ×3'),
+        R('신규', 'FAC_SLAB · FAC_PAINT', '상점 설비 카드: 판 성형대 · 붓 시유대', '288×288 ×2'),
+        R('신규', 'ICON_SWAP', '설비 바꾸기 버튼(⇄ 판 성형대로 / 붓 시유로)', '120×120'),
+        R('유지', 'tex_* · rating_* · tutorial_* · research_*', '흙·유약 질감, 별점, 안내 아이콘, 연구 분류 (있는 그림)', '-')
       ]}
     ];
-    var total = 0;
-    [left, right].forEach(function (c) { c.forEach(function (g) { total += g.rows.length; }); });
-    return { columns: [{ groups: left }, { groups: right }], total: total };
+    var total = 0, cnt = { '신규': 0, '분리': 0, '교체': 0, '유지': 0 };
+    [left, right].forEach(function (c) { c.forEach(function (g) { total += g.rows.length; g.rows.forEach(function (r) { cnt[r.st]++; }); }); });
+    var legend = ['신규', '분리', '교체', '유지'].map(function (k) { var c = CH[k]; return { t: k, n: cnt[k], st: 'padding:6px 12px;border-radius:12px;font-size:13px;font-weight:700;color:' + c[0] + ';background:' + c[1] }; });
+    var rules = [
+      { t: '① 바닥 기준선', d: '벽/바닥 경계 = 위에서 500 (×3 = 1500).\n바닥에 서는 물건은 발이 경계선보다 확실히 아래(약 600~660)에 닿게.\n경계선에 바닥면을 걸치면 벽에 붙어 보여요.' },
+      { t: '② 받침 위에 올리기', d: '물레 머리·판 성형판은 작업대 위, 담금 시유그릇·붓 돌림판은 시유 받침대 위, 유약통은 평상 위.\n설비를 바꿀 땐 받침은 그대로 두고 위 설비만 들어 올리고 내려놓아요.' },
+      { t: '③ 빛과 그림자', d: '빛은 왼쪽 위(창문)에서.\n바닥 물건은 발밑 접지 그림자, 벽 물건은 받침쇠·못·끈이 보이게.\n스킨도 같은 외곽선·같은 접지점으로 그려 갈아 끼우기만 하면 되게.' }
+    ];
+    return { columns: [{ groups: left }, { groups: right }], total: total, legend: legend, rules: rules };
   }
 }
 </script>
