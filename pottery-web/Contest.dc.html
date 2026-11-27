@@ -49,7 +49,7 @@ a{color:#5B3A24}
       <div aria-label="이번 회차 1~3등" style="display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:6px;padding:10px 6px 0;border-radius:16px;background:rgba(255,244,222,.7);border:2px solid #C9A27A">
         <sc-for list="{{podium}}" as="x" hint-placeholder-count="3">
           <div style="display:flex;flex-direction:column;align-items:center;gap:2px;animation:cpIn .35s both">
-            <span style="display:flex;align-items:flex-end;justify-content:center;height:{{x.ph}}px"><svg width="{{x.pw}}" height="{{x.ph}}" viewBox="{{x.pot.vb}}" aria-hidden="true"><path d="{{x.pot.d}}" fill="{{x.pot.fill}}" stroke="{{x.pot.edge}}" stroke-width="{{x.pot.sw}}"></path><path d="{{x.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+            <button type="button" onClick="{{x.look}}" aria-label="{{x.name}} 작품 돌려 보기" style="all:unset;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;height:{{x.ph}}px"><svg width="{{x.pw}}" height="{{x.ph}}" viewBox="{{x.pot.vb}}" aria-hidden="true"><path d="{{x.pot.d}}" fill="{{x.pot.fill}}" stroke="{{x.pot.edge}}" stroke-width="{{x.pot.sw}}"></path><path d="{{x.pot.d}}" fill="url(#cpShade)"></path></svg></button>
             <span style="font-family:'Jua',sans-serif;font-size:12.5px;color:#2B1A0F;text-align:center;line-height:1.2">{{x.name}}</span>
             <span style="font-size:11px;color:#7A5434">👍 {{x.votes}}</span>
             <div style="{{x.base}}"><span style="font-family:'Jua',sans-serif;font-size:20px;color:#FFF">{{x.medal}}</span></div>
@@ -57,24 +57,24 @@ a{color:#5B3A24}
         </sc-for>
       </div>
       <sc-if value="{{meRowOn}}" hint-placeholder-val="{{true}}">
-        <div style="display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:8px 10px;border-radius:14px;background:#F4F9EC;border:3px solid #4F7A3A;animation:cpGlow 2s ease-in-out infinite">
+        <button type="button" onClick="{{meLook}}" aria-label="내 출품작 돌려 보기" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:8px 10px;border-radius:14px;background:#F4F9EC;border:3px solid #4F7A3A;animation:cpGlow 2s ease-in-out infinite">
           <span style="font-family:'Jua',sans-serif;font-size:18px;color:#2F5022;width:42px;text-align:center">{{meRank}}</span>
           <span style="flex:1 1 auto;font-family:'Jua',sans-serif;font-size:14px;color:#2B1A0F">내 출품작 · {{meName}}</span>
           <span style="font-size:12.5px;color:#2F5022">👍 {{meVotes}}</span>
-        </div>
+        </button>
       </sc-if>
       <sc-for list="{{ranks}}" as="r" hint-placeholder-count="5">
-        <div style="{{r.st}}">
+        <button type="button" onClick="{{r.look}}" aria-label="{{r.n}}위 {{r.name}} 작품 돌려 보기" style="{{r.st}}">
           <span style="font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24;width:30px;text-align:center">{{r.n}}</span>
           <span style="flex:0 0 auto;width:34px;height:34px;display:flex;align-items:flex-end;justify-content:center"><svg width="30" height="34" viewBox="{{r.pot.vb}}" aria-hidden="true"><path d="{{r.pot.d}}" fill="{{r.pot.fill}}" stroke="{{r.pot.edge}}" stroke-width="{{r.pot.sw}}"></path><path d="{{r.pot.d}}" fill="url(#cpShade)"></path></svg></span>
           <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column"><span style="font-family:'Jua',sans-serif;font-size:13.5px;color:#2B1A0F">{{r.name}}</span><span style="font-size:10.5px;color:#8A6440">{{r.sub}}</span></span>
           <span style="font-size:12px;color:#5B3A24">👍 {{r.votes}}</span>
-        </div>
+        </button>
       </sc-for>
       <sc-if value="{{lastOn}}" hint-placeholder-val="{{true}}">
         <div style="margin-top:4px;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">지난 회차 수상작 · 「{{lastTheme}}」</div>
         <div style="display:flex;gap:6px">
-          <sc-for list="{{last}}" as="l" hint-placeholder-count="3"><div style="flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px;border-radius:12px;background:#FFF4DE;border:2px solid #C9A27A"><span style="height:40px;display:flex;align-items:flex-end"><svg width="36" height="40" viewBox="{{l.pot.vb}}" aria-hidden="true"><path d="{{l.pot.d}}" fill="{{l.pot.fill}}" stroke="{{l.pot.edge}}" stroke-width="{{l.pot.sw}}"></path><path d="{{l.pot.d}}" fill="url(#cpShade)"></path></svg></span><span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#2B1A0F">{{l.medal}} {{l.name}}</span></div></sc-for>
+          <sc-for list="{{last}}" as="l" hint-placeholder-count="3"><button type="button" onClick="{{l.look}}" aria-label="{{l.name}} 작품 돌려 보기" style="all:unset;cursor:pointer;box-sizing:border-box;flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 4px;border-radius:12px;background:#FFF4DE;border:2px solid #C9A27A"><span style="height:40px;display:flex;align-items:flex-end"><svg width="36" height="40" viewBox="{{l.pot.vb}}" aria-hidden="true"><path d="{{l.pot.d}}" fill="{{l.pot.fill}}" stroke="{{l.pot.edge}}" stroke-width="{{l.pot.sw}}"></path><path d="{{l.pot.d}}" fill="url(#cpShade)"></path></svg></span><span style="font-family:'Jua',sans-serif;font-size:11.5px;color:#2B1A0F">{{l.medal}} {{l.name}}</span></button></sc-for>
         </div>
       </sc-if>
     </sc-if>
@@ -83,7 +83,8 @@ a{color:#5B3A24}
     <sc-if value="{{isMine}}" hint-placeholder-val="{{false}}">
       <sc-if value="{{hasEntry}}" hint-placeholder-val="{{false}}">
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;box-sizing:border-box;padding:12px;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4)">
-          <span style="height:130px;display:flex;align-items:flex-end"><svg width="120" height="130" viewBox="{{my.pot.vb}}" aria-hidden="true"><path d="{{my.pot.d}}" fill="{{my.pot.fill}}" stroke="{{my.pot.edge}}" stroke-width="{{my.pot.sw}}"></path><path d="{{my.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+          <button type="button" onClick="{{my.look}}" aria-label="내 출품작 돌려 보기" style="all:unset;cursor:pointer;height:130px;display:flex;align-items:flex-end"><svg width="120" height="130" viewBox="{{my.pot.vb}}" aria-hidden="true"><path d="{{my.pot.d}}" fill="{{my.pot.fill}}" stroke="{{my.pot.edge}}" stroke-width="{{my.pot.sw}}"></path><path d="{{my.pot.d}}" fill="url(#cpShade)"></path></svg></button>
+          <span style="font-size:11px;color:#8A6440">작품을 누르면 돌려 볼 수 있어요</span>
           <span style="font-family:'Jua',sans-serif;font-size:17px;color:#2B1A0F">{{myName}}</span>
           <div style="display:flex;gap:8px;font-family:'Jua',sans-serif;font-size:14px">
             <span style="padding:3px 10px;border-radius:10px;background:#7A3E8E;color:#FFF">지금 {{myRank}}</span>
@@ -103,7 +104,7 @@ a{color:#5B3A24}
         <div style="box-sizing:border-box;padding:12px;border-radius:16px;background:#FFF4DE;border:3px dashed #8A6440;font-size:13px;line-height:1.55;color:#5B3A24;text-align:center">이번 주제는 <b>「{{themeName}}」</b>이에요.<br>보관함에 있는 {{themeName}} 중 하나를 골라 출품해요 · 회차마다 한 점</div>
         <sc-for list="{{cands}}" as="k" hint-placeholder-count="2">
           <div style="{{k.st}}">
-            <span style="flex:0 0 auto;width:54px;height:56px;display:flex;align-items:flex-end;justify-content:center"><svg width="50" height="56" viewBox="{{k.pot.vb}}" aria-hidden="true"><path d="{{k.pot.d}}" fill="{{k.pot.fill}}" stroke="{{k.pot.edge}}" stroke-width="{{k.pot.sw}}"></path><path d="{{k.pot.d}}" fill="url(#cpShade)"></path></svg></span>
+            <button type="button" onClick="{{k.look}}" aria-label="{{k.name}} 돌려 보기" style="all:unset;cursor:pointer;flex:0 0 auto;width:54px;height:56px;display:flex;align-items:flex-end;justify-content:center"><svg width="50" height="56" viewBox="{{k.pot.vb}}" aria-hidden="true"><path d="{{k.pot.d}}" fill="{{k.pot.fill}}" stroke="{{k.pot.edge}}" stroke-width="{{k.pot.sw}}"></path><path d="{{k.pot.d}}" fill="url(#cpShade)"></path></svg></button>
             <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px"><span style="font-family:'Jua',sans-serif;font-size:14.5px;color:#2B1A0F">{{k.name}}</span><span style="font-size:11.5px;color:#7A5434">{{k.sub}}</span></span>
             <button type="button" onClick="{{k.pick}}" aria-label="{{k.name}} · {{k.btnTxt}}" style="{{k.btn}}">{{k.btnTxt}}</button>
           </div>
@@ -114,21 +115,23 @@ a{color:#5B3A24}
       </sc-if>
     </sc-if>
 
-    <!-- 평가하기 -->
+    <!-- 평가하기 : 두 작품 중 마음에 드는 쪽 고르기 -->
     <sc-if value="{{isVote}}" hint-placeholder-val="{{false}}">
-      <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:13.5px;color:#5B3A24"><span>다른 공방의 출품작을 추천해요</span><span>오늘 남은 추천 {{recLeft}}/10</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-family:'Jua',sans-serif;font-size:13.5px;color:#5B3A24"><span>둘 중 더 마음에 드는 작품을 골라요</span><span>오늘 남은 선택 {{recLeft}}/10</span></div>
       <sc-if value="{{voteOn}}" hint-placeholder-val="{{true}}">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;box-sizing:border-box;padding:14px 12px;border-radius:18px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 4px 0 rgba(43,26,15,.4);animation:cpPop .3s both">
-          <span style="font-size:11.5px;color:#8A6440">{{vIdx}}</span>
-          <span style="height:150px;display:flex;align-items:flex-end"><svg width="140" height="150" viewBox="{{v.pot.vb}}" aria-hidden="true"><path d="{{v.pot.d}}" fill="{{v.pot.fill}}" stroke="{{v.pot.edge}}" stroke-width="{{v.pot.sw}}"></path><path d="{{v.pot.d}}" fill="url(#cpShade)"></path></svg></span>
-          <span style="font-family:'Jua',sans-serif;font-size:18px;color:#2B1A0F">{{vName}}</span>
-          <span style="font-size:12px;color:#7A5434">{{vSub}}</span>
-          <div style="display:flex;gap:8px;width:100%;margin-top:4px">
-            <button type="button" onClick="{{vSkip}}" style="all:unset;cursor:pointer;flex:1 1 0;text-align:center;padding:10px 0;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:15px;color:#5B3A24">다음 작품 ›</button>
-            <button type="button" onClick="{{vRec}}" aria-label="{{vName}} 추천하기" style="{{vRecSt}}">{{vRecTxt}}</button>
-          </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <sc-for list="{{pair}}" as="c" hint-placeholder-count="2">
+            <div style="{{c.st}}">
+              <button type="button" onClick="{{c.look}}" aria-label="{{c.name}} 작품 돌려 보기" style="all:unset;cursor:pointer;height:120px;display:flex;align-items:flex-end;justify-content:center"><svg width="104" height="120" viewBox="{{c.pot.vb}}" aria-hidden="true"><path d="{{c.pot.d}}" fill="{{c.pot.fill}}" stroke="{{c.pot.edge}}" stroke-width="{{c.pot.sw}}"></path><path d="{{c.pot.d}}" fill="url(#cpShade)"></path></svg></button>
+              <span style="font-size:10.5px;color:#8A6440">🔍 눌러서 돌려 보기</span>
+              <span style="font-family:'Jua',sans-serif;font-size:14.5px;color:#2B1A0F;text-align:center;line-height:1.2">{{c.name}}</span>
+              <span style="font-size:11px;color:#7A5434;text-align:center">{{c.sub}}</span>
+              <button type="button" onClick="{{c.pick}}" aria-label="{{c.name}} 고르기" style="{{c.btn}}">{{c.btnTxt}}</button>
+            </div>
+          </sc-for>
         </div>
-        <span style="font-size:11.5px;color:#7A5434;text-align:center">추천할 때마다 내 출품작도 다른 공방에 소개돼요 (최대 +40표)</span>
+        <button type="button" onClick="{{vSkip}}" style="all:unset;cursor:pointer;align-self:center;padding:8px 18px;border-radius:14px;background:#FFF4DE;border:3px solid #5B3A24;font-family:'Jua',sans-serif;font-size:14px;color:#5B3A24">고르기 어려워요 · 다음 두 작품 ›</button>
+        <span style="font-size:11.5px;color:#7A5434;text-align:center">{{vIdx}} · 고를 때마다 내 출품작도 다른 공방에 소개돼요 (최대 +40표)</span>
       </sc-if>
       <sc-if value="{{voteOff}}" hint-placeholder-val="{{false}}"><div style="padding:18px;text-align:center;font-family:'Jua',sans-serif;font-size:14px;color:#8A6440">{{voteOffTxt}}</div></sc-if>
     </sc-if>
@@ -293,25 +296,27 @@ class Component extends DCLogic {
     var B = this.board(w, g), f = this.frac(w), jade = g.jadeV === 2 && g.jade != null ? g.jade : 0;
     var left = this.wkStart(w + 1) - Date.now(), dd = Math.floor(left / 86400000), hh = Math.floor((left % 86400000) / 3600000);
     var P = function (pc) { var it = pc || {}; return self.potOf(it, self.fillOf(it, 'glazed')); };
+    /* 누르면 3D 로 돌려 보기 */
+    var LK = function (pc, nm) { return function () { var q = {}, k; for (k in (pc || {})) { q[k] = pc[k]; } q.name = nm || q.name || TN; try { window.PotteryShared.view3d(q); self.sfx('tap'); } catch (e) {} }; };
     var TABS = [['rank', '🏆 순위'], ['mine', '🏺 내 출품작'], ['vote', '👍 평가하기']];
     var v = { gold: (g.gold || 0).toLocaleString(), jade: jade.toLocaleString(), round: w, themeName: TN, dday: '마감까지 ' + (dd > 0 ? dd + '일 ' : '') + hh + '시간', entryN: B.length,
       tabs: TABS.map(function (t) { var on = s.tab === t[0]; return { label: t[1], sel: on ? 'true' : 'false', pick: function () { self.setState({ tab: t[0], cf: '' }); self.sfx('tap'); }, st: 'all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:8px 0 6px;border:3px solid #5B3A24;border-radius:14px 14px 6px 6px;font-family:Jua,sans-serif;font-size:14px;' + (on ? 'background:#FFF4DE;color:#5B3A24;box-shadow:0 3px 0 #3E2616' : 'background:#C9B08C;color:#5B3A24') }; }),
       isRank: s.tab === 'rank', isMine: s.tab === 'mine', isVote: s.tab === 'vote', toast: s.toast, toastOn: !!s.toast };
     /* 순위 */
     var MD = ['🥇', '🥈', '🥉'], top = B.slice(0, 3), ord = [1, 0, 2];
-    v.podium = ord.filter(function (i) { return top[i]; }).map(function (i) { var x = top[i], h = [86, 104, 74][ord.indexOf(i)]; return { name: x.me ? '⭐ ' + x.name : x.name, votes: x.votes, medal: MD[i], pot: P(x.piece), ph: i === 0 ? 74 : 60, pw: i === 0 ? 66 : 54, base: 'width:100%;height:' + [46, 30, 22][i] + 'px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;background:' + ['#E3B23C', '#AEB6BE', '#C08A5A'][i] }; });
+    v.podium = ord.filter(function (i) { return top[i]; }).map(function (i) { var x = top[i], h = [86, 104, 74][ord.indexOf(i)]; return { name: x.me ? '⭐ ' + x.name : x.name, votes: x.votes, medal: MD[i], pot: P(x.piece), look: LK(x.piece, x.name + ' · ' + TN), ph: i === 0 ? 74 : 60, pw: i === 0 ? 66 : 54, base: 'width:100%;height:' + [46, 30, 22][i] + 'px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;background:' + ['#E3B23C', '#AEB6BE', '#C08A5A'][i] }; });
     var myIdx = -1; B.forEach(function (x, i) { if (x.me) { myIdx = i; } });
-    v.meRowOn = myIdx >= 0; v.meRank = myIdx >= 0 ? (myIdx + 1) + '위' : ''; v.meName = TN; v.meVotes = myIdx >= 0 ? B[myIdx].votes : 0;
-    v.ranks = B.slice(3, 15).map(function (x, i) { return { n: i + 4, name: x.me ? '⭐ ' + x.name : x.name, sub: (Q.GNM[x.piece.glaze] || '') + ' · ' + TN, votes: x.votes, pot: P(x.piece), st: 'display:flex;align-items:center;gap:8px;box-sizing:border-box;padding:5px 8px;border-radius:12px;' + (x.me ? 'background:#F4F9EC;border:2px solid #4F7A3A' : 'background:rgba(255,251,242,.85);border:2px solid #E2CBA2') }; });
+    v.meRowOn = myIdx >= 0; v.meRank = myIdx >= 0 ? (myIdx + 1) + '위' : ''; v.meName = TN; v.meVotes = myIdx >= 0 ? B[myIdx].votes : 0; v.meLook = myIdx >= 0 ? LK(B[myIdx].piece) : function () {};
+    v.ranks = B.slice(3, 15).map(function (x, i) { return { n: i + 4, name: x.me ? '⭐ ' + x.name : x.name, sub: (Q.GNM[x.piece.glaze] || '') + ' · ' + TN, votes: x.votes, pot: P(x.piece), look: LK(x.piece, x.name + ' · ' + TN), st: 'all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;box-sizing:border-box;padding:5px 8px;border-radius:12px;' + (x.me ? 'background:#F4F9EC;border:2px solid #4F7A3A' : 'background:rgba(255,251,242,.85);border:2px solid #E2CBA2') }; });
     var pw = w - 1, lastB = pw >= 1 ? (function () { var f0 = self.frac; self.frac = function () { return 1; }; var L = self.board(pw, g).slice(0, 3); self.frac = f0; return L; })() : [];
-    v.lastOn = lastB.length > 0; v.lastTheme = pw >= 1 ? (Q.SKN[this.themeOf(pw, g)] || '') : ''; v.last = lastB.map(function (x, i) { return { medal: MD[i], name: x.name, pot: P(x.piece) }; });
+    v.lastOn = lastB.length > 0; v.lastTheme = pw >= 1 ? (Q.SKN[this.themeOf(pw, g)] || '') : ''; v.last = lastB.map(function (x, i) { return { medal: MD[i], name: x.name, pot: P(x.piece), look: LK(x.piece, x.name + ' · ' + v.lastTheme) }; });
     /* 내 출품작 */
     v.hasEntry = !!cur.entry; v.noEntry = !cur.entry;
-    if (cur.entry) { var me = B[myIdx] || { votes: 0 }; v.my = { pot: P(cur.entry.snap) }; v.myName = cur.entry.snap.name || TN; v.myRank = (myIdx + 1) + '위 / ' + B.length; v.myVotes = me.votes;
+    if (cur.entry) { var me = B[myIdx] || { votes: 0 }; v.my = { pot: P(cur.entry.snap), look: LK(cur.entry.snap) }; v.myName = cur.entry.snap.name || TN; v.myRank = (myIdx + 1) + '위 / ' + B.length; v.myVotes = me.votes;
       v.myTip = myIdx < 3 ? '수상권이에요! 마감까지 자리를 지켜요' : '「평가하기」에서 다른 작품을 추천하면 내 작품도 더 알려져요'; var CM = this.cmts(cur.entry, w, f); v.cmts = CM; v.cmtN = CM.length; }
-    else { v.my = { pot: P({}) }; v.cmts = []; v.cmtN = 0; v.myName = ''; v.myRank = ''; v.myVotes = 0; v.myTip = ''; }
+    else { v.my = { pot: P({}), look: function () {} }; v.cmts = []; v.cmtN = 0; v.myName = ''; v.myRank = ''; v.myVotes = 0; v.myTip = ''; }
     var ps = g.pieces || {}, cands = Object.keys(ps).filter(function (id) { var p = ps[id]; return p && p.where === 'store' && p.sk !== 'slab' && Q.shapeKeyOf(p, theme) === theme; });
-    v.cands = cands.map(function (id) { var p = ps[id], cf = s.cf === id; return { name: p.name || TN, sub: (p.grade || '') + (typeof p.skill === 'number' ? ' · ' + p.skill + '점' : ''), pot: P(p), btnTxt: cf ? '정말 출품' : '출품하기',
+    v.cands = cands.map(function (id) { var p = ps[id], cf = s.cf === id; return { name: p.name || TN, sub: (p.grade || '') + (typeof p.skill === 'number' ? ' · ' + p.skill + '점' : ''), pot: P(p), look: LK(p), btnTxt: cf ? '정말 출품' : '출품하기',
       btn: 'all:unset;cursor:pointer;flex:0 0 auto;padding:7px 12px;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (cf ? 'background:#C0582E;color:#FFFDF5;border:3px solid #8A3A1A' : 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328'),
       st: 'display:flex;align-items:center;gap:10px;box-sizing:border-box;padding:8px 10px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24',
       pick: function () { if (s.cf !== id) { self.setState({ cf: id }); self.say('출품하면 이번 회차엔 바꿀 수 없어요 · 한 번 더 누르면 출품해요'); return; }
@@ -319,15 +324,20 @@ class Component extends DCLogic {
     v.noCand = !cands.length;
     /* 평가하기 */
     var rec = cur.rec || {}, today = new Date().toDateString(), used = cur.recDay === today ? (cur.recN || 0) : 0, recLeft = Math.max(0, 10 - used);
-    var pool = B.filter(function (x) { return !x.me; }), vi = s.vi % Math.max(1, pool.length), V = pool[vi];
-    v.recLeft = recLeft; v.voteOn = !!V; v.voteOff = !V; v.voteOffTxt = '아직 출품작이 없어요';
-    if (V) { var did = !!rec[V.id]; v.v = { pot: P(V.piece) }; v.vName = V.name; v.vSub = (Q.GNM[V.piece.glaze] || '') + ' · ' + TN + ' · 👍 ' + V.votes; v.vIdx = (vi + 1) + ' / ' + pool.length;
-      v.vRecTxt = did ? '추천했어요 ✓' : (recLeft ? '👍 추천' : '오늘은 끝'); v.vRecSt = 'all:unset;cursor:pointer;flex:1 1 0;text-align:center;padding:10px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (did ? 'background:#E9F2DC;color:#2F5022;border:3px solid #4F7A3A' : (recLeft ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E'));
-      v.vSkip = function () { self.setState({ vi: s.vi + 1 }); self.sfx('tap'); };
-      v.vRec = function () { if (did) { self.setState({ vi: s.vi + 1 }); return; } if (!recLeft) { self.say('오늘 추천은 다 썼어요 · 내일 다시 와요'); return; }
-        var c2 = self.curC(), r2 = {}, k; for (k in (c2.rec || {})) { r2[k] = c2.rec[k]; } r2[V.id] = 1; var u = c2.recDay === today ? (c2.recN || 0) : 0;
-        self.putC({ wk: c2.wk, rec: r2, given: (c2.given || 0) + 1, recDay: today, recN: u + 1, entry: c2.entry }); self.sfx('ok'); try { window.__buzz && window.__buzz(12); } catch (e) {} setTimeout(function () { self.setState({ vi: self.state.vi + 1 }); }, 350); }; }
-    else { v.v = { pot: P({}) }; v.vName = ''; v.vSub = ''; v.vIdx = ''; v.vRecTxt = ''; v.vRecSt = ''; v.vSkip = function () {}; v.vRec = function () {}; }
+    var pool = B.filter(function (x) { return !x.me; }), n = pool.length, pi = s.vi % Math.max(1, Math.floor(n / 2));
+    var A = pool[(pi * 2) % Math.max(1, n)], Bp = pool[(pi * 2 + 1) % Math.max(1, n)];
+    v.recLeft = recLeft; v.voteOn = !!(A && Bp && A !== Bp); v.voteOff = !v.voteOn; v.voteOffTxt = '아직 출품작이 모자라요';
+    var nextPair = function () { self.setState({ vi: self.state.vi + 1 }); };
+    v.pair = v.voteOn ? [A, Bp].map(function (x, side) { var did = !!rec[x.id], other = side ? A : Bp, dOther = !!rec[other.id];
+      return { name: x.name, sub: (Q.GNM[x.piece.glaze] || '') + ' · ' + TN, pot: P(x.piece), look: LK(x.piece, x.name + ' · ' + TN),
+        st: 'display:flex;flex-direction:column;align-items:center;gap:3px;box-sizing:border-box;padding:10px 6px;border-radius:18px;background:#FFF4DE;border:3px solid ' + (did ? '#4F7A3A' : '#5B3A24') + ';box-shadow:0 4px 0 rgba(43,26,15,.4);animation:cpPop .3s both',
+        btnTxt: did ? '골랐어요 ✓' : (recLeft ? '이게 좋아요' : '오늘은 끝'),
+        btn: 'all:unset;cursor:pointer;box-sizing:border-box;width:100%;margin-top:4px;text-align:center;padding:9px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;' + (did ? 'background:#E9F2DC;color:#2F5022;border:3px solid #4F7A3A' : (recLeft ? 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328' : 'background:#E6DCCB;color:#8E8473;border:3px solid #B9A88E')),
+        pick: function () { if (did || dOther) { nextPair(); return; } if (!recLeft) { self.say('오늘 고르기는 다 썼어요 · 내일 다시 와요'); return; }
+          var c2 = self.curC(), r2 = {}, k; for (k in (c2.rec || {})) { r2[k] = c2.rec[k]; } r2[x.id] = 1; var u = c2.recDay === today ? (c2.recN || 0) : 0;
+          self.putC({ wk: c2.wk, rec: r2, given: (c2.given || 0) + 1, recDay: today, recN: u + 1, entry: c2.entry }); self.sfx('ok'); try { window.__buzz && window.__buzz(12); } catch (e) {} setTimeout(nextPair, 450); } }; }) : [];
+    v.vIdx = v.voteOn ? (pi + 1) + ' / ' + Math.floor(n / 2) + '번째 비교' : '';
+    v.vSkip = function () { nextPair(); self.sfx('tap'); };
     /* 결과 */
     var RS = (g.contest || {}).res; v.resOn = !!(RS && !RS.claimed);
     if (v.resOn) { v.resRound = RS.wk; v.resIc = RS.rank === 1 ? '🥇' : (RS.rank === 2 ? '🥈' : (RS.rank === 3 ? '🥉' : '🏺')); v.resTxt = '주제 「' + (Q.SKN[RS.theme] || '') + '」 · ' + RS.n + '점 중 ' + RS.rank + '위 · 👍 ' + RS.votes + '표' + (RS.rank <= 3 ? '\n축하해요! 수상작에 올랐어요' : '\n다음 회차에도 도전해요'); v.resRw = '💰 ' + RS.gold.toLocaleString() + 'G · 💎 ' + RS.jade;
