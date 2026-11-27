@@ -4793,7 +4793,7 @@ class Ctl_k extends StationBase {
     /* 평가액 = 예전의 1/10 */
     /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
     var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || ((item.brush && item.brush.length || item.bru)));
-    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) / 10) * 10);
+    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) * (QL.shapeMul ? QL.shapeMul(item) : 1) / 10) * 10); /* 기형별 배율 */
     var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
@@ -5638,7 +5638,7 @@ class Component extends DCLogic {
   KB() { return { lo: 60, hi: 86, dec: 0.25, log: 4.5, cost: 10, base: 180, over: 10, cap: 6, Z: [[74, 100, '적정'], [60, 80, '조금 낮음'], [40, 50, '낮음'], [0, 10, '너무 낮음']] }; } /* 온도 구간(아래 경계, 소성 점수, 이름) · 적정 74~86 · 86 넘으면 과열 → 10 · 빠르게 익는 건 60부터 */
   kZoneOf(T) { var Z = this.KB().Z; for (var i = 0; i < Z.length; i++) { if (T > Z[i][0] || (i === Z.length - 1)) { return Z[i]; } } return Z[Z.length - 1]; }
   kFireSc(x) { if (!x) { return 0; } if (x.zs != null && x.tt > 0) { return Math.round(x.zs / x.tt); } return x.tt > 0 ? Math.round(x.tb / x.tt * 100) : 0; } /* 소성 점수 = 구간별 머문 시간 × 구간 점수의 평균 */
-  kCost() { return [2000, 5000, 10000]; } /* 기본 3칸 → 최대 6칸 */
+  kCost() { return [10000, 25000, 50000]; } /* 기본 3칸 → 최대 6칸 */
   kN() { return 6; }
   kState(g) {
     var K = g.pk2;

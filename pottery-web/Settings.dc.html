@@ -96,7 +96,7 @@ button{font-family:inherit;cursor:pointer}
     <section aria-label="테스트" style="display:flex;flex-direction:column;gap:8px">
       <span style="font-family:'Jua',sans-serif;font-size:16px;color:#7A3E8E">🧪 테스트용</span>
       <button type="button" onClick="{{qaAll}}" style="{{qaAllStyle}}">{{qaAllLabel}}</button>
-      <button type="button" onClick="{{qaRich}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;background:#FFFDF5;border:2px solid #7A3E8E;color:#7A3E8E">골드 +300,000 · 옥 +1,000 · 재료 가득</button>
+      <button type="button" onClick="{{qaRich}}" style="all:unset;cursor:pointer;box-sizing:border-box;text-align:center;padding:11px 0;border-radius:14px;font-family:Jua,sans-serif;font-size:15px;background:#FFFDF5;border:2px solid #7A3E8E;color:#7A3E8E">골드 +1,000,000 · 옥 +1,000 · 재료 가득</button>
       <span style="font-size:10.5px;color:#7A5434;text-align:center">테스트용 버튼이에요 · 되돌리려면 「진행 상황 초기화」</span>
       <span style="font-size:10.5px;color:#7A5434;text-align:center">진행 상황은 이 기기에만 저장돼요</span>
     </section>
@@ -332,10 +332,10 @@ class Component extends DCLogic {
       },
       qaRich: function () {
         var o = {}; try { o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) {}
-        o.gold = (o.gold || 0) + 300000; o.jadeV = 2; o.jade = (o.jadeV === 2 && o.jade != null ? o.jade : 0) + 1000;
+        o.gold = (o.gold || 0) + 1000000; o.jadeV = 2; o.jade = (o.jadeV === 2 && o.jade != null ? o.jade : 0) + 1000;
         var M = {}, k; for (k in (o.mats || {})) { M[k] = o.mats[k]; } ['cy1', 'cw1', 'cr1', 'ck1', 'gw1', 'gc1', 'gb1', 'gj1', 'gs1', 'ry', 'rw', 'rr', 'rk', 'ow', 'oc', 'ob', 'oj'].forEach(function (x) { M[x] = Math.max(M[x] || 0, 99); }); o.mats = M;
         try { localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); } catch (e) {}
-        self.setState({ g: self.loadG() }); self.say('🧪 골드 +300,000 · 옥 +1,000 · 재료 99개씩');
+        self.setState({ g: self.loadG() }); self.say('🧪 골드 +1,000,000 · 옥 +1,000 · 재료 99개씩');
       },
       tutAgain: function () {
         try { var o = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}'); delete o.tut; localStorage.setItem('pottery-proto-v1', JSON.stringify(o)); ['tutProg', 'tutCardSeen', 'tutJade_dry', 'tutJade_bq', 'tutJade_kiln'].forEach(function (k) { localStorage.removeItem(k); }); Object.keys(localStorage).forEach(function (k) { if (/^tutWh_/.test(k)) { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); self.setState({ g: self.loadG() }); } catch (e) {}

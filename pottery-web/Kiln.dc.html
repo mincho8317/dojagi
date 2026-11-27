@@ -577,7 +577,7 @@ class Component extends DCLogic {
     /* 평가액 = 예전의 1/10 */
     /* 가치 = 들어간 흙·유약의 종류와 개수 (재료값) × 5 × 등급 · 이중 시유 +25% · 무늬 +40% */
     var MV = QL.matValue ? QL.matValue(item) : { total: 60, coats: 1 }, hasPat = !!(item.pattern || ((item.brush && item.brush.length || item.bru)));
-    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) / 10) * 10);
+    var vBase = Math.max(10, Math.round(MV.total * (TU.valueK || 5) * mult * (cr.yohen ? TU.yohen.valueMul : 1) * (MV.coats > 1 ? 1 + (TU.g2Bonus || 0) : 1) * (hasPat ? 1 + (TU.patternBonus || 0) : 1) * (QL.shapeMul ? QL.shapeMul(item) : 1) / 10) * 10); /* 기형별 배율 */
     var value = Math.round(vBase * cm / 10) * 10;
     if (item.pattern === 'plum') { name = '매화 ' + name; }
     var PN = { form: '성형', dry: '건조', glaze: '시유', fire: '소성' };
