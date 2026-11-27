@@ -1142,7 +1142,6 @@
     }
     function linkTo(p) { return function () { var c = [].slice.call(document.querySelectorAll('a[href]')).filter(function (a) { return pageOf(a.getAttribute('href')) === p && vis(a); }); var nx = c.filter(function (a) { return / 옆에서 보기$/.test(a.getAttribute('aria-label') || ''); }); if (nx.length) { return nx[0]; } c.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return rb.width * rb.height - ra.width * ra.height; }); return c[0] || null; }; }
     function btnWith(txt) { return function () { return [].slice.call(document.querySelectorAll('button')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0 && vis(b); })[0] || null; }; }
-    function goalReady(g) { var gl = g.goal; if (!gl || !gl.sid) { return false; } var ps = g.pieces || {}; for (var k in ps) { var p = ps[k]; if (p && (p.where === 'store' || p.where === 'shelf') && p.shape === (gl.wshape || p.shape) && (!gl.glaze || p.glaze === gl.glaze)) { return true; } } return false; }
     function nextOf(g) { return STEPS[g.tut].next; }
     function guideNext(g) {
       var t = g.tut; if (typeof t !== 'number' || t >= STEPS.length) { return true; }
@@ -1371,7 +1370,6 @@
       if (mini.getAttribute('data-t2') !== String(k)) { mini.setAttribute('data-t2', String(k)); mini.innerHTML = '📘<b>' + (k + 1) + '/' + T2.length + '</b>'; mini.onclick = function (e) { e.stopPropagation(); if (!document.querySelector('.tut-ov')) { tourCard(k); } }; }
       placeMini();
     }
-    function mainBtn(txt) { return function () { var c = [].slice.call(document.querySelectorAll('button,a[href]')).filter(function (b) { return (b.textContent || '').indexOf(txt) >= 0; }); for (var i = 0; i < c.length; i++) { var p = c[i]; for (var d = 0; d < 7 && p; d++) { p = p.parentElement; if (p && (p.textContent || '').split('제작하러 가기').length > 2) { break; } if (p && (p.textContent || '').indexOf('메인') >= 0) { if (!vis(c[i]) || vis(c[i]).bottom > window.innerHeight - 90) { try { c[i].scrollIntoView({ block: 'center' }); } catch (e) {} } return vis(c[i]) ? c[i] : null; } } } return null; }; }
     function tutGift(g) {
       if (g.tutGift) { return false; }
       var ps = {}; for (var k in (g.pieces || {})) { ps[k] = g.pieces[k]; }
@@ -1438,7 +1436,6 @@
     function gW(v) { try { localStorage.setItem('tutG', String(v)); } catch (e) {} }
     var CLAYK = ['cw1', 'cw2', 'cw3', 'cy1', 'cy2', 'cy3', 'cr1', 'cr2', 'cr3', 'ck1', 'ck2', 'ck3', 'spring'];
     function clayN(g) { var M = g.mats || {}, n = 0; CLAYK.forEach(function (k) { n += M[k] || 0; }); return n; }
-    function rawMax(g) { var M = g.mats || {}, b = 0; ['ry', 'rr', 'rw', 'rk'].forEach(function (k) { b = Math.max(b, M[k] || 0); }); return b; }
     function goPage(p) { if (window.__potGo) { window.__potGo(p + '.dc.html'); } else { location.href = p + '.dc.html'; } }
     function gatherTour(g) {
       if (g.tut < DONE1 || document.querySelector('.tut-ov') || document.querySelector('.jade-ov') || document.querySelector('.sm-ov') || document.querySelector('.st-ov')) { return; }

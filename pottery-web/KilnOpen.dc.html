@@ -453,29 +453,6 @@ class Component extends DCLogic {
     for (var i = 0; i < n; i++) { out.push(pool[(start + i) % pool.length]); }
     return out;
   }
-  record(item, where, extra) {
-    var g = this.state.g;
-    var items = this.batchItems(g);
-    var idx = g.openIdx || 0;
-    var id = 'k' + (g.firings || 38) + '_' + idx + '_' + Date.now();
-    var pieces = {}; for (var k in g.pieces) { pieces[k] = g.pieces[k]; }
-    var order = (g.order || []).slice();
-    var sf = {}; for (var a in g.shapesFound) { sf[a] = g.shapesFound[a]; }
-    var gf = {}; for (var b in g.glazesFound) { gf[b] = g.glazesFound[b]; }
-    if (!item.broken) {
-      pieces[id] = { name: item.name, grade: item.grade, shape: item.shape, glaze: item.glaze, cov: item.cov, where: where, value: item.value, prof: item.prof, H: item.H, clay: item.clay, pattern: item.pattern || '', spot: item.spot || '', covDir: item.covDir || '', covAng: item.covAng, g2: item.g2 || '', g2col: item.g2col || '', brush: item.brush || null, cov2: item.cov2, ang2: item.ang2, form: item.form, fit: item.fit, skill: item.skill, colorPct: item.colorPct, color: item.color, tint: item.tint, yohen: !!item.yohen, goalSid: item.goalSid || '', sk: item.sk || '' };
-      order.push(id);
-      sf[item.shape] = true;
-      gf[item.glaze] = true;
-    }
-    var log = (g.openLog || []).concat([{ name: item.name, action: extra.action }]);
-    var nextIdx = idx + 1;
-    var patch = { pieces: pieces, order: order, shapesFound: sf, glazesFound: gf, openLog: log, openIdx: nextIdx };
-    if (nextIdx >= items.length) { patch.kiln = 'empty'; patch.kilnFilled = {}; }
-    for (var p in extra.patch) { patch[p] = extra.patch[p]; }
-    this.setG(patch);
-    if (extra.toast) { this.say(extra.toast); }
-  }
   startDoor() {
     var self = this;
     if (this.doorAt || this.state.doorDone) { return; }
