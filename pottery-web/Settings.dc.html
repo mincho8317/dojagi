@@ -234,7 +234,7 @@ class Component extends DCLogic {
       at: new Date().toISOString(), star: s.star,
       good: pick(s.good), goodText: this.readText('fb-good'),
       bad: pick(s.bad), badText: this.readText('fb-bad'),
-      meta: { gold: g.gold, fameLv: g.fameLv, pieces: pn, firings: g.firings, ua: (typeof navigator !== 'undefined' ? navigator.userAgent : '').slice(0, 160), w: (typeof window !== 'undefined' ? window.innerWidth + 'x' + window.innerHeight : '') }
+      meta: { gold: g.gold, pieces: pn, firings: g.firings, ua: (typeof navigator !== 'undefined' ? navigator.userAgent : '').slice(0, 160), w: (typeof window !== 'undefined' ? window.innerWidth + 'x' + window.innerHeight : '') }
     };
     var list = (g.feedbacks || []).concat([fb]).slice(-30);
     this.setG({ feedbacks: list });

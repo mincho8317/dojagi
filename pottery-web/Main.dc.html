@@ -929,7 +929,6 @@ body:has([data-pano]) a[aria-label^="이야기 진행"]{display:none !important}
       <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
     </a>
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">진열 {{ds.shelfCount}}/6</div>
-    <span style="flex:0 0 auto;padding:4px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;font-family:'Jua',sans-serif;font-size:12px;color:#9FE08F">명성 +{{ds.fameRate}}/h</span>
   </div>
 
   <sc-if value="{{ds.canRecall}}" hint-placeholder-val="{{false}}">
@@ -1299,7 +1298,7 @@ class Ctl_w extends StationBase {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       dryList: [
         { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
         { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
@@ -2299,7 +2298,7 @@ class Ctl_gz extends StationBase {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       dryList: [
         { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 19000 },
         { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 31000 }
@@ -3029,7 +3028,7 @@ class Ctl_ct extends StationBase {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [],
       kiln: 'firing', heat: 'mid', kilnFilled: {}, firings: 38, openIdx: 0, openLog: [],
       trim: false, mats: {}, deco: {},
@@ -3111,8 +3110,7 @@ class Ctl_ct extends StationBase {
     var g = this.state.g, day = new Date().toDateString();
     var sold = {}; var src = g.soldDay === day ? (g.soldBy || {}) : {}; for (var k in src) { sold[k] = src[k]; }
     var sh = g.pieces[pid].shape; sold[sh] = (sold[sh] || 0) + 1;
-    var lv = g.fameLv, x = g.fameXp + 2; while (x >= 100) { lv++; x -= 100; }
-    this.give([pid], { gold: g.gold + price, walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }), soldDay: day, soldBy: sold, fameLv: lv, fameXp: x });
+    this.give([pid], { gold: g.gold + price, walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }), soldDay: day, soldBy: sold });
     this.setState({ line: 0, enterN: this.state.enterN + 1 });
     this.say(g.pieces[pid].name + ' 판매 · 골드 +' + price.toLocaleString() + '');
   }
@@ -3183,8 +3181,6 @@ class Ctl_ct extends StationBase {
     var q = g.quests || {};
     var list = [];
     var gradeMul = { '양작': 1, '수작': 1.3, '명작': 1.6, '요변': 2 };
-    var fmul = 1 + (this.qlib().fx(g).fame || 0);
-    function fame(xp) { var lv = g.fameLv, x = g.fameXp + Math.round(xp * fmul); while (x >= 100) { lv++; x -= 100; } return { fameLv: lv, fameXp: x }; }
     var accept = { label: '', run: null };
 
     var QL = this.qlib(), tnow = this.tutNow();
@@ -3206,10 +3202,7 @@ class Ctl_ct extends StationBase {
         } }];
       } else if (!MS.acc) {
         mn.kind = 'offer'; mn.face = '부탁';
-        if (!MS.lvOk) {
-          mn.lines = [TX(md.intro)[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같아요 · 지금 Lv.' + (g.fameLv || 1) + ')'];
-          mn.choices = [{ label: '명성을 쌓고 올게요', tone: '', run: function () { self.next(''); } }];
-        } else if (md.type === 'visit') {
+        if (md.type === 'visit') {
           mn.lines = TX(md.intro);
           mn.card = { title: md.title + ' · 이야기', conds: [{ t: '만들 그릇 없음 · 이야기를 들어요' }], reward: rewardTxt };
           mn.choices = [
@@ -3277,8 +3270,7 @@ class Ctl_ct extends StationBase {
           m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손끝이 똑같네요.', '선생님이 늘 그러셨어요. 우리 ' + (g.pname || '손녀') + '이 언젠가 돌아오면 줄 게 있다고.', '부치지도 못할 편지를 자꾸 쓰시더니… 공방 전시대 안에 모아 두셨어요.', '나/surprise: (…할머니가, 편지를?)'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
-              var f = fame(20);
-              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
+              self.give([cups[0]], { gold: g.gold + pay, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
               self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
               self.say('의뢰 완료 · 골드 +' + pay + '');
             } }
@@ -3383,9 +3375,8 @@ class Ctl_ct extends StationBase {
           { label: op.name + ' 건네기 · ' + oprice.toLocaleString() + 'G', tone: 'go', run: function () {
             var cur = self.state.g, day = new Date().toDateString(), sold = {}, src = cur.soldDay === day ? (cur.soldBy || {}) : {};
             for (var k in src) { sold[k] = src[k]; } sold[op.shape] = (sold[op.shape] || 0) + 1;
-            var lv = cur.fameLv, x = cur.fameXp + 5; while (x >= 100) { lv++; x -= 100; }
             var doneO = { id: o.id, name: o.name, want: o.want, price: oprice, at: Date.now() };
-            self.give([hits2[hits2.length - 1]], { gold: cur.gold + oprice, fameLv: lv, fameXp: x, soldDay: day, soldBy: sold, tasteOrders: (cur.tasteOrders || []).filter(function (z) { return z.id !== o.id; }), tasteDone: [doneO].concat(cur.tasteDone || []).slice(0, 10) });
+            self.give([hits2[hits2.length - 1]], { gold: cur.gold + oprice, soldDay: day, soldBy: sold, tasteOrders: (cur.tasteOrders || []).filter(function (z) { return z.id !== o.id; }), tasteDone: [doneO].concat(cur.tasteDone || []).slice(0, 10) });
             self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
             self.say('주문 완료 · 골드 +' + oprice.toLocaleString() + '');
           } },
@@ -3410,8 +3401,8 @@ class Ctl_ct extends StationBase {
         inv.card = { title: ip.name, conds: [{ t: ip.grade }, { t: '평가액 ' + (ip.value || 0).toLocaleString() + 'G' }, { t: '봄 축제 특별 손님' }], reward: iprice.toLocaleString() + 'G' };
         inv.choices = [
           { label: '판매하기 · ' + iprice.toLocaleString() + 'G', tone: 'go', run: function () {
-            var cur = self.state.g, lv = cur.fameLv, x = cur.fameXp + 10; while (x >= 100) { lv++; x -= 100; }
-            self.give([ipid], { gold: cur.gold + iprice, fameLv: lv, fameXp: x, inviteGuest: false });
+            var cur = self.state.g;
+            self.give([ipid], { gold: cur.gold + iprice, inviteGuest: false });
             self.setState({ line: 0, enterN: self.state.enterN + 1 });
             self.say('다회 손님 · 골드 +' + iprice.toLocaleString() + '');
           } },
@@ -3486,8 +3477,7 @@ class Ctl_ct extends StationBase {
     if (all) {
       var dVals = []; for (var pv in pieces) { if (pieces[pv].deliveredTo === md.id && pieces[pv].where === 'sold') { dVals.push(pieces[pv].value || 0); } }
       var pay = QL.payout(md, MS, grades, null, dVals); if (window.__panoPay) { pay = window.__panoPay(pay, g[KEY] || {}, md.items); }
-      var lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
-      patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards; patch.fameLv = lv; patch.fameXp = x;
+      patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards;
       if (pay.mats) { var mm = patch.mats || (function () { var o = {}; for (var mk in (g.mats || {})) { o[mk] = g.mats[mk]; } return o; })(); for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
       if (md.unlock) { var sf = {}; for (var s0 in (g.shapesFound || {})) { sf[s0] = g.shapesFound[s0]; } (md.unlocks || [md.unlock]).forEach(function (u) { sf[u] = true; }); patch.shapesFound = sf; }
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
@@ -3505,8 +3495,8 @@ class Ctl_ct extends StationBase {
   // 이야기 의뢰(방문) : 그릇 없이 이야기를 듣고 선물을 받는다
   finishVisit(LN) {
     var g = this.loadG(), QL = this.qlib(), MS = QL.lineState(g, LN), md = MS.def, KEY = MS.key; if (!md || md.type !== 'visit') { return; }
-    var pay = QL.payout(md, MS), lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
-    var m0 = g[KEY] || {}, patch = { gold: (g.gold || 0) + pay.gold, shards: (g.shards || 0) + pay.shards, fameLv: lv, fameXp: x };
+    var pay = QL.payout(md, MS);
+    var m0 = g[KEY] || {}, patch = { gold: (g.gold || 0) + pay.gold, shards: (g.shards || 0) + pay.shards };
     if (pay.mats) { var mm = {}; for (var mk in (g.mats || {})) { mm[mk] = g.mats[mk]; } for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
     patch[KEY] = { i: m0.i || 0, acc: true, dl: {}, mig: {}, thanks: true, grades: [], log: [{ id: md.id, who: md.who, title: md.title, items: '이야기', gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30) };
     this.setG(patch);
@@ -3768,7 +3758,7 @@ class Ctl_ds extends StationBase {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       drying: 1, glazeQ: 2, kilnQ: 0,
       kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
       openIdx: 0, openLog: [],
@@ -4192,7 +4182,7 @@ class Ctl_ds extends StationBase {
       };
     });
     var pk = self.pickBox({
-      on: !!this.state.pkOpen, multi: false, title: '진열대에 올릴 작품', sub: '보관 중 ' + storeIds.length + '점 · 전시하면 명성 +3/h',
+      on: !!this.state.pkOpen, multi: false, title: '진열대에 올릴 작품', sub: '보관 중 ' + storeIds.length + '점',
       rows: storeIds.map(function (sid) {
         var p = g.pieces[sid];
         var r = self.pickRow(p, { stage: 'glazed', single: true, tag: p.grade + ' · ' + (p.value || 0).toLocaleString() + 'G', tap: function () {
@@ -4264,7 +4254,6 @@ class Ctl_ds extends StationBase {
       slots: slots,
       shelfCount: shelfIds.length,
       storeCount: storeIds.length,
-      fameRate: shelfIds.length * 3,
       sel3d: function () { if (selP) { try { window.PotteryShared.view3d(selP); } catch (e) {} } },
       sel: selP ? { name: selP.name, grade: selP.grade + (typeof selP.skill === 'number' ? ' · 실력 ' + selP.skill + '점' : ''), value: selP.value.toLocaleString(), line: '평가액 ' + selP.value.toLocaleString() + 'G · 발색 ' + QLd.colorPctOf(selP) + '%' + (selP.yohen ? ' 요변' : '') } : { name: '진열된 작품 없음', grade: '', value: '0', line: '보관함에서 작품을 끌어 올려요' },
       target: target ? { name: target.name, grade: target.grade, offer: offer.toLocaleString(), pot: self.potOf(target, GC[target.glaze] || '#F2EFE6') } : { name: '', grade: '', offer: '0', pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 } },
@@ -4290,10 +4279,8 @@ class Ctl_ds extends StationBase {
         self.say(selP.name + ' 판매 · 골드 +' + selP.value.toLocaleString() + ' · 도감 기록은 남아요');
       },
       send: function () {
-        var x = g.fameXp + 45, lv = g.fameLv;
-        while (x >= 100) { lv++; x -= 100; }
-        self.movePiece(targetId, 'museum', { gold: g.gold + offer, fameLv: lv, fameXp: x, curator: 'done' });
-        self.say(target.name + '이(가) 미술관으로 떠났어요 · 골드 +' + offer.toLocaleString() + ' · 명성 +45');
+        self.movePiece(targetId, 'museum', { gold: g.gold + offer, curator: 'done' });
+        self.say(target.name + '이(가) 미술관으로 떠났어요 · 골드 +' + offer.toLocaleString());
       },
       keep: function () { self.setState({ visitor: false }); self.say('“알겠습니다. 다음에 또 들르지요.”'); },
       recall: function () { self.setState({ visitor: true }); }
@@ -4493,7 +4480,7 @@ class Ctl_k extends StationBase {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       dryList: [
         { id: 'd1', shape: 'dish', clay: 'basic', form: 3, tmin: 4.6, start: Date.now() - 1140000 },
         { id: 'd2', shape: 'cup', clay: 'refined', form: 4, tmin: 4.1, start: Date.now() - 1860000 }
@@ -5572,9 +5559,8 @@ class Component extends DCLogic {
     for (k in g.pieces) { pieces[k] = g.pieces[k]; }
     ids.forEach(function (pid) { var x = {}; for (var a in pieces[pid]) { x[a] = pieces[pid][a]; } x.where = 'sold'; x.deliveredTo = id; pieces[pid] = x; });
     var po = Q.payout({ items: o.items }, { mig: {} }, grades, null, ids.map(function (pid) { return (pieces[pid] || {}).value || 0; })), mul = 1, gold = po.gold * mul, sh = po.shards * mul;
-    var lv = g.fameLv || 1, xp = (g.fameXp || 0) + po.fame; while (xp >= 100) { lv++; xp -= 100; }
     var cq = g.cq || { i: 0, n: 0, sp: 0.1 };
-    ctl.setG({ pieces: pieces, gold: (g.gold || 0) + gold, shards: (g.shards || 0) + sh, fameLv: lv, fameXp: xp, nq: (g.nq || []).filter(function (x) { return x.id !== id; }), cq: { i: cq.i || 0, n: cq.n || 0, sp: Math.min(1, (cq.sp || 0.1) + 0.1) } });
+    ctl.setG({ pieces: pieces, gold: (g.gold || 0) + gold, shards: (g.shards || 0) + sh, nq: (g.nq || []).filter(function (x) { return x.id !== id; }), cq: { i: cq.i || 0, n: cq.n || 0, sp: Math.min(1, (cq.sp || 0.1) + 0.1) } });
     try { window.__sfx && window.__sfx('unlock'); } catch (e) {} this.payFx(ids);
     ctl.say('의뢰 완료! 골드 +' + gold.toLocaleString() + (mul > 1 ? ' (기한 안 2배)' : '') + ' · 파편 +' + sh);
     ctl.setState({ deliver: '', line: 0, enterN: (ctl.state.enterN || 0) + 1 });
@@ -7170,7 +7156,7 @@ class Component extends DCLogic {
     return v;
   }
   loadG() {
-    var d = { gold: 0, fameLv: 1, fameXp: 0, glazeList: [], kilnList: [], kilnFilled: {}, pieces: {}, mats: {} };
+    var d = { gold: 0, glazeList: [], kilnList: [], kilnFilled: {}, pieces: {}, mats: {} };
     try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
     return d;
   }
@@ -7185,7 +7171,7 @@ class Component extends DCLogic {
   boot(g) {
     var ch = false;
     if (g.tut === undefined) {
-      var base = { needIntro: 1, wEmpty: true, tut: 99, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], mats: { cy1: 6, cw1: 2, gw1: 4, gc1: 4, gb1: 2 }, matsQ: {}, gv2: 1, gv3: 1, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var base = { needIntro: 1, wEmpty: true, tut: 99, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], mats: { cy1: 6, cw1: 2, gw1: 4, gc1: 4, gb1: 2 }, matsQ: {}, gv2: 1, gv3: 1, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'pname'].forEach(function (k) { if (g[k] !== undefined) { base[k] = g[k]; } }); g = base; try { localStorage.setItem('potVer', '2026-11-13-story'); } catch (e) {} /* 처음 시작 : 기본값(빈 목록·0골드)을 덮어쓴다 */
       ch = true;
     } else if (typeof g.tut === 'number' && g.tut < 99) { g.tut = 99; ch = true; }

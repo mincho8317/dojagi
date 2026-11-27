@@ -120,7 +120,7 @@ a{color:#5B3A24}a:hover{color:#3E2616}
 class Component extends DCLogic {
   constructor(props) { super(props); this.state = { g: this.loadG(), toast: '' }; }
   loadG() {
-    var d = { gold: 1240, shards: 142, fameLv: 3, fameXp: 62, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, deco: {}, mats: {} };
+    var d = { gold: 1240, shards: 142, pieces: {}, order: [], shapesFound: {}, glazesFound: {}, deco: {}, mats: {} };
     try { var r = localStorage.getItem('pottery-proto-v1'); if (r) { var o = JSON.parse(r); for (var k in o) { d[k] = o[k]; } } } catch (e) {}
     return d;
   }

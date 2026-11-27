@@ -23,7 +23,6 @@
       itemGold: 750,       // 의뢰 기물 1점당 골드 · 양작 찻잔 일반 판매(약 300G)의 2.5배 안팎
       itemShards: 0,         // (쓰지 않음) 파편은 메인 의뢰에서만
       mainShardShare: 0.5,  // 메인 의뢰 파편 합 = 연구 파편 합의 50%      // 메인 의뢰 기물 1점당 파편
-      questFame: 15,       // 메인 의뢰 완료 시 명성 경험치
       gradeBonus: { '수작': 1, '명작': 3, '요변': 3 }, // 납품 작품 등급별 골드 보너스 비율 · 판매가 등급 배수(×2·×4)를 따라가 납품이 늘 판매보다 비싸게
       // 작품 등급 = 공정별 실력 점수(0~100)의 가중 평균 · 무작위 없음
       skillW: { form: 0.55, glaze: 0.25, fire: 0.2 }, // 건조 공정 없음
@@ -87,7 +86,6 @@
       sell: { t: '판매', l: '작품 판매가', b: 100, m: 100, u: '%' },
       questGold: { t: '의뢰', l: '이야기 의뢰 골드', b: 100, m: 100, u: '%' },
       shard: { t: '와장창', l: '파편 획득량', b: 100, m: 100, u: '%' },
-      fame: { t: '명성', l: '명성 경험치', b: 100, m: 100, u: '%' },
       expand: { t: '공방', l: '공방 바닥 줄 수', b: 7, m: 2, u: '줄' },
       tixMax: { t: '채집', l: '메밀묵 최대', b: 5, m: 1, u: '그릇' },
       gTime: { t: '채집', l: '채집 제한 시간', b: 30, m: 1, u: '초' },
@@ -139,8 +137,7 @@
     RCAT.forEach(function (c) { RROW[c.id].forEach(function (r) { RNODE[r[0]] = { id: r[0], cat: c.id, row: r[1], col: r[2], name: r[3], req: r[4], fx: r[5], shards: r[6], gold: r[7] || [200, 400, 600, 1500][r[1]] || 500, cond: r[8] || '' }; }); }); /* 연구는 파편과 골드를 함께 쓴다 */
     UPG.forEach(function (u) { RNODE[u.id] = { id: u.id, cat: 'upg', row: -1, col: -1, name: u.name, req: u.req, fx: u.fx, shards: 0, gold: u.gold, cond: u.cond, upg: true }; });
     var RCOND = {
-      dryUp: { t: '튜토리얼 후 도자기 6점 굽기', ok: function (g) { return !!g.dryUpReady; } },
-      fame3: { t: '명성 Lv 3', ok: function (g) { return (g.fameLv || 1) >= 3; } }
+      dryUp: { t: '튜토리얼 후 도자기 6점 굽기', ok: function (g) { return !!g.dryUpReady; } }
     };
     function fx(g) {
       var o = {}, R = (g && g.res) || {};
@@ -578,7 +575,7 @@
         var unlock = '', unlocks = []; items.forEach(function (it) { if (it.newShape) { unlock = it.newShape; if (unlocks.indexOf(it.newShape) < 0) { unlocks.push(it.newShape); } } });
         var cnt = items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n); }, 0);
         var sameCh = story.filter(function (x) { return x.ch === q.ch; }), inCh = sameCh.indexOf(q);
-        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, fame: TUNE.questFame, mats: q.rw.mats || null } : { gold: items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n * Math.round(estVal(it) * (kind === 'main' ? TUNE.deliverMul : TUNE.deliverMulOther) / 10) * 10); }, 0), shards: 0, fame: TUNE.questFame } };
+        return { id: q.id, idx: qi, accLabel: q.accLabel, kind: kind, type: type, npc: q.npc, who: NPC[q.npc].name, role: NPC[q.npc].role, res: NPC[q.npc].res, tone: NPC[q.npc].tone, ch: q.ch, chNo: chIdx[q.ch] + 1, inCh: inCh + 1, chLen: sameCh.length, chEnd: inCh === sameCh.length - 1, needLv: lvOf(q), title: q.title, intro: q.intro, done: q.done, doneBy: q.doneBy || null, items: items, unlock: unlock, unlocks: unlocks, unlockNote: q.unlockNote || '', rw: q.rw || null, reward: q.rw ? { gold: q.rw.gold || 0, shards: q.rw.shards || 0, mats: q.rw.mats || null } : { gold: items.reduce(function (a, it) { return a + (it.mat ? 0 : it.n * Math.round(estVal(it) * (kind === 'main' ? TUNE.deliverMul : TUNE.deliverMulOther) / 10) * 10); }, 0), shards: 0 } };
       });
     }
     var MAIN = buildLine(STORY, 'main', function (q) { return CHLV[q.ch] || 1; });
@@ -683,7 +680,7 @@
       if (ms.acc && !ms.thanks) { var d = ms.def; out.push({ id: 'main', mid: d.id, kind: 'main', tag: '메인', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ms.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var ss = lineState(g, 'season'); if (ss.open && ss.acc && !ss.thanks) { var d = ss.def; out.push({ id: 'season', mid: d.id, kind: 'season', tag: '시즌', who: d.who, role: d.role, res: d.res, title: d.title, items: d.items, reward: d.reward, dl: ss.dl, unlock: d.unlock, unlockNote: d.unlockNote, chapter: d.ch, idx: d.idx }); }
       var dk = lineState(g, 'dok'); if (dk.open && dk.acc && !dk.thanks && dk.def.type !== 'visit') { var d2 = dk.def; out.push({ id: 'dok', mid: d2.id, kind: 'dok', tag: '도깨비', who: d2.who, role: d2.role, res: d2.res, title: d2.title, items: d2.items, reward: d2.reward, dl: dk.dl, unlock: d2.unlock, unlockNote: d2.unlockNote, chapter: d2.ch, idx: d2.idx }); }
-      (g.nq || []).forEach(function (o) { var po = payout({ items: o.items }, { mig: {} }); out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: { gold: po.gold, shards: po.shards, fame: po.fame, text: po.gold.toLocaleString() + 'G · 파편 ' + po.shards }, dl: o.dl || {}, at: o.at, due: o.due }); });
+      (g.nq || []).forEach(function (o) { var po = payout({ items: o.items }, { mig: {} }); out.push({ id: o.id, kind: 'normal', tag: '일반', who: o.who, role: '동네 손님', res: o.res, title: o.title, items: o.items, reward: { gold: po.gold, shards: po.shards, text: po.gold.toLocaleString() + 'G · 파편 ' + po.shards }, dl: o.dl || {}, at: o.at, due: o.due }); });
       return out.concat(sideQuests(g));
     }
     var WIPK = ['formedList', 'dryList', 'bisqueList', 'glazeList', 'kilnList'];
@@ -792,14 +789,14 @@
       var cnt = 0, bonus = 0, G = g; if (!G) { try { G = JSON.parse(localStorage.getItem('pottery-proto-v1') || '{}') || {}; } catch (e) { G = {}; } }
       var F = fx(G), gm = 1 + (F.questGold || 0);
       var shM = def.kind === 'main' ? mainShards(def.id) : 0;
-      if (def.rw) { return { gold: Math.round((def.rw.gold || 0) * gm), base: def.rw.gold || 0, bonus: 0, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))), mats: def.rw.mats || null }; }
+      if (def.rw) { return { gold: Math.round((def.rw.gold || 0) * gm), base: def.rw.gold || 0, bonus: 0, shards: shM, mats: def.rw.mats || null }; }
       def.items.forEach(function (it) { if (!it.mat && !(ms.mig || {})[it.key]) { cnt += it.n; } });
       /* 납품가 = 납품한 작품 가치 × 2.5 · 아직 안 만들었으면 예상 가치로 */
       var D = TUNE.deliverMul || 2.5, base = 0, est = !(vals && vals.length);
       if (def.kind !== 'main') { D = TUNE.deliverMulOther || 1; } /* 메인 외 의뢰 = 작품 가치 그대로 (× 1) */
       if (!est) { vals.forEach(function (v) { base += Math.round((v || 0) * D / 10) * 10; }); }
       else { var gi = 0; def.items.forEach(function (it) { if (it.mat || (ms.mig || {})[it.key]) { return; } for (var q = 0; q < it.n; q++) { var gm2 = grades && grades[gi] ? (TUNE.gradeMul[grades[gi]] || 1) : 1; gi++; base += Math.round(estVal(it) * gm2 * D / 10) * 10; } }); }
-      return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, est: est, shards: shM, fame: Math.round(TUNE.questFame * (1 + (F.fame || 0))) };
+      return { gold: Math.round((base + bonus) * gm), base: base, bonus: bonus, est: est, shards: shM };
     }
     // 소성 결과 보기를 시작했다가 다른 화면으로 가면, 남은 작품을 그대로 대기함에 넣는다
     /* 소성이 끝날 때 한 번 : 풀무로 불을 잘 다스린 만큼 발색 +0~10% · 요변 찬스 성공 수만큼 요변 굴림 → 등급·값 다시 계산 */
@@ -1245,7 +1242,7 @@
     setInterval(function () { lnL = locked(load()); lnRun(); }, 700);
     try { new MutationObserver(function (ms) { if (lnBusy) { return; } for (var i = 0; i < ms.length; i++) { var t = ms[i].target, el = t.nodeType === 3 ? t.parentElement : t; if (el && el.closest && el.closest('a[href]')) { lnRun(); return; } } }).observe(document.documentElement, { subtree: true, childList: true, characterData: true }); } catch (e) {}
     function freshStart(keep) {
-      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, fameLv: 1, fameXp: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
+      var g = { tut: 0, tutV: 2, jadeV: 2, jade: 300, gold: 800, shards: 0, formedList: [], dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [], kiln: 'empty', heat: 'mid', kilnFilled: {}, batchItems: [], batch: 0, kilnStart: 0, firings: 0, openIdx: 0, openLog: [], trim: false, mats: {}, gv2: 1, gv3: 1, matsQ: {}, deco: {}, quests: { min: false, guest: false, week: false, minDone: false }, research: {}, pieces: {}, order: [], broken: 0, curator: 'done', walkins: [], tasteOrders: [], tasteDone: [], contest: { stars: {} }, goal: null, glazesFound: { white: true, celadon: true, black: true }, shapesFound: { dish: true, cup: true, bowl: true }, soldBy: {}, soldDay: 0 };
       ['settings', 'feedbacks', 'playerName', 'layout', 'pname', 'scenes'].forEach(function (k) { if (keep[k] !== undefined) { g[k] = keep[k]; } });
       try { Object.keys(localStorage).forEach(function (k) { if (/^(tut|ctab$|lastCraft|wheelWip|trkOpen2_|t2auto|contestCh|resFocus)/.test(k) && k !== 'tutMig') { localStorage.removeItem(k); } }); Object.keys(sessionStorage).forEach(function (k) { if (/^tut/.test(k)) { sessionStorage.removeItem(k); } }); } catch (e) {} save(g); return g; /* 처음부터 : 지난 진행의 튜토리얼·채집 단계 기록도 지운다 (남아 있으면 민 씨 납품 직후 채집 끝 컷신이 나옴) */
     }
@@ -2024,7 +2021,6 @@
     function parse(v) { try { return JSON.parse(v || 'null'); } catch (e) { return null; } }
     function lib() { try { return S.qlib.call(window.__qfxCtx || (window.__qfxCtx = {})); } catch (e) { return null; } }
     function nAct(g) { var L = lib(); try { return L && g ? L.active(g).length : 0; } catch (e) { return 0; } }
-    function fameOf(g) { return ((g && g.fameLv) || 1) * 100000 + ((g && g.fameXp) || 0); }
     var orig = Storage.prototype.setItem;
     Storage.prototype.setItem = function (k, v) {
       var before = null;
@@ -2036,8 +2032,8 @@
     function check(a, b) {
       if (!b) { return; }
       var acc = nAct(b) > nAct(a) && (b.tut == null || b.tut >= 1 || PAGE === 'Counter');
-      var dg = (b.gold || 0) - (a.gold || 0), ds = (b.shards || 0) - (a.shards || 0), df = fameOf(b) > fameOf(a);
-      var paid = dg > 0 && (ds > 0 || df) && PAGE !== 'Main';
+      var dg = (b.gold || 0) - (a.gold || 0), ds = (b.shards || 0) - (a.shards || 0);
+      var paid = dg > 0 && ds > 0 && PAGE !== 'Main';
       if (acc) { setTimeout(scrollFly, 0); }
       if (paid) { setTimeout(function () { coinFly(dg, ds, (a.gold || 0), (a.shards || 0)); }, acc ? 500 : 0); }
     }
@@ -2590,8 +2586,6 @@
       if (md.id === 'd15') { q.push(function (nx) { confetti(); card('🏺', '도깨비 이야기 1 · 끝', '이야기는 다음 에피소드로 이어져요', '마을 한가운데 큰 독은 왜 금이 갔을까요?\n강 할매는 도깨비 마을에 무엇을 남겼을까요?', '계속', nx); }); }
       (function run(i) { if (q[i]) { setTimeout(function () { q[i](function () { run(i + 1); }); }, i ? 200 : 900); } })(0);
     };
-    // 명성 칭호
-    S.fameTitle = function (lv) { lv = lv || 1; return lv >= 8 ? '명장' : (lv >= 5 ? '장인' : (lv >= 3 ? '도공' : '견습')); };
 
     // 공방 화면 · 이야기 카드 (지금 에피소드·챕터와 진행)
     var PAGE = ((location.pathname.split('/').pop() || '').replace('.dc.html', '').replace('.html', '')) || 'Main';

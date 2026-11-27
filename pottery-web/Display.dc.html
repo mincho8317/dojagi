@@ -62,7 +62,6 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
       <svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
     </a>
     <div style="flex:1 1 auto;height:40px;display:flex;align-items:center;justify-content:center;background:#A3442C;clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);font-family:'Jua',sans-serif;font-size:19px;color:#FFF4DE;text-shadow:0 2px 0 #7A2F1E">진열 {{shelfCount}}/6</div>
-    <span style="flex:0 0 auto;padding:4px 10px;border-radius:12px;background:rgba(43,26,15,.85);border:2px solid #3E2616;font-family:'Jua',sans-serif;font-size:12px;color:#9FE08F">명성 +{{fameRate}}/h</span>
   </div>
 
   <sc-if value="{{canRecall}}" hint-placeholder-val="{{false}}">
@@ -301,7 +300,7 @@ class Component extends DCLogic {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       drying: 1, glazeQ: 2, kilnQ: 0,
       kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
       openIdx: 0, openLog: [],
@@ -725,7 +724,7 @@ class Component extends DCLogic {
       };
     });
     var pk = self.pickBox({
-      on: !!this.state.pkOpen, multi: false, title: '진열대에 올릴 작품', sub: '보관 중 ' + storeIds.length + '점 · 전시하면 명성 +3/h',
+      on: !!this.state.pkOpen, multi: false, title: '진열대에 올릴 작품', sub: '보관 중 ' + storeIds.length + '점',
       rows: storeIds.map(function (sid) {
         var p = g.pieces[sid];
         var r = self.pickRow(p, { stage: 'glazed', single: true, tag: p.grade + ' · ' + (p.value || 0).toLocaleString() + 'G', tap: function () {
@@ -797,7 +796,6 @@ class Component extends DCLogic {
       slots: slots,
       shelfCount: shelfIds.length,
       storeCount: storeIds.length,
-      fameRate: shelfIds.length * 3,
       sel3d: function () { if (selP) { try { window.PotteryShared.view3d(selP); } catch (e) {} } },
       sel: selP ? { name: selP.name, grade: selP.grade + (typeof selP.skill === 'number' ? ' · 실력 ' + selP.skill + '점' : ''), value: selP.value.toLocaleString(), line: '평가액 ' + selP.value.toLocaleString() + 'G · 발색 ' + QLd.colorPctOf(selP) + '%' + (selP.yohen ? ' 요변' : '') } : { name: '진열된 작품 없음', grade: '', value: '0', line: '보관함에서 작품을 끌어 올려요' },
       target: target ? { name: target.name, grade: target.grade, offer: offer.toLocaleString(), pot: self.potOf(target, GC[target.glaze] || '#F2EFE6') } : { name: '', grade: '', offer: '0', pot: { vb: '0 0 1 1', d: '', fill: '', sw: 0 } },
@@ -823,10 +821,8 @@ class Component extends DCLogic {
         self.say(selP.name + ' 판매 · 골드 +' + selP.value.toLocaleString() + ' · 도감 기록은 남아요');
       },
       send: function () {
-        var x = g.fameXp + 45, lv = g.fameLv;
-        while (x >= 100) { lv++; x -= 100; }
-        self.movePiece(targetId, 'museum', { gold: g.gold + offer, fameLv: lv, fameXp: x, curator: 'done' });
-        self.say(target.name + '이(가) 미술관으로 떠났어요 · 골드 +' + offer.toLocaleString() + ' · 명성 +45');
+        self.movePiece(targetId, 'museum', { gold: g.gold + offer, curator: 'done' });
+        self.say(target.name + '이(가) 미술관으로 떠났어요 · 골드 +' + offer.toLocaleString());
       },
       keep: function () { self.setState({ visitor: false }); self.say('“알겠습니다. 다음에 또 들르지요.”'); },
       recall: function () { self.setState({ visitor: true }); }

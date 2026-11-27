@@ -308,7 +308,7 @@ class Component extends DCLogic {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       drying: 1, glazeQ: 2, kilnQ: 0,
       kiln: 'firing', heat: 'mid', kilnFilled: { '0': true, '1': true, '4': true }, firings: 38,
       openIdx: 0, openLog: [],
@@ -517,11 +517,6 @@ class Component extends DCLogic {
     this.setState({ shownIdx: -1, ph: '', leaving: true });
   }
   goKiln() { if (window.__embedMode) { try { window.__studioPost('collected'); } catch (e0) {} return; } try { var a = document.getElementById('goKiln'); if (a) { a.click(); } } catch (e) {} }
-  fame(g, xp) {
-    var lv = g.fameLv, x = g.fameXp + xp;
-    while (x >= 100) { lv++; x -= 100; }
-    return { lv: lv, xp: x };
-  }
   renderVals0() {
     var self = this;
     var g = this.state.g;

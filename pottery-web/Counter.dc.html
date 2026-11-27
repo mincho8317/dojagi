@@ -201,7 +201,7 @@ class Component extends DCLogic {
   }
   gdef() {
     return {
-      gold: 1240, shards: 142, fameLv: 3, fameXp: 62,
+      gold: 1240, shards: 142,
       dryList: [], bisqueList: [], bisque: { state: 'idle', start: 0, items: [] }, glazeList: [], kilnList: [],
       kiln: 'firing', heat: 'mid', kilnFilled: {}, firings: 38, openIdx: 0, openLog: [],
       trim: false, mats: {}, deco: {},
@@ -283,8 +283,7 @@ class Component extends DCLogic {
     var g = this.state.g, day = new Date().toDateString();
     var sold = {}; var src = g.soldDay === day ? (g.soldBy || {}) : {}; for (var k in src) { sold[k] = src[k]; }
     var sh = g.pieces[pid].shape; sold[sh] = (sold[sh] || 0) + 1;
-    var lv = g.fameLv, x = g.fameXp + 2; while (x >= 100) { lv++; x -= 100; }
-    this.give([pid], { gold: g.gold + price, walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }), soldDay: day, soldBy: sold, fameLv: lv, fameXp: x });
+    this.give([pid], { gold: g.gold + price, walkins: (g.walkins || []).filter(function (z) { return z.id !== w.id; }), soldDay: day, soldBy: sold });
     this.setState({ line: 0, enterN: this.state.enterN + 1 });
     this.say(g.pieces[pid].name + ' 판매 · 골드 +' + price.toLocaleString() + '');
   }
@@ -355,8 +354,6 @@ class Component extends DCLogic {
     var q = g.quests || {};
     var list = [];
     var gradeMul = { '양작': 1, '수작': 1.3, '명작': 1.6, '요변': 2 };
-    var fmul = 1 + (this.qlib().fx(g).fame || 0);
-    function fame(xp) { var lv = g.fameLv, x = g.fameXp + Math.round(xp * fmul); while (x >= 100) { lv++; x -= 100; } return { fameLv: lv, fameXp: x }; }
     var accept = { label: '', run: null };
 
     var QL = this.qlib(), tnow = this.tutNow();
@@ -378,10 +375,7 @@ class Component extends DCLogic {
         } }];
       } else if (!MS.acc) {
         mn.kind = 'offer'; mn.face = '부탁';
-        if (!MS.lvOk) {
-          mn.lines = [TX(md.intro)[0], '(명성 Lv.' + md.needLv + '이 되면 자세한 이야기를 들려줄 것 같아요 · 지금 Lv.' + (g.fameLv || 1) + ')'];
-          mn.choices = [{ label: '명성을 쌓고 올게요', tone: '', run: function () { self.next(''); } }];
-        } else if (md.type === 'visit') {
+        if (md.type === 'visit') {
           mn.lines = TX(md.intro);
           mn.card = { title: md.title + ' · 이야기', conds: [{ t: '만들 그릇 없음 · 이야기를 들어요' }], reward: rewardTxt };
           mn.choices = [
@@ -449,8 +443,7 @@ class Component extends DCLogic {
           m.face = '기대'; m.lines = ['(' + best.grade + ' ' + best.name + '을(를) 꺼내 보여준다)', '어머… 선생님 잔이랑 꼭 닮았어요. 손끝이 똑같네요.', '선생님이 늘 그러셨어요. 우리 ' + (g.pname || '손녀') + '이 언젠가 돌아오면 줄 게 있다고.', '부치지도 못할 편지를 자꾸 쓰시더니… 공방 전시대 안에 모아 두셨어요.', '나/surprise: (…할머니가, 편지를?)'];
           m.choices = [
             { label: best.name + ' 건네기 · ' + pay + 'G', tone: 'go', run: function () {
-              var f = fame(20);
-              self.give([cups[0]], { gold: g.gold + pay, fameLv: f.fameLv, fameXp: f.fameXp, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
+              self.give([cups[0]], { gold: g.gold + pay, quests: (function () { var qq = {}; for (var k in q) { qq[k] = q[k]; } qq.minDone = true; return qq; })() });
               self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
               self.say('의뢰 완료 · 골드 +' + pay + '');
             } }
@@ -555,9 +548,8 @@ class Component extends DCLogic {
           { label: op.name + ' 건네기 · ' + oprice.toLocaleString() + 'G', tone: 'go', run: function () {
             var cur = self.state.g, day = new Date().toDateString(), sold = {}, src = cur.soldDay === day ? (cur.soldBy || {}) : {};
             for (var k in src) { sold[k] = src[k]; } sold[op.shape] = (sold[op.shape] || 0) + 1;
-            var lv = cur.fameLv, x = cur.fameXp + 5; while (x >= 100) { lv++; x -= 100; }
             var doneO = { id: o.id, name: o.name, want: o.want, price: oprice, at: Date.now() };
-            self.give([hits2[hits2.length - 1]], { gold: cur.gold + oprice, fameLv: lv, fameXp: x, soldDay: day, soldBy: sold, tasteOrders: (cur.tasteOrders || []).filter(function (z) { return z.id !== o.id; }), tasteDone: [doneO].concat(cur.tasteDone || []).slice(0, 10) });
+            self.give([hits2[hits2.length - 1]], { gold: cur.gold + oprice, soldDay: day, soldBy: sold, tasteOrders: (cur.tasteOrders || []).filter(function (z) { return z.id !== o.id; }), tasteDone: [doneO].concat(cur.tasteDone || []).slice(0, 10) });
             self.setState({ deliver: '', line: 0, enterN: self.state.enterN + 1 });
             self.say('주문 완료 · 골드 +' + oprice.toLocaleString() + '');
           } },
@@ -582,8 +574,8 @@ class Component extends DCLogic {
         inv.card = { title: ip.name, conds: [{ t: ip.grade }, { t: '평가액 ' + (ip.value || 0).toLocaleString() + 'G' }, { t: '봄 축제 특별 손님' }], reward: iprice.toLocaleString() + 'G' };
         inv.choices = [
           { label: '판매하기 · ' + iprice.toLocaleString() + 'G', tone: 'go', run: function () {
-            var cur = self.state.g, lv = cur.fameLv, x = cur.fameXp + 10; while (x >= 100) { lv++; x -= 100; }
-            self.give([ipid], { gold: cur.gold + iprice, fameLv: lv, fameXp: x, inviteGuest: false });
+            var cur = self.state.g;
+            self.give([ipid], { gold: cur.gold + iprice, inviteGuest: false });
             self.setState({ line: 0, enterN: self.state.enterN + 1 });
             self.say('다회 손님 · 골드 +' + iprice.toLocaleString() + '');
           } },
@@ -658,8 +650,7 @@ class Component extends DCLogic {
     if (all) {
       var dVals = []; for (var pv in pieces) { if (pieces[pv].deliveredTo === md.id && pieces[pv].where === 'sold') { dVals.push(pieces[pv].value || 0); } }
       var pay = QL.payout(md, MS, grades, null, dVals); if (window.__panoPay) { pay = window.__panoPay(pay, g[KEY] || {}, md.items); }
-      var lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
-      patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards; patch.fameLv = lv; patch.fameXp = x;
+      patch.gold = (g.gold || 0) + pay.gold; patch.shards = (g.shards || 0) + pay.shards;
       if (pay.mats) { var mm = patch.mats || (function () { var o = {}; for (var mk in (g.mats || {})) { o[mk] = g.mats[mk]; } return o; })(); for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
       if (md.unlock) { var sf = {}; for (var s0 in (g.shapesFound || {})) { sf[s0] = g.shapesFound[s0]; } (md.unlocks || [md.unlock]).forEach(function (u) { sf[u] = true; }); patch.shapesFound = sf; }
       patch[KEY].log = [{ id: md.id, who: md.who, title: md.title, items: md.items.map(function (it) { return it.name + (it.n > 1 ? ' ×' + it.n : ''); }).join(', '), gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30);
@@ -677,8 +668,8 @@ class Component extends DCLogic {
   // 이야기 의뢰(방문) : 그릇 없이 이야기를 듣고 선물을 받는다
   finishVisit(LN) {
     var g = this.loadG(), QL = this.qlib(), MS = QL.lineState(g, LN), md = MS.def, KEY = MS.key; if (!md || md.type !== 'visit') { return; }
-    var pay = QL.payout(md, MS), lv = g.fameLv || 1, x = (g.fameXp || 0) + pay.fame; while (x >= 100) { lv++; x -= 100; }
-    var m0 = g[KEY] || {}, patch = { gold: (g.gold || 0) + pay.gold, shards: (g.shards || 0) + pay.shards, fameLv: lv, fameXp: x };
+    var pay = QL.payout(md, MS);
+    var m0 = g[KEY] || {}, patch = { gold: (g.gold || 0) + pay.gold, shards: (g.shards || 0) + pay.shards };
     if (pay.mats) { var mm = {}; for (var mk in (g.mats || {})) { mm[mk] = g.mats[mk]; } for (var rk in pay.mats) { mm[rk] = (mm[rk] || 0) + pay.mats[rk]; } patch.mats = mm; }
     patch[KEY] = { i: m0.i || 0, acc: true, dl: {}, mig: {}, thanks: true, grades: [], log: [{ id: md.id, who: md.who, title: md.title, items: '이야기', gold: pay.gold, shards: pay.shards, at: Date.now() }].concat(m0.log || []).slice(0, 30) };
     this.setG(patch);
