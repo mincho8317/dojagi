@@ -78,7 +78,7 @@ button{font-family:inherit;cursor:pointer}
         <sc-for list="{{decos}}" as="d" hint-placeholder-count="4">
           <div style="box-sizing:border-box;padding:9px 10px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:16px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:10px">
             <span aria-hidden="true" style="{{d.sw}}"></span>
-            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{d.name}} <span style="font-size:11px;color:#8A6440">{{d.part}}</span></span><span style="font-size:11px;color:#7A5434">{{d.desc}}</span></span>
+            <span style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="font-family:'Jua',sans-serif;font-size:15px;color:#2B1A0F">{{d.name}} <span style="font-size:11px;color:#8A6440">{{d.part}}</span><sc-if value="{{d.jdOn}}" hint-placeholder-val="{{false}}"> <span style="font-size:10.5px;padding:1px 6px;border-radius:8px;background:#DDF2EA;color:#1F6650;border:1px solid #4FB08F">💎 옥 전용</span></sc-if></span><span style="font-size:11px;color:#7A5434">{{d.desc}}</span></span>
             <button type="button" onClick="{{d.act}}" aria-label="{{d.name}} · {{d.label}}" style="{{d.btn}}">{{d.label}}</button>
           </div>
         </sc-for>
@@ -277,11 +277,13 @@ class Component extends DCLogic {
     if (DOn) { ['wall', 'wheel', 'desk', 'shelf', 'slab', 'paint', 'kiln', 'tub'].forEach(function (pt) { (DD[pt] || []).forEach(function (it) {
       var key = pt + ':' + it.id, has = it.id === 'base' || !!(SD.own || {})[key], using = ((SD.use || {})[pt] || 'base') === it.id;
       decos.push({ part: PN[pt], name: it.n, desc: it.d, sw: 'flex:0 0 52px;height:52px;box-sizing:border-box;border-radius:12px;border:2px solid #8A6440;background:' + it.sw,
-        label: using ? '사용 중' : (has ? '적용' : it.p.toLocaleString() + 'G'),
-        btn: 'all:unset;cursor:pointer;box-sizing:border-box;flex:0 0 78px;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (using ? 'background:#E9F2DC;color:#2F5022;border:3px solid #4F7A3A' : (has ? 'background:#FFF4DE;color:#5B3A24;border:3px solid #5B3A24' : 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328')),
+        label: using ? '사용 중' : (has ? '적용' : (it.jd ? '💎' + it.jd : it.p.toLocaleString() + 'G')), jdTag: it.jd ? '옥' : '', jdOn: !!it.jd,
+        btn: 'all:unset;cursor:pointer;box-sizing:border-box;flex:0 0 78px;text-align:center;padding:8px 0;border-radius:12px;font-family:Jua,sans-serif;font-size:14px;' + (using ? 'background:#E9F2DC;color:#2F5022;border:3px solid #4F7A3A' : (has ? 'background:#FFF4DE;color:#5B3A24;border:3px solid #5B3A24' : (it.jd ? 'background:#2F8A6E;color:#FFFDF5;border:3px solid #1F6650;box-shadow:0 3px 0 #1F6650' : 'background:#3B7A32;color:#FFFDF5;border:3px solid #2F6328;box-shadow:0 3px 0 #2F6328'))),
         act: function () { var G2 = self.loadG(), S0 = G2.sDeco || { own: {}, use: {} }, own = {}, use = {}, k; for (k in (S0.own || {})) { own[k] = S0.own[k]; } for (k in (S0.use || {})) { use[k] = S0.use[k]; }
           if (using) { return; } if (has) { use[pt] = it.id; self.setG({ sDeco: { own: own, use: use } }); self.say(it.n + ' 적용'); return; }
-          own[key] = true; use[pt] = it.id; self.spend(it.p, it.n + ' 리모델링 · 공방에 바로 적용했어요', { sDeco: { own: own, use: use } }); } });
+          own[key] = true; use[pt] = it.id;
+          if (it.jd) { var jn = G2.jadeV === 2 && G2.jade != null ? G2.jade : 0; if (jn < it.jd) { self.say('옥이 ' + (it.jd - jn) + '개 모자라요'); return; } self.setG({ jadeV: 2, jade: jn - it.jd, sDeco: { own: own, use: use } }); self.say('💎 ' + it.n + ' · 공방에 바로 적용했어요'); try { window.__sfx && window.__sfx('unlock'); } catch (e) {} return; }
+          self.spend(it.p, it.n + ' 리모델링 · 공방에 바로 적용했어요', { sDeco: { own: own, use: use } }); } });
     }); }); }
     return {
       decos: decos, isDeco: s.tab === 'deco', decoOn: DOn, decoOff: !DOn, rmProg: rmV.rmProg, rmPctN: rmV.rmPctN, rmBar: rmV.rmBar, rmPrice: rmV.rmPrice, rmLabel: rmV.rmLabel, rmBtn: rmV.rmBtn, rmBuy: rmV.rmBuy,
