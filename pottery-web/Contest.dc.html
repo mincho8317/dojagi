@@ -34,7 +34,7 @@ a{color:#5B3A24}
   <section aria-label="이번 회차" style="position:absolute;left:12px;right:12px;top:64px;box-sizing:border-box;padding:9px 12px;border-radius:16px;background:#FFF4DE;border:3px solid #5B3A24;box-shadow:0 3px 0 rgba(43,26,15,.4);display:flex;align-items:center;gap:10px">
     <div style="flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px">
       <span style="font-family:'Jua',sans-serif;font-size:16px;color:#2B1A0F">제 {{round}}회 · 주제 「{{themeName}}」</span>
-      <span style="font-size:11.5px;color:#7A5434">{{dday}} · 1등 150,000G+💎30 · 2등 80,000G+💎20 · 3등 40,000G+💎10</span>
+      <span style="font-size:11.5px;color:#7A5434">{{dday}} · 1등 45,000G+💎30 · 2등 24,000G+💎20 · 3등 12,000G+💎10</span>
     </div>
     <span style="flex:0 0 auto;padding:3px 9px;border-radius:10px;background:#7A3E8E;color:#FFF;font-family:'Jua',sans-serif;font-size:13px">참가 {{entryN}}점</span>
   </section>
@@ -262,12 +262,12 @@ class Component extends DCLogic {
     L.sort(function (a, b) { return b.votes - a.votes; });
     return L;
   }
-  REW() { return [{ gold: 150000, jade: 30 }, { gold: 80000, jade: 20 }, { gold: 40000, jade: 10 }]; }
+  REW() { return [{ gold: 45000, jade: 30 }, { gold: 24000, jade: 20 }, { gold: 12000, jade: 10 }]; }
   settle() { /* 지난 회차 마감 : 순위 확정 → 보상 대기 */
     var g = this.loadG(), C = g.contest || {}, w = this.wkNow();
     if (C.cur && C.cur.wk < w) {
       var cur = C.cur, res = C.res || null;
-      if (cur.entry) { var f0 = this.frac, self = this; this.frac = function () { return 1; }; var B = this.board(cur.wk, g); this.frac = f0; var rk = 0; B.forEach(function (x, i) { if (x.me) { rk = i + 1; } }); var me = B[rk - 1] || {}, RW = this.REW()[rk - 1] || { gold: 5000, jade: 3 };
+      if (cur.entry) { var f0 = this.frac, self = this; this.frac = function () { return 1; }; var B = this.board(cur.wk, g); this.frac = f0; var rk = 0; B.forEach(function (x, i) { if (x.me) { rk = i + 1; } }); var me = B[rk - 1] || {}, RW = this.REW()[rk - 1] || { gold: 1500, jade: 3 };
         res = { wk: cur.wk, theme: this.themeOf(cur.wk, g), rank: rk, votes: me.votes || 0, n: B.length, gold: RW.gold, jade: RW.jade, claimed: false }; }
       var C2 = {}, k; for (k in C) { C2[k] = C[k]; } C2.cur = { wk: w, rec: {}, given: 0 }; if (res && res.wk === cur.wk) { C2.res = res; }
       var th = {}; for (k in (C.themes || {})) { th[k] = C.themes[k]; } C2.themes = th;
