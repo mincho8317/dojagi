@@ -65,7 +65,7 @@ button{font-family:inherit;cursor:pointer}
     <sc-if value="{{isDeco}}" hint-placeholder-val="{{false}}">
       <sc-if value="{{decoOff}}" hint-placeholder-val="{{true}}">
         <div style="box-sizing:border-box;padding:16px 14px;background:#FFF4DE;border:3px solid #5B3A24;border-radius:18px;box-shadow:0 4px 0 rgba(43,26,15,.4);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
-          <span style="font-size:40px;line-height:1" aria-hidden="true">🏠</span>
+          <img src="gfx/BANNER_REMODEL.webp" alt="" aria-hidden="true" style="width:calc(100% + 28px);margin:-16px -14px 0;border-radius:15px 15px 0 0;display:block">
           <span style="font-family:'Jua',sans-serif;font-size:19px;color:#2B1A0F">공방 리모델링</span>
           <span style="font-size:12.5px;line-height:1.5;color:#7A5434">할머니 공방을 새로 단장해요.<br>물레 · 성형대 · 시유대 · 벽지 · 탁자 · 선반이 한 번에 바뀌고,<br>그 뒤로 꾸미기 아이템을 하나씩 살 수 있어요.</span>
           <div role="progressbar" aria-label="리모델링 비용 모으기" aria-valuenow="{{rmPctN}}" aria-valuemin="0" aria-valuemax="100" style="width:100%;height:14px;box-sizing:border-box;border-radius:8px;background:#E6D6B8;border:2px solid #8A6440;overflow:hidden"><div style="{{rmBar}}"></div></div>
@@ -109,27 +109,27 @@ button{font-family:inherit;cursor:pointer}
 
   <nav aria-label="주 메뉴" style="position:absolute;left:0;bottom:0;width:390px;height:92px;box-sizing:border-box;padding:0 4px 8px;background:#6B4429;border-top:4px solid #3E2616;box-shadow:inset 0 3px 0 #8A5A36;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));align-items:end;z-index:50">
     <a href="Main.dc.html" aria-label="공방" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/4d235f31faacd07e94182c72c545cfea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_HOME.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">공방</span>
     </a>
     <a href="Gather.dc.html" aria-label="채집" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/976713d77fcd910c2063a318370be110.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_GATHER.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">채집</span>
     </a>
     <a href="Research.dc.html" aria-label="연구" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/6a66a73c9fc4b6c62852fd952628acea.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_RESEARCH.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">연구</span>
     </a>
     <a href="Codex.dc.html" aria-label="도감" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="_blob/ec31190f776d7005da6bd6a0febe0402.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_CODEX.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">도감</span>
     </a>
     <a href="Shop.dc.html" aria-label="상점" aria-current="page" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;background:rgba(255,214,107,.2);text-decoration:none">
-      <img src="_blob/06f86a4df741dc544193607cfb80c2fb.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_SHOP.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#FFE7A8">상점</span>
     </a>
     <a href="Contest.dc.html" aria-label="품평회" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 4px;border-radius:12px;text-decoration:none">
-      <img src="ui/tutorial_trophy.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
+      <img src="gfx/NAV_CONTEST.webp" alt="" aria-hidden="true" style="width:38px;height:38px;object-fit:contain">
       <span style="font-family:'Jua',sans-serif;font-size:12px;white-space:nowrap;color:#F6E7CC">품평회</span>
     </a>
   </nav>
@@ -250,8 +250,8 @@ class Component extends DCLogic {
     // 설비 : 판 성형대 · 붓 시유대 (기본 잠김 · 지금은 0G)
     var FAC = G.fac || {}, BTN = 'all:unset;cursor:pointer;box-sizing:border-box;margin-top:auto;width:100%;text-align:center;padding:8px 0;border-radius:13px;font-family:Jua,sans-serif;font-size:16px;';
     var facs = [
-      { id: 'slab', name: '판 성형대', desc: '흙을 밀대로 펴서 판으로 · 모양대로 잘라 접시를 만들어요 (물레 화면 구석)', price: 40000, img: '', slab: true },
-      { id: 'paint', name: '붓 시유대', desc: '유약을 붓에 찍어 기물에 무늬를 그려요 (유약 화면 오른쪽)', price: 60000, img: '_blob/3e347c192eea1b786ae04b3d3606b5bc.webp' }
+      { id: 'slab', name: '판 성형대', desc: '흙을 밀대로 펴서 판으로 · 모양대로 잘라 접시를 만들어요 (물레 화면 구석)', price: 40000, img: 'gfx/FAC_SLAB.webp' },
+      { id: 'paint', name: '붓 시유대', desc: '유약을 붓에 찍어 기물에 무늬를 그려요 (유약 화면 오른쪽)', price: 60000, img: 'gfx/FAC_PAINT.webp' }
     ].map(function (d) {
       var own = !!FAC[d.id], pr = d.price ? d.price.toLocaleString() + 'G' : '무료';
       return { name: d.name, desc: d.desc, img: d.img, imgOn: !!d.img, slabOn: !!d.slab,

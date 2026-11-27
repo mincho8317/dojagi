@@ -494,15 +494,15 @@
       var E1 = DISP[0], E1f = E1.slots.filter(function (sl) { return slotSt(sl) === 'filled'; }).length;
       var nx1 = E1.slots.filter(function (sl) { return slotSt(sl) !== 'filled'; })[0];
       // 최종 목표 1 : 할머니 전시대 채우기 → 품평회
-      out.final.push({ ic: '🏺', t: '할머니의 전시대 채우기', sub: unl(g, 'contest') ? '전시대를 다 채웠어요 · 하단 「품평회」에 출품해요' : '에피소드 1 전시대 4칸을 모두 채우면 「품평회」가 열려요', prog: E1f + '/4', pct: E1f / 4, done: E1f >= 4, go: unl(g, 'contest') ? { href: 'Contest.dc.html' } : go(4),
+      out.final.push({ ic: '🏺', img: 'gfx/ICON_GOAL_DISPLAY.webp', t: '할머니의 전시대 채우기', sub: unl(g, 'contest') ? '전시대를 다 채웠어요 · 하단 「품평회」에 출품해요' : '에피소드 1 전시대 4칸을 모두 채우면 「품평회」가 열려요', prog: E1f + '/4', pct: E1f / 4, done: E1f >= 4, go: unl(g, 'contest') ? { href: 'Contest.dc.html' } : go(4),
         hint: nx1 && !unl(g, 'contest') ? '다음 칸 : ' + chTitle(nx1.line, nx1.ch) + (slotSt(nx1) === 'open' ? ' · 지금 올릴 수 있어요' : ' · 챕터를 끝내면 열려요') : '' });
       // 최종 목표 3 : 공방 리모델링 (골드)
       var RM = REMODEL_COST, gd = g.gold || 0;
-      out.final.push({ ic: '🏠', t: '공방 리모델링', sub: g.remod ? '리모델링을 마쳤어요 · 상점 「리모델링」에서 꾸며요' : RM.toLocaleString() + 'G를 모으면 상점에서 공방을 새로 꾸며요', prog: g.remod ? '완료' : Math.min(gd, RM).toLocaleString() + ' / ' + RM.toLocaleString() + 'G', pct: g.remod ? 1 : Math.min(1, gd / RM), done: !!g.remod, go: { href: 'Shop.dc.html' }, hint: '' });
+      out.final.push({ ic: '🏠', img: 'gfx/ICON_GOAL_REMODEL.webp', t: '공방 리모델링', sub: g.remod ? '리모델링을 마쳤어요 · 상점 「리모델링」에서 꾸며요' : RM.toLocaleString() + 'G를 모으면 상점에서 공방을 새로 꾸며요', prog: g.remod ? '완료' : Math.min(gd, RM).toLocaleString() + ' / ' + RM.toLocaleString() + 'G', pct: g.remod ? 1 : Math.min(1, gd / RM), done: !!g.remod, go: { href: 'Shop.dc.html' }, hint: '' });
       // 최종 목표 2 : 달항아리 명작
       var mjShape = !!((g.shapesFound || {}).moonjar), mjAny = false, mjBest = false;
       for (var k in ps) { var P = ps[k]; if (P && shapeKeyOf(P, 'moonjar') === 'moonjar' && P.sk !== 'slab') { mjAny = true; if ((GRANK[P.grade] || 0) >= 3) { mjBest = true; } } }
-      out.final.push({ ic: '🌕', t: '보름달 같은 달항아리 빚기', sub: mjBest ? '명작 달항아리를 빚었어요!' : (mjShape ? '달항아리 모양이 열렸어요 · 명작으로 빚어 보세요' : '4챕터 「장 씨네 장독대」를 끝내면 달항아리 모양이 열려요'), prog: mjBest ? '명작 ✓' : (mjAny ? '빚음 · 명작 전' : (mjShape ? '모양 열림' : '잠김')), pct: mjBest ? 1 : (mjAny ? 0.66 : (mjShape ? 0.33 : 0)), done: mjBest, go: go(1), hint: '' });
+      out.final.push({ ic: '🌕', img: 'gfx/ICON_GOAL_MOONJAR.webp', t: '보름달 같은 달항아리 빚기', sub: mjBest ? '명작 달항아리를 빚었어요!' : (mjShape ? '달항아리 모양이 열렸어요 · 명작으로 빚어 보세요' : '4챕터 「장 씨네 장독대」를 끝내면 달항아리 모양이 열려요'), prog: mjBest ? '명작 ✓' : (mjAny ? '빚음 · 명작 전' : (mjShape ? '모양 열림' : '잠김')), pct: mjBest ? 1 : (mjAny ? 0.66 : (mjShape ? 0.33 : 0)), done: mjBest, go: go(1), hint: '' });
       // 지금 목표 1 : 메인 의뢰
       var M = mainState(g);
       if (!M.allDone) {
@@ -526,7 +526,7 @@
       else if (!D.open) { out.now.push({ ic: '👹', t: '도깨비 이야기', sub: '전시대 ①에 명작을 올려 흑토·흑유를 해금하면 찾아와요', prog: '잠김', pct: 0, done: false, locked: true, go: go(4), hint: '' }); }
       // 설비
       [['slab', '판 성형대', '판으로 접시·통을 만들어요 · 도깨비 3챕터 · 도깨비 전시대 ②③에 필요'], ['paint', '붓 시유대', '붓·도장으로 무늬를 그려요 · 전시대 ④ · 도깨비 전시대 ③에 필요']].forEach(function (f) {
-        out.fac.push({ ic: f[0] === 'slab' ? '🪵' : '🖌', t: f[1] + ' 설치', sub: FAC[f[0]] ? '설치했어요' : f[2], prog: FAC[f[0]] ? '설치됨' : '상점 · 설비', pct: FAC[f[0]] ? 1 : 0, done: !!FAC[f[0]], go: { href: 'Shop.dc.html' }, hint: '' });
+        out.fac.push({ ic: f[0] === 'slab' ? '🪵' : '🖌', img: f[0] === 'slab' ? 'gfx/FAC_SLAB.webp' : 'gfx/FAC_PAINT.webp', t: f[1] + ' 설치', sub: FAC[f[0]] ? '설치했어요' : f[2], prog: FAC[f[0]] ? '설치됨' : '상점 · 설비', pct: FAC[f[0]] ? 1 : 0, done: !!FAC[f[0]], go: { href: 'Shop.dc.html' }, hint: '' });
       });
       return out;
     }
@@ -2288,6 +2288,7 @@
     var CI = {}; [['CHAR_HARAM', 'haram'], ['CHAR_MIN', 'min'], ['CHAR_YOON', 'yoon'], ['CHAR_CHA', 'cha'], ['CHAR_JEONG', 'jeong'], ['CHAR_JANG', 'jang'], ['CHAR_DUDU', 'dudu'], ['CHAR_BULMOK', 'bulmok'], ['CHAR_KIDS', 'kids']].forEach(function (r) {
       CI[r[0]] = { wait: 'char/c_' + r[1] + '_wait.webp', joy: 'char/c_' + r[1] + '_joy.webp', ask: 'char/c_' + r[1] + '_ask.webp', face: 'char/f_' + r[1] + '.webp' };
     });
+    'abcdef'.split('').forEach(function (k) { CI['CHAR_WALK_' + k.toUpperCase()] = { wait: 'char/w_' + k + '_wait.webp', joy: 'char/w_' + k + '_joy.webp', ask: 'char/w_' + k + '_ask.webp', face: 'char/f_w_' + k + '.webp' }; }); /* 일반 손님 6명 */
     S.CHARIMG = CI;
     // 말하는 사람 흉상 · faces = 표정별 그림, 줄마다 {face: '...'} 로 고른다 (없으면 def)
     var ART = {
@@ -2296,7 +2297,7 @@
       '할머니': { id: 'grandma', emo: '👵', tone: '#7A5A3A', side: 'r', def: 'smile', faces: { smile: IMG('grandma', 'smile'), stubborn: IMG('grandma', 'stubborn'), sick: IMG('grandma', 'sick') } },
       '두두리': { id: 'dudu', emo: '👹', tone: '#3E6B8A', side: 'r', def: 'laugh', faces: { laugh: IMG('dudu', 'laugh'), sulk: IMG('dudu', 'sulk'), muk: IMG('dudu', 'muk') } },
       '???': { id: 'dudu', emo: '👹', tone: '#26323A', side: 'r', def: 'laugh', shadow: true, faces: { laugh: IMG('dudu', 'laugh') } },
-      '민 씨': { id: 'min', emo: '🍵', tone: '#6E8A5A', side: 'r', img: null },
+      '민 씨': { id: 'min', emo: '🍵', tone: '#6E8A5A', side: 'r', def: 'neutral', faces: { neutral: IMG('min', 'neutral'), sad: IMG('min', 'sad'), smile: IMG('min', 'smile') } },
       '방울이': { id: 'kids', emo: '🎐', tone: '#7A5A9A', side: 'r', img: 'char/c_kids_joy.webp' },
       '도롱이': { id: 'kids', emo: '🎐', tone: '#5A7A9A', side: 'r', img: 'char/c_kids_joy.webp' }
     };
@@ -2310,8 +2311,8 @@
         { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '물레를 덮은 천을 걷었다. 할머니 무릎에 앉아, 할머니 손 아래 내 손을 얹고 돌리던 물레.'], ['나', '…한 번만 돌려 볼까.', { face: 'sad' }], ['나', '할머니가 제일 아끼던 청자 찻잔. 딱 하나만 빚어 보자.', { face: 'smile' }]] }
       ] },
       min_arrive: { title: '찻집 주인 민 씨', steps: [
-        { img: 'cg/m1.webp', pic: '🍵', cap: '가마 앞 · 문을 두드린 손님', bg: '#4A3422', amb: 'dust', lines: [['', '가마에 찻잔을 넣고 한숨 돌리는데, 누군가 문을 두드렸다.', { fx: 'knock' }], ['민 씨', '강 선생님! …아, 손녀분이시구나.'], ['', '손님은 한참 말이 없었다.'], ['민 씨', '…그러셨구나. 저는 골목 찻집 하는 민이에요.'], ['민 씨', '{이름} 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.'], ['민 씨', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.'], ['나', '(…그걸 아직 기억하셨구나.)', { face: 'surprise' }]] },
-        { img: 'cg/m2.webp', pic: '🔥', cap: '불이 오른 가마', bg: '#4A3422', amb: 'dust', lines: [['민 씨', '선생님께 받은 청자 찻잔이 지난겨울에 깨졌어요. 혹시 남은 잔이 있을까 해서 와 봤는데…'], ['민 씨', '어머, 지금 가마에 굽고 계신 거… 찻잔이에요?'], ['나', '아, 네. 할머니 물레를 한 번만 돌려 보고 싶어서요. 잘 나올지는 모르겠지만…', { face: 'sad' }], ['민 씨', '그 잔, 다 구워지면 제가 받아 가도 될까요?'], ['민 씨', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚은 잔이면, 그걸로 충분해요.'], ['나', '…네. 잘 구워지면 꼭 드릴게요.', { face: 'smile' }]] }
+        { img: 'cg/m1.webp', pic: '🍵', cap: '가마 앞 · 문을 두드린 손님', bg: '#4A3422', amb: 'dust', lines: [['', '가마에 찻잔을 넣고 한숨 돌리는데, 누군가 문을 두드렸다.', { fx: 'knock' }], ['민 씨', '강 선생님! …아, 손녀분이시구나.'], ['', '손님은 한참 말이 없었다.'], ['민 씨', '…그러셨구나. 저는 골목 찻집 하는 민이에요.', { face: 'sad' }], ['민 씨', '{이름} 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.', { face: 'smile' }], ['민 씨', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.', { face: 'smile' }], ['나', '(…그걸 아직 기억하셨구나.)', { face: 'surprise' }]] },
+        { img: 'cg/m2.webp', pic: '🔥', cap: '불이 오른 가마', bg: '#4A3422', amb: 'dust', lines: [['민 씨', '선생님께 받은 청자 찻잔이 지난겨울에 깨졌어요. 혹시 남은 잔이 있을까 해서 와 봤는데…', { face: 'sad' }], ['민 씨', '어머, 지금 가마에 굽고 계신 거… 찻잔이에요?'], ['나', '아, 네. 할머니 물레를 한 번만 돌려 보고 싶어서요. 잘 나올지는 모르겠지만…', { face: 'sad' }], ['민 씨', '그 잔, 다 구워지면 제가 받아 가도 될까요?'], ['민 씨', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚은 잔이면, 그걸로 충분해요.', { face: 'smile' }], ['나', '…네. 잘 구워지면 꼭 드릴게요.', { face: 'smile' }]] }
       ] },
       after_min: { title: '할머니의 전시대', steps: [
         { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '…전시대에, 편지?', { face: 'surprise' }]] },
