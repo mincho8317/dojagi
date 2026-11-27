@@ -24,7 +24,7 @@
       itemShards: 0,         // (쓰지 않음) 파편은 메인 의뢰에서만
       mainShardShare: 0.5,  // 메인 의뢰 파편 합 = 연구 파편 합의 50%      // 메인 의뢰 기물 1점당 파편
       questFame: 15,       // 메인 의뢰 완료 시 명성 경험치
-      gradeBonus: { '수작': 2, '명작': 7, '요변': 7 }, // 납품 작품 등급별 골드 보너스 비율 · 판매가 등급 배수(×3·×8)를 따라가 납품이 늘 판매보다 비싸게
+      gradeBonus: { '수작': 1, '명작': 3, '요변': 3 }, // 납품 작품 등급별 골드 보너스 비율 · 판매가 등급 배수(×2·×4)를 따라가 납품이 늘 판매보다 비싸게
       // 작품 등급 = 공정별 실력 점수(0~100)의 가중 평균 · 무작위 없음
       skillW: { form: 0.55, glaze: 0.25, fire: 0.2 }, // 건조 공정 없음
       skillPart: {
@@ -36,7 +36,7 @@
       gradeCut3: { '명작': 190, '수작': 160 }, /* 지금 등급 : 성형 일치율(100) + 소성 온도 구간 점수(100) */
       gradeCut2: { '명작': 287, '수작': 250 }, /* 발색은 무작위 없음 · 연구 전부 + 최고 궁합 = 발색 100 → 실력 187+ 이면 명작 */ // 등급 = 실력(200) + 발색(100) = 300점 만점 · 미만은 양작
       colorTemp: { '정합': 55, '근접': 25, '불일치': 0 }, colorRnd: 0, /* 운 요소 없음 · 발색 = 온도 정합 55 + 고른 유약 10 + 연구 12 + 흙·유약 궁합 최대 24 (100에서 자름) */ // 발색 · 온도 정합 몫(%)
-      gradeMul: { '양작': 1, '수작': 3, '명작': 8 }, // 평가액 배율
+      gradeMul: { '양작': 1, '수작': 2, '명작': 4 }, // 평가액 배율
       pieceCap: { table: 1, tea: 2, vase: 2, jar: 3 }, // 의뢰 하나가 요구하는 기물 수 · 메인 의뢰 장(章)에 따라 (초반 1 · 중반 2 · 후반 3)
       deliverMul: 2.5,    // 메인 의뢰 납품가 = 작품 가치 × 2.5
       deliverMulOther: 1, // 일반·단골·시즌 의뢰 납품가 = 작품 가치 × 1
@@ -225,7 +225,7 @@
     function lerpG(a, b, t) { var o = {}; for (var k in a) { o[k] = typeof a[k] === 'number' ? a[k] + (b[k] - a[k]) * t : a[k]; } return o; }
     var CLEGACY = { basic: 'cy1', refined: 'cy2', kaolin: 'cw2', porcelain: 'cw3', premium: 'cw3' };
     /* 재료 가격 등급 · 기본 30 / 중급 90 / 특별 500 (상점 가격 = 기물 가치 계산의 바탕) */
-    var SVAL = { dish: 1, jan: 1, chatjan: 1, tongjan: 1, sabal: 1.2, daejeop: 1.2, lotuscup: 1.2, plate: 1.4, dawan: 1.4, danji: 1.4, slab: 1.4, hangari: 1.7, byeong: 1.7, hwabyeong: 2, jangdok: 2, maebyeong: 2.3, moonjar: 3 };
+    var SVAL = { dish: 1, jan: 1, chatjan: 1, tongjan: 1, sabal: 1.1, daejeop: 1.1, lotuscup: 1.1, plate: 1.2, dawan: 1.2, danji: 1.2, slab: 1.2, hangari: 1.4, byeong: 1.4, hwabyeong: 1.6, jangdok: 1.6, maebyeong: 1.8, moonjar: 2 };
     var MATPRICE = { clay: { y: 30, w: 30, r: 90, k: 90, s: 300 }, glaze: { white: 30, celadon: 30, black: 90, jinsa: 500, sakura: 300 } };
     /* 기물에 들어간 재료값 = 흙 종류 × 개수 + 유약 종류 × 입힌 횟수 */
     function matValue(it) {
