@@ -6058,7 +6058,7 @@ class Component extends DCLogic {
     try { var G = this.ctls.Glaze; G && G.setState({ lastId: '' }); } catch (e) {}
     return true;
   }
-  putGlaze(b) { if (b.on) { this.say(b.name + '이 이미 시유그릇에 들어 있어요'); return false; } if (b.pick) { b.pick(); } this.sfx('ok'); this.say(b.name + '을 시유그릇에 부었어요 · 시유 준비'); return true; }
+  putGlaze(b) { if (this.tutFix() && b.id && b.id !== 'celadon') { this.say('첫 찻잔은 청자유로 입혀요'); return false; } if (b.on) { this.say(b.name + '이 이미 시유그릇에 들어 있어요'); return false; } if (b.pick) { b.pick(); } this.sfx('ok'); this.say(b.name + '을 시유그릇에 부었어요 · 시유 준비'); return true; }
   /* 실을 물레에 대면 : 실이 밑동을 가로지르는 연출 → 잘라 낸 기물이 물레 위에 남는다 */
   cutWire() {
     var g = this.loadG(), W = this.ctls.Wheel, self = this;
@@ -6574,8 +6574,9 @@ class Component extends DCLogic {
     var S = window.PotteryShared; if (!S || !S.storyPlay || this._stOn || document.querySelector('.st-ov,.tut-ov,.sm-ov') || this.reveal) { return; }
     var g = this.loadG(), sc = g.scenes || {}, self = this, Q = this.qlib();
     var play = function (id, cb) { self._stOn = true; S.storyPlay(id, function () { self._stOn = false; try { cb && cb(); } catch (e) {} self.bump(); }); };
-    if (g.needIntro) { play('prologue', function () { self.setG2({ needIntro: 0 }); self.jumpTo(0); }); return; }
+    if (g.needIntro) { play('prologue', function () { self.setG2({ needIntro: 0 }); self.jumpTo(1); }); return; }
     var q = g.quests || {};
+    if (!q.min && !q.minDone && (this.kState(g).k || []).some(function (x) { return x && x.it; })) { play('min_arrive', function () { var g2 = self.loadG(), qq = {}, k; for (k in (g2.quests || {})) { qq[k] = g2.quests[k]; } qq.min = true; qq.minAt = Date.now(); self.setG2({ quests: qq }); self.say('의뢰 내역서에 「할머님 잔을 닮은 찻잔」이 적혔어요'); }); return; } /* 첫 찻잔을 가마에 넣으면 민 씨가 찾아온다 */
     if (sc.after_min && !g.goalIntro && S.storyCard && g.shopOpen) { /* 「할머니의 전시대」 뒤 : 최종 목표 두 가지를 바로 알려 준다 */
       this.setG2({ goalIntro: 1 }); this._stOn = true;
       S.storyCard('🏺', '목표 ① 할머니의 전시대', '에피소드 1 전시대 4칸 채우기', '단골 이야기를 하나씩 끝낼 때마다 전시대 칸이 열려요.\n조건에 맞는 명작을 올리면 새 재료와 기능이 열리고,\n마지막 칸에 「달항아리」 명작을 올리면 「품평회」가 열려요.', '다음', function () {
@@ -6598,9 +6599,10 @@ class Component extends DCLogic {
   }
   /* ── 첫 작업 안내 (민 씨 찻잔) : 흙 올리기 → 빚기 → 자르기 → 선반 → 시유 → 가마 → 장작 → 꺼내기 → 납품 ── */
   gdEl(q) { var el = typeof q === 'string' ? document.querySelector(q) : q; if (!el) { return null; } var r = el.getBoundingClientRect(); if (r.width < 4 || r.height < 4 || r.right < 0 || r.left > window.innerWidth || r.bottom < 0 || r.top > window.innerHeight) { return null; } return el; }
+  tutFix(g) { g = g || this.loadG(); return !g.needIntro && !(g.quests || {}).minDone; } /* 첫 작업 : 찻잔 · 청자유 고정 */
   gdStep() {
     var g = this.loadG(), q = g.quests || {}, Q = this.qlib(), self = this;
-    if (!q.min || q.minDone || g.gd1) { return null; }
+    if (q.minDone || g.gd1 || g.needIntro) { return null; }
     var P = this.curPanel(), go = function (i, t) { return { t: t, fn: function () { self.jumpTo(i); } }; };
     var btnTxt = function (t) { return [].slice.call(document.querySelectorAll('button,a')).filter(function (b) { return (b.textContent || '').indexOf(t) >= 0 && self.gdEl(b); })[0] || null; };
     var ps = g.pieces || {}, cup = false; for (var k in ps) { var p = ps[k]; if (p && p.where === 'store' && p.shape === 'cup' && Q.shapeKeyOf(p) === 'chatjan' && p.glaze === 'celadon') { cup = true; } }
@@ -6622,7 +6624,7 @@ class Component extends DCLogic {
       var sIt = (g.glazeList || []).filter(function (x) { return x.id === gsel; })[0];
       if (sIt && sIt.recoat) { return { el: '#gpot', msg: '', noBub: true }; } /* 한 번 담근 뒤 : 시유그릇 안내 문구가 그대로 보인다 */
       var bks = [].slice.call(document.querySelectorAll('[aria-label="유약통 · 골라서 시유그릇에"] [role=button]')), cel = bks.filter(function (b) { return /^청자/.test(b.getAttribute('aria-label') || ''); })[0];
-      if (cel && !/들어간 유약/.test(cel.getAttribute('aria-label') || '')) { return { el: cel, msg: '민 씨는 청자유를 원해요 · 청자유 통을 끌어 시유그릇에 부어요' }; }
+      if (cel && !/들어간 유약/.test(cel.getAttribute('aria-label') || '')) { return { el: cel, msg: (q.min ? '민 씨는 청자유를 원해요' : '할머니가 즐겨 쓰던 청자유예요') + ' · 청자유 통을 끌어 시유그릇에 부어요' }; }
       return { el: '#gpot', msg: '찻잔을 아래로 끌어 유약에 담갔다가 들어 올려요 · 깊이 담글수록 유약이 많이 묻어요' };
     }
     if (g.onWheel && Date.now() - (this.liftAt || 0) < 2600) { return null; } /* 자른 기물은 잠시 뒤 저절로 선반에 올라간다 · 그동안은 안내를 쉬어요 */
@@ -6928,7 +6930,7 @@ class Component extends DCLogic {
     v.onDown = function (e) { if (!it0) { return; } var gw = ob.w, gh = ob.h, gH = v.onGhost || ''; self.carryStart(e, 'piece', { id: it0.id }, gH, gw, gh, function () { self.say('기물을 들어서 2층 선반에 올려요'); }, { sc: 1.05, to: '[data-rail="rf"]', hide: function (on) { self.carryId = on ? it0.id : ''; self.bump(); } }); };
     var WIREH = '<svg width="70" height="70" viewBox="0 0 62 70"><rect x="4" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><rect x="46" y="6" width="12" height="24" rx="5" fill="#A97B52" stroke="#5B3A24" stroke-width="2.5"/><path d="M10 30 Q31 46 52 30" fill="none" stroke="#F3E3C4" stroke-width="2.5"/></svg>';
     v.wireDown = function (e) { self.carryStart(e, 'wire', null, WIREH, 70, 70, function () { self.say('실을 끌어서 물레에 대면 자를 점선이 나와요'); }); };
-    v.tgTap = function () { self.tgOpen = true; self.bump(); }; /* 목표 모양 : 모달 대신 쪽지가 커져서 목록 */
+    v.tgTap = function () { if (!self.slabOn && self.tutFix()) { self.say('첫 작업은 「청자 찻잔」 모양으로 빚어요'); return; } self.tgOpen = true; self.bump(); }; /* 목표 모양 : 모달 대신 쪽지가 커져서 목록 */
     v.tgClose = function () { self.tgOpen = false; self.bump(); };
     v.tgOpen = !!this.tgOpen; v.tgShut = !this.tgOpen; v.tgRows = []; v.tgZ = this.slabOn ? 26 : 6; v.tgPctOn = false; v.tgPct = ''; v.shOn = false;
     var RSTY = function (on) { return 'all:unset;cursor:pointer;display:flex;align-items:center;gap:6px;box-sizing:border-box;min-height:32px;padding:4px 8px;border-radius:8px;font-family:Jua,sans-serif;font-size:13.5px;color:#2B1A0F;' + (on ? 'background:#FFE7A8;border:2px solid #E3B23C' : 'background:transparent;border:2px solid transparent'); };

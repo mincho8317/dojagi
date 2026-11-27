@@ -643,6 +643,7 @@
     function reqLabel(it) { return it.name || ((it.glaze ? GP[it.glaze] + ' ' : '') + (SN[it.wshape] || '그릇')); }
     function sideQuests(g) {
       var q = g.quests || {}, out = [];
+      if (!q.min && !q.minDone && !g.needIntro) { out.push({ id: 'min', kind: 'side', tag: '첫 작업', who: '나', role: '할머니 공방', res: '', title: '할머니 물레로 빚는 첫 찻잔', items: [{ key: 'a', name: '청자 찻잔', wshape: 'cup', sk: 'chatjan', glaze: 'celadon', n: 1 }], reward: { text: '' }, self: true }); } /* 튜토리얼 : 민 씨가 오기 전, 혼자 빚는 첫 찻잔 (가마에 넣으면 민 씨가 찾아온다) */
       if (q.min && !q.minDone) { out.push({ id: 'min', kind: 'side', tag: '사연', who: '민 씨', role: '찻집 주인', res: 'CHAR_MIN', title: '할머님 잔을 닮은 찻잔', items: [{ key: 'a', name: '청자 찻잔', wshape: 'cup', sk: 'chatjan', glaze: 'celadon', n: 1 }], reward: { text: '400G × 등급' }, at: q.minAt }); }
       if (q.guest && !q.guestDone) { out.push({ id: 'guest', kind: 'side', tag: '일간', who: '이름 없는 손님', role: '동네 주민', res: 'CHAR_GUEST', title: '둥근 밥공기', items: [{ key: 'a', name: '사발 (유약 무관)', wshape: 'bowl', sk: 'sabal', glaze: '', n: 1 }], reward: { text: '350G' }, at: q.guestAt }); }
       if (q.week && !q.weekDone) { out.push({ id: 'week', kind: 'side', tag: '주간', who: '카페 사장', role: '골목 카페', res: 'CHAR_CAFE', title: '카페 잔 세트', items: [{ key: 'a', name: '백자 찻잔', wshape: 'cup', sk: 'chatjan', glaze: 'white', n: 3 }], reward: { text: '3,600G · 파편 20' }, at: q.weekAt }); }
@@ -840,7 +841,8 @@
     /* 의뢰 수 : offers = 카운터에서 지금 받을 수 있는 의뢰 · accepted = 받아 둔(진행 중) 의뢰 · 메인·도깨비·시즌 + 튜토리얼 민 씨 */
     function reqCounts(g) {
       var q = g.quests || {}, offers = 0, accepted = 0, tutOk = typeof g.tut !== 'number' || g.tut >= 8;
-      if (!q.min) { offers++; } else if (!q.minDone) { accepted++; }
+      if (!q.minDone && (q.min || !g.needIntro)) { accepted++; }
+      if (!q.minDone) { return { offers: 0, accepted: accepted }; } /* 첫 찻잔 전에는 다른 의뢰를 세지 않는다 */
       ['main', 'dok', 'season'].forEach(function (LN) {
         var M = lineState(g, LN); if (!M.open || !M.def || M.allDone) { return; }
         if (M.acc && !M.thanks) { accepted++; } else if (!M.acc && !M.thanks && tutOk && M.lvOk) { offers++; }
@@ -1709,7 +1711,7 @@
     }
     /* 배경음악 파일 (bgm/bgm_키.mp3) · 화면·컷신별 곡, 끝나기 전에 같은 곡을 겹쳐 틀어 끊김 없이 반복, 화면을 옮겨도 이어서 재생 · 파일을 못 읽으면 합성음으로 */
     var PAGE_BGM = { Main: 'main', MainSide: 'main', Queue: 'main', Codex: 'main', Settings: 'main', Resources: 'main', Wheel: 'craft', Dry: 'craft', Glaze: 'craft', Kiln: 'craft', KilnOpen: 'craft', Counter: 'counter', Commission: 'counter', Town: 'counter', Display: 'counter', Gather: 'gather', Shop: 'shop', Research: 'shop', Season: 'festa', Contest: 'festa' };
-    var SCENE_BGM = { prologue: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa', dok_meet: 'dok', dok_valley: 'dok', disp_m1: 'memory', disp_m2: 'memory', disp_m3: 'memory', disp_full: 'hope', event_open: 'festa' };
+    var SCENE_BGM = { prologue: 'memory', min_arrive: 'memory', research_open: 'memory', after_min: 'hope', open_shop: 'hope', ep1_end: 'hope', dok_intro: 'dok', dok_bye: 'dok', sakura_ask: 'festa', dok_meet: 'dok', dok_valley: 'dok', disp_m1: 'memory', disp_m2: 'memory', disp_m3: 'memory', disp_full: 'hope', event_open: 'festa' };
     /* 곡은 화면을 옮겨도 끝까지 이어서 들려준다 · 한 곡이 끝날 때 지금 화면에 맞는 곡으로 넘어감 · 컷신은 바로 바꾸고 끝나면 듣던 곡·자리로 돌아감 */
     var BF = { cur: null, scene: null, prev: null, ok: false, dead: false, XF: 5 };
     function bgmWant() { return BF.scene || PAGE_BGM[PAGE] || 'main'; }
@@ -2312,7 +2314,11 @@
         { img: 'cg/p1.webp', pic: '🏥', cap: '병실 창가 · 회상', bg: '#3A3A44', amb: 'memory', lines: [['', '할머니가 쓰러진 건 작년 이맘때였다.'], ['', '회사엔 한 달만 쉬겠다고 했다. 한 달은 석 달이 되고, 석 달은 일 년이 됐다.'], ['', '마지막 날, 할머니는 내 손을 한참 쥐고 있었다.'], ['할머니', '…우리 아가. 울지 말어.', { face: 'sick' }], ['할머니', '이 할미가 평생 그릇을 빚었는디…', { face: 'sick' }], ['할머니', '…네가, 이 할미가 빚은 것 중에 제일 이쁜 도자기여.', { face: 'sick' }], ['', '그게, 마지막으로 들은 말이었다.']] },
         { img: 'cg/p2.webp', pic: '🏚️', cap: '골목 끝, 닫힌 공방 문', bg: '#2B2A33', amb: 'leaves', lines: [['', '할머니를 보내 드리고, 오랜만에 공방으로 돌아왔다.'], ['나', '할머니가 쓰러지시고 1년이나 지났는데…', { face: 'sad' }], ['나', '아직도 할머니 온기가 남아 있는 것 같아.', { face: 'sad' }]] },
         { input: 'pname', q: '내 이름은…', ph: '이름 (최대 6자)', def: '하윤', bg: '#2B2A33', img: 'cg/p2.webp' },
-        { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '그때, 누군가 문을 두드렸다.', { fx: 'knock' }]] }
+        { img: 'cg/p3.webp', pic: '🫙', cap: '먼지 앉은 공방 안 · 이어 붙인 사발', bg: '#4A3422', amb: 'dust', lines: [['', '물레도, 선반 위 그릇들도 그대로다. 맨 윗칸엔 금 간 자리를 이어 붙인 사발 하나.'], ['나', '…다녀왔어요, 할머니. {이름}이에요.', { face: 'sad' }], ['나', '얼른 정리만 하고 가자. 오래 걸리진 않을 거야.'], ['', '물레를 덮은 천을 걷었다. 할머니 무릎에 앉아, 할머니 손 아래 내 손을 얹고 돌리던 물레.'], ['나', '…한 번만 돌려 볼까.', { face: 'sad' }], ['나', '할머니가 제일 아끼던 청자 찻잔. 딱 하나만 빚어 보자.', { face: 'smile' }]] }
+      ] },
+      min_arrive: { title: '찻집 주인 민 씨', steps: [
+        { img: 'cg/p3.webp', pic: '🍵', cap: '가마 앞 · 문을 두드린 손님', bg: '#4A3422', amb: 'dust', lines: [['', '가마에 찻잔을 넣고 한숨 돌리는데, 누군가 문을 두드렸다.', { fx: 'knock' }], ['민 씨', '강 선생님! …아, 손녀분이시구나.'], ['', '손님은 한참 말이 없었다.'], ['민 씨', '…그러셨구나. 저는 골목 찻집 하는 민이에요.'], ['민 씨', '{이름} 씨 맞죠? 선생님이 손녀 얘기를 정말 자주 하셨어요.'], ['민 씨', '꼬마 때 이 물레 앞에서 흙투성이가 돼서는, 할머니 그릇보다 자기 그릇이 더 예쁘다고 우겼다고요.'], ['나', '(…그걸 아직 기억하셨구나.)', { face: 'surprise' }]] },
+        { img: 'cg/p3.webp', pic: '🔥', cap: '불이 오른 가마', bg: '#4A3422', amb: 'dust', lines: [['민 씨', '선생님께 받은 청자 찻잔이 지난겨울에 깨졌어요. 혹시 남은 잔이 있을까 해서 와 봤는데…'], ['민 씨', '어머, 지금 가마에 굽고 계신 거… 찻잔이에요?'], ['나', '아, 네. 할머니 물레를 한 번만 돌려 보고 싶어서요. 잘 나올지는 모르겠지만…', { face: 'sad' }], ['민 씨', '그 잔, 다 구워지면 제가 받아 가도 될까요?'], ['민 씨', '똑같은 잔이 아니어도 괜찮아요. 그 물레 앞에 앉아 있던 손으로 빚은 잔이면, 그걸로 충분해요.'], ['나', '…네. 잘 구워지면 꼭 드릴게요.', { face: 'smile' }]] }
       ] },
       after_min: { title: '할머니의 전시대', steps: [
         { img: 'cg/a1.webp', pic: '🍵', cap: '찻잔을 품에 안고 돌아가는 민 씨', bg: '#3E4A30', amb: 'dusk', lines: [['', '민 씨는 찻잔을 품에 안고, 몇 번이나 고개를 숙이며 돌아갔다.'], ['나', '…전시대에, 편지?', { face: 'surprise' }]] },
