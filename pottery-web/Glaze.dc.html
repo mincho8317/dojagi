@@ -67,7 +67,10 @@ body:has(.navdrop [role=dialog]) .navarrows{display:none}
   </div>
 
   <div aria-hidden="true" style="position:absolute;left:56px;top:362px;width:278px;height:140px;pointer-events:none">
-    <img src="gfx/OBJ_GLAZE_BASIN.webp" data-skin="basin" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))">
+    <img src="gfx/OBJ_GLAZE_BASIN.webp" data-btub="base" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))">
+    <img src="gfx/SKIN_BASIN_blue.webp" data-btub="blue" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))">
+    <img src="gfx/SKIN_BASIN_onggi.webp" data-btub="onggi" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))">
+    <img src="gfx/SKIN_BASIN_sang.webp" data-btub="sang" alt="" aria-hidden="true" draggable="false" style="position:absolute;left:0;top:0;width:278px;height:140px;filter:drop-shadow(0 3px 2px rgba(43,26,15,.3))">
     <div style="{{liquid}}"></div>
   </div>
   <sc-if value="{{shelfFull}}" hint-placeholder-val="{{false}}">
@@ -761,7 +764,7 @@ class Component extends DCLogic {
       glzAltTxt: '원료가 있는 다른 유약 고르기 ›',
       glzEmptyTitle: selG.name + ' 없음 · 보유 0',
       glzEmptyWhy: (function () { var QGm = self.qlib(); return EG === 'sakura' ? '벚꽃 재가 없어서 담글 수 없어요. 축제 채집지에서 모을 수 있어요.' : '원료(' + ((QGm.GMATN || {})[EG] || '원료') + ')가 없어서 담글 수 없어요. 채집 「돌 부수기」에서 모으거나 상점에서 살 수 있어요.'; })(),
-      liquid: self.noMat(g, EG) ? 'position:absolute;left:30px;top:20px;width:219px;height:24px;border-radius:50%;opacity:.95;background:radial-gradient(ellipse at 50% 45%,#4A2F1E 0%,#2E1C12 75%);box-shadow:inset 0 0 0 3px ' + selG.raw + '55,inset 0 6px 10px rgba(0,0,0,.45)' /* 빈 유약통 : 바닥과 마른 자국만 */ : 'position:absolute;left:17px;top:13px;width:245px;height:30px;border-radius:50%;opacity:.93;box-shadow:inset 0 6px 10px rgba(43,26,15,.35);background:' + selG.raw,
+      liquid: self.noMat(g, EG) ? 'position:absolute;left:30px;top:33px;width:218px;height:26px;border-radius:50%;opacity:.95;background:radial-gradient(ellipse at 50% 45%,#4A2F1E 0%,#2E1C12 75%);box-shadow:inset 0 0 0 3px ' + selG.raw + '55,inset 0 6px 10px rgba(0,0,0,.45)' /* 빈 유약통 : 바닥과 마른 자국만 */ : 'position:absolute;left:22px;top:29px;width:234px;height:33px;border-radius:50%;opacity:.93;box-shadow:inset 0 6px 10px rgba(43,26,15,.35);background:' + selG.raw,
       tubLine: selG.raw,
       needle: shown < 0 ? 'display:none' : 'position:absolute;top:-3px;bottom:-3px;width:5px;margin-left:-2px;background:#FFFDF5;border:1px solid #2B1A0F;left:' + Math.min(100, shown / 2400 * 100) + '%',
       zoneLabel: zone ? ZL[zone][0] : '도자기를 끌어내려 담그기',
